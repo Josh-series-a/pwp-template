@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight } from 'lucide-react';
@@ -6,10 +5,8 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import FeatureCard from '@/components/FeatureCard';
-
 const Index = () => {
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Header />
       
       {/* Hero Section */}
@@ -17,7 +14,7 @@ const Index = () => {
         <div className="max-w-5xl mx-auto text-center space-y-10">
           <TransitionWrapper animation="fade">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
-              <span className="text-xs font-medium">Business Intelligence Book</span>
+              <span className="text-xs font-medium">Welcome to Propser with Purpose</span>
             </div>
           </TransitionWrapper>
           
@@ -28,10 +25,7 @@ const Index = () => {
           </TransitionWrapper>
           
           <TransitionWrapper animation="slide-up" delay={200}>
-            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Upload your business documents and engage with an AI that asks insightful questions, 
-              challenges your assumptions, and helps you discover new opportunities.
-            </p>
+            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">Upload your Documents, Business Plan or Pitch Deck</p>
           </TransitionWrapper>
           
           <TransitionWrapper animation="slide-up" delay={300}>
@@ -88,34 +82,13 @@ const Index = () => {
           </TransitionWrapper>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard 
-              icon={<FileText className="h-6 w-6" />}
-              title="Document Analysis"
-              description="Upload reports, strategies, financial data, and other business documents for comprehensive analysis."
-              delay={100}
-            />
+            <FeatureCard icon={<FileText className="h-6 w-6" />} title="Document Analysis" description="Upload reports, strategies, financial data, and other business documents for comprehensive analysis." delay={100} />
             
-            <FeatureCard 
-              icon={<Bot className="h-6 w-6" />}
-              title="AI Conversation"
-              description="Engage in a conversation with an AI that understands your business context and challenges your thinking."
-              delay={200}
-            />
+            <FeatureCard icon={<Bot className="h-6 w-6" />} title="AI Conversation" description="Engage in a conversation with an AI that understands your business context and challenges your thinking." delay={200} />
             
-            <FeatureCard 
-              icon={<Lightbulb className="h-6 w-6" />}
-              title="Strategic Insights"
-              description="Receive insights, suggestions, and alternative perspectives that might not be immediately obvious."
-              delay={300}
-            />
+            <FeatureCard icon={<Lightbulb className="h-6 w-6" />} title="Strategic Insights" description="Receive insights, suggestions, and alternative perspectives that might not be immediately obvious." delay={300} />
             
-            <FeatureCard 
-              icon={<BarChart3 className="h-6 w-6" />}
-              title="Data Visualization"
-              description="View key metrics and trends extracted from your documents in easy-to-understand visual formats."
-              delay={400}
-              className="md:col-span-2 lg:col-span-3"
-            />
+            <FeatureCard icon={<BarChart3 className="h-6 w-6" />} title="Data Visualization" description="View key metrics and trends extracted from your documents in easy-to-understand visual formats." delay={400} className="md:col-span-2 lg:col-span-3" />
           </div>
         </div>
       </section>
@@ -148,8 +121,6 @@ const Index = () => {
           <p>&copy; {new Date().getFullYear()} Prosper with Purpose. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
