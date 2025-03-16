@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Check, X } from 'lucide-react';
-import { type AnalysisDocument } from "@/utils/apiService";
+import { type AnalysisDocument } from "@/types/api";
 import TransitionWrapper from '../TransitionWrapper';
 
 interface DocumentListProps {
