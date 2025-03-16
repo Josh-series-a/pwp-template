@@ -1,11 +1,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, Key } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiService, type ChatMessage } from "@/utils/apiService";
 import TransitionWrapper from './TransitionWrapper';
 import ApiKeyForm from './ApiKeyForm';
+import { useToast } from "@/hooks/use-toast";
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -13,6 +14,7 @@ const ChatInterface = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Initialize with any existing chat history
@@ -59,6 +61,13 @@ const ChatInterface = () => {
       setMessages(prev => [...prev, response]);
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "There was an error processing your request. Please check your API key.",
+        duration: 5000,
+      });
       
       // Add error message
       setMessages(prev => [...prev, {

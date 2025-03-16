@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiService } from '@/utils/apiService';
 import { Key } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 const ApiKeyForm = () => {
   const [apiKey, setApiKey] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [hasKey, setHasKey] = useState<boolean>(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Check if API key is already stored
@@ -24,6 +26,11 @@ const ApiKeyForm = () => {
       apiService.setApiKey(apiKey.trim());
       setHasKey(true);
       setIsOpen(false);
+      toast({
+        title: "API Key Saved",
+        description: "Your OpenAI API key has been saved successfully.",
+        duration: 3000,
+      });
     }
   };
 
