@@ -42,5 +42,5 @@ class ApiService {
   // These are now imported from @/types/api
 }
 
-export { ChatMessage, AnalysisDocument } from "@/types/api";
+export type { ChatMessage, AnalysisDocument } from "@/types/api";
 export const apiService = new ApiService();
