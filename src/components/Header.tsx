@@ -10,7 +10,7 @@ const Header = () => {
     <header className="fixed w-full top-0 z-50 px-6 md:px-8 py-4 glass-card backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-lg font-medium tracking-tight">BusinessGPT</span>
+          <span className="text-lg font-medium tracking-tight">Prosper with Purpose</span>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-8">

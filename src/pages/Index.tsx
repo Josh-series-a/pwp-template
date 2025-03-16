@@ -145,7 +145,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="py-8 px-6 md:px-8 border-t">
         <div className="max-w-6xl mx-auto text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} BusinessGPT Analysis. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Prosper with Purpose. All rights reserved.</p>
         </div>
       </footer>
     </div>
