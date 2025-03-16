@@ -74,10 +74,7 @@ const Index = () => {
           <TransitionWrapper>
             <div className="text-center mb-16">
               <h2 className="font-semibold tracking-tight mb-4">How It Works</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Our AI reads and understands your business documents, then engages with you
-                through insightful questions and strategic analysis.
-              </p>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Our Prosper with Purpose AI reads and understands your business documents, then engages with you through insightful questions and strategic analysis.</p>
             </div>
           </TransitionWrapper>
           
