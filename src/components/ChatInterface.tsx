@@ -1,15 +1,17 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2 } from 'lucide-react';
+import { Send, Loader2, Key } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiService, type ChatMessage } from "@/utils/apiService";
 import TransitionWrapper from './TransitionWrapper';
+import ApiKeyForm from './ApiKeyForm';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,10 +23,13 @@ const ChatInterface = () => {
       // Add an initial assistant message if no history exists
       const initialMessage: ChatMessage = {
         role: 'assistant',
-        content: "I'm your business analysis expert. I've reviewed your uploaded documents. What aspects of your business would you like me to analyze or question?"
+        content: "I'm your Prosper with Purpose business analysis expert. I've reviewed your uploaded documents. What aspects of your business would you like me to analyze or question?"
       };
       setMessages([initialMessage]);
     }
+
+    // Check if API key is set
+    setHasApiKey(!!apiService.getApiKey());
   }, []);
 
   useEffect(() => {
@@ -54,6 +59,12 @@ const ChatInterface = () => {
       setMessages(prev => [...prev, response]);
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Add error message
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: "I'm sorry, there was an error processing your request. Please try again or check your API key."
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +72,15 @@ const ChatInterface = () => {
 
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-14rem)]">
+      {!hasApiKey && (
+        <div className="bg-muted/50 p-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Using mock responses. For full AI capabilities, please set your OpenAI API key.
+          </p>
+          <ApiKeyForm />
+        </div>
+      )}
+      
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {messages.map((message, index) => (
           <TransitionWrapper 

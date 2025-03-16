@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import UploadForm from "@/components/UploadForm";
 import ChatInterface from "@/components/ChatInterface";
+import ApiKeyForm from "@/components/ApiKeyForm";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import { apiService } from '@/utils/apiService';
 
@@ -26,7 +27,10 @@ const Chat = () => {
       <main className="flex-1 pt-24 px-6 md:px-8 pb-10">
         <div className="max-w-6xl mx-auto">
           <TransitionWrapper>
-            <h1 className="text-3xl font-semibold mb-2">Business Analysis</h1>
+            <div className="flex justify-between items-center mb-2">
+              <h1 className="text-3xl font-semibold">Business Analysis</h1>
+              <ApiKeyForm />
+            </div>
             <p className="text-muted-foreground mb-8">
               Upload your documents and chat with your AI business expert
             </p>
