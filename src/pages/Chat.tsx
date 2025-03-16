@@ -7,18 +7,34 @@ import ChatInterface from "@/components/ChatInterface";
 import ApiKeyForm from "@/components/ApiKeyForm";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import { apiService } from '@/utils/apiService';
+import { useLocation } from 'react-router-dom';
 
 const Chat = () => {
   const [hasDocuments, setHasDocuments] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("upload");
+  const location = useLocation();
+  
+  // Check if coming from a button click with state
+  useEffect(() => {
+    if (location.state?.startAnalysis) {
+      checkDocumentsAndSetTab();
+    }
+  }, [location.state]);
   
   useEffect(() => {
-    const checkDocuments = async () => {
-      const documents = await apiService.getDocuments();
-      setHasDocuments(documents.length > 0);
-    };
-    
-    checkDocuments();
+    checkDocumentsAndSetTab();
   }, []);
+  
+  const checkDocumentsAndSetTab = async () => {
+    const documents = await apiService.getDocuments();
+    const hasAnyDocuments = documents.length > 0;
+    setHasDocuments(hasAnyDocuments);
+    
+    // If there are documents and we're trying to start analysis, switch to chat tab
+    if (hasAnyDocuments && location.state?.startAnalysis) {
+      setActiveTab("chat");
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -36,7 +52,7 @@ const Chat = () => {
             </p>
           </TransitionWrapper>
           
-          <Tabs defaultValue={hasDocuments ? "chat" : "upload"} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TransitionWrapper animation="slide-up" delay={100}>
               <TabsList className="grid w-full max-w-xs grid-cols-2 mb-8">
                 <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -45,7 +61,7 @@ const Chat = () => {
             </TransitionWrapper>
             
             <TabsContent value="upload" className="pt-4">
-              <UploadForm />
+              <UploadForm onDocumentUpload={checkDocumentsAndSetTab} />
             </TabsContent>
             
             <TabsContent value="chat" className="pt-4">
