@@ -97,7 +97,7 @@ const LoadingRayMeter = ({
   return (
     <div 
       className={cn(
-        'relative flex items-center justify-center',
+        'relative flex items-center justify-center transition-all duration-500',
         sizeClasses[size].container,
         className
       )}
@@ -139,14 +139,14 @@ const LoadingRayMeter = ({
       {/* Sun Center */}
       <div 
         className={cn(
-          'relative rounded-full bg-secondary flex items-center justify-center z-10',
+          'relative rounded-full bg-secondary flex items-center justify-center z-10 transition-all duration-300',
           isComplete ? 'animate-pulse-subtle shadow-lg shadow-secondary/30' : '',
           sizeClasses[size].sun
         )}
       >
         <Sun 
           className={cn(
-            'text-primary h-full w-full p-1',
+            'text-primary h-full w-full p-1 transition-all',
             isComplete ? 'animate-spin' : '',
           )} 
           style={{ animationDuration: '12s' }}

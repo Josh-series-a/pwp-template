@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Header from "@/components/Header";
+import PageLoader from "@/components/PageLoader";
 
 import Index from "./pages/Index";
 import Products from "./pages/Products";
@@ -23,13 +25,14 @@ import PreloaderDemo from './pages/PreloaderDemo';
 
 const queryClient = new QueryClient();
 
-// Wrapper component to conditionally show header
+// Wrapper component to conditionally show header and handle preloading
 const AppContent = () => {
   const location = useLocation();
   const isDashboardRoute = location.pathname.includes('/dashboard');
   
   return (
     <>
+      <PageLoader />
       {!isDashboardRoute && <Header />}
       <Routes>
         {/* Non-Dashboard Routes */}
