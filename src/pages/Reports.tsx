@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,16 +26,48 @@ import {
   Share2, 
   Plus
 } from 'lucide-react';
+import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
+import { useToast } from '@/hooks/use-toast';
 
 const Reports = () => {
-  // Mock data for reports - in a real app, this would come from the database
-  const reports = [
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reports, setReports] = useState([
     { id: 1, title: 'Annual Business Health Check', date: '2023-10-15', company: 'Acme Corp', status: 'Completed' },
     { id: 2, title: 'Quarterly Performance Review', date: '2023-07-22', company: 'Acme Corp', status: 'Completed' },
     { id: 3, title: 'Team Assessment', date: '2023-04-10', company: 'Acme Corp', status: 'Completed' },
     { id: 4, title: 'Growth Strategy Evaluation', date: '2023-01-05', company: 'Acme Corp', status: 'Completed' },
     { id: 5, title: 'Financial Health Analysis', date: '2022-11-18', company: 'Acme Corp', status: 'Completed' },
-  ];
+  ]);
+  const { toast } = useToast();
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAnalysisComplete = (companyName: string, exerciseTitle: string) => {
+    // Add the new report to the list
+    const newReport = {
+      id: reports.length + 1,
+      title: exerciseTitle,
+      date: new Date().toISOString().split('T')[0],
+      company: companyName,
+      status: 'In Progress ⏳'
+    };
+    
+    setReports([newReport, ...reports]);
+    closeModal();
+    
+    // Show success toast
+    toast({
+      title: "Analysis Started",
+      description: `Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`,
+      duration: 5000,
+    });
+  };
 
   return (
     <DashboardLayout title="My Reports">
@@ -44,7 +76,7 @@ const Reports = () => {
           <p className="text-muted-foreground">
             View all your business health checks and analyses
           </p>
-          <Button>
+          <Button onClick={openModal}>
             <Plus className="mr-2 h-4 w-4" />
             Run New Analysis
           </Button>
@@ -75,7 +107,11 @@ const Reports = () => {
                     <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
                     <TableCell>{report.company}</TableCell>
                     <TableCell>
-                      <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        report.status === 'In Progress ⏳' 
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-green-100 text-green-800'
+                      }`}>
                         {report.status}
                       </span>
                     </TableCell>
@@ -137,13 +173,19 @@ const Reports = () => {
             </p>
           </CardContent>
           <CardFooter>
-            <Button className="w-full">
+            <Button className="w-full" onClick={openModal}>
               <Plus className="mr-2 h-4 w-4" />
               Start New Business Health Check
             </Button>
           </CardFooter>
         </Card>
       </div>
+
+      <RunAnalysisModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        onSubmitComplete={handleAnalysisComplete} 
+      />
     </DashboardLayout>
   );
 };
