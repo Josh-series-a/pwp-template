@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -69,19 +68,12 @@ const Header = () => {
           />
         </Link>
         
-        {/* Desktop Menu */}
         <nav className="hidden md:flex items-center space-x-8">
           <NavLink to="/" current={location.pathname === "/"}>Home</NavLink>
           <NavLink to="/products" current={location.pathname === "/products"}>Products</NavLink>
           <NavLink to="/chat" current={location.pathname === "/chat"}>Analysis</NavLink>
-          {isAuthenticated && (
-            <NavLink to="/dashboard/overview" current={false}>
-              Dashboard
-            </NavLink>
-          )}
         </nav>
         
-        {/* Mobile Menu Toggle */}
         <button 
           className="md:hidden text-foreground"
           onClick={toggleMobileMenu}
@@ -90,7 +82,6 @@ const Header = () => {
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         
-        {/* Desktop Authentication Dropdown */}
         <div className="hidden md:flex items-center gap-4">
           {isLoading ? (
             <div className="h-10 w-20 animate-pulse bg-accent rounded-md"></div>
@@ -153,18 +144,12 @@ const Header = () => {
         </div>
       </div>
       
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md p-4 border-t border-border animate-slide-down">
           <nav className="flex flex-col space-y-4 mb-4">
             <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
             <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)}>Products</MobileNavLink>
             <MobileNavLink to="/chat" current={location.pathname === "/chat"} onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
-            {isAuthenticated && (
-              <MobileNavLink to="/dashboard/overview" current={false} onClick={() => setIsMobileMenuOpen(false)}>
-                Dashboard
-              </MobileNavLink>
-            )}
           </nav>
           
           <div className="flex flex-col space-y-3">
