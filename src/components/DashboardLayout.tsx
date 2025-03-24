@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
 import { 
@@ -10,12 +9,8 @@ import {
   BookOpen, 
   Dumbbell, 
   Calendar, 
-  User,
-  LogOut
+  User
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { authService } from '@/utils/authService';
-import { toast } from 'sonner';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -23,25 +18,6 @@ type DashboardLayoutProps = {
 };
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      const result = await authService.signOut();
-      
-      if (result.success) {
-        toast.success("You have been logged out.");
-        navigate('/');
-      } else {
-        toast.error("Logout failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("An error occurred during logout.");
-    }
-  };
-
   const navigation = [
     { name: 'Dashboard', href: '/dashboard/overview', icon: Home },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText },
@@ -79,17 +55,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                 );
               })}
             </nav>
-            
-            <div className="p-4 mt-auto">
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                className="w-full justify-start"
-              >
-                <LogOut className="mr-3 h-5 w-5" />
-                Logout
-              </Button>
-            </div>
           </div>
         </div>
         
