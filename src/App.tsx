@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -36,33 +36,38 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             
-            {/* Protected Routes */}
+            {/* Dashboard Routes */}
             <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Navigate to="/dashboard/overview" replace />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/overview" element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/reports" element={
+            <Route path="/dashboard/reports" element={
               <ProtectedRoute>
                 <Reports />
               </ProtectedRoute>
             } />
-            <Route path="/exercises" element={
+            <Route path="/dashboard/exercises" element={
               <ProtectedRoute>
                 <Exercises />
               </ProtectedRoute>
             } />
-            <Route path="/book-insights" element={
+            <Route path="/dashboard/book-insights" element={
               <ProtectedRoute>
                 <BookInsights />
               </ProtectedRoute>
             } />
-            <Route path="/book-session" element={
+            <Route path="/dashboard/book-session" element={
               <ProtectedRoute>
                 <BookSession />
               </ProtectedRoute>
             } />
-            <Route path="/profile" element={
+            <Route path="/dashboard/profile" element={
               <ProtectedRoute>
                 <Profile />
               </ProtectedRoute>

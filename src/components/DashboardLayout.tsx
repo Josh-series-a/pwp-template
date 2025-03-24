@@ -43,12 +43,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Reports', href: '/reports', icon: FileText },
-    { name: 'Exercises', href: '/exercises', icon: Dumbbell },
-    { name: 'Book Insights', href: '/book-insights', icon: BookOpen },
-    { name: 'Book a Session', href: '/book-session', icon: Calendar },
-    { name: 'Profile', href: '/profile', icon: User },
+    { name: 'Dashboard', href: '/dashboard/overview', icon: Home },
+    { name: 'Reports', href: '/dashboard/reports', icon: FileText },
+    { name: 'Exercises', href: '/dashboard/exercises', icon: Dumbbell },
+    { name: 'Book Insights', href: '/dashboard/book-insights', icon: BookOpen },
+    { name: 'Book a Session', href: '/dashboard/book-session', icon: Calendar },
+    { name: 'Profile', href: '/dashboard/profile', icon: User },
   ];
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { LogIn, LogOut, User, Menu, X, LayoutDashboard } from 'lucide-react';
@@ -12,6 +12,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoading] = useState(false);
   
   const handleLogout = async () => {
     try {
@@ -36,6 +37,8 @@ const Header = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   
+  const isDashboardPage = location.pathname.startsWith('/dashboard');
+  
   return (
     <header className="fixed w-full top-0 z-50 px-6 md:px-8 py-4 glass-card backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -53,7 +56,7 @@ const Header = () => {
           <NavLink to="/products" current={location.pathname === "/products"}>Products</NavLink>
           <NavLink to="/chat" current={location.pathname === "/chat"}>Analysis</NavLink>
           {isAuthenticated && location.pathname === "/" && (
-            <NavLink to="/dashboard" current={location.pathname === "/dashboard"}>
+            <NavLink to="/dashboard/overview" current={isDashboardPage}>
               Dashboard
             </NavLink>
           )}
@@ -81,19 +84,14 @@ const Header = () => {
               {location.pathname === "/" && (
                 <Button 
                   variant="outline" 
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/dashboard/overview')}
                   className="px-3 py-1 h-auto text-sm"
                 >
                   <LayoutDashboard className="mr-2 h-3 w-3" />
                   Dashboard
                 </Button>
               )}
-              {location.pathname.startsWith('/dashboard') || 
-               location.pathname.startsWith('/reports') || 
-               location.pathname.startsWith('/exercises') || 
-               location.pathname.startsWith('/book-insights') || 
-               location.pathname.startsWith('/book-session') || 
-               location.pathname.startsWith('/profile') ? (
+              {isDashboardPage ? (
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/')}
@@ -107,9 +105,9 @@ const Header = () => {
                 variant="outline" 
                 onClick={handleLogout}
                 className="px-3 py-1 h-auto text-sm"
-                disabled={isLoading}
+                disabled={isLoggingOut}
               >
-                {isLoading ? (
+                {isLoggingOut ? (
                   <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
                 ) : (
                   <LogOut className="mr-2 h-3 w-3" />
@@ -148,7 +146,7 @@ const Header = () => {
             <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)}>Products</MobileNavLink>
             <MobileNavLink to="/chat" current={location.pathname === "/chat"} onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
             {isAuthenticated && location.pathname === "/" && (
-              <MobileNavLink to="/dashboard" current={location.pathname === "/dashboard"} onClick={() => setIsMobileMenuOpen(false)}>
+              <MobileNavLink to="/dashboard/overview" current={isDashboardPage} onClick={() => setIsMobileMenuOpen(false)}>
                 Dashboard
               </MobileNavLink>
             )}
@@ -167,7 +165,7 @@ const Header = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => {
-                      navigate('/dashboard');
+                      navigate('/dashboard/overview');
                       setIsMobileMenuOpen(false);
                     }}
                     className="w-full justify-center"
@@ -176,12 +174,7 @@ const Header = () => {
                     Dashboard
                   </Button>
                 )}
-                {location.pathname.startsWith('/dashboard') || 
-                 location.pathname.startsWith('/reports') || 
-                 location.pathname.startsWith('/exercises') || 
-                 location.pathname.startsWith('/book-insights') || 
-                 location.pathname.startsWith('/book-session') || 
-                 location.pathname.startsWith('/profile') ? (
+                {isDashboardPage ? (
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -201,9 +194,9 @@ const Header = () => {
                     setIsMobileMenuOpen(false);
                   }}
                   className="w-full justify-center"
-                  disabled={isLoading}
+                  disabled={isLoggingOut}
                 >
-                  {isLoading ? (
+                  {isLoggingOut ? (
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
                   ) : (
                     <LogOut className="mr-2 h-4 w-4" />
