@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Bot, FileText, Lightbulb, BarChart3, ArrowRight } from 'lucide-react';
+import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
@@ -17,30 +17,33 @@ const Index = () => {
           <div className="text-center md:text-left space-y-10 md:flex-1">
             <TransitionWrapper animation="fade">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
-                <span className="text-xs font-medium">Welcome to Propser with Purpose</span>
+                <span className="text-xs font-medium">Welcome to Prosper with Purpose</span>
               </div>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-down" delay={100}>
               <h1 className="font-semibold tracking-tighter leading-tight mb-4">
-                Your AI Business <br className="md:hidden" /> Analysis Expert
+                Build a Stronger Business—<br className="md:hidden" />With Less Stress
               </h1>
+              <p className="text-xl text-muted-foreground mt-2">Guided by automation. Powered by purpose.</p>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-up" delay={200}>
-              <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto md:mx-0 leading-relaxed">Upload your Documents, Business Plan or Pitch Deck</p>
+              <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto md:mx-0 leading-relaxed">
+                Turn insights from the book Prosper With Purpose into an AI-generated report tailored to your business—complete with personalised advice, strategic next steps, and a whole lot less stress.
+              </p>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-up" delay={300}>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
                 <Button asChild size="lg" className="rounded-full px-6">
                   <Link to="/chat">
-                    Start Analysis
+                    Get Your Free Business Health Check
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full px-6">
-                  <a href="#features">Learn More</a>
+                  <a href="#how-it-works">Learn More</a>
                 </Button>
               </div>
             </TransitionWrapper>
@@ -59,48 +62,270 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Demo GIF/Image */}
-      <TransitionWrapper animation="blur" delay={400}>
-        <div className="relative max-w-5xl mx-auto px-6 md:px-8 mb-24">
-          <div className="rounded-2xl overflow-hidden glass-card aspect-video">
-            {/* This would normally be an actual image/video */}
-            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex items-center justify-center">
-              <div className="text-center p-8">
-                <Bot className="h-16 w-16 mx-auto mb-4 text-primary" />
-                <h3 className="text-2xl font-medium mb-2">Interactive AI Business Analysis</h3>
-                <p className="text-muted-foreground">
-                  Upload documents, get insights, and explore new business perspectives
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xs mx-auto">
-            <div className="glass-card rounded-full px-6 py-3 text-center text-sm font-medium backdrop-blur-lg">
-              Based on advanced AI analysis technology
-            </div>
-          </div>
-        </div>
-      </TransitionWrapper>
-      
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6 md:px-8 bg-secondary/50">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 px-6 md:px-8 bg-secondary/20">
         <div className="max-w-6xl mx-auto">
           <TransitionWrapper>
             <div className="text-center mb-16">
               <h2 className="font-semibold tracking-tight mb-4">How It Works</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Our Prosper with Purpose AI reads and understands your business documents, then engages with you through insightful questions and strategic analysis.</p>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Our AI-powered system combines your business data with the insights from Prosper With Purpose to create a tailored report just for you.
+              </p>
             </div>
           </TransitionWrapper>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard icon={<FileText className="h-6 w-6" />} title="Document Analysis" description="Upload reports, strategies, financial data, and other business documents for comprehensive analysis." delay={100} />
+          <div className="grid md:grid-cols-3 gap-8">
+            <TransitionWrapper animation="slide-up" delay={100}>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                  <span className="text-primary font-bold text-xl">1</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Share Your Business Info</h3>
+                <p className="text-muted-foreground">
+                  Fill in a short form with your name, company, and website. We'll pull all your online content using automation tools.
+                </p>
+              </div>
+            </TransitionWrapper>
             
-            <FeatureCard icon={<Bot className="h-6 w-6" />} title="AI Conversation" description="Engage in a conversation with an AI that understands your business context and challenges your thinking." delay={200} />
+            <TransitionWrapper animation="slide-up" delay={200}>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                  <span className="text-primary font-bold text-xl">2</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">AI + Book + Analysis</h3>
+                <p className="text-muted-foreground">
+                  We combine insights from your site with the wisdom of Prosper With Purpose and our structured Fyva analysis to generate a custom report.
+                </p>
+              </div>
+            </TransitionWrapper>
             
-            <FeatureCard icon={<Lightbulb className="h-6 w-6" />} title="Strategic Insights" description="Receive insights, suggestions, and alternative perspectives that might not be immediately obvious." delay={300} />
+            <TransitionWrapper animation="slide-up" delay={300}>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                  <span className="text-primary font-bold text-xl">3</span>
+                </div>
+                <h3 className="text-xl font-medium mb-3">Get Your Personalised Report</h3>
+                <p className="text-muted-foreground">
+                  Your final output: a tailored business evaluation, complete with practical next steps aligned to your mission, team, profits, and long-term goals.
+                </p>
+              </div>
+            </TransitionWrapper>
+          </div>
+          
+          <TransitionWrapper animation="fade" delay={400}>
+            <div className="text-center mt-12 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm max-w-3xl mx-auto">
+              <p className="text-lg italic">
+                👉 It's like having a business coach and a strategist in your inbox.
+              </p>
+            </div>
+          </TransitionWrapper>
+        </div>
+      </section>
+      
+      {/* Book Details Section */}
+      <section id="book-details" className="py-20 px-6 md:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-16">
+            <TransitionWrapper animation="slide-right" delay={100} className="md:w-2/5">
+              <div className="relative">
+                <img 
+                  src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
+                  alt="Prosper with Purpose book cover" 
+                  className="w-full max-w-sm mx-auto shadow-2xl rounded-lg"
+                />
+              </div>
+            </TransitionWrapper>
             
-            <FeatureCard icon={<BarChart3 className="h-6 w-6" />} title="Data Visualization" description="View key metrics and trends extracted from your documents in easy-to-understand visual formats." delay={400} className="md:col-span-2 lg:col-span-3" />
+            <TransitionWrapper animation="slide-left" delay={200} className="md:w-3/5">
+              <div className="space-y-6">
+                <h2 className="font-semibold tracking-tight">What's In The Book?</h2>
+                <p className="text-lg">
+                  Prosper With Purpose is your essential guide to building a successful business without burning out.
+                  It focuses on the Three Ps:
+                </p>
+                
+                <div className="space-y-4 mt-6">
+                  <div className="flex items-start gap-4">
+                    <Compass className="h-8 w-8 text-primary shrink-0 mt-1" />
+                    <div>
+                      <h3 className="text-xl font-medium">Plan</h3>
+                      <p className="text-muted-foreground">Know where you're going and how to get there</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <Users className="h-8 w-8 text-primary shrink-0 mt-1" />
+                    <div>
+                      <h3 className="text-xl font-medium">People</h3>
+                      <p className="text-muted-foreground">Delegate well, build trust, grow strong teams</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <PieChart className="h-8 w-8 text-primary shrink-0 mt-1" />
+                    <div>
+                      <h3 className="text-xl font-medium">Profits</h3>
+                      <p className="text-muted-foreground">Make money, manage cash, and stay in control</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <p className="text-lg mt-6">
+                  Now, we've turned that wisdom into a smart AI-powered tool to help you apply it—faster.
+                </p>
+              </div>
+            </TransitionWrapper>
+          </div>
+        </div>
+      </section>
+      
+      {/* Report Details Section */}
+      <section id="report-details" className="py-20 px-6 md:px-8 bg-secondary/20">
+        <div className="max-w-6xl mx-auto">
+          <TransitionWrapper>
+            <div className="text-center mb-16">
+              <h2 className="font-semibold tracking-tight mb-4">What You Get In Your Report</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Your personalized business analysis includes everything you need to move forward with clarity and purpose.
+              </p>
+            </div>
+          </TransitionWrapper>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <FeatureCard 
+              icon={<FileText className="h-6 w-6" />} 
+              title="Executive Summary" 
+              description="An AI-powered analysis of your business based on your online presence" 
+              delay={100} 
+            />
+            
+            <FeatureCard 
+              icon={<Lightbulb className="h-6 w-6" />} 
+              title="Key Insights" 
+              description="Valuable observations drawn from your website and the book's principles" 
+              delay={200} 
+            />
+            
+            <FeatureCard 
+              icon={<Bot className="h-6 w-6" />} 
+              title="Practical Exercises" 
+              description="A breakdown of one or more exercises (e.g. 'Define Your Exit Strategy')" 
+              delay={300} 
+            />
+            
+            <FeatureCard 
+              icon={<BarChart3 className="h-6 w-6" />} 
+              title="Strategic Guidance" 
+              description="Practical, no-fluff guidance that you can act on immediately" 
+              delay={400} 
+            />
+          </div>
+          
+          <TransitionWrapper animation="fade" delay={500}>
+            <div className="mt-16 flex justify-around flex-wrap gap-6">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-primary" />
+                <span>Built by advisors</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-primary" />
+                <span>Powered by AdvisorPro.ai</span>
+              </div>
+            </div>
+          </TransitionWrapper>
+        </div>
+      </section>
+      
+      {/* Who It's For Section */}
+      <section id="who-its-for" className="py-20 px-6 md:px-8">
+        <div className="max-w-6xl mx-auto">
+          <TransitionWrapper>
+            <div className="text-center mb-16">
+              <h2 className="font-semibold tracking-tight mb-4">Who It's For</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Our business health check is designed for people who are serious about growing their business with purpose.
+              </p>
+            </div>
+          </TransitionWrapper>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <TransitionWrapper animation="slide-up" delay={100}>
+              <div className="p-6 border rounded-xl text-center">
+                <h3 className="text-lg font-medium mb-2">Founders</h3>
+                <p className="text-muted-foreground text-sm">Who want clarity without overwhelm</p>
+              </div>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="slide-up" delay={200}>
+              <div className="p-6 border rounded-xl text-center">
+                <h3 className="text-lg font-medium mb-2">Business Owners</h3>
+                <p className="text-muted-foreground text-sm">Ready to delegate, scale or exit</p>
+              </div>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="slide-up" delay={300}>
+              <div className="p-6 border rounded-xl text-center">
+                <h3 className="text-lg font-medium mb-2">Coaches & Advisors</h3>
+                <p className="text-muted-foreground text-sm">Who want to help clients go deeper</p>
+              </div>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="slide-up" delay={400}>
+              <div className="p-6 border rounded-xl text-center">
+                <h3 className="text-lg font-medium mb-2">Purpose-Driven Leaders</h3>
+                <p className="text-muted-foreground text-sm">Building businesses that matter</p>
+              </div>
+            </TransitionWrapper>
+          </div>
+        </div>
+      </section>
+      
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 px-6 md:px-8 bg-secondary/20">
+        <div className="max-w-6xl mx-auto">
+          <TransitionWrapper>
+            <div className="text-center mb-16">
+              <h2 className="font-semibold tracking-tight mb-4">Testimonials</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Here's what people are saying about Prosper with Purpose
+              </p>
+            </div>
+          </TransitionWrapper>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <TransitionWrapper animation="fade" delay={100}>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+                <p className="italic mb-6 text-lg">
+                  "Colin has really helped me focus on the key priorities… It's been invaluable having an experienced and empathetic person to talk to."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-bold">LH</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Dr Lia Hunter</h4>
+                    <p className="text-sm text-muted-foreground">Founder, CGX</p>
+                  </div>
+                </div>
+              </div>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="fade" delay={200}>
+              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
+                <p className="italic mb-6 text-lg">
+                  "After going through a structural change, Colin helped us define our mission and set us on the path to achieving it."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-bold">DA</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Deborah Allen</h4>
+                    <p className="text-sm text-muted-foreground">Founder, DouglasJane Studio</p>
+                  </div>
+                </div>
+              </div>
+            </TransitionWrapper>
           </div>
         </div>
       </section>
@@ -110,11 +335,11 @@ const Index = () => {
         <TransitionWrapper animation="slide-up">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <h2 className="font-semibold tracking-tight">
-              Ready to Gain New Business Insights?
+              Ready to Discover Where Your Business Stands?
             </h2>
             
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Start uploading your business documents and engaging with your AI business analysis expert.
+              Get your free business health check and personalised Prosper With Purpose report.
             </p>
             
             <Button asChild size="lg" className="rounded-full px-8 mt-6">
