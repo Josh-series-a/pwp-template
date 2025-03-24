@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -101,17 +100,6 @@ const Header = () => {
               </Link>
             </>
           )}
-          <Link 
-            to="/chat" 
-            state={{ startAnalysis: true }}
-            className={cn(
-              "px-4 py-2 rounded-full text-sm font-medium",
-              "bg-primary text-primary-foreground shadow-sm",
-              "hover:bg-primary/90 smooth-transition"
-            )}
-          >
-            Start Analysis
-          </Link>
         </div>
       </div>
       
@@ -159,18 +147,6 @@ const Header = () => {
                 </Link>
               </>
             )}
-            <Link 
-              to="/chat" 
-              state={{ startAnalysis: true }}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium text-center",
-                "bg-primary text-primary-foreground shadow-sm",
-                "hover:bg-primary/90 smooth-transition"
-              )}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Start Analysis
-            </Link>
           </div>
         </div>
       )}
