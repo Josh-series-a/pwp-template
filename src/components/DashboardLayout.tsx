@@ -33,7 +33,7 @@ type DashboardLayoutProps = {
   title: string;
 };
 
-// Create a custom collapse button component to place at the top of the sidebar
+// Custom collapse button component for the top of the sidebar
 const SidebarCollapseButton = () => {
   const { open, toggleSidebar } = useSidebar();
   
@@ -41,7 +41,7 @@ const SidebarCollapseButton = () => {
     <Button 
       variant="ghost" 
       size="sm" 
-      className="ml-auto flex h-7 w-7 p-0 items-center justify-center"
+      className="ml-auto flex h-7 w-7 p-0 items-center justify-center hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       onClick={toggleSidebar}
     >
       {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -71,11 +71,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
           <Sidebar collapsible="icon" className="z-30">
             <SidebarContent>
               <SidebarGroup>
-                <div className="flex items-center px-2 pt-2 pb-1">
-                  <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                <div className="flex items-center px-3 pt-3 pb-2">
+                  <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground">Navigation</SidebarGroupLabel>
                   <SidebarCollapseButton />
                 </div>
-                <SidebarGroupContent>
+                <SidebarGroupContent className="mt-1">
                   <SidebarMenu>
                     {navigation.map((item) => {
                       const isActive = location.pathname === item.href;
@@ -85,10 +85,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                             asChild 
                             isActive={isActive}
                             tooltip={item.name}
+                            className={cn(
+                              "my-1 transition-all duration-200",
+                              isActive && "font-medium"
+                            )}
                           >
                             <Link to={item.href}>
-                              <item.icon />
-                              <span>{item.name}</span>
+                              <item.icon className={cn(
+                                "transition-all duration-200",
+                                isActive ? "text-primary" : "text-sidebar-foreground/70"
+                              )} />
+                              <span className={cn(
+                                "transition-all duration-200 ml-2",
+                                isActive ? "text-primary" : "text-sidebar-foreground/80"
+                              )}>{item.name}</span>
                             </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
