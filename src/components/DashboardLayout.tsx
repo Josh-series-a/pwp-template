@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
+
 type DashboardLayoutProps = {
   children: React.ReactNode;
   title: string;
 };
+
 const SidebarCollapseButton = () => {
   const {
     toggleSidebar,
@@ -22,17 +24,20 @@ const SidebarCollapseButton = () => {
       {isCollapsed ? <ChevronRight className="h-4 w-4 stroke-[2.5px]" /> : <ChevronLeft className="h-4 w-4 stroke-[2.5px]" />}
     </Button>;
 };
+
 const SidebarLogo = () => {
   return <div className="flex items-center px-4 py-4 justify-between">
       
       <SidebarCollapseButton />
     </div>;
 };
+
 const SidebarSearch = () => {
   return <div className="flex justify-center px-3 py-2">
       
     </div>;
 };
+
 const SidebarProfile = () => {
   const {
     user
@@ -52,6 +57,7 @@ const SidebarProfile = () => {
       </Link>
     </div>;
 };
+
 const SidebarNavigationHeader = () => {
   const {
     toggleSidebar,
@@ -65,6 +71,7 @@ const SidebarNavigationHeader = () => {
       </Button>
     </div>;
 };
+
 const SidebarNavigation = () => {
   const location = useLocation();
   const navigation = [{
@@ -109,11 +116,12 @@ const SidebarNavigation = () => {
       </SidebarGroupContent>
     </SidebarGroup>;
 };
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   title
 }) => {
-  return <SidebarProvider defaultOpen={true}>
+  return <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex flex-col w-full">
         <DashboardHeader />
         
@@ -144,4 +152,5 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
     </SidebarProvider>;
 };
+
 export default DashboardLayout;
