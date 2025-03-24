@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { LogIn, LogOut, User, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,28 +9,77 @@ import { toast } from 'sonner';
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     // Check authentication status on component mount and when location changes
-    const checkAuth = () => {
-      const authStatus = authService.isAuthenticated();
-      setIsAuthenticated(authStatus);
-      if (authStatus) {
-        setUser(authService.getCurrentUser());
+    const checkAuth = async () => {
+      setIsLoading(true);
+      try {
+        const isAuth = await authService.isAuthenticated();
+        setIsAuthenticated(isAuth);
+        
+        if (isAuth) {
+          const userData = await authService.getCurrentUser();
+          if (userData) {
+            setUser({
+              name: userData.user_metadata?.name || 'User',
+              email: userData.email || ''
+            });
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     
     checkAuth();
+    
+    // Setup auth state change listener
+    const { data: { subscription } } = authService.onAuthStateChange((user) => {
+      setIsAuthenticated(!!user);
+      if (user) {
+        setUser({
+          name: user.user_metadata?.name || 'User',
+          email: user.email || ''
+        });
+      } else {
+        setUser(null);
+      }
+    });
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [location]);
   
-  const handleLogout = () => {
-    authService.logout();
-    setIsAuthenticated(false);
-    setUser(null);
-    toast.success("You have been logged out.");
+  const handleLogout = async () => {
+    try {
+      setIsLoading(true);
+      const result = await authService.signOut();
+      
+      if (result.success) {
+        setIsAuthenticated(false);
+        setUser(null);
+        toast.success("You have been logged out.");
+        navigate('/');
+      } else {
+        toast.error("Logout failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("An error occurred during logout.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleMobileMenu = () => {
@@ -65,7 +115,9 @@ const Header = () => {
         
         {/* Desktop Authentication Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          {isAuthenticated ? (
+          {isLoading ? (
+            <div className="h-10 w-20 animate-pulse bg-accent rounded-md"></div>
+          ) : isAuthenticated ? (
             <>
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
@@ -75,8 +127,13 @@ const Header = () => {
                 variant="outline" 
                 onClick={handleLogout}
                 className="px-3 py-1 h-auto text-sm"
+                disabled={isLoading}
               >
-                <LogOut className="mr-2 h-3 w-3" />
+                {isLoading ? (
+                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                ) : (
+                  <LogOut className="mr-2 h-3 w-3" />
+                )}
                 Logout
               </Button>
             </>
@@ -113,7 +170,9 @@ const Header = () => {
           </nav>
           
           <div className="flex flex-col space-y-3">
-            {isAuthenticated ? (
+            {isLoading ? (
+              <div className="h-10 w-full animate-pulse bg-accent rounded-md"></div>
+            ) : isAuthenticated ? (
               <>
                 <div className="flex items-center gap-2 py-2">
                   <User className="h-4 w-4" />
@@ -126,8 +185,13 @@ const Header = () => {
                     setIsMobileMenuOpen(false);
                   }}
                   className="w-full justify-center"
+                  disabled={isLoading}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  {isLoading ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  ) : (
+                    <LogOut className="mr-2 h-4 w-4" />
+                  )}
                   Logout
                 </Button>
               </>

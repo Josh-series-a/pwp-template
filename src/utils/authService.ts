@@ -1,8 +1,10 @@
 
+import { supabase } from "@/integrations/supabase/client";
+import { Session, User } from "@supabase/supabase-js";
+
 class AuthService {
   private apiKey: string | null = null;
-  private user: User | null = null;
-  private mockUsers: Record<string, User> = {};
+  private session: Session | null = null;
 
   // Set the OpenAI API key
   setApiKey(key: string) {
@@ -19,83 +21,94 @@ class AuthService {
     return this.apiKey;
   }
 
-  // Mock login functionality
-  mockLogin(email: string, password: string): boolean {
-    // Check if the user exists in our mock database and if the password matches
-    const user = this.mockUsers[email];
-    if (user && user.password === password) {
-      this.user = user;
-      localStorage.setItem('auth_user', JSON.stringify({ email: user.email, name: user.name }));
-      return true;
+  // Sign up with email and password
+  async signUp(email: string, password: string, name: string) {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name
+          }
+        }
+      });
+
+      if (error) throw error;
+      return { success: true, data };
+    } catch (error: any) {
+      console.error("Sign up error:", error.message);
+      return { success: false, error: error.message };
     }
-    return false;
   }
 
-  // Mock signup functionality
-  mockSignup(name: string, email: string, password: string): boolean {
-    // Check if the user already exists
-    if (this.mockUsers[email]) {
-      return false;
+  // Sign in with email and password
+  async signIn(email: string, password: string) {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+      return { success: true, data };
+    } catch (error: any) {
+      console.error("Sign in error:", error.message);
+      return { success: false, error: error.message };
     }
+  }
 
-    // Create a new user
-    const newUser: User = {
-      name,
-      email,
-      password
-    };
-
-    // Store the user in our mock database
-    this.mockUsers[email] = newUser;
-    
-    // Auto-login after signup (optional)
-    this.user = newUser;
-    localStorage.setItem('auth_user', JSON.stringify({ email: newUser.email, name: newUser.name }));
-    
-    return true;
+  // Sign out the user
+  async signOut() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      return { success: true };
+    } catch (error: any) {
+      console.error("Sign out error:", error.message);
+      return { success: false, error: error.message };
+    }
   }
 
   // Check if the user is authenticated
-  isAuthenticated(): boolean {
-    if (!this.user) {
-      const storedUser = localStorage.getItem('auth_user');
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        // If we have a stored user, we consider them authenticated
-        // In a real app, you would validate the token here
-        return true;
-      }
+  async isAuthenticated() {
+    try {
+      const { data } = await supabase.auth.getSession();
+      return !!data.session;
+    } catch (error) {
+      console.error("Authentication check error:", error);
       return false;
     }
-    return true;
   }
 
   // Get the current user
-  getCurrentUser(): { name: string; email: string } | null {
-    if (this.user) {
-      return { name: this.user.name, email: this.user.email };
+  async getCurrentUser() {
+    try {
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    } catch (error) {
+      console.error("Get current user error:", error);
+      return null;
     }
-    
-    const storedUser = localStorage.getItem('auth_user');
-    if (storedUser) {
-      return JSON.parse(storedUser);
+  }
+  
+  // Get the current session
+  async getSession() {
+    try {
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    } catch (error) {
+      console.error("Get session error:", error);
+      return null;
     }
-    
-    return null;
   }
 
-  // Logout the user
-  logout(): void {
-    this.user = null;
-    localStorage.removeItem('auth_user');
+  // Setup auth state change listener
+  onAuthStateChange(callback: (user: User | null) => void) {
+    return supabase.auth.onAuthStateChange((event, session) => {
+      callback(session?.user || null);
+    });
   }
-}
-
-// User interface
-interface User {
-  name: string;
-  email: string;
-  password: string;
 }
 
 export const authService = new AuthService();

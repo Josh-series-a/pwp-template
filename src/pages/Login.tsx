@@ -1,11 +1,11 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { KeyRound, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { authService } from "@/utils/authService";
 import TransitionWrapper from "@/components/TransitionWrapper";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Login form schema
 const formSchema = z.object({
@@ -28,6 +29,20 @@ const formSchema = z.object({
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  
+  useEffect(() => {
+    // Check if already logged in
+    const checkAuth = async () => {
+      const isAuth = await authService.isAuthenticated();
+      if (isAuth) {
+        navigate('/');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,19 +52,24 @@ const Login = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      // This is a mock login - in a real app, you would call your authentication service
-      const success = authService.mockLogin(values.email, values.password);
-      if (success) {
+      const result = await authService.signIn(values.email, values.password);
+      
+      if (result.success) {
         toast.success("Login successful!");
         navigate("/");
       } else {
-        toast.error("Invalid credentials. Please try again.");
+        setError(result.error || "Invalid credentials. Please try again.");
       }
-    } catch (error) {
-      toast.error("An error occurred while logging in.");
+    } catch (error: any) {
+      setError(error.message || "An error occurred while logging in.");
       console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,6 +81,12 @@ const Login = () => {
             <h1 className="text-3xl font-bold">Welcome Back</h1>
             <p className="text-muted-foreground">Enter your credentials to access your account</p>
           </div>
+          
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -92,9 +118,23 @@ const Login = () => {
                 )}
               />
               
-              <Button type="submit" className="w-full" size="lg">
-                <LogIn className="mr-2 h-4 w-4" />
-                Login
+              <Button 
+                type="submit" 
+                className="w-full" 
+                size="lg" 
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                    Logging in...
+                  </span>
+                ) : (
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Login
+                  </>
+                )}
               </Button>
             </form>
           </Form>

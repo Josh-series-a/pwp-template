@@ -1,11 +1,11 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { KeyRound, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { authService } from "@/utils/authService";
 import TransitionWrapper from "@/components/TransitionWrapper";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Signup form schema
 const formSchema = z.object({
@@ -33,6 +34,20 @@ const formSchema = z.object({
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  
+  useEffect(() => {
+    // Check if already logged in
+    const checkAuth = async () => {
+      const isAuth = await authService.isAuthenticated();
+      if (isAuth) {
+        navigate('/');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,19 +59,24 @@ const Signup = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      // This is a mock signup - in a real app, you would call your authentication service
-      const success = authService.mockSignup(values.name, values.email, values.password);
-      if (success) {
-        toast.success("Account created successfully!");
+      const result = await authService.signUp(values.email, values.password, values.name);
+      
+      if (result.success) {
+        toast.success("Account created successfully! Please check your email for confirmation.");
         navigate("/login");
       } else {
-        toast.error("An account with this email already exists.");
+        setError(result.error || "There was an error creating your account.");
       }
-    } catch (error) {
-      toast.error("An error occurred while creating your account.");
+    } catch (error: any) {
+      setError(error.message || "An error occurred while creating your account.");
       console.error("Signup error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,6 +88,12 @@ const Signup = () => {
             <h1 className="text-3xl font-bold">Create an Account</h1>
             <p className="text-muted-foreground">Join Prosper with Purpose today</p>
           </div>
+          
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -127,9 +153,23 @@ const Signup = () => {
                 )}
               />
               
-              <Button type="submit" className="w-full" size="lg">
-                <UserPlus className="mr-2 h-4 w-4" />
-                Create Account
+              <Button 
+                type="submit" 
+                className="w-full" 
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                    Creating account...
+                  </span>
+                ) : (
+                  <>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Create Account
+                  </>
+                )}
               </Button>
             </form>
           </Form>
