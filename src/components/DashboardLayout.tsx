@@ -20,7 +20,20 @@ const SidebarCollapseButton = () => {
     state
   } = useSidebar();
   const isCollapsed = state === 'collapsed';
-  return;
+  
+  return (
+    <Button 
+      variant="ghost" 
+      size="sm" 
+      onClick={toggleSidebar} 
+      className="flex h-6 w-6 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+    >
+      {isCollapsed ? 
+        <ChevronRight className="h-4 w-4 stroke-[2.5px]" /> : 
+        <ChevronLeft className="h-4 w-4 stroke-[2.5px]" />
+      }
+    </Button>
+  );
 };
 
 const SidebarLogo = () => {
