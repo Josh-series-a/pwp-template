@@ -32,6 +32,7 @@ const AppContent = () => {
     <>
       {!isDashboardRoute && <Header />}
       <Routes>
+        {/* Non-Dashboard Routes */}
         <Route path="/" element={<Index />} />
         <Route path="/products" element={<Products />} />
         <Route path="/chat" element={<Chat />} />
