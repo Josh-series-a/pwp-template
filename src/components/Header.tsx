@@ -62,7 +62,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <img 
-            src="/lovable-uploads/c16b90ce-0611-48e7-93fd-90b04a13542e.png" 
+            src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" 
             alt="Prosper with Purpose Logo" 
             className="h-10 md:h-12"
           />
