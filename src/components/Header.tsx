@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -53,7 +52,7 @@ const Header = () => {
           <NavLink to="/" current={location.pathname === "/"}>Home</NavLink>
           <NavLink to="/products" current={location.pathname === "/products"}>Products</NavLink>
           <NavLink to="/chat" current={location.pathname === "/chat"}>Analysis</NavLink>
-          {isAuthenticated && (
+          {isAuthenticated && location.pathname === "/" && (
             <NavLink to="/dashboard" current={location.pathname === "/dashboard"}>
               Dashboard
             </NavLink>
@@ -79,6 +78,16 @@ const Header = () => {
                 <User className="h-4 w-4" />
                 <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
               </div>
+              {location.pathname === "/" && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/dashboard')}
+                  className="px-3 py-1 h-auto text-sm"
+                >
+                  <LayoutDashboard className="mr-2 h-3 w-3" />
+                  Dashboard
+                </Button>
+              )}
               {location.pathname.startsWith('/dashboard') || 
                location.pathname.startsWith('/reports') || 
                location.pathname.startsWith('/exercises') || 
@@ -93,16 +102,7 @@ const Header = () => {
                   <LayoutDashboard className="mr-2 h-3 w-3" />
                   Go to Website
                 </Button>
-              ) : (
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate('/dashboard')}
-                  className="px-3 py-1 h-auto text-sm"
-                >
-                  <LayoutDashboard className="mr-2 h-3 w-3" />
-                  Dashboard
-                </Button>
-              )}
+              ) : null}
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
@@ -147,7 +147,7 @@ const Header = () => {
             <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
             <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)}>Products</MobileNavLink>
             <MobileNavLink to="/chat" current={location.pathname === "/chat"} onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
-            {isAuthenticated && (
+            {isAuthenticated && location.pathname === "/" && (
               <MobileNavLink to="/dashboard" current={location.pathname === "/dashboard"} onClick={() => setIsMobileMenuOpen(false)}>
                 Dashboard
               </MobileNavLink>
@@ -163,6 +163,19 @@ const Header = () => {
                   <User className="h-4 w-4" />
                   <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
                 </div>
+                {location.pathname === "/" && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      navigate('/dashboard');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-center"
+                  >
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Button>
+                )}
                 {location.pathname.startsWith('/dashboard') || 
                  location.pathname.startsWith('/reports') || 
                  location.pathname.startsWith('/exercises') || 
@@ -180,19 +193,7 @@ const Header = () => {
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Go to Website
                   </Button>
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      navigate('/dashboard');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-center"
-                  >
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Button>
-                )}
+                ) : null}
                 <Button 
                   variant="outline" 
                   onClick={() => {
