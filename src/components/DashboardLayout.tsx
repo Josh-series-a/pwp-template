@@ -11,7 +11,9 @@ import {
   Calendar, 
   User,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Search,
+  Bell
 } from 'lucide-react';
 import {
   Sidebar,
@@ -23,10 +25,12 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarProvider,
-  SidebarTrigger,
   useSidebar
 } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/contexts/AuthContext';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -50,6 +54,89 @@ const SidebarCollapseButton = () => {
   );
 };
 
+// Logo component that adapts to sidebar state
+const SidebarLogo = () => {
+  const { open } = useSidebar();
+  
+  return (
+    <div className={cn(
+      "flex items-center px-4 py-4", 
+      open ? "justify-between" : "justify-center"
+    )}>
+      <Link to="/" className="flex items-center gap-2">
+        <img 
+          src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" 
+          alt="Logo" 
+          className="h-8 w-8 object-contain"
+        />
+        {open && <span className="font-semibold text-sidebar-foreground">Prosper</span>}
+      </Link>
+      {open && <SidebarCollapseButton />}
+    </div>
+  );
+};
+
+// Search component that adapts to sidebar state
+const SidebarSearch = () => {
+  const { open } = useSidebar();
+  
+  if (!open) {
+    return (
+      <div className="flex justify-center px-3 py-2">
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-md text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent">
+          <Search className="h-5 w-5" />
+        </Button>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="px-4 py-2">
+      <div className="relative">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-sidebar-foreground/60" />
+        <Input
+          placeholder="Search..."
+          className="pl-9 bg-sidebar-accent/30 border-none h-9 text-sm text-sidebar-foreground placeholder:text-sidebar-foreground/50"
+        />
+      </div>
+    </div>
+  );
+};
+
+// User profile component at bottom of sidebar
+const SidebarProfile = () => {
+  const { user } = useAuth();
+  const { open } = useSidebar();
+  
+  const userName = user?.user_metadata?.name || 'User';
+  const userInitials = user?.user_metadata?.name 
+    ? userName.split(' ').map(part => part[0]).join('').toUpperCase()
+    : 'U';
+  
+  return (
+    <div className={cn(
+      "px-4 py-3 mt-auto border-t border-sidebar-border/30",
+      open ? "flex items-center" : "flex justify-center"
+    )}>
+      <Link to="/dashboard/profile" className={cn(
+        "flex items-center",
+        open ? "space-x-3" : "justify-center"
+      )}>
+        <Avatar className="h-8 w-8 ring-2 ring-sidebar-accent/50">
+          <AvatarImage src={user?.user_metadata?.avatar_url} />
+          <AvatarFallback>{userInitials}</AvatarFallback>
+        </Avatar>
+        {open && (
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-sidebar-foreground">{userName}</span>
+            <span className="text-xs text-sidebar-foreground/60">View profile</span>
+          </div>
+        )}
+      </Link>
+    </div>
+  );
+};
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) => {
   const location = useLocation();
   const navigation = [
@@ -68,45 +155,53 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
         
         <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
           {/* Sidebar */}
-          <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30">
-            <SidebarContent>
-              <SidebarGroup>
-                <div className="flex items-center px-4 pt-4 pb-2 border-b border-sidebar-border/30">
-                  <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground/90">Navigation</SidebarGroupLabel>
-                  <SidebarCollapseButton />
-                </div>
-                <SidebarGroupContent className="mt-3 px-2">
-                  <SidebarMenu>
-                    {navigation.map((item) => {
-                      const isActive = location.pathname === item.href;
-                      return (
-                        <SidebarMenuItem key={item.name}>
-                          <SidebarMenuButton 
-                            asChild 
-                            isActive={isActive}
-                            tooltip={item.name}
-                            className={cn(
-                              "my-1.5 transition-all duration-200 rounded-md",
-                              isActive ? "bg-sidebar-accent/50 font-medium" : "hover:bg-sidebar-accent/30"
-                            )}
-                          >
-                            <Link to={item.href}>
-                              <item.icon className={cn(
-                                "transition-all duration-200",
-                                isActive ? "text-primary" : "text-sidebar-foreground/60"
-                              )} />
-                              <span className={cn(
-                                "transition-all duration-200 ml-3",
-                                isActive ? "text-primary font-medium" : "text-sidebar-foreground/80"
-                              )}>{item.name}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
+          <Sidebar 
+            collapsible="icon" 
+            className="z-30 shadow-sm border-r border-sidebar-border/30"
+          >
+            <SidebarContent className="flex flex-col h-full justify-between">
+              {/* Top section */}
+              <div>
+                <SidebarLogo />
+                <SidebarSearch />
+                
+                <SidebarGroup>
+                  <SidebarGroupContent className="px-2 mt-2">
+                    <SidebarMenu>
+                      {navigation.map((item) => {
+                        const isActive = location.pathname === item.href;
+                        return (
+                          <SidebarMenuItem key={item.name}>
+                            <SidebarMenuButton 
+                              asChild 
+                              isActive={isActive}
+                              tooltip={item.name}
+                              className={cn(
+                                "my-1.5 transition-all duration-200 rounded-md",
+                                isActive ? "bg-sidebar-accent/50 font-medium" : "hover:bg-sidebar-accent/30"
+                              )}
+                            >
+                              <Link to={item.href}>
+                                <item.icon className={cn(
+                                  "transition-all duration-200",
+                                  isActive ? "text-primary" : "text-sidebar-foreground/60"
+                                )} />
+                                <span className={cn(
+                                  "transition-all duration-200 ml-3",
+                                  isActive ? "text-primary font-medium" : "text-sidebar-foreground/80"
+                                )}>{item.name}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </div>
+              
+              {/* Bottom section with profile */}
+              <SidebarProfile />
             </SidebarContent>
           </Sidebar>
           
