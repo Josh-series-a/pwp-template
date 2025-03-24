@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -21,7 +22,7 @@ const SidebarCollapseButton = () => {
   } = useSidebar();
   const isCollapsed = state === 'collapsed';
   return <Button variant="ghost" size="sm" onClick={toggleSidebar} className="ml-auto flex h-8 w-8 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
-      {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+      {isCollapsed ? <ChevronRight className="h-5 w-5 stroke-[2.5px]" /> : <ChevronLeft className="h-5 w-5 stroke-[2.5px]" />}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>;
 };
@@ -75,7 +76,7 @@ const SidebarNavigationHeader = () => {
   return <div className="flex items-center justify-between px-4 py-2">
       
       <Button variant="ghost" size="sm" onClick={toggleSidebar} className="flex h-6 w-6 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-        {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+        {isCollapsed ? <ChevronRight className="h-4 w-4 stroke-[2.5px]" /> : <ChevronLeft className="h-4 w-4 stroke-[2.5px]" />}
       </Button>
     </div>;
 };
@@ -113,8 +114,8 @@ const SidebarNavigation = () => {
           return <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild isActive={isActive} tooltip={item.name} className={cn("my-1.5 transition-all duration-200 rounded-md", isActive ? "bg-sidebar-accent/50 font-medium" : "hover:bg-sidebar-accent/30")}>
                   <Link to={item.href}>
-                    <item.icon className={cn("transition-all duration-200", isActive ? "text-primary" : "text-sidebar-foreground/60")} />
-                    <span className={cn("transition-all duration-200 ml-3", isActive ? "text-primary font-medium" : "text-sidebar-foreground/80")}>{item.name}</span>
+                    <item.icon className={cn("transition-all duration-200 stroke-[2.5px]", isActive ? "text-primary" : "text-sidebar-foreground/80")} />
+                    <span className={cn("transition-all duration-200 ml-3 font-medium", isActive ? "text-primary font-semibold" : "text-sidebar-foreground/90 font-medium")}>{item.name}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>;
