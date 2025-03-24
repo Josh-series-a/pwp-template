@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,7 @@ import Exercises from "./pages/Exercises";
 import BookInsights from "./pages/BookInsights";
 import BookSession from "./pages/BookSession";
 import Profile from "./pages/Profile";
+import PreloaderDemo from './pages/PreloaderDemo';
 
 const queryClient = new QueryClient();
 
@@ -77,6 +77,9 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
         </Route>
+        
+        {/* Add PreloaderDemo route */}
+        <Route path="/preloader-demo" element={<PreloaderDemo />} />
         
         <Route path="*" element={<NotFound />} />
       </Routes>
