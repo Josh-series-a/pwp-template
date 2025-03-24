@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -22,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface ExerciseFormProps {
   exerciseId: string;
@@ -98,9 +98,12 @@ const getExerciseTitle = (exerciseId: string): string => {
   }
 };
 
+const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
+
 const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onComplete }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const exerciseTitle = getExerciseTitle(exerciseId);
+  const { toast } = useToast();
 
   // Select the appropriate form based on the exercise ID
   const renderForm = () => {
@@ -128,9 +131,36 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
   );
 };
 
+const sendToWebhook = async (data: any, exerciseType: string) => {
+  try {
+    const payload = {
+      ...data,
+      exerciseType,
+      timestamp: new Date().toISOString()
+    };
+    
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      mode: 'no-cors',
+    });
+    
+    console.log('Webhook submission sent:', payload);
+    return true;
+  } catch (error) {
+    console.error('Error sending to webhook:', error);
+    return false;
+  }
+};
+
 // Exercise 4: Define Your Exit Strategy Form
 const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const form = useForm<z.infer<typeof exitStrategySchema>>({
     resolver: zodResolver(exitStrategySchema),
@@ -143,9 +173,30 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
     }
   });
 
-  const onSubmit = (data: z.infer<typeof exitStrategySchema>) => {
+  const onSubmit = async (data: z.infer<typeof exitStrategySchema>) => {
+    setIsSubmitting(true);
     console.log(data);
-    onComplete();
+    
+    // Send to webhook
+    try {
+      await sendToWebhook(data, 'Exit Strategy');
+      onComplete();
+      toast({
+        title: "Form submitted successfully",
+        description: "Your exit strategy analysis has been started.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission error",
+        description: "The form was processed but there was an error with the webhook submission.",
+        variant: "destructive",
+      });
+      // Still complete the flow even if webhook fails
+      onComplete();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -309,6 +360,9 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
 
 // Exercise 6: Know Your Customer Form
 const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
@@ -327,9 +381,30 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
     }
   });
 
-  const onSubmit = (data: z.infer<typeof customerSchema>) => {
+  const onSubmit = async (data: z.infer<typeof customerSchema>) => {
+    setIsSubmitting(true);
     console.log(data);
-    onComplete();
+    
+    // Send to webhook
+    try {
+      await sendToWebhook(data, 'Know Your Customer');
+      onComplete();
+      toast({
+        title: "Form submitted successfully",
+        description: "Your customer analysis has been started.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission error",
+        description: "The form was processed but there was an error with the webhook submission.",
+        variant: "destructive",
+      });
+      // Still complete the flow even if webhook fails
+      onComplete();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -537,6 +612,9 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
 
 // Exercise 7: Create Your '1+1' Proposition Form
 const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof propositionSchema>>({
     resolver: zodResolver(propositionSchema),
     defaultValues: {
@@ -546,9 +624,30 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
     }
   });
 
-  const onSubmit = (data: z.infer<typeof propositionSchema>) => {
+  const onSubmit = async (data: z.infer<typeof propositionSchema>) => {
+    setIsSubmitting(true);
     console.log(data);
-    onComplete();
+    
+    // Send to webhook
+    try {
+      await sendToWebhook(data, 'Create Your 1+1 Proposition');
+      onComplete();
+      toast({
+        title: "Form submitted successfully",
+        description: "Your proposition analysis has been started.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission error",
+        description: "The form was processed but there was an error with the webhook submission.",
+        variant: "destructive",
+      });
+      // Still complete the flow even if webhook fails
+      onComplete();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -645,6 +744,9 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
 
 // Exercise 18: Measure Your Delegation Form
 const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof delegationSchema>>({
     resolver: zodResolver(delegationSchema),
     defaultValues: {
@@ -674,9 +776,30 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
     { name: 'teamTraining', label: 'Do you train your team?' }
   ];
 
-  const onSubmit = (data: z.infer<typeof delegationSchema>) => {
+  const onSubmit = async (data: z.infer<typeof delegationSchema>) => {
+    setIsSubmitting(true);
     console.log(data);
-    onComplete();
+    
+    // Send to webhook
+    try {
+      await sendToWebhook(data, 'Measure Your Delegation');
+      onComplete();
+      toast({
+        title: "Form submitted successfully",
+        description: "Your delegation analysis has been started.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission error",
+        description: "The form was processed but there was an error with the webhook submission.",
+        variant: "destructive",
+      });
+      // Still complete the flow even if webhook fails
+      onComplete();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -725,6 +848,9 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
 
 // Exercise 27: Know Your Key Customers Form
 const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof keyCustomersSchema>>({
     resolver: zodResolver(keyCustomersSchema),
     defaultValues: {
@@ -735,9 +861,30 @@ const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }>
     }
   });
 
-  const onSubmit = (data: z.infer<typeof keyCustomersSchema>) => {
+  const onSubmit = async (data: z.infer<typeof keyCustomersSchema>) => {
+    setIsSubmitting(true);
     console.log(data);
-    onComplete();
+    
+    // Send to webhook
+    try {
+      await sendToWebhook(data, 'Know Your Key Customers');
+      onComplete();
+      toast({
+        title: "Form submitted successfully",
+        description: "Your key customers analysis has been started.",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Submission error",
+        description: "The form was processed but there was an error with the webhook submission.",
+        variant: "destructive",
+      });
+      // Still complete the flow even if webhook fails
+      onComplete();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
