@@ -3,8 +3,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
-import { Home, FileText, BookOpen, Dumbbell, Calendar, User, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider } from "@/components/ui/sidebar";
+import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,10 +17,24 @@ type DashboardLayoutProps = {
 
 // Custom collapse button component for the top of the sidebar
 const SidebarCollapseButton = () => {
-  return <Button variant="ghost" size="sm" className="ml-auto flex h-8 w-8 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
-      <ChevronLeft className="h-4 w-4" />
+  const { toggleSidebar, state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
+  
+  return (
+    <Button 
+      variant="ghost" 
+      size="sm" 
+      onClick={toggleSidebar}
+      className="ml-auto flex h-8 w-8 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+    >
+      {isCollapsed ? (
+        <ChevronRight className="h-4 w-4" />
+      ) : (
+        <ChevronLeft className="h-4 w-4" />
+      )}
       <span className="sr-only">Toggle Sidebar</span>
-    </Button>;
+    </Button>
+  );
 };
 
 // Logo component that adapts to sidebar state
@@ -63,6 +77,30 @@ const SidebarProfile = () => {
     </div>;
 };
 
+// Nav section header with collapse button
+const SidebarNavigationHeader = () => {
+  const { toggleSidebar, state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
+  
+  return (
+    <div className="flex items-center justify-between px-4 py-2">
+      <span className="font-medium text-sm text-sidebar-foreground/70">Navigation</span>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        onClick={toggleSidebar}
+        className="flex h-6 w-6 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-3 w-3" />
+        ) : (
+          <ChevronLeft className="h-3 w-3" />
+        )}
+      </Button>
+    </div>
+  );
+};
+
 // Main navigation content component
 const SidebarNavigation = () => {
   const location = useLocation();
@@ -90,7 +128,8 @@ const SidebarNavigation = () => {
 
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="px-2 mt-2">
+      <SidebarNavigationHeader />
+      <SidebarGroupContent className="px-2 mt-1">
         <SidebarMenu>
           {navigation.map(item => {
             const isActive = location.pathname === item.href;
