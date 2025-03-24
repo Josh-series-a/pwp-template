@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight } from 'lucide-react';
@@ -5,40 +6,54 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import FeatureCard from '@/components/FeatureCard';
+
 const Index = () => {
   return <div className="min-h-screen">
       <Header />
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 md:px-8">
-        <div className="max-w-5xl mx-auto text-center space-y-10">
-          <TransitionWrapper animation="fade">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
-              <span className="text-xs font-medium">Welcome to Propser with Purpose</span>
-            </div>
-          </TransitionWrapper>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+          <div className="text-center md:text-left space-y-10 md:flex-1">
+            <TransitionWrapper animation="fade">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
+                <span className="text-xs font-medium">Welcome to Propser with Purpose</span>
+              </div>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="slide-down" delay={100}>
+              <h1 className="font-semibold tracking-tighter leading-tight mb-4">
+                Your AI Business <br className="md:hidden" /> Analysis Expert
+              </h1>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="slide-up" delay={200}>
+              <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto md:mx-0 leading-relaxed">Upload your Documents, Business Plan or Pitch Deck</p>
+            </TransitionWrapper>
+            
+            <TransitionWrapper animation="slide-up" delay={300}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
+                <Button asChild size="lg" className="rounded-full px-6">
+                  <Link to="/chat">
+                    Start Analysis
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-full px-6">
+                  <a href="#features">Learn More</a>
+                </Button>
+              </div>
+            </TransitionWrapper>
+          </div>
           
-          <TransitionWrapper animation="slide-down" delay={100}>
-            <h1 className="font-semibold tracking-tighter leading-tight mb-4">
-              Your AI Business <br className="md:hidden" /> Analysis Expert
-            </h1>
-          </TransitionWrapper>
-          
-          <TransitionWrapper animation="slide-up" delay={200}>
-            <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">Upload your Documents, Business Plan or Pitch Deck</p>
-          </TransitionWrapper>
-          
-          <TransitionWrapper animation="slide-up" delay={300}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button asChild size="lg" className="rounded-full px-6">
-                <Link to="/chat">
-                  Start Analysis
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-6">
-                <a href="#features">Learn More</a>
-              </Button>
+          {/* Book Image */}
+          <TransitionWrapper animation="fade" delay={400} className="md:flex-1">
+            <div className="relative w-full max-w-md mx-auto">
+              <img 
+                src="/lovable-uploads/78b6fa9b-4983-4f64-8b4a-6df46b90dc44.png" 
+                alt="Prosper with Purpose book" 
+                className="w-full h-auto drop-shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500"
+              />
             </div>
           </TransitionWrapper>
         </div>
