@@ -1,34 +1,21 @@
-
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { 
-  User,
-  LogOut,
-  ChevronDown
-} from 'lucide-react';
+import { User, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
-
 const DashboardHeader = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  
   const handleLogout = async () => {
     try {
       const result = await authService.signOut();
-      
       if (result.success) {
         toast.success("You have been logged out.");
         navigate('/');
@@ -40,32 +27,18 @@ const DashboardHeader = () => {
       toast.error("An error occurred during logout.");
     }
   };
-
   const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase();
+    return name.split(' ').map(part => part[0]).join('').toUpperCase();
   };
-
   const userName = user?.user_metadata?.name || 'User';
   const userInitials = user?.user_metadata?.name ? getInitials(user.user_metadata.name) : 'U';
-  
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 py-2 px-4 border-b bg-background">
+  return <header className="fixed top-0 left-0 right-0 z-50 py-2 px-4 border-b bg-background">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 mr-8">
-            <img 
-              src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" 
-              alt="Prosper with Purpose Logo" 
-              className="h-10"
-            />
+            <img src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" alt="Prosper with Purpose Logo" className="h-10" />
           </Link>
-          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Back to Website
-          </Link>
+          
         </div>
         
         <div className="flex items-center gap-2">
@@ -95,8 +68,6 @@ const DashboardHeader = () => {
           </DropdownMenu>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default DashboardHeader;
