@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import Header from '@/components/Header';
+import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
 import { 
   Home, 
@@ -53,9 +53,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <DashboardHeader />
       
-      <div className="flex flex-1 pt-16">
+      <div className="flex flex-1">
         {/* Sidebar */}
         <div className="hidden md:flex w-64 flex-col fixed h-full bg-card shadow-sm border-r pt-8">
           <div className="flex-1 flex flex-col overflow-y-auto">
