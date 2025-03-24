@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
 import { 
@@ -9,8 +9,20 @@ import {
   BookOpen, 
   Dumbbell, 
   Calendar, 
-  User
+  User,
+  MenuIcon
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarRail
+} from '@/components/ui/sidebar';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -18,6 +30,8 @@ type DashboardLayoutProps = {
 };
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) => {
+  const location = useLocation();
+  
   const navigation = [
     { name: 'Dashboard', href: '/dashboard/overview', icon: Home },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText },
@@ -28,45 +42,50 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <DashboardHeader />
-      
-      <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
-        {/* Sidebar */}
-        <div className="hidden md:flex w-64 flex-col fixed h-full bg-card shadow-sm border-r pt-8 top-14"> {/* Updated top position */}
-          <div className="flex-1 flex flex-col overflow-y-auto">
-            <nav className="flex-1 px-4 space-y-1">
-              {navigation.map((item) => {
-                const isActive = window.location.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={cn(
-                      "flex items-center px-3 py-3 rounded-md text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
-                    )}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex flex-col w-full">
+        <DashboardHeader>
+          <SidebarTrigger className="mr-2" />
+        </DashboardHeader>
         
-        {/* Main Content */}
-        <main className="flex-1 md:ml-64">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
-            <h1 className="text-2xl font-bold mb-6">{title}</h1>
-            {children}
-          </div>
-        </main>
+        <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
+          {/* Collapsible Sidebar */}
+          <Sidebar>
+            <SidebarContent className="pt-4">
+              <SidebarMenu>
+                {navigation.map((item) => {
+                  const isActive = location.pathname === item.href;
+                  
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton 
+                        asChild
+                        tooltip={item.name}
+                        isActive={isActive}
+                      >
+                        <Link to={item.href}>
+                          <item.icon />
+                          <span>{item.name}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarContent>
+            <SidebarRail />
+          </Sidebar>
+          
+          {/* Main Content */}
+          <main className="flex-1 md:pl-4">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
+              <h1 className="text-2xl font-bold mb-6">{title}</h1>
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

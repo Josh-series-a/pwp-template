@@ -21,7 +21,11 @@ import {
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
 
-const DashboardHeader = () => {
+interface DashboardHeaderProps {
+  children?: React.ReactNode;
+}
+
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ children }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
@@ -56,6 +60,7 @@ const DashboardHeader = () => {
     <header className="fixed top-0 left-0 right-0 z-40 py-2 px-4 border-b bg-background">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          {children}
           <Link to="/" className="flex items-center gap-2 mr-8">
             <img 
               src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" 
