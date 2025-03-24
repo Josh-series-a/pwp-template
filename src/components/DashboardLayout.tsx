@@ -41,7 +41,7 @@ const SidebarCollapseButton = () => {
     <Button 
       variant="ghost" 
       size="sm" 
-      className="ml-auto flex h-7 w-7 p-0 items-center justify-center hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      className="ml-auto flex h-8 w-8 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
       onClick={toggleSidebar}
     >
       {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -68,14 +68,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
         
         <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
           {/* Sidebar */}
-          <Sidebar collapsible="icon" className="z-30">
+          <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30">
             <SidebarContent>
               <SidebarGroup>
-                <div className="flex items-center px-3 pt-3 pb-2">
-                  <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground">Navigation</SidebarGroupLabel>
+                <div className="flex items-center px-4 pt-4 pb-2 border-b border-sidebar-border/30">
+                  <SidebarGroupLabel className="text-sm font-semibold text-sidebar-foreground/90">Navigation</SidebarGroupLabel>
                   <SidebarCollapseButton />
                 </div>
-                <SidebarGroupContent className="mt-1">
+                <SidebarGroupContent className="mt-3 px-2">
                   <SidebarMenu>
                     {navigation.map((item) => {
                       const isActive = location.pathname === item.href;
@@ -86,18 +86,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
                             isActive={isActive}
                             tooltip={item.name}
                             className={cn(
-                              "my-1 transition-all duration-200",
-                              isActive && "font-medium"
+                              "my-1.5 transition-all duration-200 rounded-md",
+                              isActive ? "bg-sidebar-accent/50 font-medium" : "hover:bg-sidebar-accent/30"
                             )}
                           >
                             <Link to={item.href}>
                               <item.icon className={cn(
                                 "transition-all duration-200",
-                                isActive ? "text-primary" : "text-sidebar-foreground/70"
+                                isActive ? "text-primary" : "text-sidebar-foreground/60"
                               )} />
                               <span className={cn(
-                                "transition-all duration-200 ml-2",
-                                isActive ? "text-primary" : "text-sidebar-foreground/80"
+                                "transition-all duration-200 ml-3",
+                                isActive ? "text-primary font-medium" : "text-sidebar-foreground/80"
                               )}>{item.name}</span>
                             </Link>
                           </SidebarMenuButton>
@@ -111,7 +111,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
           </Sidebar>
           
           {/* Main Content */}
-          <main className="flex-1">
+          <main className="flex-1 bg-background/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
               <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-bold">{title}</h1>
