@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { authService } from "@/utils/authService";
 import TransitionWrapper from "@/components/TransitionWrapper";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Login form schema
 const formSchema = z.object({
@@ -29,20 +30,19 @@ const formSchema = z.object({
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const { isAuthenticated } = useAuth();
+  
+  const from = location.state?.from?.pathname || "/dashboard";
   
   useEffect(() => {
-    // Check if already logged in
-    const checkAuth = async () => {
-      const isAuth = await authService.isAuthenticated();
-      if (isAuth) {
-        navigate('/');
-      }
-    };
-    
-    checkAuth();
-  }, [navigate]);
+    // Redirect if already logged in
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,7 +61,7 @@ const Login = () => {
       
       if (result.success) {
         toast.success("Login successful!");
-        navigate("/");
+        navigate("/dashboard");
       } else {
         setError(result.error || "Invalid credentials. Please try again.");
       }

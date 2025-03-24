@@ -2,64 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
-import { LogIn, LogOut, User, Menu, X } from 'lucide-react';
+import { LogIn, LogOut, User, Menu, X, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const { isAuthenticated, user, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    // Check authentication status on component mount and when location changes
-    const checkAuth = async () => {
-      setIsLoading(true);
-      try {
-        const isAuth = await authService.isAuthenticated();
-        setIsAuthenticated(isAuth);
-        
-        if (isAuth) {
-          const userData = await authService.getCurrentUser();
-          if (userData) {
-            setUser({
-              name: userData.user_metadata?.name || 'User',
-              email: userData.email || ''
-            });
-          }
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    checkAuth();
-    
-    // Setup auth state change listener
-    const { data: { subscription } } = authService.onAuthStateChange((user) => {
-      setIsAuthenticated(!!user);
-      if (user) {
-        setUser({
-          name: user.user_metadata?.name || 'User',
-          email: user.email || ''
-        });
-      } else {
-        setUser(null);
-      }
-    });
-    
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [location]);
   
   const handleLogout = async () => {
     try {
@@ -67,8 +20,6 @@ const Header = () => {
       const result = await authService.signOut();
       
       if (result.success) {
-        setIsAuthenticated(false);
-        setUser(null);
         toast.success("You have been logged out.");
         navigate('/');
       } else {
@@ -102,6 +53,11 @@ const Header = () => {
           <NavLink to="/" current={location.pathname === "/"}>Home</NavLink>
           <NavLink to="/products" current={location.pathname === "/products"}>Products</NavLink>
           <NavLink to="/chat" current={location.pathname === "/chat"}>Analysis</NavLink>
+          {isAuthenticated && (
+            <NavLink to="/dashboard" current={location.pathname === "/dashboard"}>
+              Dashboard
+            </NavLink>
+          )}
         </nav>
         
         {/* Mobile Menu Toggle */}
@@ -121,8 +77,32 @@ const Header = () => {
             <>
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span className="text-sm font-medium">{user?.name}</span>
+                <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
               </div>
+              {location.pathname.startsWith('/dashboard') || 
+               location.pathname.startsWith('/reports') || 
+               location.pathname.startsWith('/exercises') || 
+               location.pathname.startsWith('/book-insights') || 
+               location.pathname.startsWith('/book-session') || 
+               location.pathname.startsWith('/profile') ? (
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/')}
+                  className="px-3 py-1 h-auto text-sm"
+                >
+                  <LayoutDashboard className="mr-2 h-3 w-3" />
+                  Go to Website
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/dashboard')}
+                  className="px-3 py-1 h-auto text-sm"
+                >
+                  <LayoutDashboard className="mr-2 h-3 w-3" />
+                  Dashboard
+                </Button>
+              )}
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
@@ -167,6 +147,11 @@ const Header = () => {
             <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
             <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)}>Products</MobileNavLink>
             <MobileNavLink to="/chat" current={location.pathname === "/chat"} onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
+            {isAuthenticated && (
+              <MobileNavLink to="/dashboard" current={location.pathname === "/dashboard"} onClick={() => setIsMobileMenuOpen(false)}>
+                Dashboard
+              </MobileNavLink>
+            )}
           </nav>
           
           <div className="flex flex-col space-y-3">
@@ -176,8 +161,38 @@ const Header = () => {
               <>
                 <div className="flex items-center gap-2 py-2">
                   <User className="h-4 w-4" />
-                  <span className="text-sm font-medium">{user?.name}</span>
+                  <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
                 </div>
+                {location.pathname.startsWith('/dashboard') || 
+                 location.pathname.startsWith('/reports') || 
+                 location.pathname.startsWith('/exercises') || 
+                 location.pathname.startsWith('/book-insights') || 
+                 location.pathname.startsWith('/book-session') || 
+                 location.pathname.startsWith('/profile') ? (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      navigate('/');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-center"
+                  >
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Go to Website
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      navigate('/dashboard');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full justify-center"
+                  >
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   onClick={() => {
