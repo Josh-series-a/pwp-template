@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -105,6 +106,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     href: '/dashboard/book-session',
     icon: Calendar
   }];
+  
+  // Added useSidebar hook to access sidebar state
+  const { open, toggleSidebar } = useSidebar();
+  
   return <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex flex-col w-full">
         <DashboardHeader />
@@ -120,6 +125,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 
                 <SidebarGroup>
                   <SidebarGroupContent className="px-2 mt-2">
+                    {/* Add collapse button at the top of the menu */}
+                    <div className="flex justify-end mb-2 px-1">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-7 w-7 p-0 flex items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        onClick={toggleSidebar}
+                      >
+                        {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    
                     <SidebarMenu>
                       {navigation.map(item => {
                       const isActive = location.pathname === item.href;
