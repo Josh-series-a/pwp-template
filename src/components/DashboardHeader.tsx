@@ -32,11 +32,11 @@ const DashboardHeader = () => {
   };
   const userName = user?.user_metadata?.name || 'User';
   const userInitials = user?.user_metadata?.name ? getInitials(user.user_metadata.name) : 'U';
-  return <header className="fixed top-0 left-0 right-0 z-50 py-2 px-4 border-b bg-background">
+  return <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background py-[18px] my-0 px-[49px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 mr-8">
-            <img src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" alt="Prosper with Purpose Logo" className="h-10" />
+            <img src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" alt="Prosper with Purpose Logo" className="h-14" />
           </Link>
           
         </div>

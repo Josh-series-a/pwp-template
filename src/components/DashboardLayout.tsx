@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -21,19 +20,13 @@ const SidebarCollapseButton = () => {
     state
   } = useSidebar();
   const isCollapsed = state === 'collapsed';
-  return <Button variant="ghost" size="sm" onClick={toggleSidebar} className="ml-auto flex h-8 w-8 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
-      {isCollapsed ? <ChevronRight className="h-5 w-5 stroke-[2.5px]" /> : <ChevronLeft className="h-5 w-5 stroke-[2.5px]" />}
-      <span className="sr-only">Toggle Sidebar</span>
-    </Button>;
+  return;
 };
 
 // Logo component that adapts to sidebar state
 const SidebarLogo = () => {
   return <div className="flex items-center px-4 py-4 justify-between">
-      <Link to="/" className="flex items-center gap-2">
-        <img src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" alt="Logo" className="h-8 w-8 object-contain" />
-        <span className="font-semibold text-sidebar-foreground">Prosper</span>
-      </Link>
+      
       <SidebarCollapseButton />
     </div>;
 };
@@ -105,29 +98,17 @@ const SidebarNavigation = () => {
     href: '/dashboard/book-session',
     icon: Calendar
   }];
-  return <SidebarGroup>
+  return <SidebarGroup className="py-[60px]">
       <SidebarNavigationHeader />
       <SidebarGroupContent className="px-2 mt-1">
         <SidebarMenu>
           {navigation.map(item => {
           const isActive = location.pathname === item.href;
           return <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild isActive={isActive} tooltip={item.name} className={cn("my-1.5 transition-all duration-200 rounded-md", 
-                  isActive 
-                    ? "bg-primary/10 font-medium" 
-                    : "hover:bg-primary/5"
-                )}>
+                <SidebarMenuButton asChild isActive={isActive} tooltip={item.name} className={cn("my-1.5 transition-all duration-200 rounded-md", isActive ? "bg-primary/10 font-medium" : "hover:bg-primary/5")}>
                   <Link to={item.href}>
-                    <item.icon className={cn("transition-all duration-200 stroke-[2.5px]", 
-                      isActive 
-                        ? "text-primary" 
-                        : "text-sidebar-foreground/80"
-                    )} />
-                    <span className={cn("transition-all duration-200 ml-3 font-medium", 
-                      isActive 
-                        ? "text-primary font-semibold" 
-                        : "text-sidebar-foreground/90 font-medium"
-                    )}>
+                    <item.icon className={cn("transition-all duration-200 stroke-[2.5px]", isActive ? "text-primary" : "text-sidebar-foreground/80")} />
+                    <span className={cn("transition-all duration-200 ml-3 font-medium", isActive ? "text-primary font-semibold" : "text-sidebar-foreground/90 font-medium")}>
                       {item.name}
                     </span>
                   </Link>
