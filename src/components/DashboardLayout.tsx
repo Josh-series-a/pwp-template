@@ -9,7 +9,9 @@ import {
   BookOpen, 
   Dumbbell, 
   Calendar, 
-  User
+  User,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import {
   Sidebar,
@@ -21,12 +23,31 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarProvider,
-  SidebarTrigger
+  SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
+import { Button } from '@/components/ui/button';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
   title: string;
+};
+
+// Create a custom collapse button component to place at the top of the sidebar
+const SidebarCollapseButton = () => {
+  const { open, toggleSidebar } = useSidebar();
+  
+  return (
+    <Button 
+      variant="ghost" 
+      size="sm" 
+      className="ml-auto flex h-7 w-7 p-0 items-center justify-center"
+      onClick={toggleSidebar}
+    >
+      {open ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+      <span className="sr-only">Toggle Sidebar</span>
+    </Button>
+  );
 };
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) => {
@@ -50,7 +71,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
           <Sidebar collapsible="icon" className="z-30">
             <SidebarContent>
               <SidebarGroup>
-                <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                <div className="flex items-center px-2 pt-2 pb-1">
+                  <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                  <SidebarCollapseButton />
+                </div>
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {navigation.map((item) => {
@@ -80,7 +104,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
           <main className="flex-1">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
               <div className="flex items-center mb-6">
-                <SidebarTrigger className="mr-4" />
                 <h1 className="text-2xl font-bold">{title}</h1>
               </div>
               {children}
