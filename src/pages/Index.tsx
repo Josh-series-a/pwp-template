@@ -50,7 +50,7 @@ const Index = () => {
           <TransitionWrapper animation="fade" delay={400} className="md:flex-1">
             <div className="relative w-full max-w-md mx-auto">
               <img 
-                src="/lovable-uploads/78b6fa9b-4983-4f64-8b4a-6df46b90dc44.png" 
+                src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
                 alt="Prosper with Purpose book" 
                 className="w-full h-auto drop-shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500"
               />
