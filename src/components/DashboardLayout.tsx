@@ -8,47 +8,31 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-
 type DashboardLayoutProps = {
   children: React.ReactNode;
   title: string;
 };
-
 const SidebarCollapseButton = () => {
   const {
     toggleSidebar,
     state
   } = useSidebar();
   const isCollapsed = state === 'collapsed';
-  
-  return (
-    <Button 
-      variant="ghost" 
-      size="sm" 
-      onClick={toggleSidebar} 
-      className="flex h-6 w-6 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-    >
-      {isCollapsed ? 
-        <ChevronRight className="h-4 w-4 stroke-[2.5px]" /> : 
-        <ChevronLeft className="h-4 w-4 stroke-[2.5px]" />
-      }
-    </Button>
-  );
+  return <Button variant="ghost" size="sm" onClick={toggleSidebar} className="flex h-6 w-6 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+      {isCollapsed ? <ChevronRight className="h-4 w-4 stroke-[2.5px]" /> : <ChevronLeft className="h-4 w-4 stroke-[2.5px]" />}
+    </Button>;
 };
-
 const SidebarLogo = () => {
   return <div className="flex items-center px-4 py-4 justify-between">
       
       <SidebarCollapseButton />
     </div>;
 };
-
 const SidebarSearch = () => {
   return <div className="flex justify-center px-3 py-2">
       
     </div>;
 };
-
 const SidebarProfile = () => {
   const {
     user
@@ -68,7 +52,6 @@ const SidebarProfile = () => {
       </Link>
     </div>;
 };
-
 const SidebarNavigationHeader = () => {
   const {
     toggleSidebar,
@@ -82,7 +65,6 @@ const SidebarNavigationHeader = () => {
       </Button>
     </div>;
 };
-
 const SidebarNavigation = () => {
   const location = useLocation();
   const navigation = [{
@@ -127,7 +109,6 @@ const SidebarNavigation = () => {
       </SidebarGroupContent>
     </SidebarGroup>;
 };
-
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   title
@@ -137,7 +118,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <DashboardHeader />
         
         <div className="flex flex-1 pt-14">
-          <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30" style={{ "--sidebar-width": "18rem", "--sidebar-width-icon": "3.5rem" } as React.CSSProperties}>
+          <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30" style={{
+          "--sidebar-width": "18rem",
+          "--sidebar-width-icon": "3.5rem"
+        } as React.CSSProperties}>
             <SidebarContent className="flex flex-col h-full justify-between">
               <div>
                 <SidebarLogo />
@@ -149,7 +133,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </Sidebar>
           
           <main className="flex-1 bg-background/50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:px-[60px]">
               <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-bold">{title}</h1>
               </div>
@@ -160,5 +144,4 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
     </SidebarProvider>;
 };
-
 export default DashboardLayout;
