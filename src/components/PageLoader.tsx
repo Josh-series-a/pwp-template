@@ -1,15 +1,13 @@
 
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import LoadingRayMeter from './LoadingRayMeter';
 import { cn } from '@/lib/utils';
 
 const PageLoader = () => {
-  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   
-  // Reset and trigger loader on route change
+  // Only trigger loader on initial page load, not on route changes
   useEffect(() => {
     // Start loading
     setIsLoading(true);
@@ -50,7 +48,7 @@ const PageLoader = () => {
     // Listen for window load event (for initial page load)
     window.addEventListener('load', handleLoad);
     
-    // For navigation between routes, use a timeout as a fallback
+    // For initial load, use a timeout as a fallback
     const navigationTimeout = setTimeout(() => {
       handleLoad();
     }, duration);
@@ -60,7 +58,7 @@ const PageLoader = () => {
       clearInterval(interval);
       clearTimeout(navigationTimeout);
     };
-  }, [location.pathname]);
+  }, []); // Empty dependency array means this only runs once on initial mount
   
   if (!isLoading) return null;
   
