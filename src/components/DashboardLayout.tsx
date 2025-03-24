@@ -31,9 +31,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
     <div className="min-h-screen flex flex-col">
       <DashboardHeader />
       
-      <div className="flex flex-1">
+      <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
         {/* Sidebar */}
-        <div className="hidden md:flex w-64 flex-col fixed h-full bg-card shadow-sm border-r pt-8">
+        <div className="hidden md:flex w-64 flex-col fixed h-full bg-card shadow-sm border-r pt-8 top-14"> {/* Updated top position */}
           <div className="flex-1 flex flex-col overflow-y-auto">
             <nav className="flex-1 px-4 space-y-1">
               {navigation.map((item) => {
