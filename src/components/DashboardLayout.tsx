@@ -112,10 +112,24 @@ const SidebarNavigation = () => {
           {navigation.map(item => {
           const isActive = location.pathname === item.href;
           return <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild isActive={isActive} tooltip={item.name} className={cn("my-1.5 transition-all duration-200 rounded-md", isActive ? "bg-sidebar-accent/50 font-medium" : "hover:bg-sidebar-accent/30")}>
+                <SidebarMenuButton asChild isActive={isActive} tooltip={item.name} className={cn("my-1.5 transition-all duration-200 rounded-md", 
+                  isActive 
+                    ? "bg-primary/10 font-medium" 
+                    : "hover:bg-primary/5"
+                )}>
                   <Link to={item.href}>
-                    <item.icon className={cn("transition-all duration-200 stroke-[2.5px]", isActive ? "text-primary" : "text-sidebar-foreground/80")} />
-                    <span className={cn("transition-all duration-200 ml-3 font-medium", isActive ? "text-primary font-semibold" : "text-sidebar-foreground/90 font-medium")}>{item.name}</span>
+                    <item.icon className={cn("transition-all duration-200 stroke-[2.5px]", 
+                      isActive 
+                        ? "text-primary" 
+                        : "text-sidebar-foreground/80"
+                    )} />
+                    <span className={cn("transition-all duration-200 ml-3 font-medium", 
+                      isActive 
+                        ? "text-primary font-semibold" 
+                        : "text-sidebar-foreground/90 font-medium"
+                    )}>
+                      {item.name}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>;
