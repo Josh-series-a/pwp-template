@@ -48,7 +48,7 @@ const Index = () => {
           
           {/* Book Image */}
           <TransitionWrapper animation="fade" delay={400} className="md:flex-1">
-            <div className="relative w-full max-w-md mx-auto">
+            <div className="relative w-full max-w-lg mx-auto">
               <img 
                 src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
                 alt="Prosper with Purpose book" 
