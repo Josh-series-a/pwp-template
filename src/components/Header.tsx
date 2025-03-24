@@ -37,7 +37,8 @@ const Header = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   
-  const isDashboardPage = location.pathname.startsWith('/dashboard');
+  // We don't need this check anymore as it's handled in App.tsx
+  // const isDashboardPage = location.pathname.startsWith('/dashboard');
   
   return (
     <header className="fixed w-full top-0 z-50 px-6 md:px-8 py-4 glass-card backdrop-blur-md">
@@ -55,8 +56,8 @@ const Header = () => {
           <NavLink to="/" current={location.pathname === "/"}>Home</NavLink>
           <NavLink to="/products" current={location.pathname === "/products"}>Products</NavLink>
           <NavLink to="/chat" current={location.pathname === "/chat"}>Analysis</NavLink>
-          {isAuthenticated && location.pathname === "/" && (
-            <NavLink to="/dashboard/overview" current={isDashboardPage}>
+          {isAuthenticated && (
+            <NavLink to="/dashboard/overview" current={false}>
               Dashboard
             </NavLink>
           )}
@@ -81,26 +82,14 @@ const Header = () => {
                 <User className="h-4 w-4" />
                 <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
               </div>
-              {location.pathname === "/" && (
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate('/dashboard/overview')}
-                  className="px-3 py-1 h-auto text-sm"
-                >
-                  <LayoutDashboard className="mr-2 h-3 w-3" />
-                  Dashboard
-                </Button>
-              )}
-              {isDashboardPage ? (
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate('/')}
-                  className="px-3 py-1 h-auto text-sm"
-                >
-                  <LayoutDashboard className="mr-2 h-3 w-3" />
-                  Go to Website
-                </Button>
-              ) : null}
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/dashboard/overview')}
+                className="px-3 py-1 h-auto text-sm"
+              >
+                <LayoutDashboard className="mr-2 h-3 w-3" />
+                Dashboard
+              </Button>
               <Button 
                 variant="outline" 
                 onClick={handleLogout}
@@ -145,8 +134,8 @@ const Header = () => {
             <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
             <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)}>Products</MobileNavLink>
             <MobileNavLink to="/chat" current={location.pathname === "/chat"} onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
-            {isAuthenticated && location.pathname === "/" && (
-              <MobileNavLink to="/dashboard/overview" current={isDashboardPage} onClick={() => setIsMobileMenuOpen(false)}>
+            {isAuthenticated && (
+              <MobileNavLink to="/dashboard/overview" current={false} onClick={() => setIsMobileMenuOpen(false)}>
                 Dashboard
               </MobileNavLink>
             )}
@@ -161,32 +150,17 @@ const Header = () => {
                   <User className="h-4 w-4" />
                   <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
                 </div>
-                {location.pathname === "/" && (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      navigate('/dashboard/overview');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-center"
-                  >
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Button>
-                )}
-                {isDashboardPage ? (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      navigate('/');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full justify-center"
-                  >
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Go to Website
-                  </Button>
-                ) : null}
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    navigate('/dashboard/overview');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full justify-center"
+                >
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  Dashboard
+                </Button>
                 <Button 
                   variant="outline" 
                   onClick={() => {
