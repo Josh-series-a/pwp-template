@@ -10,7 +10,11 @@ const Header = () => {
     <header className="fixed w-full top-0 z-50 px-6 md:px-8 py-4 glass-card backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-lg font-medium tracking-tight">Prosper with Purpose</span>
+          <img 
+            src="/lovable-uploads/06c251d7-7262-4d14-a348-1bf7cb1df32c.png" 
+            alt="Prosper with Purpose Logo" 
+            className="h-10 md:h-12"
+          />
         </Link>
         
         <nav className="hidden md:flex items-center space-x-8">
