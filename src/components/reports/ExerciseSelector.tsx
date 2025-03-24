@@ -24,7 +24,7 @@ const exercises: Exercise[] = [
   {
     id: 'exercise-4',
     title: 'Exercise 4: Define Your Exit Strategy',
-    description: 'Plan how and when you'll exit your business',
+    description: 'Plan how and when you\'ll exit your business',
     icon: ArrowRightCircle
   },
   {
