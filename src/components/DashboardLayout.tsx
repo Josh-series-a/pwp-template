@@ -133,7 +133,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </Sidebar>
           
           <main className="flex-1 bg-background/50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:px-[60px]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-[60px] py-[90px]">
               <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-bold">{title}</h1>
               </div>
