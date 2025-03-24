@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
+
 type DashboardLayoutProps = {
   children: React.ReactNode;
   title: string;
 };
 
-// Custom collapse button component for the top of the sidebar
 const SidebarCollapseButton = () => {
   const {
     toggleSidebar,
@@ -23,7 +23,6 @@ const SidebarCollapseButton = () => {
   return;
 };
 
-// Logo component that adapts to sidebar state
 const SidebarLogo = () => {
   return <div className="flex items-center px-4 py-4 justify-between">
       
@@ -31,14 +30,12 @@ const SidebarLogo = () => {
     </div>;
 };
 
-// Search component that adapts to sidebar state
 const SidebarSearch = () => {
   return <div className="flex justify-center px-3 py-2">
       
     </div>;
 };
 
-// User profile component at bottom of sidebar
 const SidebarProfile = () => {
   const {
     user
@@ -59,7 +56,6 @@ const SidebarProfile = () => {
     </div>;
 };
 
-// Nav section header with collapse button
 const SidebarNavigationHeader = () => {
   const {
     toggleSidebar,
@@ -74,7 +70,6 @@ const SidebarNavigationHeader = () => {
     </div>;
 };
 
-// Main navigation content component
 const SidebarNavigation = () => {
   const location = useLocation();
   const navigation = [{
@@ -119,6 +114,7 @@ const SidebarNavigation = () => {
       </SidebarGroupContent>
     </SidebarGroup>;
 };
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   title
@@ -128,7 +124,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <DashboardHeader />
         
         <div className="flex flex-1 pt-14">
-          <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30">
+          <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30" style={{ "--sidebar-width": "18rem", "--sidebar-width-icon": "3.5rem" } as React.CSSProperties}>
             <SidebarContent className="flex flex-col h-full justify-between">
               <div>
                 <SidebarLogo />
@@ -151,4 +147,5 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
     </SidebarProvider>;
 };
+
 export default DashboardLayout;
