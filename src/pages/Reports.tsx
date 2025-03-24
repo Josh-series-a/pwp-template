@@ -29,6 +29,7 @@ import {
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Report {
   id: string;
@@ -43,10 +44,13 @@ const Reports = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Fetch reports from Supabase
   useEffect(() => {
     const fetchReports = async () => {
+      if (!user) return;
+      
       setIsLoading(true);
       try {
         const { data, error } = await supabase
@@ -81,7 +85,7 @@ const Reports = () => {
     };
 
     fetchReports();
-  }, [toast]);
+  }, [toast, user]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -93,18 +97,29 @@ const Reports = () => {
 
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string) => {
     try {
+      // Check if user is authenticated
+      if (!user) {
+        toast({
+          title: "Authentication Error",
+          description: "You must be logged in to create a report.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       // Extract exercise ID from the title format "Exercise X: Title"
       const exerciseMatch = exerciseTitle.match(/Exercise (\d+):/);
       const exerciseId = exerciseMatch ? `exercise-${exerciseMatch[1]}` : 'unknown';
       
-      // Add the new report to Supabase
+      // Add the new report to Supabase with the user_id
       const { data, error } = await supabase
         .from('reports')
         .insert({
           title: exerciseTitle,
           company_name: companyName,
           exercise_id: exerciseId,
-          status: 'In Progress'
+          status: 'In Progress',
+          user_id: user.id // Add the user_id field
         })
         .select()
         .single();
