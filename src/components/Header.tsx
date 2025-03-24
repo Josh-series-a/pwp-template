@@ -1,11 +1,21 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
-import { LogIn, LogOut, User, Menu, X, LayoutDashboard } from 'lucide-react';
+import { LogIn, LogOut, User, Menu, X, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Header = () => {
   const location = useLocation();
@@ -37,8 +47,16 @@ const Header = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   
-  // We don't need this check anymore as it's handled in App.tsx
-  // const isDashboardPage = location.pathname.startsWith('/dashboard');
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  const userName = user?.user_metadata?.name || 'User';
+  const userInitials = user?.user_metadata?.name ? getInitials(user.user_metadata.name) : 'U';
   
   return (
     <header className="fixed w-full top-0 z-50 px-6 md:px-8 py-4 glass-card backdrop-blur-md">
@@ -72,38 +90,46 @@ const Header = () => {
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         
-        {/* Desktop Authentication Buttons */}
+        {/* Desktop Authentication Dropdown */}
         <div className="hidden md:flex items-center gap-4">
           {isLoading ? (
             <div className="h-10 w-20 animate-pulse bg-accent rounded-md"></div>
           ) : isAuthenticated ? (
-            <>
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</span>
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/dashboard/overview')}
-                className="px-3 py-1 h-auto text-sm"
-              >
-                <LayoutDashboard className="mr-2 h-3 w-3" />
-                Dashboard
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                className="px-3 py-1 h-auto text-sm"
-                disabled={isLoggingOut}
-              >
-                {isLoggingOut ? (
-                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
-                ) : (
-                  <LogOut className="mr-2 h-3 w-3" />
-                )}
-                Logout
-              </Button>
-            </>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.user_metadata?.avatar_url} />
+                    <AvatarFallback>{userInitials}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium hidden sm:inline">{userName}</span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" /> Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/overview" className="cursor-pointer">
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer" disabled={isLoggingOut}>
+                  {isLoggingOut ? (
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></span>
+                  ) : (
+                    <LogOut className="mr-2 h-4 w-4" />
+                  )}
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <>
               <Link to="/login">
