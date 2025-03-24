@@ -73,7 +73,7 @@ const SidebarNavigationHeader = () => {
   } = useSidebar();
   const isCollapsed = state === 'collapsed';
   return <div className="flex items-center justify-between px-4 py-2">
-      <span className="font-medium text-sm text-sidebar-foreground/70">Navigation</span>
+      
       <Button variant="ghost" size="sm" onClick={toggleSidebar} className="flex h-6 w-6 p-0 items-center justify-center rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
         {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
       </Button>
