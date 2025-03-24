@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
 import { 
@@ -11,6 +11,18 @@ import {
   Calendar, 
   User
 } from 'lucide-react';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarProvider,
+  SidebarTrigger
+} from "@/components/ui/sidebar";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -18,6 +30,7 @@ type DashboardLayoutProps = {
 };
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) => {
+  const location = useLocation();
   const navigation = [
     { name: 'Dashboard', href: '/dashboard/overview', icon: Home },
     { name: 'Reports', href: '/dashboard/reports', icon: FileText },
@@ -28,45 +41,54 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <DashboardHeader />
-      
-      <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
-        {/* Sidebar */}
-        <div className="hidden md:flex w-64 flex-col fixed h-full bg-card shadow-sm border-r pt-8 top-14"> {/* Updated top position */}
-          <div className="flex-1 flex flex-col overflow-y-auto">
-            <nav className="flex-1 px-4 space-y-1">
-              {navigation.map((item) => {
-                const isActive = window.location.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={cn(
-                      "flex items-center px-3 py-3 rounded-md text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
-                    )}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen flex flex-col w-full">
+        <DashboardHeader />
         
-        {/* Main Content */}
-        <main className="flex-1 md:ml-64">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
-            <h1 className="text-2xl font-bold mb-6">{title}</h1>
-            {children}
-          </div>
-        </main>
+        <div className="flex flex-1 pt-14"> {/* Added padding-top to account for fixed header */}
+          {/* Sidebar */}
+          <Sidebar collapsible="icon" className="z-30">
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {navigation.map((item) => {
+                      const isActive = location.pathname === item.href;
+                      return (
+                        <SidebarMenuItem key={item.name}>
+                          <SidebarMenuButton 
+                            asChild 
+                            isActive={isActive}
+                            tooltip={item.name}
+                          >
+                            <Link to={item.href}>
+                              <item.icon />
+                              <span>{item.name}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+          
+          {/* Main Content */}
+          <main className="flex-1">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
+              <div className="flex items-center mb-6">
+                <SidebarTrigger className="mr-4" />
+                <h1 className="text-2xl font-bold">{title}</h1>
+              </div>
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
