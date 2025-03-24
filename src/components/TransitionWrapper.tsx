@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 interface TransitionWrapperProps {
   children: React.ReactNode;
   className?: string;
-  animation?: 'fade' | 'slide-up' | 'slide-down' | 'blur';
+  animation?: 'fade' | 'slide-up' | 'slide-down' | 'blur' | 'slide-right' | 'slide-left';
   delay?: number;
 }
 
@@ -37,6 +37,10 @@ const TransitionWrapper = ({
         return 'animate-slide-down';
       case 'blur':
         return 'animate-blur-in';
+      case 'slide-right':
+        return 'animate-slide-right';
+      case 'slide-left':
+        return 'animate-slide-left';
       default:
         return 'animate-fade-in';
     }
