@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
+
 type DashboardLayoutProps = {
   children: React.ReactNode;
   title: string;
@@ -77,6 +78,7 @@ const SidebarProfile = () => {
       </Link>
     </div>;
 };
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   title
@@ -102,10 +104,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     name: 'Book a Session',
     href: '/dashboard/book-session',
     icon: Calendar
-  }, {
-    name: 'Profile',
-    href: '/dashboard/profile',
-    icon: User
   }];
   return <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex flex-col w-full">
@@ -157,4 +155,5 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
     </SidebarProvider>;
 };
+
 export default DashboardLayout;
