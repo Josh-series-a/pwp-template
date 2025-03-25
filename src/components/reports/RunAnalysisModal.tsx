@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import NewCompanyForm from './NewCompanyForm';
 import ExistingCompanyForm from './ExistingCompanyForm';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface RunAnalysisModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   onSubmitComplete
 }) => {
   const [activeTab, setActiveTab] = useState('new-company');
+  const { user } = useAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -48,11 +50,11 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
           </TabsList>
           
           <TabsContent value="new-company" className="mt-4">
-            <NewCompanyForm onComplete={onSubmitComplete} />
+            <NewCompanyForm onComplete={onSubmitComplete} userData={user} />
           </TabsContent>
           
           <TabsContent value="existing-company" className="mt-4">
-            <ExistingCompanyForm onComplete={onSubmitComplete} />
+            <ExistingCompanyForm onComplete={onSubmitComplete} userData={user} />
           </TabsContent>
         </Tabs>
       </DialogContent>

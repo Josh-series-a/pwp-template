@@ -13,6 +13,7 @@ import ExerciseForm from './ExerciseForm';
 
 interface ExistingCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
+  userData: any | null;
 }
 
 // Mock data for existing companies - this would come from an API in a real app
@@ -24,7 +25,7 @@ const mockCompanies = [
   { id: '5', name: 'Bright Future Holdings' }
 ];
 
-const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete }) => {
+const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, userData }) => {
   const [step, setStep] = useState<number>(1);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
@@ -47,12 +48,20 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete })
     return company ? company.name : 'Unknown Company';
   };
 
+  // Generate a unique company ID
+  const companyId = `comp-${selectedCompany}-${Date.now()}`;
+
   // Create company details object for passing to ExerciseForm
   const getCompanyDetails = () => {
     const companyName = getCompanyName();
     return {
       companyName,
-      fromExisting: true
+      fromExisting: true,
+      companyId: companyId,
+      userData: {
+        name: userData?.user_metadata?.name || 'Unknown User',
+        email: userData?.email || 'unknown@example.com'
+      }
     };
   };
 

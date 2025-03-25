@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface NewCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
+  userData: any | null;
 }
 
 // Step 1: Company details validation schema
@@ -40,7 +41,7 @@ const initialCompanyValues: CompanyDetailsFormValues = {
 
 const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
 
-const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
+const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData }) => {
   const [step, setStep] = useState<number>(1);
   const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues>(initialCompanyValues);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
@@ -81,6 +82,9 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
       setStep(step - 1);
     }
   };
+
+  // Generate a unique company ID
+  const companyId = `comp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
   return (
     <div className="space-y-6">
@@ -180,7 +184,14 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
             exerciseId={selectedExercise}
             onBack={handleBack}
             onComplete={handleExerciseComplete}
-            companyDetails={companyDetails} // Pass company details to the ExerciseForm
+            companyDetails={{
+              ...companyDetails,
+              companyId: companyId,
+              userData: {
+                name: userData?.user_metadata?.name || companyDetails.fullName,
+                email: userData?.email || 'unknown@example.com'
+              }
+            }}
           />
         </>
       )}

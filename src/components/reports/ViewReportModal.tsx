@@ -25,6 +25,11 @@ interface SubmissionData {
   exerciseNumber?: string;
   timestamp: string;
   data: Record<string, any>;
+  submitter?: {
+    name: string;
+    email: string;
+  };
+  companyId?: string;
 }
 
 const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, reportId }) => {
@@ -102,7 +107,12 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
           hasPlan: 'Yes, we have a detailed plan to prepare the business for acquisition.',
           implementationSteps: 'Building recurring revenue, documenting processes, expanding client base.',
           resources: '20% of profits are allocated to implementing the exit strategy.'
-        }
+        },
+        submitter: {
+          name: 'John Smith',
+          email: 'john.smith@example.com'
+        },
+        companyId: 'comp-' + Math.floor(Math.random() * 1000)
       });
     } else if (report.exercise_id === 'exercise-6') {
       submissions.push({
@@ -118,7 +128,12 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
           personalSituation: 'Established business owners',
           challenges: 'Time management, scaling operations, hiring difficulties',
           goals: 'Growing revenue by 30%, reducing working hours'
-        }
+        },
+        submitter: {
+          name: 'Jane Doe',
+          email: 'jane.doe@example.com'
+        },
+        companyId: 'comp-' + Math.floor(Math.random() * 1000)
       });
     } else {
       submissions.push({
@@ -128,7 +143,12 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
         timestamp,
         data: {
           information: 'This exercise data would be retrieved from your webhook destination.'
-        }
+        },
+        submitter: {
+          name: 'Alex Johnson',
+          email: 'alex.johnson@example.com'
+        },
+        companyId: 'comp-' + Math.floor(Math.random() * 1000)
       });
     }
     
@@ -142,7 +162,12 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
         companySize: 'Small (10-50 employees)',
         yearFounded: '2018',
         location: 'London, UK'
-      }
+      },
+      submitter: {
+        name: 'Jane Doe',
+        email: 'jane.doe@example.com'
+      },
+      companyId: 'comp-' + Math.floor(Math.random() * 1000)
     });
     
     return submissions;
@@ -164,6 +189,18 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
               <span className="text-sm">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
             </div>
           ))}
+          
+          {/* Display submitter information */}
+          {submission.submitter && (
+            <div className="py-2 mt-2 border-t">
+              <h4 className="text-sm font-semibold mb-1">Submitted by:</h4>
+              <div className="text-sm">
+                <div>{submission.submitter.name}</div>
+                <div>{submission.submitter.email}</div>
+                {submission.companyId && <div>Company ID: {submission.companyId}</div>}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
