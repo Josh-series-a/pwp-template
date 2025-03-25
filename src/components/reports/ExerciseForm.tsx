@@ -144,46 +144,39 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
   try {
     const exerciseNumber = getExerciseNumber(exerciseId);
     
-    const exercisePayload = {
-      ...data,
+    const submissions = [];
+    
+    submissions.push({
+      type: 'exercise',
       exerciseType,
       exerciseNumber,
+      exerciseId,
       userId: userId || 'anonymous',
-      timestamp: new Date().toISOString()
-    };
+      timestamp: new Date().toISOString(),
+      data
+    });
+    
+    if (companyDetails) {
+      submissions.push({
+        type: 'company',
+        exerciseNumber,
+        exerciseId,
+        userId: userId || 'anonymous',
+        timestamp: new Date().toISOString(),
+        data: companyDetails
+      });
+    }
     
     await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(exercisePayload),
+      body: JSON.stringify({ submissions }),
       mode: 'no-cors',
     });
     
-    console.log('Exercise webhook sent:', exercisePayload);
-    
-    if (companyDetails) {
-      const companyPayload = {
-        ...companyDetails,
-        formType: 'Company Details',
-        exerciseNumber,
-        userId: userId || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(companyPayload),
-        mode: 'no-cors',
-      });
-      
-      console.log('Company details webhook sent:', companyPayload);
-    }
-    
+    console.log('Webhook submissions sent:', submissions);
     return true;
   } catch (error) {
     console.error('Error sending to webhook:', error);
