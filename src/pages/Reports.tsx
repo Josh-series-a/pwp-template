@@ -27,6 +27,7 @@ import {
   Plus
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
+import ViewReportModal from '@/components/reports/ViewReportModal';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -43,6 +44,8 @@ const Reports = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -93,6 +96,16 @@ const Reports = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const openViewModal = (reportId: string) => {
+    setSelectedReportId(reportId);
+    setIsViewModalOpen(true);
+  };
+
+  const closeViewModal = () => {
+    setIsViewModalOpen(false);
+    setSelectedReportId(null);
   };
 
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string) => {
@@ -195,7 +208,11 @@ const Reports = () => {
                 </TableHeader>
                 <TableBody>
                   {reports.map((report) => (
-                    <TableRow key={report.id}>
+                    <TableRow 
+                      key={report.id} 
+                      className="cursor-pointer hover:bg-muted/70"
+                      onClick={() => openViewModal(report.id)}
+                    >
                       <TableCell className="font-medium">{report.title}</TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
                       <TableCell>{report.company}</TableCell>
@@ -209,18 +226,29 @@ const Reports = () => {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Button variant="outline" size="icon" asChild title="View">
-                            <span><Eye className="h-4 w-4" /></span>
+                        <div 
+                          className="flex justify-end space-x-2"
+                          onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action buttons
+                        >
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            title="View" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openViewModal(report.id);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" asChild title="Download">
-                            <span><DownloadCloud className="h-4 w-4" /></span>
+                          <Button variant="outline" size="icon" title="Download">
+                            <DownloadCloud className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" asChild title="Re-analyze">
-                            <span><RefreshCw className="h-4 w-4" /></span>
+                          <Button variant="outline" size="icon" title="Re-analyze">
+                            <RefreshCw className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" asChild title="Share">
-                            <span><Share2 className="h-4 w-4" /></span>
+                          <Button variant="outline" size="icon" title="Share">
+                            <Share2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -285,6 +313,12 @@ const Reports = () => {
         isOpen={isModalOpen} 
         onClose={closeModal} 
         onSubmitComplete={handleAnalysisComplete} 
+      />
+
+      <ViewReportModal
+        isOpen={isViewModalOpen}
+        onClose={closeViewModal}
+        reportId={selectedReportId}
       />
     </DashboardLayout>
   );
