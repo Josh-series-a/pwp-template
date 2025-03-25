@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ExerciseFormProps {
   exerciseId: string;
@@ -89,11 +90,11 @@ const keyCustomersSchema = z.object({
 
 const getExerciseTitle = (exerciseId: string): string => {
   switch (exerciseId) {
-    case 'exercise-4': return 'Define Your Exit Strategy';
-    case 'exercise-6': return 'Know Your Customer';
-    case 'exercise-7': return 'Create Your "1+1" Proposition';
-    case 'exercise-18': return 'Measure Your Delegation';
-    case 'exercise-27': return 'Know Your Key Customers';
+    case 'exercise-4': return 'Exercise 4: Define Your Exit Strategy';
+    case 'exercise-6': return 'Exercise 6: Know Your Customer';
+    case 'exercise-7': return 'Exercise 7: Create Your "1+1" Proposition';
+    case 'exercise-18': return 'Exercise 18: Measure Your Delegation';
+    case 'exercise-27': return 'Exercise 27: Know Your Key Customers';
     default: return '';
   }
 };
@@ -104,6 +105,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
   const [isSubmitting, setIsSubmitting] = useState(false);
   const exerciseTitle = getExerciseTitle(exerciseId);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Select the appropriate form based on the exercise ID
   const renderForm = () => {
@@ -133,9 +135,12 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
 
 const sendToWebhook = async (data: any, exerciseType: string) => {
   try {
+    const { user } = useAuth();
+    
     const payload = {
       ...data,
       exerciseType,
+      userId: user?.id || 'anonymous',
       timestamp: new Date().toISOString()
     };
     
@@ -161,6 +166,7 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
   
   const form = useForm<z.infer<typeof exitStrategySchema>>({
     resolver: zodResolver(exitStrategySchema),
@@ -179,7 +185,22 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
     
     // Send to webhook
     try {
-      await sendToWebhook(data, 'Exit Strategy');
+      const payload = {
+        ...data,
+        exerciseType: 'Exit Strategy',
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      
       onComplete();
       toast({
         title: "Form submitted successfully",
@@ -351,7 +372,9 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
           <Button type="button" variant="outline" onClick={onBack}>
             Back
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
         </div>
       </form>
     </Form>
@@ -362,6 +385,7 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
 const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
   
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -387,7 +411,22 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
     
     // Send to webhook
     try {
-      await sendToWebhook(data, 'Know Your Customer');
+      const payload = {
+        ...data,
+        exerciseType: 'Know Your Customer',
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      
       onComplete();
       toast({
         title: "Form submitted successfully",
@@ -603,7 +642,9 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
           <Button type="button" variant="outline" onClick={onBack}>
             Back
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
         </div>
       </form>
     </Form>
@@ -614,6 +655,7 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
 const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
   
   const form = useForm<z.infer<typeof propositionSchema>>({
     resolver: zodResolver(propositionSchema),
@@ -630,7 +672,22 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
     
     // Send to webhook
     try {
-      await sendToWebhook(data, 'Create Your 1+1 Proposition');
+      const payload = {
+        ...data,
+        exerciseType: 'Create Your 1+1 Proposition',
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      
       onComplete();
       toast({
         title: "Form submitted successfully",
@@ -735,7 +792,9 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
           <Button type="button" variant="outline" onClick={onBack}>
             Back
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
         </div>
       </form>
     </Form>
@@ -746,6 +805,7 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
 const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
   
   const form = useForm<z.infer<typeof delegationSchema>>({
     resolver: zodResolver(delegationSchema),
@@ -782,7 +842,22 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
     
     // Send to webhook
     try {
-      await sendToWebhook(data, 'Measure Your Delegation');
+      const payload = {
+        ...data,
+        exerciseType: 'Measure Your Delegation',
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      
       onComplete();
       toast({
         title: "Form submitted successfully",
@@ -839,7 +914,9 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
           <Button type="button" variant="outline" onClick={onBack}>
             Back
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
         </div>
       </form>
     </Form>
@@ -850,6 +927,7 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
 const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
   
   const form = useForm<z.infer<typeof keyCustomersSchema>>({
     resolver: zodResolver(keyCustomersSchema),
@@ -867,7 +945,22 @@ const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }>
     
     // Send to webhook
     try {
-      await sendToWebhook(data, 'Know Your Key Customers');
+      const payload = {
+        ...data,
+        exerciseType: 'Know Your Key Customers',
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      
       onComplete();
       toast({
         title: "Form submitted successfully",
@@ -905,77 +998,3 @@ const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }>
                   className="min-h-[100px]"
                   {...field}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="customerKnowledge"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How well do you know each customer?</FormLabel>
-              <FormDescription>
-                Rate on a scale of 1-5 for each customer, or provide comments
-              </FormDescription>
-              <FormControl>
-                <Textarea
-                  placeholder="e.g., Acme Inc: 4/5, TechCorp: 2/5..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="improvementIdeas"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>What could you do to increase that number?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="List actions to improve your knowledge of customers..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="relationshipImprovements"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>What else could you do to improve relationship quality?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe other potential relationship improvements..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit">Submit</Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
-
-export default ExerciseForm;

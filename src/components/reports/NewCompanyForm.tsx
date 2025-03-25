@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -15,6 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface NewCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
@@ -36,10 +37,14 @@ const initialCompanyValues: CompanyDetailsFormValues = {
   websiteUrl: 'https://'
 };
 
+const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
+
 const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
   const [step, setStep] = useState<number>(1);
   const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues>(initialCompanyValues);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  const { user } = useAuth();
+  const { toast } = useToast();
   
   // Company details form
   const companyForm = useForm<CompanyDetailsFormValues>({
@@ -48,8 +53,32 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
   });
 
   // Handle company details submission
-  const onCompanyDetailsSubmit = (data: CompanyDetailsFormValues) => {
+  const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
     setCompanyDetails(data);
+    
+    // Send company details to webhook
+    try {
+      const payload = {
+        ...data,
+        formType: 'Company Details',
+        userId: user?.id || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      
+      console.log('Company details webhook sent:', payload);
+    } catch (error) {
+      console.error("Error sending company details to webhook:", error);
+    }
+    
     setStep(2);
   };
 
