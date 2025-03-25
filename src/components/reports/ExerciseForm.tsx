@@ -28,9 +28,16 @@ interface ExerciseFormProps {
   exerciseId: string;
   onBack: () => void;
   onComplete: (exerciseTitle: string) => void;
+  companyDetails?: any;
 }
 
-// Exercise 4: Define Your Exit Strategy
+interface ExerciseFormComponentProps {
+  exerciseId: string;
+  onBack: () => void;
+  onComplete: () => void;
+  companyDetails?: any;
+}
+
 const exitStrategySchema = z.object({
   hasStrategy: z.enum(['yes', 'no'], {
     required_error: "Please select an option",
@@ -42,7 +49,6 @@ const exitStrategySchema = z.object({
   resources: z.string().min(1, { message: "Please describe the resources allocated" })
 });
 
-// Exercise 6: Know Your Customer
 const customerSchema = z.object({
   personaDescription: z.string().min(1, { message: "Please provide a description" }),
   age: z.string().min(1, { message: "Age is required" }),
@@ -58,7 +64,6 @@ const customerSchema = z.object({
   offerRequirements: z.string().min(1, { message: "Please describe what you must offer" })
 });
 
-// Exercise 7: Create Your '1+1' Proposition
 const propositionSchema = z.object({
   primaryValue: z.enum(['price', 'quality', 'delivery', 'flexibility', 'service'], {
     required_error: "Please select a primary value",
@@ -69,7 +74,6 @@ const propositionSchema = z.object({
   explanation: z.string().min(1, { message: "Please explain your choice" })
 });
 
-// Exercise 18: Measure Your Delegation
 const delegationSchema = z.object({
   knowStaff: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
   staffKnowYou: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
@@ -80,7 +84,6 @@ const delegationSchema = z.object({
   teamTraining: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" })
 });
 
-// Exercise 27: Know Your Key Customers
 const keyCustomersSchema = z.object({
   customerList: z.string().min(1, { message: "Please list your key customers" }),
   customerKnowledge: z.string().min(1, { message: "Please rate your knowledge of customers" }),
@@ -106,25 +109,24 @@ const getExerciseNumber = (exerciseId: string): string => {
 
 const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
 
-const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onComplete }) => {
+const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const exerciseTitle = getExerciseTitle(exerciseId);
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Select the appropriate form based on the exercise ID
   const renderForm = () => {
     switch (exerciseId) {
       case 'exercise-4':
-        return <ExitStrategyForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <ExitStrategyForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       case 'exercise-6':
-        return <CustomerForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <CustomerForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       case 'exercise-7':
-        return <PropositionForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <PropositionForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       case 'exercise-18':
-        return <DelegationForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <DelegationForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       case 'exercise-27':
-        return <KeyCustomersForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <KeyCustomersForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       default:
         return <div>Unknown exercise</div>;
     }
@@ -138,11 +140,11 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
   );
 };
 
-const sendToWebhook = async (data: any, exerciseType: string, userId: string | undefined, exerciseId: string) => {
+const sendToWebhook = async (data: any, exerciseType: string, userId: string | undefined, exerciseId: string, companyDetails?: any) => {
   try {
     const exerciseNumber = getExerciseNumber(exerciseId);
     
-    const payload = {
+    const exercisePayload = {
       ...data,
       exerciseType,
       exerciseNumber,
@@ -150,16 +152,38 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
       timestamp: new Date().toISOString()
     };
     
-    const response = await fetch(WEBHOOK_URL, {
+    await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(exercisePayload),
       mode: 'no-cors',
     });
     
-    console.log('Webhook submission sent:', payload);
+    console.log('Exercise webhook sent:', exercisePayload);
+    
+    if (companyDetails) {
+      const companyPayload = {
+        ...companyDetails,
+        formType: 'Company Details',
+        exerciseNumber,
+        userId: userId || 'anonymous',
+        timestamp: new Date().toISOString()
+      };
+      
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(companyPayload),
+        mode: 'no-cors',
+      });
+      
+      console.log('Company details webhook sent:', companyPayload);
+    }
+    
     return true;
   } catch (error) {
     console.error('Error sending to webhook:', error);
@@ -167,8 +191,7 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
   }
 };
 
-// Exercise 4: Define Your Exit Strategy Form
-const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
+const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,9 +212,8 @@ const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, on
     setIsSubmitting(true);
     console.log(data);
     
-    // Send to webhook
     try {
-      await sendToWebhook(data, 'Exit Strategy', user?.id, exerciseId);
+      await sendToWebhook(data, 'Exit Strategy', user?.id, exerciseId, companyDetails);
       
       onComplete();
       toast({
@@ -205,7 +227,6 @@ const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, on
         description: "The form was processed but there was an error with the webhook submission.",
         variant: "destructive",
       });
-      // Still complete the flow even if webhook fails
       onComplete();
     } finally {
       setIsSubmitting(false);
@@ -373,8 +394,7 @@ const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, on
   );
 };
 
-// Exercise 6: Know Your Customer Form
-const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
+const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -401,9 +421,8 @@ const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack
     setIsSubmitting(true);
     console.log(data);
     
-    // Send to webhook
     try {
-      await sendToWebhook(data, 'Know Your Customer', user?.id, exerciseId);
+      await sendToWebhook(data, 'Know Your Customer', user?.id, exerciseId, companyDetails);
       
       onComplete();
       toast({
@@ -417,7 +436,6 @@ const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack
         description: "The form was processed but there was an error with the webhook submission.",
         variant: "destructive",
       });
-      // Still complete the flow even if webhook fails
       onComplete();
     } finally {
       setIsSubmitting(false);
@@ -629,8 +647,7 @@ const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack
   );
 };
 
-// Exercise 7: Create Your '1+1' Proposition Form
-const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
+const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -648,9 +665,8 @@ const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onB
     setIsSubmitting(true);
     console.log(data);
     
-    // Send to webhook
     try {
-      await sendToWebhook(data, 'Create Your 1+1 Proposition', user?.id, exerciseId);
+      await sendToWebhook(data, 'Create Your 1+1 Proposition', user?.id, exerciseId, companyDetails);
       
       onComplete();
       toast({
@@ -664,7 +680,6 @@ const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onB
         description: "The form was processed but there was an error with the webhook submission.",
         variant: "destructive",
       });
-      // Still complete the flow even if webhook fails
       onComplete();
     } finally {
       setIsSubmitting(false);
@@ -765,8 +780,7 @@ const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onB
   );
 };
 
-// Exercise 18: Measure Your Delegation Form
-const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
+const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -804,9 +818,8 @@ const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBa
     setIsSubmitting(true);
     console.log(data);
     
-    // Send to webhook
     try {
-      await sendToWebhook(data, 'Measure Your Delegation', user?.id, exerciseId);
+      await sendToWebhook(data, 'Measure Your Delegation', user?.id, exerciseId, companyDetails);
       
       onComplete();
       toast({
@@ -820,7 +833,6 @@ const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBa
         description: "The form was processed but there was an error with the webhook submission.",
         variant: "destructive",
       });
-      // Still complete the flow even if webhook fails
       onComplete();
     } finally {
       setIsSubmitting(false);
@@ -873,8 +885,7 @@ const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBa
   );
 };
 
-// Exercise 27: Know Your Key Customers Form
-const KeyCustomersForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
+const KeyCustomersForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -893,9 +904,8 @@ const KeyCustomersForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, on
     setIsSubmitting(true);
     console.log(data);
     
-    // Send to webhook
     try {
-      await sendToWebhook(data, 'Know Your Key Customers', user?.id, exerciseId);
+      await sendToWebhook(data, 'Know Your Key Customers', user?.id, exerciseId, companyDetails);
       
       onComplete();
       toast({
@@ -909,7 +919,6 @@ const KeyCustomersForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, on
         description: "The form was processed but there was an error with the webhook submission.",
         variant: "destructive",
       });
-      // Still complete the flow even if webhook fails
       onComplete();
     } finally {
       setIsSubmitting(false);

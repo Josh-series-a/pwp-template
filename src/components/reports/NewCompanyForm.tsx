@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -56,28 +57,9 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
     setCompanyDetails(data);
     
-    // Send company details to webhook
-    try {
-      const payload = {
-        ...data,
-        formType: 'Company Details',
-        userId: user?.id || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        mode: 'no-cors',
-      });
-      
-      console.log('Company details webhook sent:', payload);
-    } catch (error) {
-      console.error("Error sending company details to webhook:", error);
-    }
+    // No longer sending company details to webhook here
+    // We'll send them together with the exercise data when the exercise form is submitted
+    console.log('Company details saved for later submission:', data);
     
     setStep(2);
   };
@@ -198,6 +180,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete }) => {
             exerciseId={selectedExercise}
             onBack={handleBack}
             onComplete={handleExerciseComplete}
+            companyDetails={companyDetails} // Pass company details to the ExerciseForm
           />
         </>
       )}

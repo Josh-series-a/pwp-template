@@ -47,6 +47,15 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete })
     return company ? company.name : 'Unknown Company';
   };
 
+  // Create company details object for passing to ExerciseForm
+  const getCompanyDetails = () => {
+    const companyName = getCompanyName();
+    return {
+      companyName,
+      fromExisting: true
+    };
+  };
+
   // Handle exercise form submission
   const handleExerciseComplete = (exerciseTitle: string) => {
     onComplete(getCompanyName(), exerciseTitle);
@@ -129,6 +138,7 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete })
             exerciseId={selectedExercise}
             onBack={handleBack}
             onComplete={handleExerciseComplete}
+            companyDetails={getCompanyDetails()} // Pass company details to the ExerciseForm
           />
         </>
       )}
