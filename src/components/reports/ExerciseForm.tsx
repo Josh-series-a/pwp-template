@@ -133,14 +133,12 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
   );
 };
 
-const sendToWebhook = async (data: any, exerciseType: string) => {
+const sendToWebhook = async (data: any, exerciseType: string, userId: string | undefined) => {
   try {
-    const { user } = useAuth();
-    
     const payload = {
       ...data,
       exerciseType,
-      userId: user?.id || 'anonymous',
+      userId: userId || 'anonymous',
       timestamp: new Date().toISOString()
     };
     
@@ -998,3 +996,76 @@ const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }>
                   className="min-h-[100px]"
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="customerKnowledge"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>How well do you know these customers?</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Rate your knowledge and understanding..."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="improvementIdeas"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>What would you like to improve or change?</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="List your improvement ideas..."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="relationshipImprovements"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>How will you improve your relationship with these customers?</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Describe your strategy for improvement..."
+                  className="min-h-[100px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-between pt-4">
+          <Button type="button" variant="outline" onClick={onBack}>
+            Back
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+};
+
+export default ExerciseForm;
+
