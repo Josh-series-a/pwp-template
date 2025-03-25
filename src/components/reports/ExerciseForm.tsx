@@ -99,6 +99,11 @@ const getExerciseTitle = (exerciseId: string): string => {
   }
 };
 
+const getExerciseNumber = (exerciseId: string): string => {
+  const match = exerciseId.match(/exercise-(\d+)/);
+  return match ? match[1] : '';
+};
+
 const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
 
 const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onComplete }) => {
@@ -111,15 +116,15 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
   const renderForm = () => {
     switch (exerciseId) {
       case 'exercise-4':
-        return <ExitStrategyForm onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <ExitStrategyForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
       case 'exercise-6':
-        return <CustomerForm onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <CustomerForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
       case 'exercise-7':
-        return <PropositionForm onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <PropositionForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
       case 'exercise-18':
-        return <DelegationForm onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <DelegationForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
       case 'exercise-27':
-        return <KeyCustomersForm onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
+        return <KeyCustomersForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} />;
       default:
         return <div>Unknown exercise</div>;
     }
@@ -133,11 +138,14 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
   );
 };
 
-const sendToWebhook = async (data: any, exerciseType: string, userId: string | undefined) => {
+const sendToWebhook = async (data: any, exerciseType: string, userId: string | undefined, exerciseId: string) => {
   try {
+    const exerciseNumber = getExerciseNumber(exerciseId);
+    
     const payload = {
       ...data,
       exerciseType,
+      exerciseNumber,
       userId: userId || 'anonymous',
       timestamp: new Date().toISOString()
     };
@@ -160,7 +168,7 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
 };
 
 // Exercise 4: Define Your Exit Strategy Form
-const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -183,21 +191,7 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
     
     // Send to webhook
     try {
-      const payload = {
-        ...data,
-        exerciseType: 'Exit Strategy',
-        userId: user?.id || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        mode: 'no-cors',
-      });
+      await sendToWebhook(data, 'Exit Strategy', user?.id, exerciseId);
       
       onComplete();
       toast({
@@ -380,7 +374,7 @@ const ExitStrategyForm: React.FC<{ onBack: () => void; onComplete: () => void }>
 };
 
 // Exercise 6: Know Your Customer Form
-const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -409,21 +403,7 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
     
     // Send to webhook
     try {
-      const payload = {
-        ...data,
-        exerciseType: 'Know Your Customer',
-        userId: user?.id || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        mode: 'no-cors',
-      });
+      await sendToWebhook(data, 'Know Your Customer', user?.id, exerciseId);
       
       onComplete();
       toast({
@@ -650,7 +630,7 @@ const CustomerForm: React.FC<{ onBack: () => void; onComplete: () => void }> = (
 };
 
 // Exercise 7: Create Your '1+1' Proposition Form
-const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -670,21 +650,7 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
     
     // Send to webhook
     try {
-      const payload = {
-        ...data,
-        exerciseType: 'Create Your 1+1 Proposition',
-        userId: user?.id || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        mode: 'no-cors',
-      });
+      await sendToWebhook(data, 'Create Your 1+1 Proposition', user?.id, exerciseId);
       
       onComplete();
       toast({
@@ -800,7 +766,7 @@ const PropositionForm: React.FC<{ onBack: () => void; onComplete: () => void }> 
 };
 
 // Exercise 18: Measure Your Delegation Form
-const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -840,21 +806,7 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
     
     // Send to webhook
     try {
-      const payload = {
-        ...data,
-        exerciseType: 'Measure Your Delegation',
-        userId: user?.id || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        mode: 'no-cors',
-      });
+      await sendToWebhook(data, 'Measure Your Delegation', user?.id, exerciseId);
       
       onComplete();
       toast({
@@ -922,7 +874,7 @@ const DelegationForm: React.FC<{ onBack: () => void; onComplete: () => void }> =
 };
 
 // Exercise 27: Know Your Key Customers Form
-const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }> = ({ onBack, onComplete }) => {
+const KeyCustomersForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete }) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
@@ -943,21 +895,7 @@ const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }>
     
     // Send to webhook
     try {
-      const payload = {
-        ...data,
-        exerciseType: 'Know Your Key Customers',
-        userId: user?.id || 'anonymous',
-        timestamp: new Date().toISOString()
-      };
-      
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        mode: 'no-cors',
-      });
+      await sendToWebhook(data, 'Know Your Key Customers', user?.id, exerciseId);
       
       onComplete();
       toast({
@@ -1068,4 +1006,3 @@ const KeyCustomersForm: React.FC<{ onBack: () => void; onComplete: () => void }>
 };
 
 export default ExerciseForm;
-
