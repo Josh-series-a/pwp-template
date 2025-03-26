@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -163,7 +164,10 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
         exerciseId,
         userId: userId || 'anonymous',
         timestamp: new Date().toISOString(),
-        data: companyDetails
+        data: {
+          ...companyDetails,
+          websiteUrl: companyDetails.websiteUrl || 'Not provided' // Ensure website URL is included
+        }
       });
     }
     
