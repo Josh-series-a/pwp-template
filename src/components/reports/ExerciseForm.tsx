@@ -145,42 +145,66 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
   try {
     const exerciseNumber = getExerciseNumber(exerciseId);
     
-    const submissions = [];
+    // Build query string for exercise data
+    const exerciseParams = new URLSearchParams();
+    exerciseParams.append('type', 'exercise');
+    exerciseParams.append('exerciseType', exerciseType);
+    exerciseParams.append('exerciseNumber', exerciseNumber);
+    exerciseParams.append('exerciseId', exerciseId);
+    exerciseParams.append('userId', userId || 'anonymous');
+    exerciseParams.append('timestamp', new Date().toISOString());
     
-    submissions.push({
-      type: 'exercise',
-      exerciseType,
-      exerciseNumber,
-      exerciseId,
-      userId: userId || 'anonymous',
-      timestamp: new Date().toISOString(),
-      data
+    // Add all data fields to query string
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        // Convert Date objects to ISO strings
+        const formattedValue = value instanceof Date ? value.toISOString() : String(value);
+        exerciseParams.append(`data_${key}`, formattedValue);
+      }
     });
     
-    if (companyDetails) {
-      submissions.push({
-        type: 'company',
-        exerciseNumber,
-        exerciseId,
-        userId: userId || 'anonymous',
-        timestamp: new Date().toISOString(),
-        data: {
-          ...companyDetails,
-          websiteUrl: companyDetails.websiteUrl || 'Not provided' // Ensure website URL is included
-        }
-      });
-    }
-    
-    await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ submissions }),
+    // Send exercise data
+    await fetch(`${WEBHOOK_URL}?${exerciseParams.toString()}`, {
+      method: 'GET',
       mode: 'no-cors',
     });
     
-    console.log('Webhook submissions sent:', submissions);
+    // If company details exist, send them as well
+    if (companyDetails) {
+      const companyParams = new URLSearchParams();
+      companyParams.append('type', 'company');
+      companyParams.append('exerciseNumber', exerciseNumber);
+      companyParams.append('exerciseId', exerciseId);
+      companyParams.append('userId', userId || 'anonymous');
+      companyParams.append('timestamp', new Date().toISOString());
+      
+      // Add all company details fields to query string
+      Object.entries(companyDetails).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (key === 'userData' && typeof value === 'object') {
+            // Handle nested userData object
+            Object.entries(value as object).forEach(([userKey, userValue]) => {
+              companyParams.append(`userData_${userKey}`, String(userValue));
+            });
+          } else {
+            companyParams.append(`company_${key}`, String(value));
+          }
+        }
+      });
+      
+      // Ensure website URL is included
+      if (!companyDetails.websiteUrl) {
+        companyParams.append('company_websiteUrl', 'Not provided');
+      }
+      
+      // Send company data
+      await fetch(`${WEBHOOK_URL}?${companyParams.toString()}`, {
+        method: 'GET',
+        mode: 'no-cors',
+      });
+    }
+    
+    console.log('Webhook submissions sent via query string');
     return true;
   } catch (error) {
     console.error('Error sending to webhook:', error);
