@@ -39,8 +39,6 @@ const initialCompanyValues: CompanyDetailsFormValues = {
   websiteUrl: 'https://'
 };
 
-const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
-
 const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData }) => {
   const [step, setStep] = useState<number>(1);
   const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues>(initialCompanyValues);
@@ -57,11 +55,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   // Handle company details submission
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
     setCompanyDetails(data);
-    
-    // No longer sending company details to webhook here
-    // We'll send them together with the exercise data when the exercise form is submitted
     console.log('Company details saved for later submission:', data);
-    
     setStep(2);
   };
 

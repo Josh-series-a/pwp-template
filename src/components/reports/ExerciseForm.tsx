@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -163,6 +162,51 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
       }
     });
     
+    // Add exercise questions based on exerciseId
+    switch (exerciseId) {
+      case 'exercise-4':
+        exerciseParams.append('question_1', 'Do you have an exit strategy?');
+        exerciseParams.append('question_2', 'When would you like to exit?');
+        exerciseParams.append('question_3', 'Do you have a plan for making the exit strategy happen in that timeframe?');
+        exerciseParams.append('question_4', 'What steps have you put in place to make the plan happen?');
+        exerciseParams.append('question_5', 'How much time and resources have you allocated to making this strategy happen?');
+        break;
+      case 'exercise-6':
+        exerciseParams.append('question_1', 'Short description of customer persona');
+        exerciseParams.append('question_2', 'Age');
+        exerciseParams.append('question_3', 'Gender');
+        exerciseParams.append('question_4', 'Where do they live?');
+        exerciseParams.append('question_5', 'Personal situation');
+        exerciseParams.append('question_6', 'Job title');
+        exerciseParams.append('question_7', 'How do they spend their spare time?');
+        exerciseParams.append('question_8', 'Disposable income or project budget');
+        exerciseParams.append('question_9', 'Concerns/challenges/fears');
+        exerciseParams.append('question_10', 'Big goals (work and personal)');
+        exerciseParams.append('question_11', 'Why is this your ideal customer?');
+        exerciseParams.append('question_12', 'What must you offer to attract them?');
+        break;
+      case 'exercise-7':
+        exerciseParams.append('question_1', 'Choose your primary value');
+        exerciseParams.append('question_2', 'Choose your "+1" value');
+        exerciseParams.append('question_3', 'In your words, explain why you chose this combination');
+        break;
+      case 'exercise-18':
+        exerciseParams.append('question_1', 'How well do you know your senior staff?');
+        exerciseParams.append('question_2', 'How well do they know you?');
+        exerciseParams.append('question_3', 'How many people report to you?');
+        exerciseParams.append('question_4', 'How often do you meet them (for longer than 45 minutes)?');
+        exerciseParams.append('question_5', 'Do you have a process for monitoring them?');
+        exerciseParams.append('question_6', 'Are your processes written down?');
+        exerciseParams.append('question_7', 'Do you train your team?');
+        break;
+      case 'exercise-27':
+        exerciseParams.append('question_1', 'List your main/key customers');
+        exerciseParams.append('question_2', 'How well do you know these customers?');
+        exerciseParams.append('question_3', 'What would you like to improve or change?');
+        exerciseParams.append('question_4', 'How will you improve your relationship with these customers?');
+        break;
+    }
+    
     // Send exercise data
     await fetch(`${WEBHOOK_URL}?${exerciseParams.toString()}`, {
       method: 'GET',
@@ -178,19 +222,17 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
       companyParams.append('userId', userId || 'anonymous');
       companyParams.append('timestamp', new Date().toISOString());
       
-      // Add all company details fields to query string
-      Object.entries(companyDetails).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (key === 'userData' && typeof value === 'object') {
-            // Handle nested userData object
-            Object.entries(value as object).forEach(([userKey, userValue]) => {
-              companyParams.append(`userData_${userKey}`, String(userValue));
-            });
-          } else {
-            companyParams.append(`company_${key}`, String(value));
-          }
-        }
-      });
+      // Add company information fields directly to the query string (not nested)
+      if (companyDetails.fullName) companyParams.append('company_fullName', companyDetails.fullName);
+      if (companyDetails.companyName) companyParams.append('company_companyName', companyDetails.companyName);
+      if (companyDetails.websiteUrl) companyParams.append('company_websiteUrl', companyDetails.websiteUrl);
+      if (companyDetails.companyId) companyParams.append('company_companyId', companyDetails.companyId);
+      
+      // Add user data fields directly
+      if (companyDetails.userData) {
+        if (companyDetails.userData.name) companyParams.append('userData_name', companyDetails.userData.name);
+        if (companyDetails.userData.email) companyParams.append('userData_email', companyDetails.userData.email);
+      }
       
       // Ensure website URL is included
       if (!companyDetails.websiteUrl) {
