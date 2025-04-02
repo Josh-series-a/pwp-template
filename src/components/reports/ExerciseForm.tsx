@@ -144,113 +144,113 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
   try {
     const exerciseNumber = getExerciseNumber(exerciseId);
     
-    // Build query string for exercise data
-    const exerciseParams = new URLSearchParams();
-    exerciseParams.append('type', 'exercise');
-    exerciseParams.append('exerciseType', exerciseType);
-    exerciseParams.append('exerciseNumber', exerciseNumber);
-    exerciseParams.append('exerciseId', exerciseId);
-    exerciseParams.append('userId', userId || 'anonymous');
-    exerciseParams.append('timestamp', new Date().toISOString());
+    // Build single query string for all data
+    const params = new URLSearchParams();
+    params.append('type', 'exercise_submission');
+    params.append('exerciseType', exerciseType);
+    params.append('exerciseNumber', exerciseNumber);
+    params.append('exerciseId', exerciseId);
+    params.append('userId', userId || 'anonymous');
+    params.append('timestamp', new Date().toISOString());
     
-    // Add all data fields to query string
+    // Add company details to query string
+    if (companyDetails) {
+      if (companyDetails.fullName) params.append('company_name', companyDetails.fullName);
+      if (companyDetails.companyName) params.append('company_businessName', companyDetails.companyName);
+      if (companyDetails.websiteUrl) params.append('company_websiteUrl', companyDetails.websiteUrl);
+      if (companyDetails.companyId) params.append('company_id', companyDetails.companyId);
+      
+      // Add user data
+      if (companyDetails.userData) {
+        if (companyDetails.userData.name) params.append('user_name', companyDetails.userData.name);
+        if (companyDetails.userData.email) params.append('user_email', companyDetails.userData.email);
+      }
+    }
+    
+    // Add exercise questions and answers in format "question: answer"
+    const questionLabels = getQuestionLabels(exerciseId);
+    
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        // Convert Date objects to ISO strings
-        const formattedValue = value instanceof Date ? value.toISOString() : String(value);
-        exerciseParams.append(`data_${key}`, formattedValue);
+        // Find matching question label for this field
+        const questionLabel = questionLabels[key];
+        if (questionLabel) {
+          // Convert Date objects to formatted strings
+          const formattedValue = value instanceof Date 
+            ? format(value, 'PPP') 
+            : String(value);
+          
+          // Append as "Question: Answer" format
+          params.append(`qa_${key}`, `${questionLabel}: ${formattedValue}`);
+        }
       }
     });
     
-    // Add exercise questions based on exerciseId
-    switch (exerciseId) {
-      case 'exercise-4':
-        exerciseParams.append('question_1', 'Do you have an exit strategy?');
-        exerciseParams.append('question_2', 'When would you like to exit?');
-        exerciseParams.append('question_3', 'Do you have a plan for making the exit strategy happen in that timeframe?');
-        exerciseParams.append('question_4', 'What steps have you put in place to make the plan happen?');
-        exerciseParams.append('question_5', 'How much time and resources have you allocated to making this strategy happen?');
-        break;
-      case 'exercise-6':
-        exerciseParams.append('question_1', 'Short description of customer persona');
-        exerciseParams.append('question_2', 'Age');
-        exerciseParams.append('question_3', 'Gender');
-        exerciseParams.append('question_4', 'Where do they live?');
-        exerciseParams.append('question_5', 'Personal situation');
-        exerciseParams.append('question_6', 'Job title');
-        exerciseParams.append('question_7', 'How do they spend their spare time?');
-        exerciseParams.append('question_8', 'Disposable income or project budget');
-        exerciseParams.append('question_9', 'Concerns/challenges/fears');
-        exerciseParams.append('question_10', 'Big goals (work and personal)');
-        exerciseParams.append('question_11', 'Why is this your ideal customer?');
-        exerciseParams.append('question_12', 'What must you offer to attract them?');
-        break;
-      case 'exercise-7':
-        exerciseParams.append('question_1', 'Choose your primary value');
-        exerciseParams.append('question_2', 'Choose your "+1" value');
-        exerciseParams.append('question_3', 'In your words, explain why you chose this combination');
-        break;
-      case 'exercise-18':
-        exerciseParams.append('question_1', 'How well do you know your senior staff?');
-        exerciseParams.append('question_2', 'How well do they know you?');
-        exerciseParams.append('question_3', 'How many people report to you?');
-        exerciseParams.append('question_4', 'How often do you meet them (for longer than 45 minutes)?');
-        exerciseParams.append('question_5', 'Do you have a process for monitoring them?');
-        exerciseParams.append('question_6', 'Are your processes written down?');
-        exerciseParams.append('question_7', 'Do you train your team?');
-        break;
-      case 'exercise-27':
-        exerciseParams.append('question_1', 'List your main/key customers');
-        exerciseParams.append('question_2', 'How well do you know these customers?');
-        exerciseParams.append('question_3', 'What would you like to improve or change?');
-        exerciseParams.append('question_4', 'How will you improve your relationship with these customers?');
-        break;
-    }
-    
-    // Send exercise data
-    await fetch(`${WEBHOOK_URL}?${exerciseParams.toString()}`, {
+    // Send combined data
+    await fetch(`${WEBHOOK_URL}?${params.toString()}`, {
       method: 'GET',
       mode: 'no-cors',
     });
     
-    // If company details exist, send them as well
-    if (companyDetails) {
-      const companyParams = new URLSearchParams();
-      companyParams.append('type', 'company');
-      companyParams.append('exerciseNumber', exerciseNumber);
-      companyParams.append('exerciseId', exerciseId);
-      companyParams.append('userId', userId || 'anonymous');
-      companyParams.append('timestamp', new Date().toISOString());
-      
-      // Add company information fields directly to the query string (not nested)
-      if (companyDetails.fullName) companyParams.append('company_fullName', companyDetails.fullName);
-      if (companyDetails.companyName) companyParams.append('company_companyName', companyDetails.companyName);
-      if (companyDetails.websiteUrl) companyParams.append('company_websiteUrl', companyDetails.websiteUrl);
-      if (companyDetails.companyId) companyParams.append('company_companyId', companyDetails.companyId);
-      
-      // Add user data fields directly
-      if (companyDetails.userData) {
-        if (companyDetails.userData.name) companyParams.append('userData_name', companyDetails.userData.name);
-        if (companyDetails.userData.email) companyParams.append('userData_email', companyDetails.userData.email);
-      }
-      
-      // Ensure website URL is included
-      if (!companyDetails.websiteUrl) {
-        companyParams.append('company_websiteUrl', 'Not provided');
-      }
-      
-      // Send company data
-      await fetch(`${WEBHOOK_URL}?${companyParams.toString()}`, {
-        method: 'GET',
-        mode: 'no-cors',
-      });
-    }
-    
-    console.log('Webhook submissions sent via query string');
+    console.log('Webhook submission sent via query string');
     return true;
   } catch (error) {
     console.error('Error sending to webhook:', error);
     return false;
+  }
+};
+
+const getQuestionLabels = (exerciseId: string): Record<string, string> => {
+  switch (exerciseId) {
+    case 'exercise-4':
+      return {
+        hasStrategy: 'Do you have an exit strategy?',
+        exitDateText: 'When would you like to exit?',
+        exitDate: 'Specific exit date',
+        hasPlan: 'Do you have a plan for making the exit strategy happen in that timeframe?',
+        implementationSteps: 'What steps have you put in place to make the plan happen?',
+        resources: 'How much time and resources have you allocated to making this strategy happen?'
+      };
+    case 'exercise-6':
+      return {
+        personaDescription: 'Short description of customer persona',
+        age: 'Age',
+        gender: 'Gender',
+        location: 'Where do they live?',
+        personalSituation: 'Personal situation',
+        jobTitle: 'Job title',
+        spareTime: 'How do they spend their spare time?',
+        disposableIncome: 'Disposable income or project budget',
+        challenges: 'Concerns/challenges/fears',
+        goals: 'Big goals (work and personal)',
+        idealCustomerReason: 'Why is this your ideal customer?',
+        offerRequirements: 'What must you offer to attract them?'
+      };
+    case 'exercise-7':
+      return {
+        primaryValue: 'Choose your primary value',
+        plusOneValue: 'Choose your "+1" value',
+        explanation: 'In your words, explain why you chose this combination'
+      };
+    case 'exercise-18':
+      return {
+        knowStaff: 'How well do you know your senior staff?',
+        staffKnowYou: 'How well do they know you?',
+        reportCount: 'How many people report to you?',
+        meetingFrequency: 'How often do you meet them (for longer than 45 minutes)?',
+        monitoringProcess: 'Do you have a process for monitoring them?',
+        writtenProcesses: 'Are your processes written down?',
+        teamTraining: 'Do you train your team?'
+      };
+    case 'exercise-27':
+      return {
+        customerList: 'List your main/key customers',
+        customerKnowledge: 'How well do you know these customers?',
+        improvementIdeas: 'What would you like to improve or change?',
+        relationshipImprovements: 'How will you improve your relationship with these customers?'
+      };
+    default:
+      return {};
   }
 };
 

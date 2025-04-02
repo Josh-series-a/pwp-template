@@ -54,8 +54,9 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   // Handle company details submission
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
+    // Store company details for later submission with exercise data
     setCompanyDetails(data);
-    console.log('Company details saved for later submission:', data);
+    console.log('Company details saved for combined submission:', data);
     setStep(2);
   };
 
