@@ -27,7 +27,6 @@ export const getPageContent = (page: number): React.ReactNode => (
   <>
     <h3>Page {page}</h3>
     <p>Demo text for page {page}. Replace this via CMS or static assets.</p>
-    {/* Example workbook prompt every 5 pages */}
     {page % 5 === 0 && (
       <div data-workbook-field-id={`reflect-${page}`}>
         Reflection: jot down what resonated on this spread.
@@ -35,3 +34,4 @@ export const getPageContent = (page: number): React.ReactNode => (
     )}
   </>
 );
+
