@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -67,12 +66,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				canvas: '#FBF9F4',
+				'canvas-dark': '#EFECE5',
+				'brand-ink': '#0F1B24',
+				'accent-gold': '#C79A3B',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'page': '0 4px 20px rgba(15,27,36,.08)',
+			},
+			gridTemplateColumns: {
+				spread: 'auto minmax(0,1fr) 4px minmax(0,1fr) auto',
 			},
 			keyframes: {
 				'accordion-down': {
