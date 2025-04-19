@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent } from '@/components/ui/card';
@@ -163,7 +164,7 @@ Your business's mission and vision should guide every major decision you make. T
       {/* Book Content */}
       <div className="h-[calc(100vh-73px)] overflow-auto bg-muted/10 p-8">
         <div 
-          className="max-w-4xl mx-auto bg-background rounded-lg shadow-lg p-12"
+          className="w-full max-w-6xl h-full mx-auto bg-background rounded-lg shadow-lg p-12 overflow-y-auto"
           style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
         >
           <Tabs value={activeTab} onValueChange={setActiveTab}>
