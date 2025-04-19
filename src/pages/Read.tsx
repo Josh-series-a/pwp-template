@@ -268,7 +268,7 @@ Your business's mission and vision should guide every major decision you make. T
             }}
           >
             {isSpreadView && (
-              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] shadow-[inset_-25px_0_25px_-20px_rgba(0,0,0,0.3)] p-12 overflow-y-auto">
+              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] shadow-[inset_-25px_0_25px_-20px_rgba(0,0,0,0.3)] p-12 overflow-y-auto relative">
                 <div className="h-full flex flex-col">
                   <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
                   <div className="space-y-4">
@@ -299,11 +299,16 @@ Your business's mission and vision should guide every major decision you make. T
                     </div>
                   </div>
                 </div>
+                {isSpreadView && (
+                  <div className="absolute bottom-4 right-8 font-serif text-2xl text-muted-foreground/50 italic">
+                    {currentPage > 1 ? currentPage - 1 : 'i'}
+                  </div>
+                )}
               </div>
             )}
 
             <div className={cn(
-              "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto",
+              "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative",
               isSpreadView 
                 ? "shadow-[inset_25px_0_25px_-20px_rgba(0,0,0,0.3)]" 
                 : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
@@ -321,21 +326,20 @@ Your business's mission and vision should guide every major decision you make. T
                 </div>
 
                 <div className="flex justify-between mt-12 text-sm text-muted-foreground">
-                  <div>
-                    {currentPage > 1 && 
-                      <button onClick={() => handlePageChange('prev')} className="flex items-center">
-                        <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                      </button>
-                    }
-                  </div>
-                  <div>
-                    {currentPage < chapters.length &&
-                      <button onClick={() => handlePageChange('next')} className="flex items-center">
-                        Next <ChevronRight className="h-4 w-4 ml-1" />
-                      </button>
-                    }
-                  </div>
+                  {currentPage > 1 && 
+                    <button onClick={() => handlePageChange('prev')} className="flex items-center">
+                      <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                    </button>
+                  }
+                  {currentPage < chapters.length &&
+                    <button onClick={() => handlePageChange('next')} className="flex items-center">
+                      Next <ChevronRight className="h-4 w-4 ml-1" />
+                    </button>
+                  }
                 </div>
+              </div>
+              <div className="absolute bottom-4 left-8 font-serif text-2xl text-muted-foreground/50 italic">
+                {currentPage}
               </div>
             </div>
           </div>
