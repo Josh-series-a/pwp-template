@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,10 +21,10 @@ import BookInsights from "./pages/BookInsights";
 import BookSession from "./pages/BookSession";
 import Profile from "./pages/Profile";
 import PreloaderDemo from './pages/PreloaderDemo';
+import Read from './pages/Read';
 
 const queryClient = new QueryClient();
 
-// Wrapper component to conditionally show header
 const AppContent = () => {
   const location = useLocation();
   const isDashboardRoute = location.pathname.includes('/dashboard');
@@ -77,6 +76,11 @@ const AppContent = () => {
           <Route path="profile" element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="read" element={
+            <ProtectedRoute>
+              <Read />
             </ProtectedRoute>
           } />
         </Route>

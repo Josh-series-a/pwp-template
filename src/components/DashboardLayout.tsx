@@ -83,6 +83,10 @@ const SidebarNavigation = () => {
     href: '/dashboard/reports',
     icon: FileText
   }, {
+    name: 'Read',
+    href: '/dashboard/read',
+    icon: BookOpen
+  }, {
     name: 'Exercises',
     href: '/dashboard/exercises',
     icon: Dumbbell
