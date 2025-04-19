@@ -11,11 +11,20 @@ import { AnimatePresence } from 'framer-motion';
  *     </PageTransition>
  *   </TransitionWrapper>
  */
-export const TransitionWrapper: React.FC<{ children: React.ReactNode }> = ({
+const TransitionWrapper: React.FC<{ 
+  children: React.ReactNode;
+  animation?: string;
+  delay?: number;
+  className?: string;
+}> = ({
   children,
+  animation,
+  delay,
+  className
 }) => (
   <AnimatePresence initial={false} mode="wait">
     {children}
   </AnimatePresence>
 );
 
+export default TransitionWrapper;
