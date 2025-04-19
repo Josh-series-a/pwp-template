@@ -34,4 +34,3 @@ export const getPageContent = (page: number): React.ReactNode => (
     )}
   </>
 );
-
