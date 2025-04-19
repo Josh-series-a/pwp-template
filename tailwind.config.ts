@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -21,6 +20,7 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['SF Pro Display', 'Inter', 'system-ui', 'sans-serif'],
+				serif: ['Playfair Display', 'Georgia', 'serif'],
 				mono: ['SF Mono', 'monospace'],
 			},
 			colors: {
@@ -121,7 +121,11 @@ export default {
 				'pulse-subtle': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.8' }
-				}
+				},
+				'page-turn': {
+					'0%': { transform: 'rotateY(0deg)', transformOrigin: 'left' },
+					'100%': { transform: 'rotateY(-180deg)', transformOrigin: 'left' }
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -133,13 +137,38 @@ export default {
 				'slide-right': 'slide-right 0.6s ease-out',
 				'slide-left': 'slide-left 0.6s ease-out',
 				'blur-in': 'blur-in 0.6s ease-out',
-				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite'
+				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
+				'page-turn': 'page-turn 1.5s ease-in-out forwards',
 			},
+			typography: (theme) => ({
+				DEFAULT: {
+					css: {
+						'--tw-prose-body': theme('colors.foreground'),
+						'--tw-prose-headings': theme('colors.primary'),
+						'--tw-prose-lead': theme('colors.muted.foreground'),
+						'--tw-prose-links': theme('colors.primary'),
+						'--tw-prose-bold': theme('colors.foreground'),
+						'--tw-prose-counters': theme('colors.muted.foreground'),
+						'--tw-prose-bullets': theme('colors.primary'),
+						'--tw-prose-hr': theme('colors.border'),
+						'--tw-prose-quotes': theme('colors.foreground'),
+						'--tw-prose-quote-borders': theme('colors.primary'),
+						'--tw-prose-captions': theme('colors.muted.foreground'),
+						'--tw-prose-code': theme('colors.foreground'),
+						'--tw-prose-pre-code': theme('colors.foreground'),
+						'--tw-prose-pre-bg': theme('colors.muted[50]'),
+						'--tw-prose-th-borders': theme('colors.border'),
+						'--tw-prose-td-borders': theme('colors.border'),
+						lineHeight: '1.8',
+						fontSize: '1.125rem',
+					},
+				},
+			}),
 			backdropFilter: {
 				'none': 'none',
 				'blur': 'blur(20px)'
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography')],
 } satisfies Config;
