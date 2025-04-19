@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import PageTransition from '@/components/PageTransition';
 
 const Read = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -16,22 +17,21 @@ const Read = () => {
   const [isSpreadView, setIsSpreadView] = useState(true);
   const [showUI, setShowUI] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isPageTurning, setIsPageTurning] = useState(false);
+  const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
 
-  // Update window width on resize
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Automatically switch to single page view on smaller screens
   useEffect(() => {
     if (windowWidth < 1024) {
       setIsSpreadView(false);
     }
   }, [windowWidth]);
 
-  // Mock data for book chapters
   const chapters = [
     {
       id: 1,
@@ -97,7 +97,6 @@ Your business's mission and vision should guide every major decision you make. T
     }
   ];
 
-  // Utility functions
   const handleZoomIn = () => {
     setScale(prev => Math.min(prev + 0.1, 1.5));
   };
@@ -125,16 +124,28 @@ Your business's mission and vision should guide every major decision you make. T
     setIsSpreadView(!isSpreadView);
   };
 
-  // Calculate current page content
   const getChapterByPage = (page) => {
     return chapters[Math.min(page - 1, chapters.length - 1)];
   };
 
   const currentChapter = getChapterByPage(currentPage);
-  
+
+  const handlePageChange = (direction: 'next' | 'prev') => {
+    setPageDirection(direction);
+    setIsPageTurning(true);
+    
+    setTimeout(() => {
+      if (direction === 'next') {
+        setCurrentPage(prev => Math.min(prev + 1, chapters.length));
+      } else {
+        setCurrentPage(prev => Math.max(prev - 1, 1));
+      }
+      setTimeout(() => setIsPageTurning(false), 50);
+    }, 300);
+  };
+
   return (
     <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#f8f5ed] dark:bg-[#252117] flex flex-col">
-      {/* Top Navigation Bar */}
       {showUI && (
         <div className="flex items-center justify-between p-3 border-b bg-muted/20 shadow-sm backdrop-blur-sm">
           <div className="flex items-center gap-2">
@@ -155,11 +166,11 @@ Your business's mission and vision should guide every major decision you make. T
             </div>
             
             <div className="flex items-center gap-1 bg-background/80 rounded-md px-2 py-1">
-              <Button variant="ghost" size="icon" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>
+              <Button variant="ghost" size="icon" onClick={() => handlePageChange('prev')}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="mx-2 text-sm font-serif">Page {currentPage}</span>
-              <Button variant="ghost" size="icon" onClick={() => setCurrentPage(prev => Math.min(prev + 1, chapters.length))}>
+              <Button variant="ghost" size="icon" onClick={() => handlePageChange('next')}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -210,14 +221,10 @@ Your business's mission and vision should guide every major decision you make. T
         </div>
       )}
 
-      {/* Book Content Container - Full Screen */}
-      <div 
-        className={cn(
-          "flex-1 flex justify-center overflow-hidden",
-          "bg-[#f8f5ed] dark:bg-[#252117]"
-        )}
-      >
-        {/* Chapter Tabs (Vertical Bookmarks) */}
+      <div className={cn(
+        "flex-1 flex justify-center overflow-hidden",
+        "bg-[#f8f5ed] dark:bg-[#252117]"
+      )}>
         <div className={cn(
           "flex flex-col gap-2 pr-2 overflow-y-auto",
           showUI ? "pt-10" : "pt-4"
@@ -244,93 +251,91 @@ Your business's mission and vision should guide every major decision you make. T
           ))}
         </div>
         
-        {/* Book Spread - Full Screen */}
-        <div 
-          className={cn(
-            "relative overflow-hidden book-container w-full max-w-[1400px]",
-            isSpreadView ? "flex" : "block"
-          )}
-          style={{ 
-            transform: `scale(${scale})`, 
-            transformOrigin: 'center top',
-          }}
-        >
-          {/* Left page (navigation or notes) in spread view */}
-          {isSpreadView && (
-            <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] shadow-[inset_-25px_0_25px_-20px_rgba(0,0,0,0.3)] p-12 overflow-y-auto">
-              <div className="h-full flex flex-col">
-                <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
-                <div className="space-y-4">
-                  {chapters.map(chapter => (
-                    <div 
-                      key={chapter.id} 
-                      className={cn(
-                        "cursor-pointer p-3 border-l-2 transition-colors",
-                        activeTab === chapter.id.toString() 
-                          ? "border-primary bg-primary/5" 
-                          : "border-muted hover:border-primary/50"
-                      )}
-                      onClick={() => {
-                        setActiveTab(chapter.id.toString());
-                        setCurrentPage(chapter.id);
-                      }}
-                    >
-                      <h3 className="font-serif text-lg">{chapter.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{chapter.summary}</p>
+        <PageTransition isAnimating={isPageTurning} direction={pageDirection}>
+          <div 
+            className={cn(
+              "relative overflow-hidden book-container w-full max-w-[1400px]",
+              isSpreadView ? "flex" : "block"
+            )}
+            style={{ 
+              transform: `scale(${scale})`, 
+              transformOrigin: 'center top',
+            }}
+          >
+            {isSpreadView && (
+              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] shadow-[inset_-25px_0_25px_-20px_rgba(0,0,0,0.3)] p-12 overflow-y-auto">
+                <div className="h-full flex flex-col">
+                  <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
+                  <div className="space-y-4">
+                    {chapters.map(chapter => (
+                      <div 
+                        key={chapter.id} 
+                        className={cn(
+                          "cursor-pointer p-3 border-l-2 transition-colors",
+                          activeTab === chapter.id.toString() 
+                            ? "border-primary bg-primary/5" 
+                            : "border-muted hover:border-primary/50"
+                        )}
+                        onClick={() => {
+                          setActiveTab(chapter.id.toString());
+                          setCurrentPage(chapter.id);
+                        }}
+                      >
+                        <h3 className="font-serif text-lg">{chapter.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{chapter.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-auto pt-8 border-t border-muted/30">
+                    <h3 className="font-serif text-sm mb-2">Notes</h3>
+                    <div className="bg-[#f2efe6] dark:bg-[#2a271e] p-3 rounded min-h-[120px] text-muted-foreground italic text-sm">
+                      Click to add personal notes...
                     </div>
-                  ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className={cn(
+              "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto",
+              isSpreadView 
+                ? "shadow-[inset_25px_0_25px_-20px_rgba(0,0,0,0.3)]" 
+                : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
+            )}>
+              <div>
+                <h1 className="text-3xl font-serif mb-2 font-bold">{currentChapter.title}</h1>
+                <p className="text-sm text-muted-foreground">Theme: {currentChapter.theme}</p>
+                
+                <div className="my-6 pl-6 border-l-4 border-primary/20">
+                  <p className="text-lg italic text-muted-foreground font-serif">{currentChapter.quote}</p>
                 </div>
 
-                <div className="mt-auto pt-8 border-t border-muted/30">
-                  <h3 className="font-serif text-sm mb-2">Notes</h3>
-                  <div className="bg-[#f2efe6] dark:bg-[#2a271e] p-3 rounded min-h-[120px] text-muted-foreground italic text-sm">
-                    Click to add personal notes...
+                <div className="prose prose-slate prose-headings:font-serif prose-p:text-lg prose-p:leading-relaxed dark:prose-invert max-w-none">
+                  <p className="whitespace-pre-line text-lg font-[Georgia] leading-relaxed">{currentChapter.content}</p>
+                </div>
+
+                <div className="flex justify-between mt-12 text-sm text-muted-foreground">
+                  <div>
+                    {currentPage > 1 && 
+                      <button onClick={() => handlePageChange('prev')} className="flex items-center">
+                        <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                      </button>
+                    }
+                  </div>
+                  <div>
+                    {currentPage < chapters.length &&
+                      <button onClick={() => handlePageChange('next')} className="flex items-center">
+                        Next <ChevronRight className="h-4 w-4 ml-1" />
+                      </button>
+                    }
                   </div>
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Right page (content) */}
-          <div className={cn(
-            "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto",
-            isSpreadView 
-              ? "shadow-[inset_25px_0_25px_-20px_rgba(0,0,0,0.3)]" 
-              : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
-          )}>
-            <div>
-              <h1 className="text-3xl font-serif mb-2 font-bold">{currentChapter.title}</h1>
-              <p className="text-sm text-muted-foreground">Theme: {currentChapter.theme}</p>
-              
-              <div className="my-6 pl-6 border-l-4 border-primary/20">
-                <p className="text-lg italic text-muted-foreground font-serif">{currentChapter.quote}</p>
-              </div>
-
-              <div className="prose prose-slate prose-headings:font-serif prose-p:text-lg prose-p:leading-relaxed dark:prose-invert max-w-none">
-                <p className="whitespace-pre-line text-lg font-[Georgia] leading-relaxed">{currentChapter.content}</p>
-              </div>
-
-              <div className="flex justify-between mt-12 text-sm text-muted-foreground">
-                <div>
-                  {currentPage > 1 && 
-                    <button onClick={() => setCurrentPage(prev => prev - 1)} className="flex items-center">
-                      <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                    </button>
-                  }
-                </div>
-                <div>
-                  {currentPage < chapters.length &&
-                    <button onClick={() => setCurrentPage(prev => prev + 1)} className="flex items-center">
-                      Next <ChevronRight className="h-4 w-4 ml-1" />
-                    </button>
-                  }
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
+        </PageTransition>
 
-        {/* Minimized UI Toggle */}
         {!showUI && (
           <Button 
             variant="ghost" 
@@ -343,7 +348,6 @@ Your business's mission and vision should guide every major decision you make. T
         )}
       </div>
 
-      {/* Mobile view warning */}
       {windowWidth < 768 && isSpreadView && (
         <div className="fixed bottom-4 left-0 right-0 mx-auto w-max bg-background/90 backdrop-blur-sm p-2 rounded-full shadow-lg">
           <Button variant="ghost" size="sm" onClick={() => setIsSpreadView(false)}>

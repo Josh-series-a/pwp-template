@@ -123,9 +123,25 @@ export default {
 					'50%': { opacity: '0.8' }
 				},
 				'page-turn': {
-					'0%': { transform: 'rotateY(0deg)', transformOrigin: 'left' },
-					'100%': { transform: 'rotateY(-180deg)', transformOrigin: 'left' }
+					'0%': { 
+						transform: "rotateY(0deg)",
+						transformOrigin: "left",
+					},
+					'100%': { 
+						transform: "rotateY(-180deg)",
+						transformOrigin: "left",
+					}
 				},
+				'page-turn-reverse': {
+					'0%': { 
+						transform: "rotateY(-180deg)",
+						transformOrigin: "left",
+					},
+					'100%': { 
+						transform: "rotateY(0deg)",
+						transformOrigin: "left",
+					}
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -138,7 +154,8 @@ export default {
 				'slide-left': 'slide-left 0.6s ease-out',
 				'blur-in': 'blur-in 0.6s ease-out',
 				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
-				'page-turn': 'page-turn 1.5s ease-in-out forwards',
+				'page-turn': 'page-turn 0.7s ease-in-out',
+				'page-turn-reverse': 'page-turn-reverse 0.7s ease-in-out'
 			},
 			typography: (theme) => ({
 				DEFAULT: {
