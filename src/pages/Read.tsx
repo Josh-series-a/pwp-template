@@ -1,14 +1,18 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { BookOpen, Quote } from 'lucide-react';
+import { BookOpen, Search, SkipBack, SkipForward, Share, ZoomIn, ZoomOut, Printer, ExternalLink, Download } from 'lucide-react';
 
 const Read = () => {
   const [activeTab, setActiveTab] = useState('1');
-  
+  const [scale, setScale] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Mock data for book chapters (using the same data structure as BookInsights)
   const chapters = [
     {
@@ -75,71 +79,133 @@ Your business's mission and vision should guide every major decision you make. T
     }
   ];
 
+  const handleZoomIn = () => {
+    setScale(prev => Math.min(prev + 0.1, 1.5));
+  };
+
+  const handleZoomOut = () => {
+    setScale(prev => Math.max(prev - 0.1, 0.6));
+  };
+
+  const handleShare = () => {
+    navigator.share?.({
+      title: 'Book Chapter',
+      url: window.location.href
+    }).catch(console.error);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
-    <DashboardLayout title="Read">
-      <div className="space-y-6">
-        <div className="max-w-3xl">
-          <p className="text-muted-foreground mb-6">
-            Read through the book content chapter by chapter. Take notes and highlight key concepts that resonate with your business journey.
-          </p>
+    <div className="fixed inset-0 bg-background">
+      {/* Top Navigation Bar */}
+      <div className="flex items-center justify-between p-4 border-b bg-muted/40">
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" />
+          <span className="font-semibold">Book Reader</span>
         </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 bg-background rounded-md px-2">
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-[200px]"
+            />
+            <Search className="h-4 w-4 text-muted-foreground" />
+          </div>
+          
+          <div className="flex items-center gap-1 bg-background rounded-md px-2 py-1">
+            <Button variant="ghost" size="icon" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>
+              <SkipBack className="h-4 w-4" />
+            </Button>
+            <span className="mx-2 text-sm">Page {currentPage}</span>
+            <Button variant="ghost" size="icon" onClick={() => setCurrentPage(prev => prev + 1)}>
+              <SkipForward className="h-4 w-4" />
+            </Button>
+          </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          <Card className="overflow-hidden">
-            <CardHeader className="border-b bg-muted/40">
-              <div className="flex items-center gap-4">
-                <BookOpen className="h-5 w-5 text-primary" />
-                <CardTitle>Book Content</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="w-full"
-              >
-                <TabsList className="w-full justify-start px-6 pt-4 bg-background border-b">
-                  {chapters.map((chapter) => (
-                    <TabsTrigger
-                      key={chapter.id}
-                      value={chapter.id.toString()}
-                      className={cn(
-                        "data-[state=active]:bg-muted",
-                        "rounded-none border-b-2 border-transparent",
-                        "data-[state=active]:border-primary"
-                      )}
-                    >
-                      Chapter {chapter.id}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                {chapters.map((chapter) => (
-                  <TabsContent
-                    key={chapter.id}
-                    value={chapter.id.toString()}
-                    className="p-6 space-y-6"
-                  >
-                    <div className="space-y-4">
-                      <h2 className="text-2xl font-semibold">{chapter.title}</h2>
-                      <p className="text-sm text-muted-foreground">Theme: {chapter.theme}</p>
-                      
-                      <div className="bg-muted p-4 rounded-md flex gap-3 my-4">
-                        <Quote className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
-                        <p className="text-sm italic">{chapter.quote}</p>
-                      </div>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={handleZoomOut}>
+              <ZoomOut className="h-4 w-4" />
+            </Button>
+            <span className="mx-1 text-sm">{Math.round(scale * 100)}%</span>
+            <Button variant="ghost" size="icon" onClick={handleZoomIn}>
+              <ZoomIn className="h-4 w-4" />
+            </Button>
+          </div>
 
-                      <div className="prose max-w-none">
-                        <p className="whitespace-pre-line">{chapter.content}</p>
-                      </div>
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </CardContent>
-          </Card>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" onClick={handleShare}>
+              <Share className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={handlePrint}>
+              <Printer className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+              <a href={window.location.href} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+              <a href="#" download="chapter.pdf">
+                <Download className="h-4 w-4" />
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
-    </DashboardLayout>
+
+      {/* Book Content */}
+      <div className="h-[calc(100vh-73px)] overflow-auto bg-muted/10 p-8">
+        <div 
+          className="max-w-4xl mx-auto bg-background rounded-lg shadow-lg p-12"
+          style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
+        >
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="w-full justify-start mb-8">
+              {chapters.map((chapter) => (
+                <TabsTrigger
+                  key={chapter.id}
+                  value={chapter.id.toString()}
+                  className={cn(
+                    "data-[state=active]:bg-primary/10",
+                    "data-[state=active]:text-primary"
+                  )}
+                >
+                  Chapter {chapter.id}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {chapters.map((chapter) => (
+              <TabsContent
+                key={chapter.id}
+                value={chapter.id.toString()}
+                className="space-y-6 [&_p]:leading-7"
+              >
+                <div className="space-y-4">
+                  <h1 className="text-4xl font-serif mb-2">{chapter.title}</h1>
+                  <p className="text-sm text-muted-foreground">Theme: {chapter.theme}</p>
+                  
+                  <div className="my-6 pl-6 border-l-4 border-primary/20">
+                    <p className="text-lg italic text-muted-foreground">{chapter.quote}</p>
+                  </div>
+
+                  <div className="prose prose-gray max-w-none">
+                    <p className="whitespace-pre-line text-lg">{chapter.content}</p>
+                  </div>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+      </div>
+    </div>
   );
 };
 
