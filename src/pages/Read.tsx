@@ -131,6 +131,8 @@ Your business's mission and vision should guide every major decision you make. T
   const currentChapter = getChapterByPage(currentPage);
 
   const handlePageChange = (direction: 'next' | 'prev') => {
+    if (isPageTurning) return; // Prevent rapid clicking during animation
+    
     setPageDirection(direction);
     setIsPageTurning(true);
     
@@ -259,7 +261,7 @@ Your business's mission and vision should guide every major decision you make. T
         >
           <div 
             className={cn(
-              "relative overflow-hidden book-container w-full max-w-[1400px]",
+              "relative overflow-hidden w-full max-w-[1400px]",
               isSpreadView ? "flex" : "block"
             )}
             style={{ 
@@ -269,7 +271,7 @@ Your business's mission and vision should guide every major decision you make. T
             key={`page-${currentPage}`}
           >
             {isSpreadView && (
-              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] shadow-[inset_-25px_0_25px_-20px_rgba(0,0,0,0.3)] p-12 overflow-y-auto relative">
+              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative">
                 <div className="h-full flex flex-col">
                   <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
                   <div className="space-y-4">
@@ -308,10 +310,12 @@ Your business's mission and vision should guide every major decision you make. T
               </div>
             )}
 
+            {isSpreadView && <div className="book-spine"></div>}
+
             <div className={cn(
               "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative",
               isSpreadView 
-                ? "shadow-[inset_25px_0_25px_-20px_rgba(0,0,0,0.3)]" 
+                ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.3)]" 
                 : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
             )}>
               <div>

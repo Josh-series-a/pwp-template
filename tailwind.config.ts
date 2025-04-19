@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -126,20 +127,30 @@ export default {
 					'0%': { 
 						transform: "rotateY(0deg)",
 						transformOrigin: "left",
+						boxShadow: "0 0 0 rgba(0,0,0,0)"
+					},
+					'50%': {
+						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
 					},
 					'100%': { 
 						transform: "rotateY(-180deg)",
 						transformOrigin: "left",
+						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					}
 				},
 				'page-turn-reverse': {
 					'0%': { 
 						transform: "rotateY(-180deg)",
 						transformOrigin: "left",
+						boxShadow: "0 0 0 rgba(0,0,0,0)"
+					},
+					'50%': {
+						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
 					},
 					'100%': { 
 						transform: "rotateY(0deg)",
 						transformOrigin: "left",
+						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					}
 				}
 			},

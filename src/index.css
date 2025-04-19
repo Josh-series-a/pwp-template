@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -125,5 +124,24 @@
 
   .smooth-transition {
     @apply transition-all duration-300 ease-in-out;
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .book-spine {
+    @apply absolute left-1/2 top-0 bottom-0 w-[20px] -ml-[10px] bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 z-10 transform -translate-x-[8px];
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
   }
 }

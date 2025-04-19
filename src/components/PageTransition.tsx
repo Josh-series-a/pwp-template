@@ -27,10 +27,10 @@ const PageTransition = ({
   }, [children, isAnimating]);
   
   return (
-    <div className="relative">
+    <div className="relative book-container perspective-1000">
       <div
         className={cn(
-          "relative transition-transform duration-700 ease-in-out",
+          "relative transition-all duration-700 ease-in-out transform-style-3d",
           isAnimating && direction === 'next' && "animate-page-turn",
           isAnimating && direction === 'prev' && "animate-page-turn-reverse"
         )}
