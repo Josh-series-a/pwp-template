@@ -170,7 +170,7 @@ const Exercises = () => {
   });
 
   return (
-    <DashboardLayout title="Exercises">
+    <DashboardLayout title={selectedCompany ? `${selectedCompany} Exercises` : "Exercises"}>
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <p className="text-muted-foreground">
