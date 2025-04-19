@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -105,9 +104,17 @@ const Exercises = () => {
     },
   ];
 
+  // Filter buttons configuration
+  const filterOptions = [
+    { value: "all", label: "All" },
+    { value: "in-progress", label: "In Progress" },
+    { value: "completed", label: "Completed" },
+    { value: "suggested", label: "Suggested" }
+  ];
+
   const filteredExercises = exercises.filter(exercise => {
     if (activeTab === "all") return true;
-    return exercise.status === activeTab || exercise.tags.includes(activeTab);
+    return exercise.status === activeTab;
   });
 
   const getCategoryIcon = (category: string) => {
@@ -192,7 +199,20 @@ const Exercises = () => {
           </div>
         </div>
 
-        
+        {/* Add filter buttons */}
+        <div className="flex gap-2 flex-wrap">
+          {filterOptions.map((option) => (
+            <Button
+              key={option.value}
+              variant={activeTab === option.value ? "default" : "outline"}
+              onClick={() => setActiveTab(option.value)}
+              className="min-w-[100px]"
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredExercises.map((exercise) => (
             <Card key={exercise.id} className="overflow-hidden">
