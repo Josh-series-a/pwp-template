@@ -1,16 +1,9 @@
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { 
   ArrowRight,
   BookOpen,
@@ -19,14 +12,16 @@ import {
   BarChart2,
   Users,
   PiggyBank,
-  ClipboardList,
-  Plus
+  ClipboardList
 } from 'lucide-react';
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
 
 const Exercises = () => {
-  const navigate = useNavigate();
-  const [filterCategory, setFilterCategory] = useState<string>("all");
-  
   // Mock data for exercises
   const exercises = [
     { 
@@ -97,9 +92,11 @@ const Exercises = () => {
     },
   ];
 
+  const [activeTab, setActiveTab] = useState("all");
+
   const filteredExercises = exercises.filter(exercise => {
-    if (filterCategory === "all") return true;
-    return exercise.category === filterCategory || exercise.tags.includes(filterCategory);
+    if (activeTab === "all") return true;
+    return exercise.status === activeTab || exercise.tags.includes(activeTab);
   });
 
   const getCategoryIcon = (category: string) => {
@@ -132,36 +129,19 @@ const Exercises = () => {
     <DashboardLayout title="Exercises">
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div className="flex items-center gap-4">
-            <Button 
-              onClick={() => navigate('/dashboard/reports/new')}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              New Company
-            </Button>
-            
-            <Select
-              value={filterCategory}
-              onValueChange={setFilterCategory}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter exercises" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Exercises</SelectItem>
-                <SelectItem value="planning">Planning</SelectItem>
-                <SelectItem value="people">People</SelectItem>
-                <SelectItem value="profit">Profit</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
           <p className="text-muted-foreground">
             Interactive worksheets pulled from the book, powered by AI
           </p>
+          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
+            <TabsList className="grid grid-cols-4 md:grid-cols-5 w-full md:w-auto">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="in-progress">In Progress</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+              <TabsTrigger value="suggested">Suggested</TabsTrigger>
+              <TabsTrigger value="people" className="hidden md:inline-flex">People</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
-        
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredExercises.map((exercise) => (
