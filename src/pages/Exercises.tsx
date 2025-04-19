@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +11,8 @@ import {
   BarChart2,
   Users,
   PiggyBank,
-  ClipboardList
+  ClipboardList,
+  Plus
 } from 'lucide-react';
 import { 
   Tabs, 
@@ -20,8 +20,19 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/components/ui/tabs";
+import { useNavigate } from 'react-router-dom';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Exercises = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const [selectedCompany, setSelectedCompany] = useState<string>('');
+
   // Mock data for exercises
   const exercises = [
     { 
@@ -125,6 +136,30 @@ const Exercises = () => {
     }
   };
 
+  // Fetch companies for the current user
+  const { data: companies = [], isLoading: isLoadingCompanies } = useQuery({
+    queryKey: ['companies', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reports')
+        .select('company_name')
+        .eq('user_id', user?.id)
+        .distinct();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load companies",
+          variant: "destructive",
+        });
+        return [];
+      }
+
+      return data?.map(item => item.company_name) || [];
+    },
+    enabled: !!user?.id,
+  });
+
   return (
     <DashboardLayout title="Exercises">
       <div className="space-y-6">
@@ -132,16 +167,29 @@ const Exercises = () => {
           <p className="text-muted-foreground">
             Interactive worksheets pulled from the book, powered by AI
           </p>
-          <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-            <TabsList className="grid grid-cols-4 md:grid-cols-5 w-full md:w-auto">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="suggested">Suggested</TabsTrigger>
-              <TabsTrigger value="people" className="hidden md:inline-flex">People</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex gap-4 items-center">
+            <Select
+              value={selectedCompany}
+              onValueChange={setSelectedCompany}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select company" />
+              </SelectTrigger>
+              <SelectContent>
+                {companies.map((company) => (
+                  <SelectItem key={company} value={company}>
+                    {company}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={() => navigate('/dashboard/reports/new')}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Company
+            </Button>
+          </div>
         </div>
+
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredExercises.map((exercise) => (
