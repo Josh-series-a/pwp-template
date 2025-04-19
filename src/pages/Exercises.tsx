@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,24 +15,25 @@ import {
   ClipboardList,
   Plus
 } from 'lucide-react';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Exercises = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
   const [selectedCompany, setSelectedCompany] = useState<string>('');
+  const [activeTab, setActiveTab] = useState("all");
 
   // Mock data for exercises
   const exercises = [
@@ -103,8 +105,6 @@ const Exercises = () => {
     },
   ];
 
-  const [activeTab, setActiveTab] = useState("all");
-
   const filteredExercises = exercises.filter(exercise => {
     if (activeTab === "all") return true;
     return exercise.status === activeTab || exercise.tags.includes(activeTab);
@@ -140,11 +140,11 @@ const Exercises = () => {
   const { data: companies = [], isLoading: isLoadingCompanies } = useQuery({
     queryKey: ['companies', user?.id],
     queryFn: async () => {
+      // Fix: Use select() with a distinct option instead of distinct() method
       const { data, error } = await supabase
         .from('reports')
         .select('company_name')
-        .eq('user_id', user?.id)
-        .distinct();
+        .eq('user_id', user?.id);
 
       if (error) {
         toast({
@@ -155,7 +155,9 @@ const Exercises = () => {
         return [];
       }
 
-      return data?.map(item => item.company_name) || [];
+      // Handle the distinct functionality manually with a Set
+      const uniqueCompanies = [...new Set(data?.map(item => item.company_name))];
+      return uniqueCompanies || [];
     },
     enabled: !!user?.id,
   });
