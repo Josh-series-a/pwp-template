@@ -140,8 +140,8 @@ Your business's mission and vision should guide every major decision you make. T
       } else {
         setCurrentPage(prev => Math.max(prev - 1, 1));
       }
-      setTimeout(() => setIsPageTurning(false), 50);
-    }, 300);
+      setTimeout(() => setIsPageTurning(false), 700);
+    }, 700);
   };
 
   return (
@@ -266,6 +266,7 @@ Your business's mission and vision should guide every major decision you make. T
               transform: `scale(${scale})`, 
               transformOrigin: 'center top',
             }}
+            key={`page-${currentPage}`}
           >
             {isSpreadView && (
               <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] shadow-[inset_-25px_0_25px_-20px_rgba(0,0,0,0.3)] p-12 overflow-y-auto relative">
