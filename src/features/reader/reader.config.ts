@@ -19,10 +19,6 @@ export const getChapterForPage = (page: number) =>
 export const getStartPageForRoute = (segment?: string) =>
   CHAPTERS.find(c => c.route.endsWith(segment || ''))?.startPage ?? 1;
 
-/* ------------------------------------------------------------------
-   This demo returns *placeholder* JSX for each page number.
-   Replace with real MDX / CMS fetch later.
-------------------------------------------------------------------- */
 export const getPageContent = (page: number): React.ReactNode => (
   <>
     <h3>Page {page}</h3>
