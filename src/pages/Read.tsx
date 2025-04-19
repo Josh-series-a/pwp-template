@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { 
@@ -8,7 +7,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Read = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -135,8 +133,8 @@ Your business's mission and vision should guide every major decision you make. T
   const currentChapter = getChapterByPage(currentPage);
   
   return (
-    <div className="fixed inset-0 bg-[#f8f5ed] dark:bg-[#252117]">
-      {/* Top Navigation Bar - only shown when showUI is true */}
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#f8f5ed] dark:bg-[#252117] flex flex-col">
+      {/* Top Navigation Bar */}
       {showUI && (
         <div className="flex items-center justify-between p-3 border-b bg-muted/20 shadow-sm backdrop-blur-sm">
           <div className="flex items-center gap-2">
@@ -212,17 +210,16 @@ Your business's mission and vision should guide every major decision you make. T
         </div>
       )}
 
-      {/* Book Content */}
+      {/* Book Content Container - Full Screen */}
       <div 
         className={cn(
-          "flex justify-center overflow-auto bg-[#f8f5ed] dark:bg-[#252117]",
-          showUI ? "h-[calc(100vh-57px)]" : "h-screen",
-          showUI ? "pt-4" : "pt-0"
+          "flex-1 flex justify-center overflow-hidden",
+          "bg-[#f8f5ed] dark:bg-[#252117]"
         )}
       >
-        {/* Book chapter tabs as vertical bookmarks */}
+        {/* Chapter Tabs (Vertical Bookmarks) */}
         <div className={cn(
-          "flex flex-col gap-2 pr-2",
+          "flex flex-col gap-2 pr-2 overflow-y-auto",
           showUI ? "pt-10" : "pt-4"
         )}>
           {chapters.map(chapter => (
@@ -247,17 +244,15 @@ Your business's mission and vision should guide every major decision you make. T
           ))}
         </div>
         
-        {/* Book spread */}
+        {/* Book Spread - Full Screen */}
         <div 
           className={cn(
-            "relative overflow-hidden book-container",
-            isSpreadView ? "flex" : "block",
-            showUI ? "" : "pt-4"
+            "relative overflow-hidden book-container w-full max-w-[1400px]",
+            isSpreadView ? "flex" : "block"
           )}
           style={{ 
             transform: `scale(${scale})`, 
             transformOrigin: 'center top',
-            maxWidth: isSpreadView ? '1400px' : '700px',
           }}
         >
           {/* Left page (navigation or notes) in spread view */}
@@ -335,13 +330,13 @@ Your business's mission and vision should guide every major decision you make. T
           </div>
         </div>
 
-        {/* Show minimized UI toggle button when UI is hidden */}
+        {/* Minimized UI Toggle */}
         {!showUI && (
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={toggleFullscreen}
-            className="fixed top-4 right-4 bg-background/50 backdrop-blur-sm"
+            onClick={() => setShowUI(true)}
+            className="fixed top-4 right-4 bg-background/50 backdrop-blur-sm z-50"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
