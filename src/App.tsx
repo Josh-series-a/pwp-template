@@ -22,6 +22,7 @@ import BookSession from "./pages/BookSession";
 import Profile from "./pages/Profile";
 import PreloaderDemo from './pages/PreloaderDemo';
 import Read from './pages/Read';
+import Read2 from './pages/Read2';
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,11 @@ const AppContent = () => {
           <Route path="read" element={
             <ProtectedRoute>
               <Read />
+            </ProtectedRoute>
+          } />
+          <Route path="read2" element={
+            <ProtectedRoute>
+              <Read2 />
             </ProtectedRoute>
           } />
         </Route>
