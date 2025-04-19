@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -147,7 +147,6 @@ const Exercises = () => {
   const { data: companies = [], isLoading: isLoadingCompanies } = useQuery({
     queryKey: ['companies', user?.id],
     queryFn: async () => {
-      // Fix: Use select() with a distinct option instead of distinct() method
       const { data, error } = await supabase
         .from('reports')
         .select('company_name')
@@ -168,6 +167,13 @@ const Exercises = () => {
     },
     enabled: !!user?.id,
   });
+
+  // Set the default company when companies are loaded
+  useEffect(() => {
+    if (companies.length > 0 && !selectedCompany) {
+      setSelectedCompany(companies[0]);
+    }
+  }, [companies, selectedCompany]);
 
   return (
     <DashboardLayout title={selectedCompany ? `${selectedCompany} Exercises` : "Exercises"}>
