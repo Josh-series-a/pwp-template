@@ -6,18 +6,33 @@ interface PageTransitionProps {
   children: React.ReactNode;
   isAnimating: boolean;
   direction: 'next' | 'prev';
+  pageNumber?: number;
+  totalPages?: number;
 }
 
-const PageTransition = ({ children, isAnimating, direction }: PageTransitionProps) => {
+const PageTransition = ({ 
+  children, 
+  isAnimating, 
+  direction,
+  pageNumber,
+  totalPages 
+}: PageTransitionProps) => {
   return (
-    <div
-      className={cn(
-        "relative transition-transform duration-700 ease-in-out",
-        isAnimating && direction === 'next' && "animate-page-turn",
-        isAnimating && direction === 'prev' && "animate-page-turn-reverse"
+    <div className="relative">
+      <div
+        className={cn(
+          "relative transition-transform duration-700 ease-in-out",
+          isAnimating && direction === 'next' && "animate-page-turn",
+          isAnimating && direction === 'prev' && "animate-page-turn-reverse"
+        )}
+      >
+        {children}
+      </div>
+      {pageNumber && totalPages && (
+        <div className="absolute bottom-4 left-0 right-0 text-center font-serif text-sm text-muted-foreground">
+          Page {pageNumber} of {totalPages}
+        </div>
       )}
-    >
-      {children}
     </div>
   );
 };

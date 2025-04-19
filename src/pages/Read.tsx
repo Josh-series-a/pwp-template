@@ -251,7 +251,12 @@ Your business's mission and vision should guide every major decision you make. T
           ))}
         </div>
         
-        <PageTransition isAnimating={isPageTurning} direction={pageDirection}>
+        <PageTransition 
+          isAnimating={isPageTurning} 
+          direction={pageDirection}
+          pageNumber={currentPage}
+          totalPages={chapters.length}
+        >
           <div 
             className={cn(
               "relative overflow-hidden book-container w-full max-w-[1400px]",
