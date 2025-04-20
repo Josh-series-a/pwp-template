@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -123,15 +122,14 @@ export default {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.8' }
 				},
-				// New animations for left-to-right and right-to-left page turning
-				'page-turn-right': {
+				'page-flip-forward': {
 					'0%': { 
 						transform: "rotateY(0deg)",
 						transformOrigin: "left center",
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					},
 					'50%': {
-						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
+						boxShadow: "-10px 0 20px rgba(0,0,0,0.4)"
 					},
 					'100%': { 
 						transform: "rotateY(-180deg)",
@@ -139,14 +137,14 @@ export default {
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					}
 				},
-				'page-turn-left': {
+				'page-flip-backward': {
 					'0%': { 
 						transform: "rotateY(-180deg)",
 						transformOrigin: "left center", 
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					},
 					'50%': {
-						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
+						boxShadow: "-10px 0 20px rgba(0,0,0,0.4)"
 					},
 					'100%': { 
 						transform: "rotateY(0deg)",
@@ -166,8 +164,8 @@ export default {
 				'slide-left': 'slide-left 0.6s ease-out',
 				'blur-in': 'blur-in 0.6s ease-out',
 				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
-				'page-turn-right': 'page-turn-right 0.7s ease-in-out',
-				'page-turn-left': 'page-turn-left 0.7s ease-in-out'
+				'page-flip-forward': 'page-flip-forward 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000)',
+				'page-flip-backward': 'page-flip-backward 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000)'
 			},
 			typography: (theme) => ({
 				DEFAULT: {

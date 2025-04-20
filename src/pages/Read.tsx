@@ -262,7 +262,7 @@ Your business's mission and vision should guide every major decision you make. T
           <div 
             className={cn(
               "relative overflow-hidden w-full max-w-[1400px]",
-              isSpreadView ? "flex" : "block"
+              isSpreadView ? "flex justify-center" : "block mx-auto"
             )}
             style={{ 
               transform: `scale(${scale})`, 
@@ -315,7 +315,7 @@ Your business's mission and vision should guide every major decision you make. T
             <div className={cn(
               "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative",
               isSpreadView 
-                ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.3)]" 
+                ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.2)]" 
                 : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
             )}>
               <div>
