@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -13,6 +12,21 @@ import PageTransition from '@/components/PageTransition';
 import ListenDialog from '@/components/ListenDialog';
 import bookChapters from '@/data/bookChapters';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const Read = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -25,6 +39,7 @@ const Read = () => {
   const [isPageTurning, setIsPageTurning] = useState(false);
   const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
   const [listenDialogOpen, setListenDialogOpen] = useState(false);
+  const [isSkipToPageOpen, setIsSkipToPageOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -116,6 +131,19 @@ const Read = () => {
     setListenDialogOpen(false);
   };
 
+  const handleSkipToPage = (pageNumber: string) => {
+    const newPage = parseInt(pageNumber, 10);
+    if (newPage >= 1 && newPage <= chapters.length) {
+      setPageDirection(newPage > currentPage ? 'next' : 'prev');
+      setIsPageTurning(true);
+      setTimeout(() => {
+        setCurrentPage(newPage);
+        setIsPageTurning(false);
+        setIsSkipToPageOpen(false);
+      }, 300);
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -151,6 +179,43 @@ const Read = () => {
                 className="pl-10 w-40 lg:w-64"
               />
             </div>
+            
+            <Drawer open={isSkipToPageOpen} onOpenChange={setIsSkipToPageOpen}>
+              <DrawerTrigger asChild>
+                <Button variant="ghost" size="icon" className="hidden sm:flex">
+                  <BookOpen className="h-5 w-5" />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full max-w-sm">
+                  <DrawerHeader>
+                    <DrawerTitle>Skip to Page</DrawerTitle>
+                  </DrawerHeader>
+                  <div className="p-4">
+                    <Select onValueChange={handleSkipToPage} value={currentPage.toString()}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a page" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {chapters.map((chapter, index) => (
+                          <SelectItem key={chapter.id} value={chapter.id.toString()}>
+                            Chapter {chapter.id}: {chapter.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <DrawerFooter>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setIsSkipToPageOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </DrawerFooter>
+                </div>
+              </DrawerContent>
+            </Drawer>
             
             <Button variant="ghost" size="icon" onClick={handleShare} className="hidden sm:flex">
               <Share className="h-5 w-5" />
