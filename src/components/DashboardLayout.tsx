@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
-import { Home, FileText, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
+import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
