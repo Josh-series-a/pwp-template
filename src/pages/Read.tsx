@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   BookOpen, Search, ChevronLeft, ChevronRight, X,
@@ -29,10 +30,19 @@ import {
 } from "@/components/ui/select"
 
 const Read = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
+  
+  // Parse the chapter from URL query parameters
+  const searchParams = new URLSearchParams(location.search);
+  const chapterParam = searchParams.get('chapter');
+  const initialChapter = chapterParam ? parseInt(chapterParam, 10) : 1;
+  
   const [activeTab, setActiveTab] = useState('1');
   const [scale, setScale] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialChapter);
   const [isSpreadView, setIsSpreadView] = useState(true);
   const [showUI, setShowUI] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -40,8 +50,6 @@ const Read = () => {
   const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
   const [listenDialogOpen, setListenDialogOpen] = useState(false);
   const [isSkipToPageOpen, setIsSkipToPageOpen] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -54,6 +62,16 @@ const Read = () => {
       setIsSpreadView(false);
     }
   }, [windowWidth]);
+
+  // Update URL when page changes
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(location.search);
+    newSearchParams.set('chapter', currentPage.toString());
+    navigate({
+      pathname: location.pathname,
+      search: newSearchParams.toString()
+    }, { replace: true });
+  }, [currentPage, location.pathname, navigate]);
 
   const chapters = bookChapters;
   

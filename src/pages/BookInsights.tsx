@@ -120,7 +120,7 @@ const BookInsights = () => {
                       className="flex-1" 
                       asChild
                     >
-                      <Link to="/dashboard/read">
+                      <Link to={`/dashboard/read?chapter=${chapter.id}`}>
                         <BookOpen className="mr-2 h-4 w-4" />
                         Read
                       </Link>
