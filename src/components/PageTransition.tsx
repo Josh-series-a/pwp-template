@@ -31,8 +31,8 @@ const PageTransition = ({
       <div
         className={cn(
           "relative transition-all duration-700 ease-in-out transform-style-3d",
-          isAnimating && direction === 'next' && "animate-page-turn",
-          isAnimating && direction === 'prev' && "animate-page-turn-reverse"
+          isAnimating && direction === 'next' && "animate-page-turn-right",
+          isAnimating && direction === 'prev' && "animate-page-turn-left"
         )}
       >
         {isAnimating ? content : children}

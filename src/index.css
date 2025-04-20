@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -141,7 +142,21 @@
   }
 
   .book-spine {
-    @apply absolute left-1/2 top-0 bottom-0 w-[20px] -ml-[10px] bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 z-10 transform -translate-x-[8px];
+    @apply absolute left-0 top-0 bottom-0 w-[10px] bg-gradient-to-r from-gray-400 via-gray-300 to-gray-200 z-10;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  }
+  
+  /* Updated book page classes */
+  .book-page {
+    @apply relative;
+    transform-origin: left center;
+  }
+  
+  .left-page {
+    @apply border-r border-gray-300/30;
+  }
+  
+  .right-page {
+    @apply shadow-[inset_4px_0_10px_-4px_rgba(0,0,0,0.2)];
   }
 }
