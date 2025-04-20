@@ -12,16 +12,18 @@ export const CHAPTERS: Chapter[] = [
   { id: 'concl',   title: 'Conclusion',          startPage: 181, endPage: 200, route: '/read/concl' },
 ];
 
-// Helpers
-export const getChapterForPage = (page: number) =>
+// Helper function to find chapter for a given page
+export const getChapterForPage = (page: number): Chapter | undefined =>
   CHAPTERS.find(c => page >= c.startPage && page <= c.endPage);
 
-export const getStartPageForRoute = (segment?: string) =>
+// Helper function to get start page for a route segment
+export const getStartPageForRoute = (segment?: string): number =>
   CHAPTERS.find(c => c.route.endsWith(segment || ''))?.startPage ?? 1;
 
+// Get content for a specific page
 export const getPageContent = (page: number): React.ReactNode => {
   return (
-    <>
+    <div>
       <h3>Page {page}</h3>
       <p>Demo text for page {page}. Replace this via CMS or static assets.</p>
       {page % 5 === 0 && (
@@ -29,6 +31,6 @@ export const getPageContent = (page: number): React.ReactNode => {
           Reflection: jot down what resonated on this spread.
         </div>
       )}
-    </>
+    </div>
   );
 };
