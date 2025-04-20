@@ -51,9 +51,22 @@ const PageTransition = ({
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
   }, [children, isAnimating, animationPhase, onAnimationComplete]);
+
+  // Override inline styles for the animation
+  const getPageStyles = (side: 'left' | 'right') => {
+    const isActive = side === activeSide;
+    const baseStyles = {
+      transformStyle: 'preserve-3d' as const,
+      boxShadow: isActive && isAnimating && animationPhase === 'turning' 
+        ? '0 6px 22px rgba(0,0,0,0.2)' 
+        : 'none'
+    };
+
+    return baseStyles;
+  };
   
   return (
-    <div className="relative book-container perspective-800">
+    <div className="relative book-container perspective-800 w-full h-full">
       <div className="relative w-full h-full flex">
         {/* Left page (even page) - this is the one that folds during "prev" direction */}
         <div 
@@ -65,15 +78,10 @@ const PageTransition = ({
               "animate-page-turn-left"
             ]
           )}
-          style={{
-            transformStyle: 'preserve-3d',
-            boxShadow: activeSide === 'left' && isAnimating && animationPhase === 'turning' 
-              ? '0 6px 22px rgba(0,0,0,0.1)' 
-              : 'none'
-          }}
+          style={getPageStyles('left')}
         >
           {/* Left page content */}
-          <div className="absolute inset-0 p-8">
+          <div className="absolute inset-0 p-8 bg-[#f8f5ed] dark:bg-[#252117]">
             {direction === 'prev' && isAnimating ? content : children}
           </div>
           
@@ -93,15 +101,10 @@ const PageTransition = ({
               "animate-page-turn-right"
             ]
           )}
-          style={{
-            transformStyle: 'preserve-3d',
-            boxShadow: activeSide === 'right' && isAnimating && animationPhase === 'turning' 
-              ? '0 6px 22px rgba(0,0,0,0.1)' 
-              : 'none'
-          }}
+          style={getPageStyles('right')}
         >
           {/* Right page content */}
-          <div className="absolute inset-0 p-8">
+          <div className="absolute inset-0 p-8 bg-[#f8f5ed] dark:bg-[#252117]">
             {direction === 'next' && isAnimating ? content : children}
           </div>
           
