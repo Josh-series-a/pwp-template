@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -129,11 +130,10 @@ export default {
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					},
 					'50%': {
-						transform: "rotateY(-15deg) translateX(-40px)",
 						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
 					},
 					'100%': { 
-						transform: "rotateY(-180deg) translateX(-80px)",
+						transform: "rotateY(-180deg)",
 						transformOrigin: "left",
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					}
@@ -152,39 +152,7 @@ export default {
 						transformOrigin: "left",
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					}
-				},
-				'page-turn-left': {
-					'0%': { 
-						transform: "rotateY(0deg)",
-						transformOrigin: "right center",
-						boxShadow: "0 0 0 rgba(0,0,0,0)"
-					},
-					'50%': {
-						transform: "rotateY(15deg) translateX(40px)",
-						boxShadow: "10px 0 15px rgba(0,0,0,0.3)"
-					},
-					'100%': { 
-						transform: "rotateY(180deg) translateX(80px)",
-						transformOrigin: "right center",
-						boxShadow: "0 0 0 rgba(0,0,0,0)"
-					}
-				},
-				'page-turn-right': {
-					'0%': { 
-						transform: "rotateY(0deg)",
-						transformOrigin: "left center",
-						boxShadow: "0 0 0 rgba(0,0,0,0)"
-					},
-					'50%': {
-						transform: "rotateY(-15deg) translateX(-40px)",
-						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
-					},
-					'100%': { 
-						transform: "rotateY(-180deg) translateX(-80px)",
-						transformOrigin: "left center",
-						boxShadow: "0 0 0 rgba(0,0,0,0)"
-					}
-				},
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -198,9 +166,7 @@ export default {
 				'blur-in': 'blur-in 0.6s ease-out',
 				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
 				'page-turn': 'page-turn 0.7s ease-in-out',
-				'page-turn-reverse': 'page-turn-reverse 0.7s ease-in-out',
-				'page-turn-left': 'page-turn-left 0.85s cubic-bezier(.55,.06,.26,1.02)',
-				'page-turn-right': 'page-turn-right 0.85s cubic-bezier(.55,.06,.26,1.02)'
+				'page-turn-reverse': 'page-turn-reverse 0.7s ease-in-out'
 			},
 			typography: (theme) => ({
 				DEFAULT: {

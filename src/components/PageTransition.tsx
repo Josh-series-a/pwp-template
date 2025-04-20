@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface PageTransitionProps {
@@ -8,7 +8,6 @@ interface PageTransitionProps {
   direction: 'next' | 'prev';
   pageNumber?: number;
   totalPages?: number;
-  onAnimationComplete?: () => void;
 }
 
 const PageTransition = ({ 
@@ -16,105 +15,28 @@ const PageTransition = ({
   isAnimating, 
   direction,
   pageNumber,
-  totalPages,
-  onAnimationComplete
+  totalPages 
 }: PageTransitionProps) => {
   const [content, setContent] = useState(children);
-  const [animationPhase, setAnimationPhase] = useState<'initial' | 'turning' | 'complete'>('initial');
-  const timeoutRef = useRef<number | null>(null);
-  
-  // Determine which side is active based on direction
-  const activeSide = direction === 'next' ? 'right' : 'left';
   
   useEffect(() => {
-    // Reset when animation is not active
+    // After the animation is complete, update the content
     if (!isAnimating) {
       setContent(children);
-      setAnimationPhase('initial');
-      return;
     }
-    
-    // Start animation when isAnimating changes to true
-    if (isAnimating && animationPhase === 'initial') {
-      setAnimationPhase('turning');
-      
-      // Use browser animation timing to match our specified duration (850ms)
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-      timeoutRef.current = window.setTimeout(() => {
-        setAnimationPhase('complete');
-        setContent(children);
-        onAnimationComplete?.();
-      }, 850); // Animation duration
-    }
-    
-    return () => {
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-    };
-  }, [children, isAnimating, animationPhase, onAnimationComplete]);
-
-  // Override inline styles for the animation
-  const getPageStyles = (side: 'left' | 'right') => {
-    const isActive = side === activeSide;
-    const baseStyles = {
-      transformStyle: 'preserve-3d' as const,
-      boxShadow: isActive && isAnimating && animationPhase === 'turning' 
-        ? '0 6px 22px rgba(0,0,0,0.2)' 
-        : 'none'
-    };
-
-    return baseStyles;
-  };
+  }, [children, isAnimating]);
   
   return (
-    <div className="relative book-container perspective-800 w-full h-full">
-      <div className="relative w-full h-full flex">
-        {/* Left page (even page) - this is the one that folds during "prev" direction */}
-        <div 
-          className={cn(
-            "w-1/2 relative transition-all duration-850 book-page left-page",
-            "backface-hidden",
-            activeSide === 'left' && isAnimating && animationPhase === 'turning' && [
-              "origin-right z-10",
-              "animate-page-turn-left"
-            ]
-          )}
-          style={getPageStyles('left')}
-        >
-          {/* Left page content */}
-          <div className="absolute inset-0 p-8 bg-[#f8f5ed] dark:bg-[#252117]">
-            {direction === 'prev' && isAnimating ? content : children}
-          </div>
-          
-          {/* Backface tint for realism when page is turning */}
-          {activeSide === 'left' && isAnimating && (
-            <div className="absolute inset-0 bg-black/5 pointer-events-none backface-hidden"></div>
-          )}
-        </div>
-        
-        {/* Right page (odd page) - this is the one that folds during "next" direction */}
-        <div 
-          className={cn(
-            "w-1/2 relative transition-all duration-850 book-page right-page",
-            "backface-hidden",
-            activeSide === 'right' && isAnimating && animationPhase === 'turning' && [
-              "origin-left z-10",
-              "animate-page-turn-right"
-            ]
-          )}
-          style={getPageStyles('right')}
-        >
-          {/* Right page content */}
-          <div className="absolute inset-0 p-8 bg-[#f8f5ed] dark:bg-[#252117]">
-            {direction === 'next' && isAnimating ? content : children}
-          </div>
-          
-          {/* Backface tint for realism when page is turning */}
-          {activeSide === 'right' && isAnimating && (
-            <div className="absolute inset-0 bg-black/5 pointer-events-none backface-hidden"></div>
-          )}
-        </div>
+    <div className="relative book-container perspective-1000">
+      <div
+        className={cn(
+          "relative transition-all duration-700 ease-in-out transform-style-3d",
+          isAnimating && direction === 'next' && "animate-page-turn",
+          isAnimating && direction === 'prev' && "animate-page-turn-reverse"
+        )}
+      >
+        {isAnimating ? content : children}
       </div>
-      
       {pageNumber && totalPages && (
         <div className="absolute bottom-4 left-0 right-0 text-center font-serif text-sm text-muted-foreground">
           Page {pageNumber} of {totalPages}

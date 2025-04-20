@@ -5,19 +5,15 @@ import { cn } from "@/lib/utils";
 interface TransitionWrapperProps {
   children: React.ReactNode;
   className?: string;
-  animation?: 'fade' | 'slide-up' | 'slide-down' | 'blur' | 'slide-right' | 'slide-left' | 'page-turn';
+  animation?: 'fade' | 'slide-up' | 'slide-down' | 'blur' | 'slide-right' | 'slide-left';
   delay?: number;
-  direction?: 'next' | 'prev';
-  activeSide?: 'left' | 'right';
 }
 
 const TransitionWrapper = ({
   children,
   className,
   animation = 'fade',
-  delay = 0,
-  direction,
-  activeSide
+  delay = 0
 }: TransitionWrapperProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -45,23 +41,9 @@ const TransitionWrapper = ({
         return 'animate-slide-right';
       case 'slide-left':
         return 'animate-slide-left';
-      case 'page-turn':
-        return direction === 'next' ? 'animate-page-turn-right' : 'animate-page-turn-left';
       default:
         return 'animate-fade-in';
     }
-  };
-
-  // Add mask-image for a realistic bend effect when using page-turn animation
-  const getMaskStyle = () => {
-    if (animation === 'page-turn') {
-      const maskPosition = activeSide === 'left' ? 'right center' : 'left center';
-      return {
-        maskImage: 'radial-gradient(circle at ' + maskPosition + ', transparent 70%, black)',
-        WebkitMaskImage: 'radial-gradient(circle at ' + maskPosition + ', transparent 70%, black)'
-      };
-    }
-    return {};
   };
 
   return (
@@ -69,13 +51,10 @@ const TransitionWrapper = ({
       className={cn(
         getAnimationClass(),
         "transition-all duration-500 will-change-transform",
-        animation === 'page-turn' && activeSide === 'left' && "origin-right",
-        animation === 'page-turn' && activeSide === 'right' && "origin-left",
         className
       )}
       style={{ 
         transitionDelay: `${delay}ms`,
-        ...getMaskStyle()
       }}
     >
       {children}
