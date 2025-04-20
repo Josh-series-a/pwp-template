@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
-import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
+import { Home, FileText, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,31 +74,33 @@ const SidebarNavigationHeader = () => {
 
 const SidebarNavigation = () => {
   const location = useLocation();
-  const navigation = [{
-    name: 'Dashboard',
-    href: '/dashboard/overview',
-    icon: Home
-  }, {
-    name: 'Reports',
-    href: '/dashboard/reports',
-    icon: FileText
-  }, {
-    name: 'Read',
-    href: '/dashboard/read',
-    icon: BookOpen
-  }, {
-    name: 'Exercises',
-    href: '/dashboard/exercises',
-    icon: Dumbbell
-  }, {
-    name: 'Book Insights',
-    href: '/dashboard/book-insights',
-    icon: BookOpen
-  }, {
-    name: 'Book a Session',
-    href: '/dashboard/book-session',
-    icon: Calendar
-  }];
+  const navigation = [
+    {
+      name: 'Dashboard',
+      href: '/dashboard/overview',
+      icon: Home
+    }, 
+    {
+      name: 'Reports',
+      href: '/dashboard/reports',
+      icon: FileText
+    }, 
+    {
+      name: 'Book Insights',
+      href: '/dashboard/book-insights',
+      icon: BookOpen
+    }, 
+    {
+      name: 'Exercises',
+      href: '/dashboard/exercises',
+      icon: Dumbbell
+    }, 
+    {
+      name: 'Book a Session',
+      href: '/dashboard/book-session',
+      icon: Calendar
+    }
+  ];
   return <SidebarGroup className="py-[60px]">
       <SidebarNavigationHeader />
       <SidebarGroupContent className="px-2 mt-1">

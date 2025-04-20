@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -154,9 +154,15 @@ const BookInsights = () => {
                   </Accordion>
                   
                   <div className="flex w-full gap-3">
-                    <Button variant="outline" className="flex-1">
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Read
+                    <Button 
+                      variant="outline" 
+                      className="flex-1" 
+                      asChild
+                    >
+                      <Link to="/dashboard/read">
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Read
+                      </Link>
                     </Button>
                     <Button variant="outline" className="flex-1">
                       <Headphones className="mr-2 h-4 w-4" />
