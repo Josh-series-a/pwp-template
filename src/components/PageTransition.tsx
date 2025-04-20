@@ -1,57 +1,49 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
-type Props = {
-  /** Children must be keyed so Framer sees "old" vs "new" page. */
-  children: React.ReactElement;
-  /** 'forward' when moving next, 'backward' when prev, 'none' for initial. */
-  direction: 'forward' | 'backward' | 'none';
-  /** Optional props for animation flexibility */
-  isAnimating?: boolean;
+interface PageTransitionProps {
+  children: React.ReactNode;
+  isAnimating: boolean;
+  direction: 'next' | 'prev';
   pageNumber?: number;
   totalPages?: number;
-};
+}
 
-/**
- * Handles the page-curl illusion: slides + subtle Y-rotation.
- * We keep it generic so any page canvas can be wrapped.
- */
-export const PageTransition: React.FC<Props> = ({
-  children,
+const PageTransition = ({ 
+  children, 
+  isAnimating, 
   direction,
-  isAnimating,
   pageNumber,
-  totalPages,
-}) => {
-  // Base distance in px for slide
-  const DIST = 40;
-
+  totalPages 
+}: PageTransitionProps) => {
+  const [content, setContent] = useState(children);
+  
+  useEffect(() => {
+    // After the animation is complete, update the content
+    if (!isAnimating) {
+      setContent(children);
+    }
+  }, [children, isAnimating]);
+  
   return (
-    <motion.div
-      className="h-full"
-      initial={{
-        x: direction === 'none' ? 0 : direction === 'forward' ? DIST : -DIST,
-        rotateY: direction === 'none' ? 0 : direction === 'forward' ? -15 : 15,
-        opacity: 0,
-      }}
-      animate={{
-        x: 0,
-        rotateY: 0,
-        opacity: 1,
-        transition: { duration: 0.85, ease: [0.55, 0.06, 0.26, 1.02] },
-      }}
-      exit={{
-        x: direction === 'forward' ? -DIST : DIST,
-        rotateY: direction === 'forward' ? 15 : -15,
-        opacity: 0,
-        transition: { duration: 0.85, ease: [0.55, 0.06, 0.26, 1.02] },
-      }}
-    >
-      {children}
-    </motion.div>
+    <div className="relative book-container perspective-1000">
+      <div
+        className={cn(
+          "relative transition-all duration-700 ease-in-out transform-style-3d",
+          isAnimating && direction === 'next' && "animate-page-turn",
+          isAnimating && direction === 'prev' && "animate-page-turn-reverse"
+        )}
+      >
+        {isAnimating ? content : children}
+      </div>
+      {pageNumber && totalPages && (
+        <div className="absolute bottom-4 left-0 right-0 text-center font-serif text-sm text-muted-foreground">
+          Page {pageNumber} of {totalPages}
+        </div>
+      )}
+    </div>
   );
 };
 
-// Add default export
 export default PageTransition;

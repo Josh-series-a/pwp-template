@@ -1,30 +1,65 @@
 
-import React from 'react';
-import { AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { cn } from "@/lib/utils";
 
-/**
- * Generic wrapper so we can swap any child with exit/enter motion.
- * Usage:
- *   <TransitionWrapper>
- *     <PageTransition key={pageKey} direction={dir}>
- *       <Page ... />
- *     </PageTransition>
- *   </TransitionWrapper>
- */
-const TransitionWrapper: React.FC<{ 
+interface TransitionWrapperProps {
   children: React.ReactNode;
-  animation?: string;
-  delay?: number;
   className?: string;
-}> = ({
+  animation?: 'fade' | 'slide-up' | 'slide-down' | 'blur' | 'slide-right' | 'slide-left';
+  delay?: number;
+}
+
+const TransitionWrapper = ({
   children,
-  animation,
-  delay,
-  className
-}) => (
-  <AnimatePresence initial={false} mode="wait">
-    {children}
-  </AnimatePresence>
-);
+  className,
+  animation = 'fade',
+  delay = 0
+}: TransitionWrapperProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  const getAnimationClass = () => {
+    if (!isVisible) return 'opacity-0';
+    
+    switch(animation) {
+      case 'fade':
+        return 'animate-fade-in';
+      case 'slide-up':
+        return 'animate-slide-up';
+      case 'slide-down':
+        return 'animate-slide-down';
+      case 'blur':
+        return 'animate-blur-in';
+      case 'slide-right':
+        return 'animate-slide-right';
+      case 'slide-left':
+        return 'animate-slide-left';
+      default:
+        return 'animate-fade-in';
+    }
+  };
+
+  return (
+    <div 
+      className={cn(
+        getAnimationClass(),
+        "transition-all duration-500 will-change-transform",
+        className
+      )}
+      style={{ 
+        transitionDelay: `${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 export default TransitionWrapper;
