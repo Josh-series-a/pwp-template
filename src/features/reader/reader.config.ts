@@ -12,22 +12,25 @@ export const CHAPTERS: Chapter[] = [
   { id: 'concl',   title: 'Conclusion',          startPage: 181, endPage: 200, route: '/read/concl' },
 ];
 
-// Helper function to find chapter for a given page
-export const getChapterForPage = (page: number): Chapter | undefined =>
-  CHAPTERS.find(c => page >= c.startPage && page <= c.endPage);
+export const getChapterForPage = (page: number): Chapter | undefined => {
+  return CHAPTERS.find(c => page >= c.startPage && page <= c.endPage);
+};
 
-// Helper function to get start page for a route segment
-export const getStartPageForRoute = (segment?: string): number =>
-  CHAPTERS.find(c => c.route.endsWith(segment || ''))?.startPage ?? 1;
+export const getStartPageForRoute = (segment?: string): number => {
+  const chapter = CHAPTERS.find(c => c.route.endsWith(segment || ''));
+  return chapter?.startPage ?? 1;
+};
 
-// Get content for a specific page
 export const getPageContent = (page: number): React.ReactNode => {
   return (
     <div>
-      <h3>Page {page}</h3>
-      <p>Demo text for page {page}. Replace this via CMS or static assets.</p>
+      <h3 className="text-2xl font-serif mb-4">Page {page}</h3>
+      <p className="text-lg mb-6">Demo text for page {page}. Replace this via CMS or static assets.</p>
       {page % 5 === 0 && (
-        <div data-workbook-field-id={`reflect-${page}`}>
+        <div 
+          data-workbook-field-id={`reflect-${page}`}
+          className="p-4 bg-muted/20 rounded-md border"
+        >
           Reflection: jot down what resonated on this spread.
         </div>
       )}
