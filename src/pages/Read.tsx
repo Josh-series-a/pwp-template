@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
-  BookOpen, Search, ChevronLeft, ChevronRight, 
+  BookOpen, Search, ChevronLeft, ChevronRight, X,
   Share, ZoomIn, ZoomOut, Printer, ExternalLink, Download,
   Bookmark
 } from 'lucide-react';
@@ -19,6 +20,7 @@ const Read = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isPageTurning, setIsPageTurning] = useState(false);
   const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -146,11 +148,24 @@ Your business's mission and vision should guide every major decision you make. T
     }, 700);
   };
 
+  const handleExit = () => {
+    navigate('/dashboard/book-insights');
+  };
+
   return (
     <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#f8f5ed] dark:bg-[#252117] flex flex-col">
       {showUI && (
         <div className="flex items-center justify-between p-3 border-b bg-muted/20 shadow-sm backdrop-blur-sm">
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleExit} 
+              className="mr-2"
+              title="Exit Reading"
+            >
+              <X className="h-5 w-5" />
+            </Button>
             <BookOpen className="h-5 w-5 text-primary" />
             <span className="font-serif font-medium">Prosper with Purpose</span>
           </div>
