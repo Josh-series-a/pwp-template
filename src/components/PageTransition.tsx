@@ -7,6 +7,10 @@ type Props = {
   children: React.ReactElement;
   /** 'forward' when moving next, 'backward' when prev, 'none' for initial. */
   direction: 'forward' | 'backward' | 'none';
+  /** Optional props for animation flexibility */
+  isAnimating?: boolean;
+  pageNumber?: number;
+  totalPages?: number;
 };
 
 /**
@@ -16,6 +20,9 @@ type Props = {
 export const PageTransition: React.FC<Props> = ({
   children,
   direction,
+  isAnimating,
+  pageNumber,
+  totalPages,
 }) => {
   // Base distance in px for slide
   const DIST = 40;
@@ -46,3 +53,5 @@ export const PageTransition: React.FC<Props> = ({
   );
 };
 
+// Add default export
+export default PageTransition;
