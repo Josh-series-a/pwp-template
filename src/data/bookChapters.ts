@@ -411,6 +411,52 @@ In creating the Future-Fit Business Model Canvas and the SWOT analysis, you will
 In the next 'People' section, we will discuss how to develop the team through the art of delegating. The following chapters in this section are fundamental to growing your business and, at the same time, reducing your stress levels and the number of hours you work. It's time to trust your people!`,
     summary: "A reflective summary of the Plan section, highlighting key insights and preparing for the next phase of business development.",
     quote: "You cannot stop trusting people in life, but I have learned to be a little bit careful. The way to make people trustworthy is to trust them."
+  },
+  {
+    id: 10,
+    title: "CHAPTER 10: TRUST YOUR PEOPLE",
+    theme: "People Management",
+    content: `If not having a plan is a huge underlying cause of stress for business owners, the most cited and immediate problem that most businesses face is managing people.
+
+It's a genuine conundrum. All businesses need good people to help them grow and do all the tasks they require. However, at the same time, most businesses will experience problems with recruiting and retaining staff and getting them to do what they want. The businesses that grow are those that can recruit the best people and retain them over time.
+
+A fundamental building block of a growing business is the team of people around you. It's essential to create a team that you can trust to run your business in your absence. None of the planning that we've gone through in the first part of this book can happen unless you are able to delegate key tasks to trusted people.
+
+In this second part of Prosper With Purpose, I will focus on how you create that team. I will look at how you can delegate more and create a team that is looking forward to new challenges.
+
+I will also cover a relationship often neglected but essential for all businesses: the relationship with people employed by the companies who supply vital services to you. Most companies have critical relationships with a small number of key suppliers. The relationships with the people in these companies can be as important as those you have with your own staff.
+
+One thing I learned very quickly in my first business was that, as an employer, I set the tone of the business. Whether intentionally or not, you, as the business owner, set the culture and style of your business.
+
+Your behaviours and attitudes have a significant effect on the behaviours and actions of all the people around you. As the business owner, the onus is therefore on you to create the teamworking style and culture you want to see in your business. There are several things that you can do to create the right atmosphere and generate trust.
+
+Set and Keep Values
+The biggest thing you can do is create the atmosphere in which your team operates. That requires you to articulate your values and clarify what is really important to you regarding how the business should be run.
+
+These are not just three or four words you write on your main office wall. These are the lived values you adhere to in your life and how you want your business to run.
+
+I meet a lot of people in business who have a very strong set of values, and you can see how they permeate through the business. Those values can act as a guide for managing the team, but they also help the team respond in ways they know will chime with the company.
+
+🔎Case Study
+At Papercycle, my personal values chimed strongly with the business priority for reliability. My granddad and dad were both in the Royal Navy, and the idea of reliability and being good for your word was fundamental to my upbringing.
+
+On close listening to my clients and potential clients, I realised that this value was also hugely important to them. In all my conversations with these facilities managers, the idea that sacks of wastepaper piling up and waiting to be collected would block fire exits or obstruct the loading bay or other routes through the building was an absolute no-no.
+
+That made a lot of sense to me, but I was surprised by the number of facilities managers worried that the bags of paper would block the chairman's car parking space!
+
+To ensure that this value of reliability meant something, I had to instigate policies and procedures that ensured, to the best of our ability, that we would be completely reliable.
+
+I needed to offer a demonstrably reliable service that gave the facilities manager complete confidence that there would be no obstruction, no fire exits blocked, and, most importantly, the chauffeur could park the chairman's car.
+
+At Tree Shepherd, the social enterprise I set up to train people from more marginalised backgrounds to start their own businesses, we found the work could be stressful. People whose lives were relatively chaotic, with lots of caring responsibilities and unforeseen challenges, could be volatile, unreliable and frankly tricky to work with.
+
+Despite this I believed that, with the right support, many of these people could build their own business. To reflect that belief, our mantra at Tree Shepherd was simple; it was two words: trust and patience.
+
+Fundamentally, we trusted the people coming to us were genuinely interested in creating their own business and wanted to pursue it. However, we knew we couldn't expect them to follow a linear path of growing their business. Life would interfere with their progress, and their ability to meet the demands of business would be limited.
+
+They would need more time, space and support to do these things. Our phrase, trust and patience, helped us hugely. It helped us at very low times when we were exhausted or frustrated by a client, and it helped us measure our effort and expectations.`,
+    summary: "Understanding the importance of trust, values, and supportive leadership in building a successful business team.",
+    quote: "Trust is not given, it is earned. And the best way to earn trust is to be trustworthy."
   }
 ];
 
