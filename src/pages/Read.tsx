@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -467,6 +466,137 @@ Next, you should consider Revenue Streams. This needs to be fully fleshed out. H
 Now that you've orientated yourself around the Future-Fit Business Model Canvas, let's return to Customer Segments. As I said earlier, I always start with the customer. It's critically important to analyse what they truly want because the rest of the Future-Fit Business Model Canvas flows directly from your understanding of the customer.`,
       summary: "Understanding your business model is essential for creating a roadmap that balances profit with purpose.",
       quote: "A business model isn't just a framework for making money; it's the blueprint for how your business will create value."
+    },
+    {
+      id: 7,
+      title: "CHAPTER 7: PLAN MEETS REALITY",
+      theme: "Planning",
+      content: `Ideally, you should complete your Future-Fit Business Model Canvas on an entirely blank sheet of paper. You shouldn't take into consideration any of the realities on the ground. You are trying to get an in-principle idea of how your business should run and what it needs to do to reach its customers and to achieve its goals.
+
+Having developed the ideal Future-Fit Business Model Canvas, you must now check in on reality. You need to work out how well you deliver on the business model you've described. This is where the SWOT analysis comes in.
+
+The SWOT analysis is one of the best-known tools for starting a planning process. It comprises a two-by-two grid that asks for Strengths, Weaknesses, Opportunities and Threats. Everyone can engage with it and share their perspective on the current situation.
+
+Doing a SWOT analysis in conjunction with the Future-Fit Business Model Canvas will prove remarkably effective at pointing out areas of weakness and gaps in your understanding. It should also draw out the things that you do well and the things that your customers love.
+
+How to Do a SWOT Analysis
+
+Overview
+It's best to do a SWOT analysis with your team; by team, I mean most of your staff. Bring in junior, inexperienced people and people working in different parts of the organisation. They will know areas of your business that you have no idea about.
+
+Firstly, ask your team to look at the Strengths, Weaknesses, Opportunities and Threats facing the business as it currently sees and understands them. This will help you to identify the key things that you need to do more of, things that you need to stop doing and the things that you need to get better at.
+
+However, the vital thing is to decide what you will do about that situation. My enhanced version of the SWOT analysis (see Exercise 11 at the end of this chapter) has four extra squares, one attached to each word. The extra boxes give you the nudge to think through how you would:
+enhance strengths
+improve weaknesses
+act on opportunities
+mitigate threats
+
+Step-By-Step SWOT Analysis
+
+Strengths — ask your team:
+What are we genuinely good at?
+What's the evidence for that?
+Why would we include this strength in the box?
+What do our clients say?
+Can we truly say we're really good at that?
+Are we strong on any particular environmental or social issue?
+
+Once you're confident that your team have listed areas where you are genuinely strong, you can move on to Weaknesses.
+
+Weaknesses — ask your team these challenging questions:
+Where are we weak?
+Why do we think we're weak there?
+What are we doing/not doing that is weak?
+What doesn't work?
+What environmental or social issues are we weak on?
+
+With an open and honest discussion, you'll discover things you didn't have a clue about!
+
+Opportunities — you need to handle these questions carefully:
+What opportunities are there to differentiate the business from the competition?
+What opportunities are offered by adopting new technology?
+Are these genuine opportunities that we can take advantage of?
+Are there any opportunities to improve our environmental or social impact that will attract customers or reduce costs?
+Can we quantify the opportunity?
+Why has it been nominated as an opportunity?
+
+Only once you have qualified an opportunity can it go into the Opportunities box inside the SWOT analysis tool.
+
+Threats — these questions can be quite alarming, but again, it's good practice to qualify the threats:
+What threats are posed by the competition?
+What threats are presented by changes in technology?
+What threats are posed to the business by environmental or societal changes?
+How big is the threat?
+How imminent is it?
+
+Once you have listed everything, the next step is to ask the team to look at the supplementary boxes I've added to the Enhanced SWOT analysis tool.
+
+From SWOT to Strategy
+
+The next step is to encourage the team to go beyond describing strengths, weaknesses, opportunities and threats. Host a discussion on how to utilise the SWOT analysis to drive strategy.
+
+Guide the team to focus on enhancing strengths, improving weaknesses, pursuing opportunities and mitigating threats. The aim is to align their insights with action plans that directly support the organisation's objectives.
+
+Enhance strengths:
+How are we going to enhance and reinforce your strengths?
+How do we make sure we maintain them as our strengths?
+How do we measure them?
+How will we manage them going forward?
+
+Improve areas of weakness:
+How are we going to improve so we can reduce them?
+What are we going to do to fix those weaknesses?
+How can we measure our progress?
+
+Action opportunities:
+What actions are we going to take to explore them?
+How are we going to validate if they're genuinely viable opportunities?
+What do we need to put in place to take advantage of them?
+Who is going to do that work?
+
+Mitigate threats:
+How can we learn more about them?
+What can we do to reduce them?
+Who is going to assess them fully?
+
+You'll see that by completing all eight boxes, you'll have the beginnings of a real plan. You will know what you're good at and what you're not so good at. You will have identified genuine opportunities and registered the threats that you face.
+
+You will know how to take advantage of all those opportunities and how to meet those threats. You will see clearly what you've got to measure in order to maintain your strengths and what you must do to fix your weaknesses. You should also know who is going to do each of these things.
+
+The next step is to put this into an effective action plan.
+
+The following two case studies illustrate the benefits of conducting an Enhanced SWOT analysis with the whole team. In discussion between different colleagues, we realised we had a huge opportunity at Tree Shepherd to broaden our market and secure more mainstream contracts. Similarly, at Green-Works, we devised a radical solution to one of our greatest competitive threats by bringing together the sales and operational teams.
+
+🔎Case Study
+When I conducted a SWOT analysis at Tree Shepherd, the team realised there was an opportunity to deliver our business skills, monitoring and training to established businesses.
+
+The skills we taught to early-stage startup businesses were very similar to those needed by existing micro and small businesses. Our insight was that many micro and small business owners had not had any business training but had worked it out as they went along.
+
+We were able to create a new service where we mentored and supported individuals with existing businesses using the same advisors, teachers and materials that we were using for the startup business course.
+
+This enabled us to approach a vast new market and attract funding from local authorities and others keen to support their local small business networks.
+
+🔎Case Study
+At Green-Works, we were committed to reducing the amount of furniture that went to landfill and increasing the amount that was reused. However, it was less easy to distinguish our passion for reuse from competitors in the second-hand furniture market, who could also claim to be reusing furniture.
+
+We wanted to create a clear differentiation between us and those traders. These competitors posed a genuine threat to our business. In our joint discussion, we came up with the idea of making our own furniture from the unwanted desktops and wardrobes. Within a short time, we purchased a CNC router to make new furniture from old desktops and wardrobes. This had multiple benefits.
+
+Firstly, it added value to what was otherwise an expensive waste stream. Secondly, it enabled us to reach new customers who wanted more consistent furniture than we could provide from second-hand stocks. Finally, it was another differentiator from our competition, which helped keep us ahead and make our customers happy.
+
+Exercise 11: Prepare Your Enhanced SWOT Analysis
+Organise a team meeting to create your own Enhanced SWOT analysis. Try to create a safe space where ideas can flow and there can be a robust debate. It's important that all opinions are aired. It's also critical that opinions can be constructively challenged and tested so that what goes into your Enhanced SWOT analysis and the consequent action boxes is both precise and accurate.
+
+You can use this template.
+
+Figure 7: Enhanced SWOT analysis
+
+⚙️Resource
+I'd be delighted to send you a blank Enhanced SWOT analysis and action template and provide a free online session on how to complete it.
+Go to this link to book your free session:
+(enter this offer code into the subject line: ESWOT24)`,
+      summary: "Learn how to bridge the gap between your ideal business model and reality using SWOT analysis.",
+      quote: "The SWOT analysis helps identify what you do well and what needs improvement, turning insights into actionable strategies."
     }
   ];
 
