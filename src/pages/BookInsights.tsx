@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
+import ListenDialog from '@/components/ListenDialog';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -18,7 +19,9 @@ import {
 } from "@/components/ui/accordion";
 
 const BookInsights = () => {
-  // Mock data for book chapters
+  const [activeChapter, setActiveChapter] = useState<number | null>(null);
+  const [isListenDialogOpen, setIsListenDialogOpen] = useState(false);
+
   const chapters = [
     {
       id: 1,
@@ -164,7 +167,14 @@ const BookInsights = () => {
                         Read
                       </Link>
                     </Button>
-                    <Button variant="outline" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => {
+                        setActiveChapter(chapter.id);
+                        setIsListenDialogOpen(true);
+                      }}
+                    >
                       <Headphones className="mr-2 h-4 w-4" />
                       Listen
                     </Button>
@@ -179,6 +189,18 @@ const BookInsights = () => {
           })}
         </div>
       </div>
+
+      {activeChapter && (
+        <ListenDialog
+          isOpen={isListenDialogOpen}
+          onClose={() => {
+            setIsListenDialogOpen(false);
+            setActiveChapter(null);
+          }}
+          chapterId={activeChapter}
+          chapterTitle={chapters.find(c => c.id === activeChapter)?.title || ''}
+        />
+      )}
     </DashboardLayout>
   );
 };
