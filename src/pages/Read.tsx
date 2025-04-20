@@ -405,4 +405,125 @@ We were a natural fit as Green-Works could reuse redundant tiles, and they could
 
 However, talking to their salespeople made me realise the other and potentially more significant benefit of our relationship.
 
-As I was briefing the sales team on what we did, they became very enthusiastic. One of them told me that our partnership would make their job so much easier because they could broaden the conversation and start talking about something other than carpet tiles, which are an essential but
+As I was briefing the sales team on what we did, they became very enthusiastic. One of them told me that our partnership would make their job so much easier because they could broaden the conversation and start talking about something other than carpet tiles, which are an essential but mundane product.
+
+Now, they could start talking about projects in Sierra Leone, the charities that we supported, and the employment the company had created.
+It's so much more interesting and more engaging for the client as well. If it's good enough for professional, experienced sales teams, then it's good enough for me. Broadening the conversation and taking it to an environmental and human level makes customer retention a lot easier.
+
+If you're in a business-to-consumer business, there is clear evidence that more and more consumers want to see strong ethical and environmental credentials in what they buy.
+A combined McKinsey/NielsenIQ analysis of US sales data over five years to June 2022 showed that products making environmental and social-related claims accounted for 56% of all growth.  They reported that products making these claims averaged 28% cumulative growth over the five-year period versus 20% for products that made no such claims.
+
+This data shows that actual spending follows previous McKinsey US consumer sentiment surveys, which showed that more than 60% of respondents said they'd pay more for a product with sustainable packaging. A recent study by NielsenIQ found that 78% of US consumers say that a sustainable lifestyle is important to them.
+
+Staff Want It!
+Whether you're aware of it or not, your staff likes being socially and environmentally conscious, as the following case study proves.
+🔎Case Study
+You may recall an earlier case study in this book where, through Papercycle, I set up a paper recycling project for Mike Tregent for the BBC.
+I called Mike two months after the scheme had started. He told me that, in the last 25 years, no one in the building had ever thanked him for anything he had done for them. However, since he had implemented the paper recycling scheme, he had received no end of thank yous. He explained, "I've lost count. It's quite extraordinary. Thank you for helping me set this up."
+Mike's feedback proved how popular environmental initiatives can be with staff.
+
+The lesson from this case study is that your staff like to feel that they're doing their bit for the environment, especially when it's explained to them.
+
+The Competition Is Doing It
+Business competitors are increasingly adopting environmental and social actions to differentiate themselves in the market. For instance, many restaurants in the UK now routinely offer to package leftovers for customers, which helps reduce food waste. Similarly, small retail businesses are introducing refill stations for household and personal care products, encouraging customers to reuse containers and minimise single-use plastic.
+
+Some independent gyms and fitness studios are transitioning to renewable energy sources to power their facilities. Meanwhile, airlines are incorporating carbon offset options to appeal to eco-conscious travellers. Business clients are demanding higher levels of environmental performance from their supply chains. Many smaller businesses are responding by publishing detailed sustainability reports demonstrating their commitments. We also see more direct responses, such as packaging suppliers offering biodegradable or compostable materials.
+
+These initiatives address environmental issues, enhance brand image and attract customers who prioritise sustainability in their choices.`,
+      summary: "Understanding environmental and social impact is essential for building businesses that thrive in the long term.",
+      quote: "Small shifts in business practices can have a broad environmental impact."
+    },
+    {
+      id: 6,
+      title: "CHAPTER 6: FUTURE-FIT BUSINESS MODEL CANVAS",
+      theme: "Planning",
+      content: `Having decided in Chapter 4 where you want to go and what you aim to achieve with your business, it's time to determine how you'll get there. This is where a well-thought-out business model comes in. A business model isn't just a framework for making money; it's the blueprint for how your business will create value, deliver it to your customers, and sustain itself over time.
+But there's more to it than just the numbers. As I illustrated in Chapter 5, aligning it with environmental and social concerns is essential. Integrating these concerns into your business model will build a positive reputation for operating responsibly, thereby building trust and creating long-term resilience.
+This chapter will guide you through crafting a business model that balances your ambitions with your responsibilities, ensuring your path to success is both achievable and sustainable.
+A business model is very different from a plan. The plan gives you an idea of where you want to go and what you want to achieve. The business model is subtly yet significantly different to the plan. It shows the how.
+By developing your business model, you will gain a deeper understanding of  your customers' wants and exactly what you need to do to meet those wants.
+You'll be able to see how to reach those customers. You will better understand what you need to say when you do reach them. You'll also work through the precise financial arrangements for working with your customer group.
+At the end of  this Chapter you will find a blank template for a Future-Fit Business Model Canvas. This is a powerful tool for encapsulating the vital essence of your business on one page. It's deceptively simple as it does not require reams of text, unlike a traditional business plan. It requires a keen and intuitive understanding of what makes your business work and why customers trade with you.
+In my Future-Fit Business Model Canvas, you will see that the model is set within the limits of our planet. This is to serve as a reminder that your model needs to be resilient and flexible enough to operate within an increasingly challenging backdrop of environmental and societal change. To be successful, you need to embed your plans for adapting to these changes into your business model. The likely changes we will face over the coming years are substantial, and not planning for their consequences could be disastrous to you and your business.
+Orientation
+The ideal place to start is on the right-hand side, with Customer Segments. This is probably the most critical thing you'll do in business: understand your customer.
+It's all about taking a human-centric approach to business. Even in a large organisation, there are only a few people who make buying decisions. It pays to get to know them, what they're concerned about and what makes them tick.
+What do they want from you? I don't mean literally what product or service, but what standards will they assess you by. Knowing what they really want from you is the key to understanding and developing your business. We'll delve into that in more detail in the next 'Who Is Your customer' section.
+Having described the customer, move to the centre and complete the Value Proposition box. There you can insert the mission statement that you worked on in Chapter 2. Below the mission statement, work out what you're going to offer to customers. The trick here is to compare your value proposition to what you've said customers really want.
+Once these two boxes are aligned, working through the others on the right-hand side of the page is relatively straightforward.
+In Customer Relationships, you describe how your specific customer would want to be communicated to.  This will emerge from the insights gained from describing the customer in the Customer Segments box.
+Directly linked to Customer Relationships, you will see Channels. In this box, ask yourself, "How can I reach these customers?" You need to know what your customers read, how they gain information and what events they attend.
+Also, on the right-hand side, you will find Key Partners, an often neglected but essential box. All businesses, particularly those at a relatively early stage in their development, need partners. These are organisations that can offer parts of your Value Proposition that your business can't deliver or that you rely on to do your work.
+It might be digital support, HR advice or a range of other things without which you would struggle.
+On the left-hand side of the Future-Fit Business Model Canvas, you can see several boxes that reflect the internal workings of your organisation. In the bottom left-hand corner, you will see Key Activities. You should treat this box quite pedantically. Describe precisely what you and your organisation are physically doing. You should not add what others are doing for you or with you, but what you are doing day to day and even hour by hour. It's important you understand this, as you'll see later on.
+Under Key Activities, you have Key Resources. Here, you will describe what key activities you must complete to deliver your value proposition.
+These could be capital items, such as vehicles or computers, or they could be specifically qualified staff, software or compliance licences.
+Supporting the entire business model is the finance. In the left-hand corner, you have the Cost Structure. Here, you need to understand and list your key costs to obtain the Key Resources you require to operate your Key Activities.
+Is it rent? Is it people? Is it digital information? What are the key costs that you need to cover to deliver your service?
+Next, you should consider Revenue Streams. This needs to be fully fleshed out. How are you going to generate revenue? Are you selling, renting or leasing your product? Are you providing a service? Do you charge by the hour? Do you charge by the day? Or do you charge by an outcome? Do you charge in arrears or charge in advance? How does the revenue model work?
+Now that you've orientated yourself around the Future-Fit Business Model Canvas, let's return to Customer Segments. As I said earlier, I always start with the customer. It's critically important to analyse what they truly want because the rest of the Future-Fit Business Model Canvas flows directly from your understanding of the customer.
+
+Who Is Your Customer?
+This is a critical question that small business owners must address and fully understand. Without a solid insight into who your customers are and what they need, it's difficult to grow a business.
+I study my clients to develop what is known in the trade as a persona or avatar. This is a detailed description of a typical customer whose habits and interests you fully understand. I've set out a template, Exercise 6, for creating a persona later in this chapter.
+Interestingly, I get a lot of pushback on this from people I'm mentoring and students on courses I run. Many of them feel that they are selling to everyone. They explain they don't have a typical customer. They state that their customers come from all walks of life, they're all different, and they can't define any one type of customer.
+When I've helped them drill down to their typical customer, I've found that it's not true. Usually, there is a dominant characteristic. There is a type of company or person who is most likely to buy your service or product.
+Moreover, it's not that you won't sell to anybody who wants your product. Of course, you will. It's about who you spend your precious marketing budget and resources on. In essence, you aim your marketing at the person or organisation most likely to want to use your product or service and pay for it.
+Even large supermarkets such as Tesco will spend most of their marketing efforts trying to connect with a particular group of people. All the other customers who don't meet that description are welcome but are effectively a marketing bonus.
+Mitali, at The Vegan Publisher, is an excellent example of this.
+
+🔎Case Study
+The Vegan Publisher offers services to help people write and publish books, but not just any kind of books. Mitali, the founder, particularly helps people write self-help, how-to or guide-style books for personal branding and thought leadership. She does not do novels, children's books or historical accounts.
+She has a specific niche, a group of people to who she concentrates on selling her services, and she has developed a particular service to help those people.
+Writing this type of book is very different from writing a novel, and the advice and support the two writers would need are very different. Mitali focuses her marketing on helping those writing books for thought leadership.
+If she were to market to any 'wannabe' author, she would also have to develop an entire range of support for those who wanted to write in other genres. Very quickly, her reputation would be diluted, her ability to support people to the highest level would be reduced, and she would lose the edge in her chosen market.
+
+The following section will concentrate on defining your customer by working out in some detail what the people in your niche look like, how they behave, and, most importantly, what they need.
+Let's get back to understanding your customer and their needs. To do that, I'm going to relate two very different case studies that illustrate how close listening can reveal a customer's true needs.
+
+🔎Case Study
+In 1990, as I was developing my first business, Papercycle, I took a call from a lovely man called Mike Tregent at the BBC. He asked me if I could provide a paper recycling scheme for Broadcasting House in Central London.
+This was a major opportunity, so I met him as soon as possible. He explained to me that there were several departments in the building who had taken it upon themselves to collect their wastepaper and organise for a recycling company to come and get it.
+The consequence was pandemonium, with various vehicles turning up at all times of day and night to collect tiny volumes of paper that this or that department had collected.
+However, as I listened to Mike describe the chaos and the consequent fire safety risks, I heard an even deeper worry. How could he manage these massive issues with unpredictable amounts of paper coming into the corridors and sitting on the loading bay in various quantities? Also, how could he keep all the staff from these different departments happy?
+If Mike just stopped their schemes, that would cause resentment. He needed to replace them with an organised scheme to remove the health, safety and fire risks. He also wanted something to communicate to the staff, who took the waste issue extremely seriously.
+My proposal would have to address all these concerns in order to be accepted.  I worked collaboratively with Mike to create a system that fully considered the fire safety requirements. We made sure it was also efficient and easy to operate. Lastly, I designed a monthly 'trees saved' reporting system, which generated a certificate that could be pinned up on all the noticeboards in the building.
+After a careful review, Mike decided to take the plunge and adopt our system over all the other recyclers collecting from the building.
+My second case study is from almost two decades later when I ran Tree Shepherd, which supported people from marginalised backgrounds, including the unemployed, and trained them to start their own enterprises.
+
+🔎Case Study
+Most people I trained through Tree Shepherd were middle-aged women from ethnic minority, working class backgrounds. In talking to them, I realised they couldn't imagine ever being wealthy. They couldn't even imagine going on holiday.
+One lady told me she would be terrified of going away for more than a few days because the fridge would be empty when she got back. Yet, they also knew that they were capable. They'd managed big, complex households. They cared for a lot of  people and constantly juggled all sorts of things in their lives.
+Very few of them had any formal education beyond the age of 16. They were terrified of going on a course that, in some way, would demean or patronise them.  They wanted and deserved respect.
+Yes, of course, they wanted to run a business to make money to help them pay the bills. However, their priority was to maintain their self-respect.
+Therefore, the most critical aspect of Tree Shepherd's offer was that the course was relatable and non-intimidating. This meant that we delivered the courses in community centres, not colleges.
+It also meant that we excluded all jargon and strange business terminology. Additionally, we used examples of businesses they could relate to and understand.
+These case studies illustrate why it's important to know your customer.  This knowledge enables you to create a service customers genuinely like and choose. Now you know how important this is, you can follow this exercise to discover who they are.
+
+Exercise 6: Know Your Customer
+As you can see from the previous case studies, knowing your customer is imperative. This exercise helps you to discover who they are.
+Create one or two personas for your ideal customer(s). You can use the customer persona template to help form a picture.
+There are many websites that can advise you on questions to help you create your persona. The most important thing is to focus on understanding how your ideal customer ticks. What motivates them, worries them, and what must you do to convince them to buy from you?
+
+Start your persona with a short description. Once you've described them, you should probe more into their aspirations and how they can achieve them. It's also a good idea to assess what resources they have at their disposal in terms of money, time, network and skills.
+
+The template is divided into business-to-consumer (B2C) and business-to-business (B2B).  Your answers will differ for the same persona, depending on whether you sell to them in their personal or work capacity.
+
+Come up with a list of the concerns and fears your persona faces. Try to use the precise words your persona would use rather than paraphrase. Also, pay attention to the order of importance you attach to these obstacles.
+
+It's very useful to consider your persona's ultimate goal(s). What do they want to achieve in life or at work?
+
+Lastly, describe why this persona is your ideal customer and what you must offer to attract them.`,
+      summary: "Understanding your business model is essential for creating a roadmap that balances profit with purpose.",
+      quote: "A business model isn't just a framework for making money; it's the blueprint for how your business will create value."
+    }
+  ];
+
+  return (
+    <PageTransition>
+      {/* Render functions and return statement */}
+    </PageTransition>
+  );
+};
+
+export default Read;
