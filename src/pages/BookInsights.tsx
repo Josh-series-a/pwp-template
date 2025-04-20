@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -34,48 +35,48 @@ const BookInsights = () => {
     },
     {
       id: 2,
-      title: "Team Building",
-      theme: "People",
-      summary: "The quality of your team will determine the ceiling of your business growth. Learn how to hire, develop and retain top talent.",
+      title: "Direction",
+      theme: "Vision",
+      summary: "Understanding your business's direction is crucial for making strategic decisions and maintaining focus.",
       relevance: "medium",
-      quote: "Your business will never outgrow the quality of your team. Invest in people who share your values but complement your weaknesses.",
-      exercises: ["Team Skills Assessment", "Leadership Development Plan"]
+      quote: "Your mission isn't just about what your business does, but about the impact you want to create in the world.",
+      exercises: ["Future Vision Exercise", "Strategic Direction Planning"]
     },
     {
       id: 3,
-      title: "Financial Foundations",
-      theme: "Profit",
-      summary: "Building robust financial systems is essential for making informed decisions and ensuring long-term sustainability.",
+      title: "Timeline",
+      theme: "Planning",
+      summary: "Understanding how to plan backwards from your goals helps create realistic roadmaps for success.",
       relevance: "high",
-      quote: "Profit isn't just a goal - it's the oxygen that keeps your business alive. Monitor it as closely as your own breathing.",
-      exercises: ["Profit Margin Analysis", "Cash Flow Projection"]
+      quote: "Start with where you want to end up and work backwards - it's easier to see the path when you're looking down from the summit.",
+      exercises: ["Future-Back Planning", "Milestone Timeline Creation"]
     },
     {
       id: 4,
-      title: "Delegation Mastery",
-      theme: "People",
-      summary: "Learning to effectively delegate is the key to scaling your business beyond your personal capacity.",
+      title: "Exit Strategy",
+      theme: "Planning",
+      summary: "Planning your exit strategy is crucial for long-term business success and sustainability.",
       relevance: "high",
-      quote: "The moment you become the bottleneck in your business is the moment growth stops. Mastering delegation is mastering growth.",
-      exercises: ["Delegation Audit", "Systems Documentation"]
+      quote: "An exit strategy isn't just about ending - it's about creating a meaningful legacy for your business.",
+      exercises: ["Exit Strategy Definition", "Succession Planning"]
     },
     {
       id: 5,
+      title: "Future-Fit Planning for Sustainability",
+      theme: "Sustainability",
+      summary: "Integrating environmental and social considerations into your business model is increasingly essential for long-term success.",
+      relevance: "medium",
+      quote: "Sustainability isn't just about saving the planet - it's about ensuring your business can thrive in a rapidly changing world.",
+      exercises: ["Environmental Impact Assessment", "Sustainability Integration Plan"]
+    },
+    {
+      id: 6,
       title: "Customer Experience",
       theme: "Planning",
       summary: "Designing an exceptional customer journey will create loyal advocates for your business.",
       relevance: "medium",
       quote: "Your customer doesn't care about your internal processes - they care about how you make them feel at every touchpoint.",
       exercises: ["Customer Journey Mapping", "Customer Persona Development"]
-    },
-    {
-      id: 6,
-      title: "Exit Planning",
-      theme: "Planning",
-      summary: "Building with the end in mind creates more options and increases the value of your business.",
-      relevance: "low",
-      quote: "The ultimate test of your business isn't how well it works when you're there, but how well it works when you're not.",
-      exercises: ["Future Growth Planning", "Value Builder Assessment"]
     },
   ];
 
