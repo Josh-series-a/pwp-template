@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { 
   BookOpen, Search, ChevronLeft, ChevronRight, 
@@ -19,12 +20,30 @@ const Read = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isPageTurning, setIsPageTurning] = useState(false);
   const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
+  const previousPageRef = useRef(1);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    
+    // Add keyboard navigation
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isPageTurning) return; // Prevent rapid keypresses during animation
+      
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        handlePageChange('next');
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        handlePageChange('prev');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isPageTurning]);
 
   useEffect(() => {
     if (windowWidth < 1024) {
@@ -133,17 +152,22 @@ Your business's mission and vision should guide every major decision you make. T
   const handlePageChange = (direction: 'next' | 'prev') => {
     if (isPageTurning) return; // Prevent rapid clicking during animation
     
+    // Store the current page for direction calculation
+    previousPageRef.current = currentPage;
+    
     setPageDirection(direction);
     setIsPageTurning(true);
+  };
+  
+  const handleAnimationComplete = () => {
+    // Update the page number after animation completes
+    if (pageDirection === 'next') {
+      setCurrentPage(prev => Math.min(prev + 1, chapters.length));
+    } else {
+      setCurrentPage(prev => Math.max(prev - 1, 1));
+    }
     
-    setTimeout(() => {
-      if (direction === 'next') {
-        setCurrentPage(prev => Math.min(prev + 1, chapters.length));
-      } else {
-        setCurrentPage(prev => Math.max(prev - 1, 1));
-      }
-      setTimeout(() => setIsPageTurning(false), 700);
-    }, 700);
+    setIsPageTurning(false);
   };
 
   return (
@@ -168,11 +192,21 @@ Your business's mission and vision should guide every major decision you make. T
             </div>
             
             <div className="flex items-center gap-1 bg-background/80 rounded-md px-2 py-1">
-              <Button variant="ghost" size="icon" onClick={() => handlePageChange('prev')}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => handlePageChange('prev')}
+                disabled={currentPage <= 1 || isPageTurning}
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="mx-2 text-sm font-serif">Page {currentPage}</span>
-              <Button variant="ghost" size="icon" onClick={() => handlePageChange('next')}>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => handlePageChange('next')}
+                disabled={currentPage >= chapters.length || isPageTurning}
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -193,6 +227,7 @@ Your business's mission and vision should guide every major decision you make. T
                 size="sm" 
                 onClick={toggleView} 
                 className="text-xs"
+                disabled={isPageTurning}
               >
                 {isSpreadView ? "Single Page" : "Spread View"}
               </Button>
@@ -245,6 +280,7 @@ Your business's mission and vision should guide every major decision you make. T
                 setActiveTab(chapter.id.toString());
                 setCurrentPage(chapter.id);
               }}
+              disabled={isPageTurning}
             >
               <span className="absolute -rotate-90 whitespace-nowrap font-serif text-xs">
                 Ch {chapter.id}
@@ -258,6 +294,7 @@ Your business's mission and vision should guide every major decision you make. T
           direction={pageDirection}
           pageNumber={currentPage}
           totalPages={chapters.length}
+          onAnimationComplete={handleAnimationComplete}
         >
           <div 
             className={cn(
@@ -269,6 +306,8 @@ Your business's mission and vision should guide every major decision you make. T
               transformOrigin: 'center top',
             }}
             key={`page-${currentPage}`}
+            aria-live="polite"
+            aria-atomic="true"
           >
             {isSpreadView && (
               <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative">
@@ -285,6 +324,7 @@ Your business's mission and vision should guide every major decision you make. T
                             : "border-muted hover:border-primary/50"
                         )}
                         onClick={() => {
+                          if (isPageTurning) return;
                           setActiveTab(chapter.id.toString());
                           setCurrentPage(chapter.id);
                         }}
@@ -332,12 +372,20 @@ Your business's mission and vision should guide every major decision you make. T
 
                 <div className="flex justify-between mt-12 text-sm text-muted-foreground">
                   {currentPage > 1 && 
-                    <button onClick={() => handlePageChange('prev')} className="flex items-center">
+                    <button 
+                      onClick={() => handlePageChange('prev')} 
+                      className="flex items-center"
+                      disabled={isPageTurning}
+                    >
                       <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                     </button>
                   }
                   {currentPage < chapters.length &&
-                    <button onClick={() => handlePageChange('next')} className="flex items-center">
+                    <button 
+                      onClick={() => handlePageChange('next')} 
+                      className="flex items-center"
+                      disabled={isPageTurning}
+                    >
                       Next <ChevronRight className="h-4 w-4 ml-1" />
                     </button>
                   }

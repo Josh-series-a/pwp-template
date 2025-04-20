@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -128,6 +129,10 @@
 }
 
 @layer utilities {
+  .perspective-800 {
+    perspective: 800px;
+  }
+  
   .perspective-1000 {
     perspective: 1000px;
   }
@@ -143,5 +148,38 @@
   .book-spine {
     @apply absolute left-1/2 top-0 bottom-0 w-[20px] -ml-[10px] bg-gradient-to-r from-gray-400 via-gray-300 to-gray-400 z-10 transform -translate-x-[8px];
     box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  }
+  
+  .duration-850 {
+    transition-duration: 850ms;
+  }
+  
+  /* Book page bend effect */
+  .book-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .left-page::before {
+    right: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.08), transparent 80%);
+  }
+  
+  .right-page::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.08), transparent 80%);  
+  }
+  
+  /* Show page bend effect when turning */
+  .animate-page-turn-left::before,
+  .animate-page-turn-right::before {
+    opacity: 1;
   }
 }
