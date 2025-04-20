@@ -37,19 +37,42 @@ const Read = () => {
   const chapters = [
     {
       id: 1,
-      title: "Mission and Vision",
+      title: "CHAPTER 1: HAVE A PLAN",
+      content: `I spend a lot of time talking with small business owners about the stresses and strains of running their businesses. They will talk about lack of money, staff not doing what they should do, rising costs, awkward suppliers and a whole raft of operational issues that stress a business owner.
+
+However, more often than not, as I talk with the business owners, it becomes glaringly apparent that they do not have a plan for where the business is going. They don't have a sense of direction. This causes the owner a huge number of problems and consequently significantly increases their stress levels.
+
+Why Do You Need a Plan?
+
+Having a plan for your business is essential for several compelling reasons.
+
+1. It will significantly reduce your stress levels by providing a clear sense of purpose and direction, alleviating that sense of the business being a constant grind that can be so exhausting.
+
+2. A well-structured plan will empower you to distinguish good opportunities from bad ones, enabling you to make informed decisions about which projects will genuinely help you achieve your goals. This sense of empowerment will boost your confidence and capability as a business owner.
+
+3. It will resolve the dilemma of how you allocate your limited time and money. You can do this much more effectively when you have a clear vision of where you want your business to go.
+
+4. A plan ensures that your team has guidance in their day-to-day decisions, helping them prioritise tasks, concentrate on the right customers, and make choices that support the business's objectives.
+
+5. A well-articulated plan is crucial for securing financial backing from investors or banks. It will demonstrate how the company will use the investment, what it will achieve as a result, and how it will repay the investment. This can be a key factor in convincing potential investors or lenders of the viability of your business.
+
+That's where this book will start; I will help you create a plan. Your plan will give you a sense of direction and a business model for getting there. In creating a plan, you will also ask, "What do you want to do when you reach your preferred destination? Will you want to sell the business or pass it on to family members? What do you want your legacy to be?"
+
+Throughout Prosper With Purpose, you will see references to environmental and social considerations. These are increasingly impinging on business decisions whether or not the owner cares about them. It's becoming clearer by the day that both customers and staff are increasingly concerned about these issues, and companies need to build these concerns into their planning.
+
+The subsequent sections on People and Profits will discuss how to develop the two most essential resources required to implement any successful plan.
+
+There are libraries worth of books published on how to plan. However, for a small business owner, it's relatively simple. There are three key ingredients. First, you need to know where you want to go and what you want to achieve with your business. Second, you need a business model for how you're going to do that. Finally, you will decide what actions you will take to implement the model so you get to where you want to go.
+
+⚠️ Warning
+When you picked up Prosper With Purpose, did you think, "This sounds good: I want to grow so that I can pay myself"? If you did, my alarm bells are ringing.
+
+It's a very common answer; I meet it a lot. You feel you're not earning any money now because you haven't grown the business enough. That may well be true, but before you go any further, I want you to stop reading here, and I want you to go directly to Chapter 16.
+
+Let's ensure you've got the business model right financially before considering growing. If you don't, you'll find yourself working even harder and longer and still have nothing to show for it.
+
+Do you need to grow so you can pay yourself? Go to Chapter 16 Making Money and Getting Paid now.`,
       theme: "Planning",
-      content: `A clear mission and vision are the foundation of any successful business. Your mission statement articulates why your business exists and what problem it solves for customers. Your vision statement paints a picture of where you want your business to be in the future.
-
-When crafting these statements:
-- Keep them concise and memorable
-- Focus on the value you provide
-- Make them inspiring yet achievable
-- Ensure they align with your values
-
-Your business's mission and vision should guide every major decision you make. They act as a north star, helping you stay focused on what matters most.`,
-      summary: "Establishing a clear mission and vision is fundamental to building a sustainable business that outlasts its founder.",
-      quote: "A business without a mission is like a ship without a rudder - it may float, but it won't go anywhere meaningful."
     },
     {
       id: 2,
