@@ -21,29 +21,13 @@ export const getStartPageForRoute = (segment?: string): number => {
   return chapter?.startPage ?? 1;
 };
 
-// Note: We're using React.createElement instead of JSX to avoid any TS/JSX parsing issues
 export const getPageContent = (page: number): React.ReactNode => {
-  return React.createElement(
-    'div',
-    null,
-    React.createElement(
-      'h3',
-      { className: "text-2xl font-serif mb-4" },
-      "Page ",
-      page
-    ),
-    React.createElement(
-      'p',
-      { className: "text-lg mb-6" },
-      `Demo text for page ${page}. Replace this via CMS or static assets.`
-    ),
-    page % 5 === 0 && React.createElement(
-      'div',
-      { 
-        'data-workbook-field-id': `reflect-${page}`,
-        className: "p-4 bg-muted/20 rounded-md border"
-      },
-      "Reflection: jot down what resonated on this spread."
-    )
+  return React.createElement('div', null, 
+    React.createElement('h3', { className: "text-2xl font-serif mb-4" }, `Page ${page}`),
+    React.createElement('p', { className: "text-lg mb-6" }, `Demo text for page ${page}. Replace this via CMS or static assets.`),
+    page % 5 === 0 && React.createElement('div', {
+      'data-workbook-field-id': `reflect-${page}`,
+      className: "p-4 bg-muted/20 rounded-md border"
+    }, "Reflection: jot down what resonated on this spread.")
   );
 };

@@ -1,44 +1,40 @@
 
 import React from 'react';
-import { cn } from "@/lib/utils";
-import { Button } from '@/components/ui/button';
-import { CHAPTERS } from '../reader.config';
+import * as Tabs from '@radix-ui/react-tabs';
+import { cn } from '@/lib/utils';
 import { useReader } from '../context/ReaderContext';
+import { CHAPTERS, getChapterForPage } from '../reader.config';
 
-interface TabBarProps {
-  className?: string;
-}
+export const TabBar: React.FC = () => {
+  const { currentPage, goToPage } = useReader();
+  const active = getChapterForPage(currentPage)?.id ?? '';
 
-const TabBar: React.FC<TabBarProps> = ({ className }) => {
-  const { currentPage, turnPage } = useReader();
-  
-  // Function to determine if a chapter tab is active
-  const isActiveChapter = (chapter: typeof CHAPTERS[0]) => {
-    return currentPage >= chapter.startPage && currentPage <= chapter.endPage;
-  };
-  
   return (
-    <div className={cn("flex flex-col gap-2 pr-2", className)}>
-      {CHAPTERS.map((chapter) => (
-        <Button
-          key={chapter.id}
-          variant="ghost"
-          className={cn(
-            "px-2 py-6 rounded-r-md border-r-4 shadow-md relative w-8 h-16",
-            isActiveChapter(chapter)
-              ? "border-primary bg-primary/10" 
-              : "border-muted bg-background/80"
-          )}
-          onClick={() => turnPage(chapter.startPage)}
-          disabled={isActiveChapter(chapter)}
-        >
-          <span className="absolute -rotate-90 whitespace-nowrap font-serif text-xs">
-            {chapter.title.slice(0, 10)}{chapter.title.length > 10 ? '...' : ''}
-          </span>
-        </Button>
-      ))}
-    </div>
+    <Tabs.Root
+      value={active}
+      onValueChange={(id) => {
+        const chap = CHAPTERS.find((c) => c.id === id);
+        if (chap) goToPage(chap.startPage);
+      }}
+      orientation="vertical"
+      className="flex flex-col h-full overflow-y-auto pr-1"
+    >
+      <Tabs.List className="flex flex-col gap-2">
+        {CHAPTERS.map((c) => (
+          <Tabs.Trigger
+            key={c.id}
+            value={c.id}
+            className={cn(
+              'relative px-2 py-1 text-left text-xs font-medium',
+              'rounded-sm transition-colors',
+              'data-[state=active]:text-brand-ink data-[state=active]:before:bg-accent-gold',
+              'before:absolute before:inset-y-0 before:left-0 before:w-1 before:rounded-l',
+            )}
+          >
+            {c.title}
+          </Tabs.Trigger>
+        ))}
+      </Tabs.List>
+    </Tabs.Root>
   );
 };
-
-export default TabBar;

@@ -66,12 +66,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				canvas: '#FBF9F4',
+				'canvas-dark': '#EFECE5',
+				'brand-ink': '#0F1B24',
+				'accent-gold': '#C79A3B',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'page': '0 4px 20px rgba(15,27,36,.08)',
+			},
+			gridTemplateColumns: {
+				spread: 'auto minmax(0,1fr) 4px minmax(0,1fr) auto',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -122,41 +132,6 @@ export default {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.8' }
 				},
-				'backface-tint-in': {
-					'0%': { opacity: '0' },
-					'50%': { opacity: '1' },
-					'100%': { opacity: '0' }
-				},
-				'page-turn-forward': {
-					'0%': { 
-						transform: "rotateY(0deg) translateX(0px)",
-						transformOrigin: "left",
-						boxShadow: "0 0 0 rgba(0,0,0,0)"
-					},
-					'50%': {
-						boxShadow: "-10px 0 15px rgba(0,0,0,0.3)"
-					},
-					'100%': { 
-						transform: "rotateY(-15deg) translateX(-40px)",
-						transformOrigin: "left",
-						boxShadow: "0 6px 22px rgba(0,0,0,0.1)"
-					}
-				},
-				'page-turn-backward': {
-					'0%': { 
-						transform: "rotateY(0deg) translateX(0px)",
-						transformOrigin: "right",
-						boxShadow: "0 0 0 rgba(0,0,0,0)"
-					},
-					'50%': {
-						boxShadow: "10px 0 15px rgba(0,0,0,0.3)"
-					},
-					'100%': { 
-						transform: "rotateY(15deg) translateX(40px)",
-						transformOrigin: "right",
-						boxShadow: "0 6px 22px rgba(0,0,0,0.1)"
-					}
-				},
 				'page-turn': {
 					'0%': { 
 						transform: "rotateY(0deg)",
@@ -199,9 +174,6 @@ export default {
 				'slide-left': 'slide-left 0.6s ease-out',
 				'blur-in': 'blur-in 0.6s ease-out',
 				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
-				'backface-tint-in': 'backface-tint-in 0.85s cubic-bezier(.55,.06,.26,1.02)',
-				'page-turn-forward': 'page-turn-forward 0.85s cubic-bezier(.55,.06,.26,1.02)',
-				'page-turn-backward': 'page-turn-backward 0.85s cubic-bezier(.55,.06,.26,1.02)',
 				'page-turn': 'page-turn 0.7s ease-in-out',
 				'page-turn-reverse': 'page-turn-reverse 0.7s ease-in-out'
 			},
