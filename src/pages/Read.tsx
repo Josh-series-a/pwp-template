@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import DashboardLayout from '@/components/DashboardLayout';
 import { 
   BookOpen, Search, ChevronLeft, ChevronRight, 
   Share, ZoomIn, ZoomOut, Printer, ExternalLink, Download,
@@ -143,7 +144,7 @@ Your business's mission and vision should guide every major decision you make. T
     setIsSpreadView(!isSpreadView);
   };
 
-  const getChapterByPage = (page) => {
+  const getChapterByPage = (page: number) => {
     return chapters[Math.min(page - 1, chapters.length - 1)];
   };
 
@@ -171,253 +172,255 @@ Your business's mission and vision should guide every major decision you make. T
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#f8f5ed] dark:bg-[#252117] flex flex-col">
-      {showUI && (
-        <div className="flex items-center justify-between p-3 border-b bg-muted/20 shadow-sm backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <span className="font-serif font-medium">Prosper with Purpose</span>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-background/80 rounded-md px-2">
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-[180px] h-8"
-              />
-              <Search className="h-4 w-4 text-muted-foreground" />
+    <DashboardLayout title="Prosper with Purpose - Book">
+      <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-[#f8f5ed] dark:bg-[#252117] flex flex-col">
+        {showUI && (
+          <div className="flex items-center justify-between p-3 border-b bg-muted/20 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <span className="font-serif font-medium">Prosper with Purpose</span>
             </div>
             
-            <div className="flex items-center gap-1 bg-background/80 rounded-md px-2 py-1">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => handlePageChange('prev')}
-                disabled={currentPage <= 1 || isPageTurning}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="mx-2 text-sm font-serif">Page {currentPage}</span>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => handlePageChange('next')}
-                disabled={currentPage >= chapters.length || isPageTurning}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-background/80 rounded-md px-2">
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-[180px] h-8"
+                />
+                <Search className="h-4 w-4 text-muted-foreground" />
+              </div>
+              
+              <div className="flex items-center gap-1 bg-background/80 rounded-md px-2 py-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handlePageChange('prev')}
+                  disabled={currentPage <= 1 || isPageTurning}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="mx-2 text-sm font-serif">Page {currentPage}</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handlePageChange('next')}
+                  disabled={currentPage >= chapters.length || isPageTurning}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
 
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" onClick={handleZoomOut}>
-                <ZoomOut className="h-4 w-4" />
-              </Button>
-              <span className="mx-1 text-sm">{Math.round(scale * 100)}%</span>
-              <Button variant="ghost" size="icon" onClick={handleZoomIn}>
-                <ZoomIn className="h-4 w-4" />
-              </Button>
-            </div>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" onClick={handleZoomOut}>
+                  <ZoomOut className="h-4 w-4" />
+                </Button>
+                <span className="mx-1 text-sm">{Math.round(scale * 100)}%</span>
+                <Button variant="ghost" size="icon" onClick={handleZoomIn}>
+                  <ZoomIn className="h-4 w-4" />
+                </Button>
+              </div>
 
-            {windowWidth >= 768 && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={toggleView} 
-                className="text-xs"
+              {windowWidth >= 768 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={toggleView} 
+                  className="text-xs"
+                  disabled={isPageTurning}
+                >
+                  {isSpreadView ? "Single Page" : "Spread View"}
+                </Button>
+              )}
+
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" onClick={handleShare}>
+                  <Share className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handlePrint}>
+                  <Printer className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" asChild>
+                  <a href={window.location.href} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button variant="ghost" size="icon" asChild>
+                  <a href="#" download="chapter.pdf">
+                    <Download className="h-4 w-4" />
+                  </a>
+                </Button>
+                <Button variant="ghost" size="icon" onClick={toggleFullscreen}>
+                  {showUI ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className={cn(
+          "flex-1 flex justify-center overflow-hidden",
+          "bg-[#f8f5ed] dark:bg-[#252117]"
+        )}>
+          <div className={cn(
+            "flex flex-col gap-2 pr-2 overflow-y-auto",
+            showUI ? "pt-10" : "pt-4"
+          )}>
+            {chapters.map(chapter => (
+              <Button
+                key={chapter.id}
+                variant="ghost"
+                className={cn(
+                  "px-2 py-6 rounded-r-md border-r-4 shadow-md relative w-8 h-16",
+                  activeTab === chapter.id.toString() 
+                    ? "border-primary bg-primary/10" 
+                    : "border-muted bg-background/80"
+                )}
+                onClick={() => {
+                  setActiveTab(chapter.id.toString());
+                  setCurrentPage(chapter.id);
+                }}
                 disabled={isPageTurning}
               >
-                {isSpreadView ? "Single Page" : "Spread View"}
+                <span className="absolute -rotate-90 whitespace-nowrap font-serif text-xs">
+                  Ch {chapter.id}
+                </span>
               </Button>
-            )}
-
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" onClick={handleShare}>
-                <Share className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={handlePrint}>
-                <Printer className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href={window.location.href} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="#" download="chapter.pdf">
-                  <Download className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button variant="ghost" size="icon" onClick={toggleFullscreen}>
-                {showUI ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </Button>
-            </div>
+            ))}
           </div>
-        </div>
-      )}
-
-      <div className={cn(
-        "flex-1 flex justify-center overflow-hidden",
-        "bg-[#f8f5ed] dark:bg-[#252117]"
-      )}>
-        <div className={cn(
-          "flex flex-col gap-2 pr-2 overflow-y-auto",
-          showUI ? "pt-10" : "pt-4"
-        )}>
-          {chapters.map(chapter => (
-            <Button
-              key={chapter.id}
-              variant="ghost"
-              className={cn(
-                "px-2 py-6 rounded-r-md border-r-4 shadow-md relative w-8 h-16",
-                activeTab === chapter.id.toString() 
-                  ? "border-primary bg-primary/10" 
-                  : "border-muted bg-background/80"
-              )}
-              onClick={() => {
-                setActiveTab(chapter.id.toString());
-                setCurrentPage(chapter.id);
-              }}
-              disabled={isPageTurning}
-            >
-              <span className="absolute -rotate-90 whitespace-nowrap font-serif text-xs">
-                Ch {chapter.id}
-              </span>
-            </Button>
-          ))}
-        </div>
-        
-        <PageTransition 
-          isAnimating={isPageTurning} 
-          direction={pageDirection}
-          pageNumber={currentPage}
-          totalPages={chapters.length}
-          onAnimationComplete={handleAnimationComplete}
-        >
-          <div 
-            className={cn(
-              "relative overflow-hidden w-full max-w-[1400px]",
-              isSpreadView ? "flex" : "block"
-            )}
-            style={{ 
-              transform: `scale(${scale})`, 
-              transformOrigin: 'center top',
-            }}
-            key={`page-${currentPage}`}
-            aria-live="polite"
-            aria-atomic="true"
+          
+          <PageTransition 
+            isAnimating={isPageTurning} 
+            direction={pageDirection}
+            pageNumber={currentPage}
+            totalPages={chapters.length}
+            onAnimationComplete={handleAnimationComplete}
           >
-            {isSpreadView && (
-              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative">
-                <div className="h-full flex flex-col">
-                  <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
-                  <div className="space-y-4">
-                    {chapters.map(chapter => (
-                      <div 
-                        key={chapter.id} 
-                        className={cn(
-                          "cursor-pointer p-3 border-l-2 transition-colors",
-                          activeTab === chapter.id.toString() 
-                            ? "border-primary bg-primary/5" 
-                            : "border-muted hover:border-primary/50"
-                        )}
-                        onClick={() => {
-                          if (isPageTurning) return;
-                          setActiveTab(chapter.id.toString());
-                          setCurrentPage(chapter.id);
-                        }}
-                      >
-                        <h3 className="font-serif text-lg">{chapter.title}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">{chapter.summary}</p>
-                      </div>
-                    ))}
-                  </div>
+            <div 
+              className={cn(
+                "relative overflow-hidden w-full max-w-[1400px]",
+                isSpreadView ? "flex" : "block"
+              )}
+              style={{ 
+                transform: `scale(${scale})`, 
+                transformOrigin: 'center top',
+              }}
+              key={`page-${currentPage}`}
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {isSpreadView && (
+                <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative">
+                  <div className="h-full flex flex-col">
+                    <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
+                    <div className="space-y-4">
+                      {chapters.map(chapter => (
+                        <div 
+                          key={chapter.id} 
+                          className={cn(
+                            "cursor-pointer p-3 border-l-2 transition-colors",
+                            activeTab === chapter.id.toString() 
+                              ? "border-primary bg-primary/5" 
+                              : "border-muted hover:border-primary/50"
+                          )}
+                          onClick={() => {
+                            if (isPageTurning) return;
+                            setActiveTab(chapter.id.toString());
+                            setCurrentPage(chapter.id);
+                          }}
+                        >
+                          <h3 className="font-serif text-lg">{chapter.title}</h3>
+                          <p className="text-sm text-muted-foreground mt-1">{chapter.summary}</p>
+                        </div>
+                      ))}
+                    </div>
 
-                  <div className="mt-auto pt-8 border-t border-muted/30">
-                    <h3 className="font-serif text-sm mb-2">Notes</h3>
-                    <div className="bg-[#f2efe6] dark:bg-[#2a271e] p-3 rounded min-h-[120px] text-muted-foreground italic text-sm">
-                      Click to add personal notes...
+                    <div className="mt-auto pt-8 border-t border-muted/30">
+                      <h3 className="font-serif text-sm mb-2">Notes</h3>
+                      <div className="bg-[#f2efe6] dark:bg-[#2a271e] p-3 rounded min-h-[120px] text-muted-foreground italic text-sm">
+                        Click to add personal notes...
+                      </div>
                     </div>
                   </div>
+                  {isSpreadView && (
+                    <div className="absolute bottom-4 right-8 font-serif text-2xl text-muted-foreground/50 italic">
+                      {currentPage > 1 ? currentPage - 1 : 'i'}
+                    </div>
+                  )}
                 </div>
-                {isSpreadView && (
-                  <div className="absolute bottom-4 right-8 font-serif text-2xl text-muted-foreground/50 italic">
-                    {currentPage > 1 ? currentPage - 1 : 'i'}
+              )}
+
+              {isSpreadView && <div className="book-spine"></div>}
+
+              <div className={cn(
+                "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative",
+                isSpreadView 
+                  ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.3)]" 
+                  : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
+              )}>
+                <div>
+                  <h1 className="text-3xl font-serif mb-2 font-bold">{currentChapter.title}</h1>
+                  <p className="text-sm text-muted-foreground">Theme: {currentChapter.theme}</p>
+                  
+                  <div className="my-6 pl-6 border-l-4 border-primary/20">
+                    <p className="text-lg italic text-muted-foreground font-serif">{currentChapter.quote}</p>
                   </div>
-                )}
-              </div>
-            )}
 
-            {isSpreadView && <div className="book-spine"></div>}
+                  <div className="prose prose-slate prose-headings:font-serif prose-p:text-lg prose-p:leading-relaxed dark:prose-invert max-w-none">
+                    <p className="whitespace-pre-line text-lg font-[Georgia] leading-relaxed">{currentChapter.content}</p>
+                  </div>
 
-            <div className={cn(
-              "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative",
-              isSpreadView 
-                ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.3)]" 
-                : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
-            )}>
-              <div>
-                <h1 className="text-3xl font-serif mb-2 font-bold">{currentChapter.title}</h1>
-                <p className="text-sm text-muted-foreground">Theme: {currentChapter.theme}</p>
-                
-                <div className="my-6 pl-6 border-l-4 border-primary/20">
-                  <p className="text-lg italic text-muted-foreground font-serif">{currentChapter.quote}</p>
+                  <div className="flex justify-between mt-12 text-sm text-muted-foreground">
+                    {currentPage > 1 && 
+                      <button 
+                        onClick={() => handlePageChange('prev')} 
+                        className="flex items-center"
+                        disabled={isPageTurning}
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                      </button>
+                    }
+                    {currentPage < chapters.length &&
+                      <button 
+                        onClick={() => handlePageChange('next')} 
+                        className="flex items-center"
+                        disabled={isPageTurning}
+                      >
+                        Next <ChevronRight className="h-4 w-4 ml-1" />
+                      </button>
+                    }
+                  </div>
                 </div>
-
-                <div className="prose prose-slate prose-headings:font-serif prose-p:text-lg prose-p:leading-relaxed dark:prose-invert max-w-none">
-                  <p className="whitespace-pre-line text-lg font-[Georgia] leading-relaxed">{currentChapter.content}</p>
+                <div className="absolute bottom-4 left-8 font-serif text-2xl text-muted-foreground/50 italic">
+                  {currentPage}
                 </div>
-
-                <div className="flex justify-between mt-12 text-sm text-muted-foreground">
-                  {currentPage > 1 && 
-                    <button 
-                      onClick={() => handlePageChange('prev')} 
-                      className="flex items-center"
-                      disabled={isPageTurning}
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                    </button>
-                  }
-                  {currentPage < chapters.length &&
-                    <button 
-                      onClick={() => handlePageChange('next')} 
-                      className="flex items-center"
-                      disabled={isPageTurning}
-                    >
-                      Next <ChevronRight className="h-4 w-4 ml-1" />
-                    </button>
-                  }
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-8 font-serif text-2xl text-muted-foreground/50 italic">
-                {currentPage}
               </div>
             </div>
-          </div>
-        </PageTransition>
+          </PageTransition>
 
-        {!showUI && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setShowUI(true)}
-            className="fixed top-4 right-4 bg-background/50 backdrop-blur-sm z-50"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          {!showUI && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setShowUI(true)}
+              className="fixed top-4 right-4 bg-background/50 backdrop-blur-sm z-50"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        {windowWidth < 768 && isSpreadView && (
+          <div className="fixed bottom-4 left-0 right-0 mx-auto w-max bg-background/90 backdrop-blur-sm p-2 rounded-full shadow-lg">
+            <Button variant="ghost" size="sm" onClick={() => setIsSpreadView(false)}>
+              Switch to single page view
+            </Button>
+          </div>
         )}
       </div>
-
-      {windowWidth < 768 && isSpreadView && (
-        <div className="fixed bottom-4 left-0 right-0 mx-auto w-max bg-background/90 backdrop-blur-sm p-2 rounded-full shadow-lg">
-          <Button variant="ghost" size="sm" onClick={() => setIsSpreadView(false)}>
-            Switch to single page view
-          </Button>
-        </div>
-      )}
-    </div>
+    </DashboardLayout>
   );
 };
 

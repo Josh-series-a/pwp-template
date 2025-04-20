@@ -29,11 +29,15 @@ const PageTransition = ({
   const activeSide = direction === 'next' ? 'right' : 'left';
   
   useEffect(() => {
-    // After the animation is complete, update the content
+    // Reset when animation is not active
     if (!isAnimating) {
       setContent(children);
       setAnimationPhase('initial');
-    } else if (isAnimating && animationPhase === 'initial') {
+      return;
+    }
+    
+    // Start animation when isAnimating changes to true
+    if (isAnimating && animationPhase === 'initial') {
       setAnimationPhase('turning');
       
       // Use browser animation timing to match our specified duration (850ms)
