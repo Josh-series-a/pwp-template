@@ -18,67 +18,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import bookChapters from '@/data/bookChapters';
 
 const BookInsights = () => {
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [isListenDialogOpen, setIsListenDialogOpen] = useState(false);
 
-  const chapters = [
-    {
-      id: 1,
-      title: "Mission and Vision",
-      theme: "Planning",
-      summary: "Establishing a clear mission and vision is fundamental to building a sustainable business that outlasts its founder.",
-      relevance: "high",
-      quote: "A business without a mission is like a ship without a rudder - it may float, but it won't go anywhere meaningful.",
-      exercises: ["Define Your Mission Statement", "Vision Board Creation"]
-    },
-    {
-      id: 2,
-      title: "Direction",
-      theme: "Vision",
-      summary: "Understanding your business's direction is crucial for making strategic decisions and maintaining focus.",
-      relevance: "medium",
-      quote: "Your mission isn't just about what your business does, but about the impact you want to create in the world.",
-      exercises: ["Future Vision Exercise", "Strategic Direction Planning"]
-    },
-    {
-      id: 3,
-      title: "Timeline",
-      theme: "Planning",
-      summary: "Understanding how to plan backwards from your goals helps create realistic roadmaps for success.",
-      relevance: "high",
-      quote: "Start with where you want to end up and work backwards - it's easier to see the path when you're looking down from the summit.",
-      exercises: ["Future-Back Planning", "Milestone Timeline Creation"]
-    },
-    {
-      id: 4,
-      title: "Exit Strategy",
-      theme: "Planning",
-      summary: "Planning your exit strategy is crucial for long-term business success and sustainability.",
-      relevance: "high",
-      quote: "An exit strategy isn't just about ending - it's about creating a meaningful legacy for your business.",
-      exercises: ["Exit Strategy Definition", "Succession Planning"]
-    },
-    {
-      id: 5,
-      title: "Future-Fit Planning for Sustainability",
-      theme: "Sustainability",
-      summary: "Integrating environmental and social considerations into your business model is increasingly essential for long-term success.",
-      relevance: "medium",
-      quote: "Sustainability isn't just about saving the planet - it's about ensuring your business can thrive in a rapidly changing world.",
-      exercises: ["Environmental Impact Assessment", "Sustainability Integration Plan"]
-    },
-    {
-      id: 6,
-      title: "Customer Experience",
-      theme: "Planning",
-      summary: "Designing an exceptional customer journey will create loyal advocates for your business.",
-      relevance: "medium",
-      quote: "Your customer doesn't care about your internal processes - they care about how you make them feel at every touchpoint.",
-      exercises: ["Customer Journey Mapping", "Customer Persona Development"]
-    },
-  ];
+  // Map relevance based on chapter positions
+  const getRelevanceForChapter = (chapterId: number) => {
+    if (chapterId <= 3) return "high";
+    if (chapterId <= 6) return "medium";
+    return "low";
+  };
 
   const getRelevanceLabel = (relevance: string) => {
     switch (relevance) {
@@ -103,8 +54,12 @@ const BookInsights = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {chapters.map((chapter) => {
-            const relevance = getRelevanceLabel(chapter.relevance);
+          {bookChapters.map((chapter) => {
+            const relevance = getRelevanceLabel(getRelevanceForChapter(chapter.id));
+            const exercises = chapter.content
+              .split('\n\n')
+              .filter(p => p.startsWith('Exercise'))
+              .map(e => e.split(':')[0].trim());
             
             return (
               <Card key={chapter.id} className="overflow-hidden">
@@ -139,23 +94,25 @@ const BookInsights = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="exercises">
-                      <AccordionTrigger className="text-sm">
-                        Related Exercises
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="space-y-2">
-                          {chapter.exercises.map((exercise, i) => (
-                            <li key={i} className="flex items-center gap-2">
-                              <span className="w-1 h-1 rounded-full bg-primary"></span>
-                              <span className="text-sm">{exercise}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                  {exercises.length > 0 && (
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="exercises">
+                        <AccordionTrigger className="text-sm">
+                          Related Exercises
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <ul className="space-y-2">
+                            {exercises.map((exercise, i) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <span className="w-1 h-1 rounded-full bg-primary"></span>
+                                <span className="text-sm">{exercise}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  )}
                   
                   <div className="flex w-full gap-3">
                     <Button 
@@ -199,7 +156,7 @@ const BookInsights = () => {
             setActiveChapter(null);
           }}
           chapterId={activeChapter}
-          chapterTitle={chapters.find(c => c.id === activeChapter)?.title || ''}
+          chapterTitle={bookChapters.find(c => c.id === activeChapter)?.title || ''}
         />
       )}
     </DashboardLayout>
