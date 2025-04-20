@@ -1,14 +1,16 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   BookOpen, Search, ChevronLeft, ChevronRight, X,
   Share, ZoomIn, ZoomOut, Printer, ExternalLink, Download,
-  Bookmark
+  Bookmark, Headphones
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import PageTransition from '@/components/PageTransition';
+import ListenDialog from '@/components/ListenDialog';
 
 const Read = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -20,6 +22,7 @@ const Read = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isPageTurning, setIsPageTurning] = useState(false);
   const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
+  const [listenDialogOpen, setListenDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -461,68 +464,190 @@ These could be capital items, such as vehicles or computers, or they could be sp
 Supporting the entire business model is the finance. In the left-hand corner, you have the Cost Structure. Here, you need to understand and list your key costs to obtain the Key Resources you require to operate your Key Activities.
 Is it rent? Is it people? Is it digital information? What are the key costs that you need to cover to deliver your service?
 Next, you should consider Revenue Streams. This needs to be fully fleshed out. How are you going to generate revenue? Are you selling, renting or leasing your product? Are you providing a service? Do you charge by the hour? Do you charge by the day? Or do you charge by an outcome? Do you charge in arrears or charge in advance? How does the revenue model work?
-Now that you've orientated yourself around the Future-Fit Business Model Canvas, let's return to Customer Segments. As I said earlier, I always start with the customer. It's critically important to analyse what they truly want because the rest of the Future-Fit Business Model Canvas flows directly from your understanding of the customer.
-
-Who Is Your Customer?
-This is a critical question that small business owners must address and fully understand. Without a solid insight into who your customers are and what they need, it's difficult to grow a business.
-I study my clients to develop what is known in the trade as a persona or avatar. This is a detailed description of a typical customer whose habits and interests you fully understand. I've set out a template, Exercise 6, for creating a persona later in this chapter.
-Interestingly, I get a lot of pushback on this from people I'm mentoring and students on courses I run. Many of them feel that they are selling to everyone. They explain they don't have a typical customer. They state that their customers come from all walks of life, they're all different, and they can't define any one type of customer.
-When I've helped them drill down to their typical customer, I've found that it's not true. Usually, there is a dominant characteristic. There is a type of company or person who is most likely to buy your service or product.
-Moreover, it's not that you won't sell to anybody who wants your product. Of course, you will. It's about who you spend your precious marketing budget and resources on. In essence, you aim your marketing at the person or organisation most likely to want to use your product or service and pay for it.
-Even large supermarkets such as Tesco will spend most of their marketing efforts trying to connect with a particular group of people. All the other customers who don't meet that description are welcome but are effectively a marketing bonus.
-Mitali, at The Vegan Publisher, is an excellent example of this.
-
-🔎Case Study
-The Vegan Publisher offers services to help people write and publish books, but not just any kind of books. Mitali, the founder, particularly helps people write self-help, how-to or guide-style books for personal branding and thought leadership. She does not do novels, children's books or historical accounts.
-She has a specific niche, a group of people to who she concentrates on selling her services, and she has developed a particular service to help those people.
-Writing this type of book is very different from writing a novel, and the advice and support the two writers would need are very different. Mitali focuses her marketing on helping those writing books for thought leadership.
-If she were to market to any 'wannabe' author, she would also have to develop an entire range of support for those who wanted to write in other genres. Very quickly, her reputation would be diluted, her ability to support people to the highest level would be reduced, and she would lose the edge in her chosen market.
-
-The following section will concentrate on defining your customer by working out in some detail what the people in your niche look like, how they behave, and, most importantly, what they need.
-Let's get back to understanding your customer and their needs. To do that, I'm going to relate two very different case studies that illustrate how close listening can reveal a customer's true needs.
-
-🔎Case Study
-In 1990, as I was developing my first business, Papercycle, I took a call from a lovely man called Mike Tregent at the BBC. He asked me if I could provide a paper recycling scheme for Broadcasting House in Central London.
-This was a major opportunity, so I met him as soon as possible. He explained to me that there were several departments in the building who had taken it upon themselves to collect their wastepaper and organise for a recycling company to come and get it.
-The consequence was pandemonium, with various vehicles turning up at all times of day and night to collect tiny volumes of paper that this or that department had collected.
-However, as I listened to Mike describe the chaos and the consequent fire safety risks, I heard an even deeper worry. How could he manage these massive issues with unpredictable amounts of paper coming into the corridors and sitting on the loading bay in various quantities? Also, how could he keep all the staff from these different departments happy?
-If Mike just stopped their schemes, that would cause resentment. He needed to replace them with an organised scheme to remove the health, safety and fire risks. He also wanted something to communicate to the staff, who took the waste issue extremely seriously.
-My proposal would have to address all these concerns in order to be accepted.  I worked collaboratively with Mike to create a system that fully considered the fire safety requirements. We made sure it was also efficient and easy to operate. Lastly, I designed a monthly 'trees saved' reporting system, which generated a certificate that could be pinned up on all the noticeboards in the building.
-After a careful review, Mike decided to take the plunge and adopt our system over all the other recyclers collecting from the building.
-My second case study is from almost two decades later when I ran Tree Shepherd, which supported people from marginalised backgrounds, including the unemployed, and trained them to start their own enterprises.
-
-🔎Case Study
-Most people I trained through Tree Shepherd were middle-aged women from ethnic minority, working class backgrounds. In talking to them, I realised they couldn't imagine ever being wealthy. They couldn't even imagine going on holiday.
-One lady told me she would be terrified of going away for more than a few days because the fridge would be empty when she got back. Yet, they also knew that they were capable. They'd managed big, complex households. They cared for a lot of  people and constantly juggled all sorts of things in their lives.
-Very few of them had any formal education beyond the age of 16. They were terrified of going on a course that, in some way, would demean or patronise them.  They wanted and deserved respect.
-Yes, of course, they wanted to run a business to make money to help them pay the bills. However, their priority was to maintain their self-respect.
-Therefore, the most critical aspect of Tree Shepherd's offer was that the course was relatable and non-intimidating. This meant that we delivered the courses in community centres, not colleges.
-It also meant that we excluded all jargon and strange business terminology. Additionally, we used examples of businesses they could relate to and understand.
-These case studies illustrate why it's important to know your customer.  This knowledge enables you to create a service customers genuinely like and choose. Now you know how important this is, you can follow this exercise to discover who they are.
-
-Exercise 6: Know Your Customer
-As you can see from the previous case studies, knowing your customer is imperative. This exercise helps you to discover who they are.
-Create one or two personas for your ideal customer(s). You can use the customer persona template to help form a picture.
-There are many websites that can advise you on questions to help you create your persona. The most important thing is to focus on understanding how your ideal customer ticks. What motivates them, worries them, and what must you do to convince them to buy from you?
-
-Start your persona with a short description. Once you've described them, you should probe more into their aspirations and how they can achieve them. It's also a good idea to assess what resources they have at their disposal in terms of money, time, network and skills.
-
-The template is divided into business-to-consumer (B2C) and business-to-business (B2B).  Your answers will differ for the same persona, depending on whether you sell to them in their personal or work capacity.
-
-Come up with a list of the concerns and fears your persona faces. Try to use the precise words your persona would use rather than paraphrase. Also, pay attention to the order of importance you attach to these obstacles.
-
-It's very useful to consider your persona's ultimate goal(s). What do they want to achieve in life or at work?
-
-Lastly, describe why this persona is your ideal customer and what you must offer to attract them.`,
+Now that you've orientated yourself around the Future-Fit Business Model Canvas, let's return to Customer Segments. As I said earlier, I always start with the customer. It's critically important to analyse what they truly want because the rest of the Future-Fit Business Model Canvas flows directly from your understanding of the customer.`,
       summary: "Understanding your business model is essential for creating a roadmap that balances profit with purpose.",
       quote: "A business model isn't just a framework for making money; it's the blueprint for how your business will create value."
     }
   ];
 
+  const handleNextPage = () => {
+    setIsPageTurning(true);
+    setPageDirection('next');
+    setTimeout(() => {
+      setCurrentPage(prev => Math.min(prev + 1, chapters.length));
+      setIsPageTurning(false);
+    }, 500);
+  };
+
+  const handlePrevPage = () => {
+    setIsPageTurning(true);
+    setPageDirection('prev');
+    setTimeout(() => {
+      setCurrentPage(prev => Math.max(prev - 1, 1));
+      setIsPageTurning(false);
+    }, 500);
+  };
+
+  const handleZoomIn = () => {
+    setScale(prev => Math.min(prev + 0.1, 2.0));
+  };
+
+  const handleZoomOut = () => {
+    setScale(prev => Math.max(prev - 0.1, 0.5));
+  };
+
+  const toggleUI = () => {
+    setShowUI(prev => !prev);
+  };
+
+  const openListenDialog = () => {
+    setListenDialogOpen(true);
+  };
+
+  const getCurrentChapter = () => {
+    return chapters[currentPage - 1];
+  };
+
+  const renderChapterContent = () => {
+    const chapter = getCurrentChapter();
+    
+    return (
+      <div className="p-8 font-serif max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">{chapter.title}</h1>
+        <div className="bg-amber-100 rounded-lg p-4 mb-6">
+          <p className="italic text-amber-800">{chapter.quote}</p>
+        </div>
+        <div className="whitespace-pre-line">
+          {chapter.content.split('\n\n').map((paragraph, idx) => {
+            if (paragraph.startsWith('🔎Case Study')) {
+              return (
+                <div key={idx} className="bg-blue-50 p-4 rounded-lg my-4 border-l-4 border-blue-500">
+                  <h3 className="font-bold text-blue-900 mb-2">Case Study</h3>
+                  <p>{paragraph.replace('🔎Case Study', '')}</p>
+                </div>
+              );
+            } else if (paragraph.startsWith('⚠️ Warning')) {
+              return (
+                <div key={idx} className="bg-red-50 p-4 rounded-lg my-4 border-l-4 border-red-500">
+                  <h3 className="font-bold text-red-900 mb-2">Warning</h3>
+                  <p>{paragraph.replace('⚠️ Warning', '')}</p>
+                </div>
+              );
+            } else if (paragraph.startsWith('⚙️Resource')) {
+              return (
+                <div key={idx} className="bg-green-50 p-4 rounded-lg my-4 border-l-4 border-green-500">
+                  <h3 className="font-bold text-green-900 mb-2">Resource</h3>
+                  <p>{paragraph.replace('⚙️Resource', '')}</p>
+                </div>
+              );
+            } else if (paragraph.startsWith('Exercise')) {
+              return (
+                <div key={idx} className="bg-purple-50 p-4 rounded-lg my-4 border-l-4 border-purple-500">
+                  <h3 className="font-bold text-purple-900 mb-2">{paragraph.split(':')[0]}</h3>
+                  <p>{paragraph.split(':').slice(1).join(':')}</p>
+                </div>
+              );
+            } else if (paragraph.startsWith('Figure')) {
+              return (
+                <div key={idx} className="text-center text-gray-600 italic my-4">
+                  <p>{paragraph}</p>
+                </div>
+              );
+            } else {
+              return <p key={idx} className="mb-4">{paragraph}</p>;
+            }
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <PageTransition>
-      {/* Render functions and return statement */}
-    </PageTransition>
+    <div className="flex flex-col h-screen bg-stone-50">
+      {showUI && (
+        <div className="flex justify-between items-center p-4 bg-white border-b">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" onClick={() => navigate('/dashboard/overview')}>
+              <X size={20} />
+            </Button>
+            <h2 className="text-xl font-serif">Prosper with Purpose</h2>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={handleZoomOut}>
+              <ZoomOut size={18} />
+            </Button>
+            <span className="text-sm">{Math.round(scale * 100)}%</span>
+            <Button variant="ghost" size="sm" onClick={handleZoomIn}>
+              <ZoomIn size={18} />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={openListenDialog}>
+              <Headphones size={18} />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Bookmark size={18} />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Share size={18} />
+            </Button>
+          </div>
+        </div>
+      )}
+      
+      <div 
+        className="flex-1 overflow-y-auto"
+        style={{ 
+          transform: `scale(${scale})`, 
+          transformOrigin: 'top center',
+          cursor: showUI ? 'default' : 'pointer'
+        }}
+        onClick={toggleUI}
+      >
+        <PageTransition 
+          isAnimating={isPageTurning} 
+          direction={pageDirection}
+          pageNumber={currentPage}
+          totalPages={chapters.length}
+        >
+          {renderChapterContent()}
+        </PageTransition>
+      </div>
+      
+      {showUI && (
+        <div className="flex justify-between p-4 bg-white border-t">
+          <Button 
+            variant="outline"
+            onClick={handlePrevPage}
+            disabled={currentPage <= 1}
+            className="flex items-center"
+          >
+            <ChevronLeft className="mr-2" size={16} />
+            Previous
+          </Button>
+          
+          <div className="text-sm text-gray-500">
+            Page {currentPage} of {chapters.length}
+          </div>
+          
+          <Button 
+            variant="outline"
+            onClick={handleNextPage}
+            disabled={currentPage >= chapters.length}
+            className="flex items-center"
+          >
+            Next
+            <ChevronRight className="ml-2" size={16} />
+          </Button>
+        </div>
+      )}
+      
+      <ListenDialog 
+        isOpen={listenDialogOpen} 
+        onClose={() => setListenDialogOpen(false)}
+        chapterId={currentPage}
+        chapterTitle={getCurrentChapter().title}
+      />
+    </div>
   );
 };
 
