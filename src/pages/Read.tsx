@@ -274,8 +274,8 @@ Your business's mission and vision should guide every major decision you make. T
               <div className={cn(
                 "book-page left-page min-w-[600px] max-w-[600px] h-[840px] p-12 overflow-y-auto relative",
                 isPageTurning && "page-turning",
-                isPageTurning && direction === 'next' && "page-turning-next",
-                isPageTurning && direction === 'prev' && "page-turning-prev"
+                isPageTurning && pageDirection === 'next' && "page-turning-next",
+                isPageTurning && pageDirection === 'prev' && "page-turning-prev"
               )}>
                 <div className="h-full flex flex-col">
                   <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
@@ -323,8 +323,8 @@ Your business's mission and vision should guide every major decision you make. T
                 ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.2)]"
                 : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]",
               isPageTurning && "page-turning",
-              isPageTurning && direction === 'next' && "page-turning-next",
-              isPageTurning && direction === 'prev' && "page-turning-prev"
+              isPageTurning && pageDirection === 'next' && "page-turning-next",
+              isPageTurning && pageDirection === 'prev' && "page-turning-prev"
             )}>
               <div>
                 <h1 className="text-3xl font-serif mb-2 font-bold">{currentChapter.title}</h1>
