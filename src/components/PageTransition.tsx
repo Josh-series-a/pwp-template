@@ -20,7 +20,6 @@ const PageTransition = ({
   const [content, setContent] = useState(children);
   
   useEffect(() => {
-    // After the animation is complete, update the content
     if (!isAnimating) {
       setContent(children);
     }
@@ -28,13 +27,7 @@ const PageTransition = ({
   
   return (
     <div className="relative book-container perspective-1000">
-      <div
-        className={cn(
-          "relative transition-transform duration-700 ease-in-out transform-style-3d",
-          isAnimating && direction === 'next' && "animate-page-flip-forward",
-          isAnimating && direction === 'prev' && "animate-page-flip-backward"
-        )}
-      >
+      <div className="book-content">
         {isAnimating ? content : children}
       </div>
       {pageNumber && totalPages && (

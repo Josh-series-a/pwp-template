@@ -141,15 +141,25 @@
     backface-visibility: hidden;
   }
 
+  .book-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
   .book-spine {
-    @apply absolute left-0 top-0 bottom-0 w-[20px] bg-gradient-to-r from-gray-500 via-gray-400 to-gray-300 shadow-md z-10;
+    @apply absolute left-1/2 top-0 bottom-0 w-[30px] bg-gradient-to-r from-gray-500 via-gray-400 to-gray-300;
     transform: translateX(-50%);
+    box-shadow: 
+      -2px 0 5px rgba(0,0,0,0.2),
+      2px 0 5px rgba(0,0,0,0.2);
   }
   
-  /* Book page classes for realistic page turning */
   .book-page {
-    @apply relative;
-    transform-origin: left center;
+    @apply relative bg-[#f8f5ed] dark:bg-[#252117];
+    transform-origin: center left;
+    transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000);
   }
   
   .left-page {
@@ -161,10 +171,17 @@
     @apply shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.2)];
   }
 
-  /* Page flip effect that centers on the book spine */
-  .page-flip {
+  .page-turning {
     position: absolute;
     transform-origin: left center;
-    transition: transform 0.7s ease-in-out;
+    transition: transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+  }
+
+  .page-turning-next {
+    transform: rotateY(-180deg);
+  }
+
+  .page-turning-prev {
+    transform: rotateY(0deg);
   }
 }

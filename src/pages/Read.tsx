@@ -131,7 +131,7 @@ Your business's mission and vision should guide every major decision you make. T
   const currentChapter = getChapterByPage(currentPage);
 
   const handlePageChange = (direction: 'next' | 'prev') => {
-    if (isPageTurning) return; // Prevent rapid clicking during animation
+    if (isPageTurning) return;
     
     setPageDirection(direction);
     setIsPageTurning(true);
@@ -262,16 +262,21 @@ Your business's mission and vision should guide every major decision you make. T
           <div 
             className={cn(
               "relative overflow-hidden w-full max-w-[1400px]",
-              isSpreadView ? "flex justify-center" : "block mx-auto"
+              isSpreadView ? "flex items-center justify-center" : "block mx-auto"
             )}
             style={{ 
-              transform: `scale(${scale})`, 
+              transform: `scale(${scale})`,
               transformOrigin: 'center top',
             }}
             key={`page-${currentPage}`}
           >
             {isSpreadView && (
-              <div className="book-page left-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative">
+              <div className={cn(
+                "book-page left-page min-w-[600px] max-w-[600px] h-[840px] p-12 overflow-y-auto relative",
+                isPageTurning && "page-turning",
+                isPageTurning && direction === 'next' && "page-turning-next",
+                isPageTurning && direction === 'prev' && "page-turning-prev"
+              )}>
                 <div className="h-full flex flex-col">
                   <h2 className="text-xl font-serif mb-6 text-primary">Table of Contents</h2>
                   <div className="space-y-4">
@@ -313,10 +318,13 @@ Your business's mission and vision should guide every major decision you make. T
             {isSpreadView && <div className="book-spine"></div>}
 
             <div className={cn(
-              "book-page right-page min-w-[600px] max-w-[600px] h-[840px] bg-[#f8f5ed] dark:bg-[#252117] p-12 overflow-y-auto relative",
+              "book-page right-page min-w-[600px] max-w-[600px] h-[840px] p-12 overflow-y-auto relative",
               isSpreadView 
-                ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.2)]" 
-                : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]"
+                ? "shadow-[inset_5px_0_15px_-5px_rgba(0,0,0,0.2)]"
+                : "shadow-[0_5px_25px_-5px_rgba(0,0,0,0.3)]",
+              isPageTurning && "page-turning",
+              isPageTurning && direction === 'next' && "page-turning-next",
+              isPageTurning && direction === 'prev' && "page-turning-prev"
             )}>
               <div>
                 <h1 className="text-3xl font-serif mb-2 font-bold">{currentChapter.title}</h1>
