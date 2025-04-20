@@ -375,6 +375,42 @@ Scoring A = 5 points B = 3 points C = 1 point
 <18 points? 		Have a rethink.`,
     summary: "Networking is a powerful tool for innovation, learning, and building meaningful business relationships.",
     quote: "Your network is your net worth in the business world."
+  },
+  {
+    id: 9,
+    title: "CHAPTER 9: PLAN: SUMMARY",
+    theme: "Planning",
+    content: `We've reached the end of Part 1: Plan section of Prosper With Purpose. Over the last eight chapters, I've asked you to go on a journey.
+
+I've asked you to use your imagination and think seriously about where you want to be and what you want your business to do for you over the next 5–10 years.
+
+To do that, you've been thinking about your values, what really matters to you, and what your business could help you achieve.
+
+With the idea of a destination firmly in mind, you've made some assumptions about what you could achieve in a given amount of time.
+
+To complete the picture, we've looked at what would happen next after you've achieved your goal. What would you do with the business? It's an excellent idea to think about it before you arrive at that point without a plan. By thinking about it in advance, you will do things differently.
+
+If, for instance, you want to sell the business, you need to make sure it's truly a valuable proposition that can fully operate without you. If you want to pass it on to your family, you need to plan long ahead to involve those family members in running the business and building up their experience.
+
+Before you started to think about how you would get to your goal, I asked you to quickly check in on whether you are currently making a profit because planning to grow on the platform of a business that is not genuinely profitable is the route to disaster.
+
+You've started to develop a Future-Fit Business Model Canvas that will enable you to devise a model that is truly sustainable. Only with that complete understanding of your customer and what their needs are can you create a successful business.
+
+Unless you're applying for a business loan or other investment, the Future-Fit Business Model Canvas is more than enough to focus you on what really matters in your business. It's the perfect tool for helping you understand your customers and exactly what you need to do to satisfy them.
+
+You've discovered how environmental and social issues should be woven into the Future-Fit Business Model Canvas because they're both inescapable and essential to modern business. Planning for them in advance will also help you reduce the stress responses that the ever-changing regulatory and social demands will make of you.
+
+Ideally, you will write the Future-Fit Business Model Canvas in a vacuum, away from the day-to-day activities of your business. It should represent an ideal that you aspire to.
+
+The subsequent SWOT analysis will identify the gaps between the ideal and the reality on the ground. The strengths and weaknesses you measure apply to the ideal business model set out in the Future-Fit Business Model Canvas.
+
+Now that you know where you want to go and the ideal way of getting there, you have the tools to start networking and connecting with potential customers and supporters. With the Future-Fit Business Model Canvas and the SWOT analysis fresh in your mind, you will find every new conversation resonates more deeply and powerfully.
+
+In creating the Future-Fit Business Model Canvas and the SWOT analysis, you will have engaged more with your team. You will have a better idea of their abilities, and they will have more confidence about where the business is going and what they can do to support it.
+
+In the next 'People' section, we will discuss how to develop the team through the art of delegating. The following chapters in this section are fundamental to growing your business and, at the same time, reducing your stress levels and the number of hours you work. It's time to trust your people!`,
+    summary: "A reflective summary of the Plan section, highlighting key insights and preparing for the next phase of business development.",
+    quote: "You cannot stop trusting people in life, but I have learned to be a little bit careful. The way to make people trustworthy is to trust them."
   }
 ];
 
