@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -27,9 +26,8 @@ const Read = () => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     
-    // Add keyboard navigation
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isPageTurning) return; // Prevent rapid keypresses during animation
+      if (isPageTurning) return;
       
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         handlePageChange('next');
@@ -151,9 +149,8 @@ Your business's mission and vision should guide every major decision you make. T
   const currentChapter = getChapterByPage(currentPage);
 
   const handlePageChange = (direction: 'next' | 'prev') => {
-    if (isPageTurning) return; // Prevent rapid clicking during animation
+    if (isPageTurning) return;
     
-    // Store the current page for direction calculation
     previousPageRef.current = currentPage;
     
     setPageDirection(direction);
@@ -161,7 +158,6 @@ Your business's mission and vision should guide every major decision you make. T
   };
   
   const handleAnimationComplete = () => {
-    // Update the page number after animation completes
     if (pageDirection === 'next') {
       setCurrentPage(prev => Math.min(prev + 1, chapters.length));
     } else {

@@ -24,8 +24,6 @@ const PageTransition = ({
   const timeoutRef = useRef<number | null>(null);
   
   // Determine which side is active based on direction
-  // When going forward (next): fold the right-hand sheet (odd page)
-  // When going backward (prev): fold the left-hand sheet (even page)
   const activeSide = direction === 'next' ? 'right' : 'left';
   
   useEffect(() => {
@@ -76,7 +74,7 @@ const PageTransition = ({
         >
           {/* Left page content */}
           <div className="absolute inset-0 p-8">
-            {isAnimating && direction === 'prev' ? content : children}
+            {direction === 'prev' && isAnimating ? content : children}
           </div>
           
           {/* Backface tint for realism when page is turning */}
@@ -104,7 +102,7 @@ const PageTransition = ({
         >
           {/* Right page content */}
           <div className="absolute inset-0 p-8">
-            {isAnimating && direction === 'next' ? content : children}
+            {direction === 'next' && isAnimating ? content : children}
           </div>
           
           {/* Backface tint for realism when page is turning */}
