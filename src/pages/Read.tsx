@@ -38,7 +38,8 @@ const Read = () => {
     {
       id: 1,
       title: "CHAPTER 1: HAVE A PLAN",
-      content: `I spend a lot of time talking with small business owners about the stresses and strains of running their businesses. They will talk about lack of money, staff not doing what they should do, rising costs, awkward suppliers and a whole raft of operational issues that stress a business owner.
+      theme: "Planning",
+      content: `I spend a lot of time talking with small business owners about the stresses and strains of running their businesses. They will talk about lack of money, staff not doing what they should do,  rising costs, awkward suppliers and a whole raft of operational issues that stress a business owner.
 
 However, more often than not, as I talk with the business owners, it becomes glaringly apparent that they do not have a plan for where the business is going. They don't have a sense of direction. This causes the owner a huge number of problems and consequently significantly increases their stress levels.
 
@@ -72,30 +73,123 @@ It's a very common answer; I meet it a lot. You feel you're not earning any mone
 Let's ensure you've got the business model right financially before considering growing. If you don't, you'll find yourself working even harder and longer and still have nothing to show for it.
 
 Do you need to grow so you can pay yourself? Go to Chapter 16 Making Money and Getting Paid now.`,
-      theme: "Planning",
+      summary: "Establishing a clear mission and vision is fundamental to building a sustainable business that outlasts its founder.",
+      quote: "A business without a mission is like a ship without a rudder - it may float, but it won't go anywhere meaningful."
     },
     {
       id: 2,
-      title: "Team Building",
-      theme: "People",
-      content: `Building and maintaining a strong team is crucial for business success. Your team members are the ones who will help turn your vision into reality. Focus on:
+      title: "CHAPTER 2: DIRECTION",
+      theme: "Vision",
+      content: `The most important thing in business is knowing where you want to go and how you'll get there. You wouldn't get in a car without knowing where you wanted to go. Most people wouldn't take a job without an idea of what prospects it offers.
 
-1. Hiring for Culture Fit
-- Look for people who share your values
-- Assess both technical skills and soft skills
-- Consider how they'll contribute to team dynamics
+So why not have a destination for your business? Where would you like it to take you?
 
-2. Professional Development
-- Invest in training and education
-- Create growth opportunities
-- Foster a learning environment
+When you close your eyes, what does your future look like? How do you imagine you and your business being in three to five years? What does the destination look like? Can you describe the business and how your life would be different?
 
-3. Team Dynamics
-- Encourage open communication
-- Build trust through transparency
-- Celebrate successes together`,
-      summary: "The quality of your team will determine the ceiling of your business growth. Learn how to hire, develop and retain top talent.",
-      quote: "Your business will never outgrow the quality of your team. Invest in people who share your values but complement your weaknesses."
+Some key questions to ask yourself:
+What should be the benefits of running your business?
+Where would you like to be spending your time?
+What would you like to be doing with your family?
+What would you like to be doing with your leisure time?
+How much time do you envisage spending at work?
+What do you want to be doing when you are at work?
+Do you want to be famous?
+Do you want to be wealthy?
+Do you want recognition from your business sector?
+
+In a nutshell, the above questions will answer the ultimate question: what do you want?
+
+In terms of your business, ask yourself the following questions:
+What do you want your business to look like?
+Do you want it to be highly regarded in the locality?
+Do you want it to earn plaudits internationally?
+Do you want it to win prizes?
+Do you want it to be regarded as the best in the sector?
+What do you want it to be?
+
+The bottom line is, what is your dream?
+
+These are crucial questions to ask yourself when running a business. What is it that you want the business to do, and in particular do for you?
+
+Without a Mission, You Waste Energy
+I firmly believe you need to start how you intend to carry on. You need to start your journey in business in line with where you want to end up.
+
+Having that clear line of sight enables you to really focus your energy. It will allow you to concentrate your limited resources of time and money on the ultimate goal and not waste them on diversionary activities.
+
+I illustrate this in the following case study.
+
+🔎 Case Study
+I once worked with a lady I'll call Beatrice, who wanted to set up a travel agency for Francophone West Africa. Beatrice was from that area, spoke French and English well, and had many necessary contacts.
+
+However, she thought she needed more money to start the business. She wanted my advice about setting up a sandwich-making business to earn this money, which she could then use to set up the travel agency.
+
+I asked her, "Do you have any experience in catering?" She replied, "Absolutely none" I continued, "Do you think you'd like making sandwiches?" She said, "I can't imagine anything worse. It's boring and tedious." I questioned, "Why on earth would you want to do that? "I think it's a way of making some money, and that will enable me to start my travel agency," she explained.
+
+I then told Beatrice, "I think you will waste a lot of energy going in the wrong direction. You should set off from day one to be a travel agent for the West African diaspora."
+
+We then talked about the strategy of starting up a small travel agent business, gradually getting some early sales, selling itineraries and moving through the gears in a way that aligned with her ultimate ambition to be a travel agent. Beatrice dropped the sandwich-making idea completely and instead focussed her energies on organising travel to West Africa.
+
+What's the Big Deal with Mission?
+Why have I started this book with such a big emphasis on knowing where you want to go? The following case study demonstrates the power of a business mission.
+
+🔎 Case Study
+When I began Green-Works, I  met a fabulous man called Peter Lehman, a recently retired commercial director for Centrica who was a very generous but astute businessman. I cheekily asked him if he would help me develop Green-Works, a tiny company with about £20,000 turnover.
+
+At the time, I was about to go into hospital for a knee operation, so I was wholly dependent on a part-time, 24-year-old history graduate driving a rented vehicle. He looked at me and said, "Tell me. What do you want to achieve in Green-Works? What's the mission?" I replied quite simply. "I want to make a significant, measurable difference to the amount of office furniture that goes to landfill, and I want to create a new culture of reuse and recycling around it."
+
+Peter was impressed and agreed to join the board as chairman, saying, "That's a powerful ambition, and I like it, but only for a year." He warned, "We need to see how it goes."
+
+Within a few weeks, I was invited to a meeting with HSBC. I still, to this day, have no idea how they'd even heard of Green-Works. We were a tiny company with no marketing budget. I went along with my graduate employee, Chris Triggs. I'd had my operation by then, so I was on crutches with a full leg plaster. As I often say to people, the entirety of Green-Works went to see HSBC, all three working legs!
+
+We were taken up into the boardroom of the old Midland Bank, a very august, beautiful oak-panelled room with wonderful mahogany furniture. We met the Senior Procurement Manager, who had travelled down from Sheffield, and the CSR manager.
+
+The two talked about the imminent completion of their new headquarters at Canary Wharf. They explained how they would like me to help them with the furniture made redundant as staff moved out of their old offices. I remember how I naively asked them if they were letting out most of that huge building, and they said, "No, no, that's our new headquarters. We intend to move everything out of the City of London into that new tower in Canary Wharf."
+
+At that point, the penny dropped. These men wanted Green-Works, this tiny organisation with one part-time employee, a rented van and no office, to take on what would end up being the largest commercial office clearance in Europe and possibly the history of the world.
+
+How would I respond? At this point, the mission statement I'd outlined to Peter Lehman all those weeks before came into play. The words echoed through my mind as I formulated my answer. When would I ever get such a golden opportunity to deliver on the mission I'd set out then? If I wasn't going to do it now, when would I ever do it?
+
+Of course, it was ludicrous. We completely lacked the financial, physical and logistical capacity, experience or knowledge to take on such a task. We could not dispose of the furniture. We had no marketing. We had no market. We couldn't conceivably do it. Up to this point, we'd handled probably 170 desks in total. This contract would require us to handle 7000!
+
+Frankly, it wasn't and shouldn't have been conceivable. However, there it was. These two experienced senior managers in HSBC asked if I would take it on. I said, "Yes, I would, but I'd need some financing upfront. As you can see, we're a tiny organisation, but we have the will, and if you help us with the finances, we'll do it."
+
+That set-in train the extraordinary set of events described in this book. It enabled Green-Works to get on the map, and it all started with a very clear mission statement.
+
+Great Mission Statement Examples
+Divine Chocolate: "We exist to help end exploitation in the cocoa industry. We champion the needs of farmers, enabling them to thrive and prosper and together build a sustainable and fair world."
+Google: "To organise the world's information and make it universally accessible and useful."
+Câr-y-Môr: "Câr-y-Môr is committed to starting the first commercial seaweed and shellfish farm in Wales to motivate and inspire others to duplicate. This zero-input farming uses no fertiliser, pesticides or freshwater. Our goal is to improve the coastal environment and the well-being of the local community. We aim to stimulate jobs and give people a route into the Welsh seafood sector, an industry of growing national importance."
+Change Please: "We want a world where homelessness is reduced through trade, its stigma is eliminated, and people experiencing homelessness remain valued members of society."
+Tesla: "Accelerating the World's Transition to Sustainable Energy"
+
+In all these examples it's clear that the objectives the company has are not simply financial or economic. The owners and leaders of these organisations want to achieve something bigger, and they are using business to enable them to achieve that. Whether it's in the commercial or not-for-profit sector, having a clear mission statement or a mountain to climb will help focus your energies.
+
+What's Your Mission?
+In the following section, you will work out what your mission statement could be. As Figure 1 shows, there are many reasons why people run businesses.
+
+Figure 1: What's Your Mission?
+I appreciate that you may regard the idea of having a mission statement as marketing fluff. In many cases, that's exactly what it is. However, if used properly, a mission statement can and should give you and the organisation a real sense of direction.
+
+It also helps you make choices. For instance, Tesla would not engage in any activities relating to carbon-emitting energies or, any activities that slow down the transition to sustainable energy. At Change Please, the mission statement is to reduce homelessness through trade. That's a very clear statement of intent. It isn't trying to raise charitable funds to provide housing. It's specifically there to enable individual homeless people to improve their well-being and their material wealth through trade. New opportunities to trade would fit the mission, but charity fundraising would not.
+
+Having a mission statement has given me a clearer sense of direction. The clarity that a well-drafted mission statement can give will make many of your business decisions much easier. It can also provide a clearer narrative to potential employees when recruiting. Additionally, it can help you make a compelling case when raising money from investors and funding organisations.
+
+How Do You Create a Mission Statement?
+Whether you're just starting your business or it's relatively mature and employing staff, getting others involved in drafting a mission statement is a good idea.
+
+This draws out the combined experience of everyone around you and helps you clarify what's truly important. For employees, it engages them all and attracts them to an agreed mission. It also helps to better understand what motivates them to come to work.
+
+In essence, to successfully make the climb, you need to map a journey that answers three fundamental questions, as shown in Figure 2.
+Figure 2: Create Your Mission Statement
+
+Exercise 2: Create a Mission Statement
+Work with others on your team to answer the three questions in this table. It's extremely useful to enable a team discussion on each of these points. Psychologically, it's vital that every team member has an opportunity to contribute to the mission statement.
+
+It's also beneficial to hear the differing perspectives to better understand how individual team members relate to the company and what is important to them.
+
+Defining these three aspects can be difficult, and it may take a few attempts to hone them, but I promise, it's worth the effort.`,
+      summary: "Understanding your business's direction is crucial for making strategic decisions and maintaining focus.",
+      quote: "Your mission isn't just about what your business does, but about the impact you want to create in the world."
     },
     {
       id: 3,
