@@ -193,26 +193,65 @@ Defining these three aspects can be difficult, and it may take a few attempts to
     },
     {
       id: 3,
-      title: "Financial Foundations",
-      theme: "Profit",
-      content: `Strong financial management is essential for business sustainability. Key areas to focus on:
+      title: "CHAPTER 3: TIMELINE",
+      theme: "Planning",
+      content: `I found that the best way to answer the question "How do I get somewhere?" is to imagine being there in the first place and working backwards.
 
-1. Cash Flow Management
-- Monitor incoming and outgoing cash
-- Maintain emergency reserves
-- Plan for seasonal fluctuations
+It's not an easy process to do. It requires you to use all your imagination to project a desired future and simultaneously push aside the realities of your current situation.
 
-2. Profit Margins
-- Understand your cost structure
-- Price products/services appropriately
-- Look for efficiency improvements
+Most people start from where they currently are and obsess about the next one or two steps forward, in other words, the things that are causing them immediate challenges. In approaching the problem that way, I've found that it stunts people's ambition. The immediate issues make ambitious, longer-term objectives feel impractical and implausible.
 
-3. Financial Planning
-- Set clear financial goals
-- Create detailed budgets
-- Review and adjust regularly`,
-      summary: "Building robust financial systems is essential for making informed decisions and ensuring long-term sustainability.",
-      quote: "Profit isn't just a goal - it's the oxygen that keeps your business alive. Monitor it as closely as your own breathing."
+Future-Back Thinking
+
+By starting where you want to end up and imagining yourself in that position, you suddenly free yourself of the resource constraints that you are currently experiencing. By imagining you're already there, you create a scenario where you have the necessary resources, staff and facilities. It's much easier to look back from there and ask, "How did I get here?"
+
+As you work backwards to your current position, you can see more readily what would have to change to get you to the place you're looking back from. Hopefully, this example from my experience will help you visualise this.
+
+🔎Case Study
+My ambition for Green-Works was to make a significant difference in the amount of office furniture sent to landfill. It was clear that the finance sector and related services were disposing of the majority of office furniture. Therefore, to make that significant difference, I would have to have a capability in all the places where the finance industry was based.
+
+Although the finance sector is predominantly based in London, we realised that back offices and support facilities were located in several cities across England and Scotland, particularly around Birmingham, Leeds, Edinburgh and Bristol.
+
+Our clients were national organisations, and they had offices across the entire country. If Green-Works was to succeed and secure contracts with these large organisations (and, in turn, deliver on our mission), we would have to be able to offer a service nationally.
+
+The challenge then was to work out how we could go national. We were a tiny organisation with no capital funding. We were a not-for-profit company, i.e., one limited by guarantee with no shares. This meant that we were unable to attract investment. How could we expand our warehouse footprint across the nation?
+
+Having worked out where we wanted to be, we needed to work out how to get there. The most obvious answer was to franchise. Working backwards, the next question was how and who to franchise with.
+
+The 'who' was relatively easy. Several socially-minded organisations across the country recycle domestic furniture for poverty relief in the community. We thought talking to them about increasing their capacity and recycling office furniture would be relatively straightforward.
+
+Thinking back from the 'who,' we had to determine what they would need from us. One element would be a fully written down operational system. This had to be accompanied by a training manual to instruct the franchisee's staff team.
+
+To create a franchise operations manual, we needed to develop our own internal manual. We would also have to consider how we would work with the franchisees regarding communication and support.
+
+We also realised that we would have to increase our national sales capacity and develop our partnerships with national logistic organisations that could support us.
+
+Using the 'future-back' model, we could track back from a future position of a national network of warehouses to what we would need to focus on in the next 6–12 months to convert our dream into reality.
+
+The fully equipped mountaineer, shown in Figure 3, can describe in detail the equipment she needed, as well as the physical and mental training she had to undertake to climb the mountain.
+
+It's much more intimidating and challenging to imagine what's required to climb a mountain if your perspective is that of the day-tripper hiking through the hills.
+
+Figure 3: The View Is Clearer From the Top
+
+Exercise 3: Use Future-Back Planning
+Please use the scale on the following page to work back from your desired goal. Firstly, visualise yourself achieving the goal at the end of the scale.
+
+Now, think about where you would be one year before that moment.
+
+What resources did you have? What did your organisation look like? What size and type of customers did you have?
+
+In short, what do you think you need at that point to take the final step towards your goal? Visualise what that point would have looked like and think through the situation a year before, which made this place possible.
+
+Repeat the process above to go back up to 6 years until you hit the present time.
+
+
+⚙️Resource
+Future-back thinking can be tough at first. I'd be delighted to help you get started.
+Book a free online session with me on how to think 'future-back.' Contact me by going to this link:
+intentionality.co.uk/contact (type this offer code into the subject line: FUTBACK24)`,
+      summary: "Understanding how to plan backwards from your goals helps create realistic roadmaps for success.",
+      quote: "Start with where you want to end up and work backwards - it's easier to see the path when you're looking down from the summit."
     }
   ];
 
