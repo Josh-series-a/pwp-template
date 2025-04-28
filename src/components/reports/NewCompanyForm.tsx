@@ -18,6 +18,7 @@ import ExerciseForm from './ExerciseForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import DropZone from '../upload/DropZone';
+import { supabase } from '@/integrations/supabase/client';
 
 interface NewCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
@@ -30,7 +31,8 @@ const companyDetailsSchema = z.object({
   pitchDeck: z.instanceof(File)
     .refine((file) => {
       return file instanceof File && file.size <= 10 * 1024 * 1024; // 10MB
-    }, "Pitch deck is required and file size should be less than 10MB")
+    }, "Pitch deck is required and file size should be less than 10MB"),
+  pitchDeckUrl: z.string().optional()
 });
 
 type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
@@ -68,12 +70,26 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
     setIsUploading(true);
     try {
+      const fileName = `${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from('pitch-deck')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('pitch-deck')
+        .getPublicUrl(fileName);
+
       companyForm.setValue('pitchDeck', file);
+      companyForm.setValue('pitchDeckUrl', publicUrl);
+      
       toast({
         title: "Success",
         description: "Pitch deck uploaded successfully"
       });
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
         title: "Error",
         description: "Failed to upload pitch deck",
