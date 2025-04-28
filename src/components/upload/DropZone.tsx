@@ -27,13 +27,19 @@ const DropZone: React.FC<DropZoneProps> = ({ isUploading, onFilesSelected }) => 
     setIsDragging(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      await onFilesSelected(e.dataTransfer.files);
+      // Only take the first file if multiple files are dropped
+      const fileList = new DataTransfer();
+      fileList.items.add(e.dataTransfer.files[0]);
+      await onFilesSelected(fileList.files);
     }
   };
 
   const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      await onFilesSelected(e.target.files);
+      // Only take the first file if multiple files are selected
+      const fileList = new DataTransfer();
+      fileList.items.add(e.target.files[0]);
+      await onFilesSelected(fileList.files);
     }
   };
 
@@ -62,10 +68,10 @@ const DropZone: React.FC<DropZoneProps> = ({ isUploading, onFilesSelected }) => 
           </div>
           
           <div className="space-y-2">
-            <h3 className="text-xl font-medium">Upload Business Documents</h3>
+            <h3 className="text-xl font-medium">Upload Business Document</h3>
             <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Drag and drop your PDF file here, or click to browse. 
-              Support for PDF format only (max 10MB).
+              Upload a single PDF file for your analysis. 
+              Only one document per analysis is allowed (max 10MB).
             </p>
           </div>
           
