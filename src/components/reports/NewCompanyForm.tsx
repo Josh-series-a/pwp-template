@@ -27,11 +27,10 @@ interface NewCompanyFormProps {
 const companyDetailsSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   companyName: z.string().min(2, { message: "Company name is required" }),
-  pitchDeck: z.any()
+  pitchDeck: z.instanceof(File)
     .refine((file) => {
-      if (!file) return true; // Allow empty
       return file instanceof File && file.size <= 10 * 1024 * 1024; // 10MB
-    }, "File size should be less than 10MB")
+    }, "Pitch deck is required and file size should be less than 10MB")
 });
 
 type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
@@ -116,7 +115,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 1: Enter Company Details</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Please provide basic information about the company
+              Please provide basic information about the company. All fields are required.
             </p>
           </div>
 
@@ -127,9 +126,11 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Full Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="John Smith" {...field} />
+                      <Input placeholder="John Smith" {...field} required />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -141,9 +142,11 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Name</FormLabel>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Company Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Acme Inc." {...field} />
+                      <Input placeholder="Acme Inc." {...field} required />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -155,9 +158,11 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
                 name="pitchDeck"
                 render={({ field: { value, onChange, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Upload Pitch Deck</FormLabel>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Upload Pitch Deck
+                    </FormLabel>
                     <FormDescription>
-                      Drag and drop or click to upload your pitch deck (Max 10MB, PDF format recommended)
+                      Drag and drop or click to upload your pitch deck (Required, Max 10MB, PDF format recommended)
                     </FormDescription>
                     <FormControl>
                       <DropZone
