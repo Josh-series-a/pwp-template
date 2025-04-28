@@ -83,31 +83,41 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
     setIsUploading(true);
     try {
-      const fileName = `${Date.now()}-${file.name}`;
+      // Generate a unique filename with timestamp
+      const timestamp = Date.now();
+      const fileName = `${timestamp}-${file.name}`;
+      
+      // Upload to the 'pitch-deck' bucket with public access
       const { data, error } = await supabase.storage
         .from('pitch-deck')
         .upload(fileName, file, {
-          contentType: 'application/pdf'
+          contentType: 'application/pdf',
+          // Make the file publicly accessible
+          upsert: true
         });
 
       if (error) throw error;
 
+      // Get the public URL for the file
       const { data: { publicUrl } } = supabase.storage
         .from('pitch-deck')
         .getPublicUrl(fileName);
 
+      // Set the file and URL in the form
       companyForm.setValue('pitchDeck', file);
       companyForm.setValue('pitchDeckUrl', publicUrl);
+      
+      console.log("File uploaded successfully. Public URL:", publicUrl);
       
       toast({
         title: "Success",
         description: "Pitch deck uploaded successfully"
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
       toast({
         title: "Error",
-        description: "Failed to upload pitch deck",
+        description: `Failed to upload pitch deck: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
@@ -116,6 +126,16 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   };
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
+    // Ensure we have the pitchDeckUrl before proceeding
+    if (!data.pitchDeckUrl) {
+      toast({
+        title: "Error",
+        description: "Please upload a pitch deck PDF before continuing",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setCompanyDetails(data);
     console.log('Company details saved for combined submission:', data);
     setStep(2);
@@ -194,7 +214,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
                       Upload Pitch Deck
                     </FormLabel>
                     <FormDescription>
-                      Drag and drop or click to upload your pitch deck (Required, Max 10MB, PDF format recommended)
+                      Drag and drop or click to upload your pitch deck (Required, Max 10MB, PDF format only)
                     </FormDescription>
                     <FormControl>
                       <DropZone
@@ -203,12 +223,22 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
                       />
                     </FormControl>
                     <FormMessage />
+                    {companyForm.watch('pitchDeckUrl') && (
+                      <div className="mt-2 text-sm text-green-600">
+                        File uploaded successfully! ✓
+                      </div>
+                    )}
                   </FormItem>
                 )}
               />
 
               <div className="pt-4">
-                <Button type="submit">Continue to Exercise Selection</Button>
+                <Button 
+                  type="submit" 
+                  disabled={!companyForm.watch('pitchDeckUrl') || isUploading}
+                >
+                  Continue to Exercise Selection
+                </Button>
               </div>
             </form>
           </Form>
