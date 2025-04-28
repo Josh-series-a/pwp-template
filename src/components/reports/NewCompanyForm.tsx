@@ -35,15 +35,14 @@ const companyDetailsSchema = z.object({
 
 type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
 
-const initialCompanyValues: CompanyDetailsFormValues = {
+const initialCompanyValues: Partial<CompanyDetailsFormValues> = {
   fullName: '',
   companyName: '',
-  pitchDeck: ''
 };
 
 const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData }) => {
   const [step, setStep] = useState<number>(1);
-  const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues>(initialCompanyValues);
+  const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -51,7 +50,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   const companyForm = useForm<CompanyDetailsFormValues>({
     resolver: zodResolver(companyDetailsSchema),
-    defaultValues: initialCompanyValues
+    defaultValues: initialCompanyValues as any
   });
 
   const handleFilesSelected = async (files: FileList) => {
@@ -97,7 +96,9 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   };
 
   const handleExerciseComplete = (exerciseTitle: string) => {
-    onComplete(companyDetails.companyName, exerciseTitle);
+    if (companyDetails) {
+      onComplete(companyDetails.companyName, exerciseTitle);
+    }
   };
 
   const handleBack = () => {
@@ -202,7 +203,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
         </>
       )}
 
-      {step === 3 && selectedExercise && (
+      {step === 3 && selectedExercise && companyDetails && (
         <>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 3: Complete Exercise</h3>
