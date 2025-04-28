@@ -82,27 +82,22 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
     setIsUploading(true);
     try {
-      // Generate a unique filename with timestamp
       const timestamp = Date.now();
       const fileName = `${timestamp}-${file.name}`;
       
-      // Upload to the 'pitch-deck' bucket with public access
       const { data, error } = await supabase.storage
         .from('pitch-deck')
         .upload(fileName, file, {
           contentType: 'application/pdf',
-          // Make the file publicly accessible
           upsert: true
         });
 
       if (error) throw error;
 
-      // Get the public URL for the file
       const { data: { publicUrl } } = supabase.storage
         .from('pitch-deck')
         .getPublicUrl(fileName);
 
-      // Set the file and URL in the form
       companyForm.setValue('pitchDeck', file);
       companyForm.setValue('pitchDeckUrl', publicUrl);
       
@@ -125,7 +120,6 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   };
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
-    // Ensure we have the pitchDeckUrl before proceeding
     if (!data.pitchDeckUrl) {
       toast({
         title: "Error",
@@ -137,7 +131,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
     
     setCompanyDetails({
       ...data,
-      pitchDeckUrl: data.pitchDeckUrl // Ensure pitchDeckUrl is included
+      pitchDeckUrl: data.pitchDeckUrl
     });
     console.log('Company details saved for combined submission:', data);
     setStep(2);
@@ -150,7 +144,6 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   const handleExerciseComplete = (exerciseTitle: string) => {
     if (companyDetails) {
-      // Pass both company name and pitch deck URL to parent component
       onComplete(companyDetails.companyName, exerciseTitle, companyDetails.pitchDeckUrl);
     }
   };
