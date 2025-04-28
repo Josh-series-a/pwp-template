@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -160,6 +161,9 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
       if (companyDetails.websiteUrl) params.append('company_websiteUrl', companyDetails.websiteUrl);
       if (companyDetails.companyId) params.append('company_id', companyDetails.companyId);
       
+      // Add pitchDeckUrl to the webhook data
+      if (companyDetails.pitchDeckUrl) params.append('company_pitchDeckUrl', companyDetails.pitchDeckUrl);
+      
       // Add user data
       if (companyDetails.userData) {
         if (companyDetails.userData.name) params.append('user_name', companyDetails.userData.name);
@@ -192,7 +196,10 @@ const sendToWebhook = async (data: any, exerciseType: string, userId: string | u
       mode: 'no-cors',
     });
     
-    console.log('Webhook submission sent via query string');
+    console.log('Webhook submission sent via query string', {
+      url: `${WEBHOOK_URL}?${params.toString()}`,
+      pitchDeckUrl: companyDetails?.pitchDeckUrl
+    });
     return true;
   } catch (error) {
     console.error('Error sending to webhook:', error);

@@ -18,6 +18,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   const { user } = useAuth();
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
+    console.log("Company details submitted with pitchDeckUrl:", data.pitchDeckUrl);
     setCompanyDetails(data);
     setStep(2);
   };
@@ -29,6 +30,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   const handleExerciseComplete = (exerciseTitle: string) => {
     if (companyDetails) {
+      console.log("Completing exercise with pitchDeckUrl:", companyDetails.pitchDeckUrl);
       onComplete(companyDetails.companyName, exerciseTitle, companyDetails.pitchDeckUrl);
     }
   };

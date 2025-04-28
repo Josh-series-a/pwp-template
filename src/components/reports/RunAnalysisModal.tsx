@@ -33,6 +33,11 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   const [activeTab, setActiveTab] = useState('new-company');
   const { user } = useAuth();
 
+  const handleSubmitComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
+    console.log("Analysis complete with pitchDeckUrl:", pitchDeckUrl);
+    onSubmitComplete(companyName, exerciseTitle, pitchDeckUrl);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -50,11 +55,11 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
           </TabsList>
           
           <TabsContent value="new-company" className="mt-4">
-            <NewCompanyForm onComplete={onSubmitComplete} userData={user} />
+            <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
           </TabsContent>
           
           <TabsContent value="existing-company" className="mt-4">
-            <ExistingCompanyForm onComplete={onSubmitComplete} userData={user} />
+            <ExistingCompanyForm onComplete={handleSubmitComplete} userData={user} />
           </TabsContent>
         </Tabs>
       </DialogContent>
