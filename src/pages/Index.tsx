@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass } from 'lucide-react';
@@ -63,12 +62,13 @@ const Index = () => {
       </section>
       
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-6 md:px-8 bg-secondary/20">
-        <div className="max-w-6xl mx-auto">
+      <section id="how-it-works" className="relative py-24 px-6 md:px-8">
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-secondary/20 to-transparent"></div>
+        <div className="relative max-w-6xl mx-auto">
           <TransitionWrapper>
-            <div className="text-center mb-16">
-              <h2 className="font-semibold tracking-tight mb-4">How It Works</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="font-semibold tracking-tight mb-6 text-4xl md:text-5xl">How It Works</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
                 Our AI-powered system combines your business data with the insights from Prosper With Purpose to create a tailored report just for you.
               </p>
             </div>
@@ -76,45 +76,54 @@ const Index = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             <TransitionWrapper animation="slide-up" delay={100}>
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                  <span className="text-primary font-bold text-xl">1</span>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl transition-all duration-300 group-hover:scale-105"></div>
+                <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/20 dark:border-gray-800/30 transition-all duration-300 group-hover:shadow-lg">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6 transition-colors group-hover:bg-primary/20">
+                    <span className="text-primary font-bold text-xl">1</span>
+                  </div>
+                  <h3 className="text-xl font-medium mb-3">Share Your Business Info</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Fill in a short form with your name, company, and website. We'll pull all your online content using automation tools.
+                  </p>
                 </div>
-                <h3 className="text-xl font-medium mb-3">Share Your Business Info</h3>
-                <p className="text-muted-foreground">
-                  Fill in a short form with your name, company, and website. We'll pull all your online content using automation tools.
-                </p>
               </div>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-up" delay={200}>
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                  <span className="text-primary font-bold text-xl">2</span>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl transition-all duration-300 group-hover:scale-105"></div>
+                <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/20 dark:border-gray-800/30 transition-all duration-300 group-hover:shadow-lg">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6 transition-colors group-hover:bg-primary/20">
+                    <span className="text-primary font-bold text-xl">2</span>
+                  </div>
+                  <h3 className="text-xl font-medium mb-3">AI + Book + Analysis</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    We combine insights from your site with the wisdom of Prosper With Purpose and our structured Fyva analysis to generate a custom report.
+                  </p>
                 </div>
-                <h3 className="text-xl font-medium mb-3">AI + Book + Analysis</h3>
-                <p className="text-muted-foreground">
-                  We combine insights from your site with the wisdom of Prosper With Purpose and our structured Fyva analysis to generate a custom report.
-                </p>
               </div>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-up" delay={300}>
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-md">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                  <span className="text-primary font-bold text-xl">3</span>
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl transition-all duration-300 group-hover:scale-105"></div>
+                <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/20 dark:border-gray-800/30 transition-all duration-300 group-hover:shadow-lg">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6 transition-colors group-hover:bg-primary/20">
+                    <span className="text-primary font-bold text-xl">3</span>
+                  </div>
+                  <h3 className="text-xl font-medium mb-3">Get Your Personalised Report</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Your final output: a tailored business evaluation, complete with practical next steps aligned to your mission, team, profits, and long-term goals.
+                  </p>
                 </div>
-                <h3 className="text-xl font-medium mb-3">Get Your Personalised Report</h3>
-                <p className="text-muted-foreground">
-                  Your final output: a tailored business evaluation, complete with practical next steps aligned to your mission, team, profits, and long-term goals.
-                </p>
               </div>
             </TransitionWrapper>
           </div>
           
           <TransitionWrapper animation="fade" delay={400}>
-            <div className="text-center mt-12 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm max-w-3xl mx-auto">
-              <p className="text-lg italic">
+            <div className="text-center mt-16 p-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-sm border border-white/20 dark:border-gray-800/30 max-w-3xl mx-auto">
+              <p className="text-lg italic leading-relaxed">
                 👉 It's like having a business coach and a strategist in your inbox.
               </p>
             </div>
