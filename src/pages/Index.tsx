@@ -1,14 +1,24 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass } from 'lucide-react';
+import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import FeatureCard from '@/components/FeatureCard';
+import TalkToAuthorDialog from '@/components/TalkToAuthorDialog';
 
 const Index = () => {
+  const [isTalkToAuthorOpen, setIsTalkToAuthorOpen] = useState(false);
+  
   return <div className="min-h-screen">
       <Header />
+      
+      {/* Talk to Author Dialog */}
+      <TalkToAuthorDialog 
+        isOpen={isTalkToAuthorOpen}
+        onClose={() => setIsTalkToAuthorOpen(false)}
+      />
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 md:px-8">
@@ -41,8 +51,9 @@ const Index = () => {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="rounded-full px-6">
-                  <a href="#how-it-works">Learn More</a>
+                <Button size="lg" variant="outline" className="rounded-full px-6" onClick={() => setIsTalkToAuthorOpen(true)}>
+                  <Headphones className="mr-2 h-4 w-4" />
+                  Talk to the Author
                 </Button>
               </div>
             </TransitionWrapper>
@@ -351,12 +362,24 @@ const Index = () => {
               Get your free business health check and personalised Prosper With Purpose report.
             </p>
             
-            <Button asChild size="lg" className="rounded-full px-8 mt-6">
-              <Link to="/chat">
-                Start Now
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+              <Button asChild size="lg" className="rounded-full px-8">
+                <Link to="/chat">
+                  Start Now
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="rounded-full px-8"
+                onClick={() => setIsTalkToAuthorOpen(true)}
+              >
+                <Headphones className="mr-2 h-4 w-4" />
+                Talk to the Author
+              </Button>
+            </div>
           </div>
         </TransitionWrapper>
       </section>
