@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -9,7 +8,8 @@ import {
   FormField, 
   FormItem, 
   FormLabel, 
-  FormMessage 
+  FormMessage,
+  FormDescription
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,18 +17,13 @@ import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-
-interface NewCompanyFormProps {
-  onComplete: (companyName: string, exerciseTitle: string) => void;
-  userData: any | null;
-}
+import { FileUpload } from 'lucide-react';
 
 // Step 1: Company details validation schema
 const companyDetailsSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   companyName: z.string().min(2, { message: "Company name is required" }),
-  websiteUrl: z.string().url({ message: "Must be a valid URL starting with https://" })
-    .refine(val => val.startsWith('https://'), { message: "URL must start with https://" })
+  pitchDeck: z.instanceof(File).optional().or(z.string())
 });
 
 type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
@@ -36,7 +31,7 @@ type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
 const initialCompanyValues: CompanyDetailsFormValues = {
   fullName: '',
   companyName: '',
-  websiteUrl: 'https://'
+  pitchDeck: ''
 };
 
 const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData }) => {
@@ -45,45 +40,51 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
-  
-  // Company details form
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      companyForm.setValue('pitchDeck', file);
+    }
+  };
+
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const companyForm = useForm<CompanyDetailsFormValues>({
     resolver: zodResolver(companyDetailsSchema),
     defaultValues: initialCompanyValues
   });
 
-  // Handle company details submission
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
-    // Store company details for later submission with exercise data
     setCompanyDetails(data);
     console.log('Company details saved for combined submission:', data);
     setStep(2);
   };
 
-  // Handle exercise selection
   const handleSelectExercise = (exerciseId: string) => {
     setSelectedExercise(exerciseId);
     setStep(3);
   };
 
-  // Handle exercise form submission
   const handleExerciseComplete = (exerciseTitle: string) => {
     onComplete(companyDetails.companyName, exerciseTitle);
   };
 
-  // Go back to previous step
   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1);
     }
   };
 
-  // Generate a unique company ID
   const companyId = `comp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
   return (
     <div className="space-y-6">
-      {/* Step 1: Company Details */}
       {step === 1 && (
         <>
           <div className="mb-6">
@@ -125,13 +126,32 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
               <FormField
                 control={companyForm.control}
-                name="websiteUrl"
-                render={({ field }) => (
+                name="pitchDeck"
+                render={({ field: { value, ...field } }) => (
                   <FormItem>
-                    <FormLabel>Website URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://example.com" {...field} />
-                    </FormControl>
+                    <FormLabel>Upload Pitch Deck</FormLabel>
+                    <FormDescription>
+                      Upload your company pitch deck (PDF format recommended)
+                    </FormDescription>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept=".pdf,.ppt,.pptx"
+                        onChange={handleFileChange}
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleFileButtonClick}
+                        className="w-full"
+                      >
+                        <FileUpload className="w-4 h-4 mr-2" />
+                        {selectedFile ? selectedFile.name : "Choose Pitch Deck"}
+                      </Button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -145,7 +165,6 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
         </>
       )}
 
-      {/* Step 2: Exercise Selection */}
       {step === 2 && (
         <>
           <div className="mb-6">
@@ -165,7 +184,6 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
         </>
       )}
 
-      {/* Step 3: Exercise Form */}
       {step === 3 && selectedExercise && (
         <>
           <div className="mb-6">
