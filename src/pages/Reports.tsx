@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,7 +48,6 @@ const Reports = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Fetch reports from Supabase
   useEffect(() => {
     const fetchReports = async () => {
       if (!user) return;
@@ -108,9 +106,8 @@ const Reports = () => {
     setSelectedReportId(null);
   };
 
-  const handleAnalysisComplete = async (companyName: string, exerciseTitle: string) => {
+  const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
     try {
-      // Check if user is authenticated
       if (!user) {
         toast({
           title: "Authentication Error",
@@ -120,12 +117,10 @@ const Reports = () => {
         return;
       }
       
-      // Extract exercise ID from the title format "Exercise X: Title"
       const exerciseMatch = exerciseTitle.match(/Exercise (\d+):/);
       const exerciseId = exerciseMatch ? `exercise-${exerciseMatch[1]}` : 'unknown';
       
-      // Add the new report to Supabase with the user_id
-      const { data, error } = await supabase
+      const { data: reportData, error } = await supabase
         .from('reports')
         .insert({
           title: exerciseTitle,
@@ -133,7 +128,7 @@ const Reports = () => {
           exercise_id: exerciseId,
           status: 'In Progress',
           user_id: user.id,
-          pitch_deck_url: data?.pitchDeckUrl // Add the pitch deck URL
+          pitch_deck_url: pitchDeckUrl
         })
         .select()
         .single();
@@ -142,15 +137,14 @@ const Reports = () => {
         throw error;
       }
       
-      if (data) {
-        // Add the new report to the UI state
+      if (reportData) {
         const newReport = {
-          id: data.id,
-          title: data.title,
-          date: data.created_at,
-          company: data.company_name,
-          status: data.status,
-          pitchDeckUrl: data.pitch_deck_url // Include pitch deck URL in the report object
+          id: reportData.id,
+          title: reportData.title,
+          date: reportData.created_at,
+          company: reportData.company_name,
+          status: reportData.status,
+          pitchDeckUrl: reportData.pitch_deck_url
         };
         
         setReports([newReport, ...reports]);
@@ -158,7 +152,6 @@ const Reports = () => {
       
       closeModal();
       
-      // Show success toast
       toast({
         title: "Analysis Started",
         description: `Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`,
@@ -230,7 +223,7 @@ const Reports = () => {
                       <TableCell className="text-right">
                         <div 
                           className="flex justify-end space-x-2"
-                          onClick={(e) => e.stopPropagation()} // Prevent row click when clicking action buttons
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Button 
                             variant="outline" 

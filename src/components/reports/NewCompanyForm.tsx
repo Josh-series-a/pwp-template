@@ -21,7 +21,7 @@ import DropZone from '../upload/DropZone';
 import { supabase } from '@/integrations/supabase/client';
 
 interface NewCompanyFormProps {
-  onComplete: (companyName: string, exerciseTitle: string) => void;
+  onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => void;
   userData: any;
 }
 
@@ -151,7 +151,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   const handleExerciseComplete = (exerciseTitle: string) => {
     if (companyDetails) {
       // Pass both company name and pitch deck URL to parent component
-      onComplete(companyDetails.companyName, exerciseTitle);
+      onComplete(companyDetails.companyName, exerciseTitle, companyDetails.pitchDeckUrl);
     }
   };
 

@@ -22,7 +22,7 @@ import { useAuth } from '@/contexts/AuthContext';
 interface RunAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmitComplete: (companyName: string, exerciseTitle: string) => void;
+  onSubmitComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => void;
 }
 
 const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({ 

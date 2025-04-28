@@ -40,6 +40,7 @@ export type Database = {
           created_at: string
           exercise_id: string
           id: string
+          pitch_deck_url: string | null
           status: string
           title: string
           updated_at: string
@@ -51,6 +52,7 @@ export type Database = {
           created_at?: string
           exercise_id: string
           id?: string
+          pitch_deck_url?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -62,6 +64,7 @@ export type Database = {
           created_at?: string
           exercise_id?: string
           id?: string
+          pitch_deck_url?: string | null
           status?: string
           title?: string
           updated_at?: string
