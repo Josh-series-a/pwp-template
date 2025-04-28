@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -136,7 +135,10 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
       return;
     }
     
-    setCompanyDetails(data);
+    setCompanyDetails({
+      ...data,
+      pitchDeckUrl: data.pitchDeckUrl // Ensure pitchDeckUrl is included
+    });
     console.log('Company details saved for combined submission:', data);
     setStep(2);
   };
@@ -148,6 +150,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   const handleExerciseComplete = (exerciseTitle: string) => {
     if (companyDetails) {
+      // Pass both company name and pitch deck URL to parent component
       onComplete(companyDetails.companyName, exerciseTitle);
     }
   };

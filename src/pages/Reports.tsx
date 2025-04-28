@@ -132,7 +132,8 @@ const Reports = () => {
           company_name: companyName,
           exercise_id: exerciseId,
           status: 'In Progress',
-          user_id: user.id // Add the user_id field
+          user_id: user.id,
+          pitch_deck_url: data?.pitchDeckUrl // Add the pitch deck URL
         })
         .select()
         .single();
@@ -148,7 +149,8 @@ const Reports = () => {
           title: data.title,
           date: data.created_at,
           company: data.company_name,
-          status: data.status
+          status: data.status,
+          pitchDeckUrl: data.pitch_deck_url // Include pitch deck URL in the report object
         };
         
         setReports([newReport, ...reports]);
