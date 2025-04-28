@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -18,19 +17,21 @@ import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Upload } from 'lucide-react'; // Changed from FileUpload to Upload
+import DropZone from '../upload/DropZone';
 
-// Define the props interface
 interface NewCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
   userData: any;
 }
 
-// Step 1: Company details validation schema
 const companyDetailsSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   companyName: z.string().min(2, { message: "Company name is required" }),
-  pitchDeck: z.instanceof(File).optional().or(z.string())
+  pitchDeck: z.any()
+    .refine((file) => {
+      if (!file) return true; // Allow empty
+      return file instanceof File && file.size <= 10 * 1024 * 1024; // 10MB
+    }, "File size should be less than 10MB")
 });
 
 type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
@@ -47,25 +48,43 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
-      companyForm.setValue('pitchDeck', file);
-    }
-  };
-
-  const handleFileButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  const [isUploading, setIsUploading] = useState(false);
 
   const companyForm = useForm<CompanyDetailsFormValues>({
     resolver: zodResolver(companyDetailsSchema),
     defaultValues: initialCompanyValues
   });
+
+  const handleFilesSelected = async (files: FileList) => {
+    if (files.length === 0) return;
+    
+    const file = files[0];
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "File size should be less than 10MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      companyForm.setValue('pitchDeck', file);
+      toast({
+        title: "Success",
+        description: "Pitch deck uploaded successfully"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload pitch deck",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
     setCompanyDetails(data);
@@ -134,31 +153,18 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
               <FormField
                 control={companyForm.control}
                 name="pitchDeck"
-                render={({ field: { value, ...field } }) => (
+                render={({ field: { value, onChange, ...field } }) => (
                   <FormItem>
                     <FormLabel>Upload Pitch Deck</FormLabel>
                     <FormDescription>
-                      Upload your company pitch deck (PDF format recommended)
+                      Drag and drop or click to upload your pitch deck (Max 10MB, PDF format recommended)
                     </FormDescription>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        className="hidden"
-                        accept=".pdf,.ppt,.pptx"
-                        onChange={handleFileChange}
-                        {...field}
+                    <FormControl>
+                      <DropZone
+                        isUploading={isUploading}
+                        onFilesSelected={handleFilesSelected}
                       />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleFileButtonClick}
-                        className="w-full"
-                      >
-                        <Upload className="w-4 h-4 mr-2" />
-                        {selectedFile ? selectedFile.name : "Choose Pitch Deck"}
-                      </Button>
-                    </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
