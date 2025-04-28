@@ -1,16 +1,24 @@
-
-import React from 'react';
-import { Book, ArrowRight, CheckCircle, User, FileText, FileBox } from 'lucide-react';
+import React, { useState } from 'react';
+import { Book, ArrowRight, CheckCircle, User, FileText, FileBox, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import TalkToAuthorDialog from '@/components/TalkToAuthorDialog';
 
 const Products = () => {
+  const [isTalkToAuthorOpen, setIsTalkToAuthorOpen] = useState(false);
+
   return (
     <div className="min-h-screen">
       <Header />
+      
+      {/* Talk to Author Dialog */}
+      <TalkToAuthorDialog 
+        isOpen={isTalkToAuthorOpen}
+        onClose={() => setIsTalkToAuthorOpen(false)}
+      />
       
       {/* Hero Section */}
       <section className="pt-32 pb-12 px-6 md:px-8">
@@ -72,11 +80,22 @@ const Products = () => {
                   </div>
                 </div>
                 
-                <div className="pt-4">
+                <div className="pt-4 flex flex-col sm:flex-row gap-3">
                   <Button size="lg" className="rounded-full">
                     Buy the Book – £14.99
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="rounded-full"
+                    onClick={() => setIsTalkToAuthorOpen(true)}
+                  >
+                    <Headphones className="mr-2 h-4 w-4" />
+                    Talk to the Author
+                  </Button>
+                  
                   <p className="text-sm text-muted-foreground mt-2">Available in paperback & Kindle</p>
                 </div>
               </div>
@@ -273,9 +292,14 @@ const Products = () => {
                 </Link>
               </Button>
               
-              <Button size="lg" variant="outline" className="rounded-full">
-                Book a Call
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="rounded-full"
+                onClick={() => setIsTalkToAuthorOpen(true)}
+              >
+                <Headphones className="mr-2 h-4 w-4" />
+                Talk to the Author
               </Button>
             </div>
           </div>
