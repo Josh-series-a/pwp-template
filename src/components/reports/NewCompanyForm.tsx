@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -31,7 +32,10 @@ const companyDetailsSchema = z.object({
   pitchDeck: z.instanceof(File)
     .refine((file) => {
       return file instanceof File && file.size <= 10 * 1024 * 1024; // 10MB
-    }, "Pitch deck is required and file size should be less than 10MB"),
+    }, "Pitch deck is required and file size should be less than 10MB")
+    .refine((file) => {
+      return file.type === 'application/pdf';
+    }, "Only PDF files are allowed"),
   pitchDeckUrl: z.string().optional()
 });
 
@@ -59,6 +63,15 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
     if (files.length === 0) return;
     
     const file = files[0];
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: "Error",
+        description: "Only PDF files are allowed",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (file.size > 10 * 1024 * 1024) {
       toast({
         title: "Error",
@@ -73,7 +86,9 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
       const fileName = `${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage
         .from('pitch-deck')
-        .upload(fileName, file);
+        .upload(fileName, file, {
+          contentType: 'application/pdf'
+        });
 
       if (error) throw error;
 

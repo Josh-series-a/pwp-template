@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Loader2, UploadCloud } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -53,8 +52,7 @@ const DropZone: React.FC<DropZoneProps> = ({ isUploading, onFilesSelected }) => 
           ref={fileInputRef}
           className="hidden" 
           onChange={handleFileInputChange}
-          multiple
-          accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          accept="application/pdf"
         />
         
         <div className="flex flex-col items-center justify-center space-y-4">
@@ -65,8 +63,8 @@ const DropZone: React.FC<DropZoneProps> = ({ isUploading, onFilesSelected }) => 
           <div className="space-y-2">
             <h3 className="text-xl font-medium">Upload Business Documents</h3>
             <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Drag and drop your files here, or click to browse. 
-              Support for PDF, TXT, and DOCX (max 10MB).
+              Drag and drop your PDF file here, or click to browse. 
+              Support for PDF format only (max 10MB).
             </p>
           </div>
           
@@ -81,7 +79,7 @@ const DropZone: React.FC<DropZoneProps> = ({ isUploading, onFilesSelected }) => 
                 Uploading...
               </>
             ) : (
-              <>Select Files</>
+              <>Select PDF File</>
             )}
           </Button>
         </div>
