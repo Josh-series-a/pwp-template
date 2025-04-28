@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -17,7 +18,13 @@ import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { FileUpload } from 'lucide-react';
+import { Upload } from 'lucide-react'; // Changed from FileUpload to Upload
+
+// Define the props interface
+interface NewCompanyFormProps {
+  onComplete: (companyName: string, exerciseTitle: string) => void;
+  userData: any;
+}
 
 // Step 1: Company details validation schema
 const companyDetailsSchema = z.object({
@@ -148,7 +155,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
                         onClick={handleFileButtonClick}
                         className="w-full"
                       >
-                        <FileUpload className="w-4 h-4 mr-2" />
+                        <Upload className="w-4 h-4 mr-2" />
                         {selectedFile ? selectedFile.name : "Choose Pitch Deck"}
                       </Button>
                     </div>
