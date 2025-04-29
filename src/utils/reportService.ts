@@ -52,6 +52,7 @@ export const reportService = {
    */
   async saveReport(params: ClientReportParams) {
     try {
+      console.log('Saving report with params:', params);
       const { data, error } = await supabase.functions.invoke('client-report', {
         method: 'POST',
         body: params
@@ -74,6 +75,8 @@ export const reportService = {
    */
   async getReport(companyName: string, exerciseId: string, reportId?: string) {
     try {
+      console.log(`Getting report: company=${companyName}, exercise=${exerciseId}, reportId=${reportId || 'none'}`);
+      
       // Use URL parameters in the body instead of query option
       const { data, error } = await supabase.functions.invoke('client-report', {
         method: 'GET',
@@ -89,6 +92,7 @@ export const reportService = {
         throw new Error(error.message);
       }
 
+      console.log('Report data received:', data);
       return data.report;
     } catch (err) {
       console.error('Error in getReport:', err);

@@ -17,7 +17,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
-import ReportDetail from "./pages/ReportDetail"; // Import the new ReportDetail component
+import ReportDetail from "./pages/ReportDetail";
 import Exercises from "./pages/Exercises";
 import BookInsights from "./pages/BookInsights";
 import BookSession from "./pages/BookSession";
@@ -60,7 +60,13 @@ const AppContent = () => {
               <Reports />
             </ProtectedRoute>
           } />
+          {/* Update report detail route to match the new format with reportId */}
           <Route path="reports/:companySlug/:exerciseId" element={
+            <ProtectedRoute>
+              <ReportDetail />
+            </ProtectedRoute>
+          } />
+          <Route path="reports/:companySlug/:exerciseId/:reportId" element={
             <ProtectedRoute>
               <ReportDetail />
             </ProtectedRoute>

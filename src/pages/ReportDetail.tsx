@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -49,15 +48,34 @@ const ReportDetail = () => {
   const { companySlug, exerciseId, reportId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<any | null>(null);
   const [submissions, setSubmissions] = useState<SubmissionData[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchReportDetails = async () => {
-      if (!companySlug) return;
+      if (!companySlug) {
+        setError("Missing company information in URL");
+        setIsLoading(false);
+        return;
+      }
+      
+      if (!exerciseId) {
+        setError("Missing exercise ID in URL");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!reportId) {
+        setError("Missing report ID in URL");
+        setIsLoading(false);
+        return;
+      }
       
       setIsLoading(true);
+      setError(null);
+      
       try {
         // Convert companySlug back to company name format (e.g., "acme" -> "Acme")
         const companyName = companySlug.split('-')
@@ -66,41 +84,22 @@ const ReportDetail = () => {
         
         console.log(`Fetching report for company "${companyName}", exerciseId "${exerciseId}", reportId "${reportId}"`);
         
-        let reportData;
-        
-        // Try to fetch the report using the ID first if available
-        if (reportId) {
-          try {
-            reportData = await reportService.getReport(companyName, exerciseId || '', reportId);
-            if (reportData) {
-              console.log("Found report by ID:", reportData);
-            }
-          } catch (idError) {
-            console.error('Error fetching report by ID:', idError);
+        // Fetch the report using the reportId directly
+        try {
+          const reportData = await reportService.getReport(companyName, exerciseId, reportId);
+          
+          if (!reportData) {
+            setError("Report not found");
+            setIsLoading(false);
+            toast({
+              title: "Report not found",
+              description: `No report found for the specified parameters`,
+              variant: "destructive",
+            });
+            return;
           }
-        }
-        
-        // If reportId was not provided or failed, try the standard route
-        if (!reportData && exerciseId) {
-          try {
-            reportData = await reportService.getReport(companyName, exerciseId);
-            
-            if (reportData) {
-              console.log("Found report from edge function:", reportData);
-              
-              // If a report was found but the URL doesn't include the reportId,
-              // update the URL to include it for future reference
-              if (reportData.id && !reportId) {
-                navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportData.id}`, { replace: true });
-              }
-            }
-          } catch (edgeError) {
-            console.error('Error fetching from edge function:', edgeError);
-          }
-        }
-        
-        // If we found a report through any method, use it
-        if (reportData) {
+          
+          console.log("Found report:", reportData);
           setReport(reportData);
           
           // If the report has tabs_data, use it
@@ -120,68 +119,33 @@ const ReportDetail = () => {
             setSubmissions(tabSubmissions);
             setIsLoading(false);
             return;
-          }
-        }
-        
-        // If we still don't have a report, fall back to direct database query
-        if (!reportData) {
-          const query = supabase
-            .from('reports')
-            .select('*')
-            .ilike('company_name', companyName)
-            .limit(1);
-          
-          // Add exercise_id filter if available
-          if (exerciseId) {
-            query.eq('exercise_id', exerciseId);
-          }
-          
-          // Add reportId filter if available
-          if (reportId) {
-            query.eq('id', reportId);
-          }
-          
-          const { data: dbReport, error: reportError } = await query.maybeSingle();
-          
-          if (reportError) throw reportError;
-          
-          if (dbReport) {
-            console.log("Found report from direct query:", dbReport);
-            setReport(dbReport);
-            
-            // If a report was found but the URL doesn't include the reportId,
-            // update the URL to include it for future reference
-            if (dbReport.id && !reportId) {
-              navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${dbReport.id}`, { replace: true });
-            }
-            
+          } else {
             // For demonstration, we'll simulate fetching submission data
             setTimeout(() => {
-              const mockSubmissionData = generateMockData(dbReport);
+              const mockSubmissionData = generateMockData(reportData);
               setSubmissions(mockSubmissionData);
               setIsLoading(false);
-            }, 1000);
-            return;
+            }, 500);
           }
-        }
-        
-        // If we get here, no report was found
-        if (!reportData) {
+        } catch (fetchError: any) {
+          console.error('Error fetching report:', fetchError);
+          setError(`Error loading report: ${fetchError.message || 'Unknown error'}`);
+          setIsLoading(false);
           toast({
-            title: "Report not found",
-            description: `No report found for the specified parameters`,
+            title: "Error",
+            description: `Failed to load report: ${fetchError.message || 'Unknown error'}`,
             variant: "destructive",
           });
-          navigate('/dashboard/reports');
         }
-      } catch (error) {
-        console.error('Error fetching report details:', error);
+      } catch (error: any) {
+        console.error('Error in fetchReportDetails:', error);
+        setError(`Error: ${error.message || 'Unknown error'}`);
+        setIsLoading(false);
         toast({
           title: "Error",
           description: "Failed to load report details. Please try again.",
           variant: "destructive",
         });
-        setIsLoading(false);
       }
     };
 
@@ -330,12 +294,18 @@ const ReportDetail = () => {
 
   // Save tab data to edge function when tabs are updated
   const handleSaveTabData = async () => {
-    if (!report || !companySlug) return;
+    if (!report || !companySlug || !exerciseId || !reportId) {
+      toast({
+        title: "Error",
+        description: "Missing required parameters for saving report data",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
       const companyName = report.company_name;
       const userId = report.user_id;
-      const currentReportId = report.id;
       
       // Example tab data - in a real app you would collect this from the UI
       const tabsData = [
@@ -359,10 +329,10 @@ const ReportDetail = () => {
       
       const result = await reportService.saveReport({
         companyName,
-        exerciseId: exerciseId || '',
+        exerciseId,
         tabs: tabsData,
         userId,
-        reportId: currentReportId // Pass the current report ID for update
+        reportId // Pass the current report ID for update
       });
       
       toast({
@@ -372,11 +342,11 @@ const ReportDetail = () => {
       
       console.log('Saved report data:', result);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving tab data:', error);
       toast({
         title: "Error",
-        description: "Failed to save report data",
+        description: `Failed to save report data: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
     }
@@ -412,6 +382,16 @@ const ReportDetail = () => {
             <CardContent className="flex flex-col items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
               <p className="text-sm text-muted-foreground">Loading report data...</p>
+            </CardContent>
+          </Card>
+        ) : error ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-8">
+              <AlertTriangle className="h-8 w-8 text-amber-500 mb-2" />
+              <p className="text-sm text-muted-foreground mb-2">{error}</p>
+              <Button onClick={() => navigate('/dashboard/reports')} className="mt-4">
+                Return to Reports
+              </Button>
             </CardContent>
           </Card>
         ) : report ? (
