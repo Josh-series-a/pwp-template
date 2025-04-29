@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -18,7 +17,14 @@ import {
   Share2, 
   RefreshCw, 
   AlertTriangle,
-  Loader2 
+  Loader2,
+  Briefcase,
+  ArrowRight,
+  Users,
+  Handshake,
+  TrendingUp,
+  Award,
+  MessageSquare
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -286,58 +292,186 @@ const ReportDetail = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="report">
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="report">Report Details</TabsTrigger>
-                    <TabsTrigger value="analysis">Analysis</TabsTrigger>
-                    <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-                  </TabsList>
+                <Tabs defaultValue="executive-snapshot">
+                  <div className="mb-4 overflow-x-auto">
+                    <TabsList className="w-max">
+                      <TabsTrigger value="executive-snapshot">
+                        <Briefcase className="h-4 w-4 mr-2" />
+                        Executive Snapshot
+                      </TabsTrigger>
+                      <TabsTrigger value="exit-destination">
+                        <ArrowRight className="h-4 w-4 mr-2" />
+                        Exit Destination
+                      </TabsTrigger>
+                      <TabsTrigger value="ideal-buyers">
+                        <Users className="h-4 w-4 mr-2" />
+                        Ideal Buyers
+                      </TabsTrigger>
+                      <TabsTrigger value="exit-proposition">
+                        '1 + 1' Exit Proposition
+                      </TabsTrigger>
+                      <TabsTrigger value="leadership-delegation">
+                        <Users className="h-4 w-4 mr-2" />
+                        Leadership & Delegation
+                      </TabsTrigger>
+                      <TabsTrigger value="customer-relationship">
+                        <Handshake className="h-4 w-4 mr-2" />
+                        Customer Relationship
+                      </TabsTrigger>
+                      <TabsTrigger value="recommendations">
+                        <TrendingUp className="h-4 w-4 mr-2" />
+                        Strategic Recommendations
+                      </TabsTrigger>
+                      <TabsTrigger value="readiness-scorecard">
+                        <Award className="h-4 w-4 mr-2" />
+                        Exit-Readiness Scorecard
+                      </TabsTrigger>
+                      <TabsTrigger value="resources">
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Purposeful-Exit Resources
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
                   
-                  <TabsContent value="report" className="space-y-4">
-                    {submissions.length > 0 ? (
-                      <div>
-                        {submissions.map(renderSubmissionData)}
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-8 text-center">
-                        <AlertTriangle className="h-8 w-8 text-amber-500 mb-2" />
-                        <p className="text-sm text-muted-foreground">
-                          No submission data found for this report.
-                        </p>
-                      </div>
-                    )}
-                  </TabsContent>
-                  
-                  <TabsContent value="analysis">
+                  <TabsContent value="executive-snapshot" className="space-y-4">
                     <div className="prose max-w-none dark:prose-invert">
-                      <h3>Analysis</h3>
+                      <h3>Executive Snapshot</h3>
                       <p>
-                        Based on the information provided, this business shows strengths in operational efficiency
-                        but has areas to improve in delegation and strategic planning. The current delegation score of 6/10
-                        indicates moderate effectiveness but room for significant improvement.
+                        Overview of {report.company_name}'s current exit readiness positioning and key metrics
+                        that executives should focus on to maximize value in a potential acquisition.
                       </p>
                       
-                      <h4>Strengths</h4>
-                      <ul>
-                        <li>Effective delegation of routine tasks like client onboarding and bookkeeping</li>
-                        <li>Clear recognition of improvement areas</li>
-                        <li>Specific delegation goals set for the next quarter</li>
-                      </ul>
-                      
-                      <h4>Areas for Improvement</h4>
-                      <ul>
-                        <li>Strategic planning remains centralized and could benefit from team input</li>
-                        <li>Content creation bottlenecks slow down marketing efforts</li>
-                        <li>Team management delegation needs structure and clear processes</li>
-                      </ul>
+                      {/* Display submission data for this specific tab if available */}
+                      {submissions.length > 0 && (
+                        <div className="mt-4">
+                          {submissions
+                            .filter(s => s.type === 'exercise')
+                            .map(renderSubmissionData)}
+                        </div>
+                      )}
                     </div>
                   </TabsContent>
                   
-                  <TabsContent value="recommendations">
+                  <TabsContent value="exit-destination" className="space-y-4">
                     <div className="prose max-w-none dark:prose-invert">
-                      <h3>Recommendations</h3>
+                      <h3>Exit Destination</h3>
                       <p>
-                        Based on our analysis, we recommend the following actions to improve your business delegation:
+                        Analysis of optimal exit strategies for {report.company_name}, including timeline
+                        projections and potential acquisition models that align with company goals.
+                      </p>
+                      
+                      <div className="bg-muted p-4 rounded-md mt-4">
+                        <h4>Exit Timeline</h4>
+                        <p>Target exit window: 3-5 years</p>
+                        <p>Optimal valuation multiple: 6-8x annual recurring revenue</p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="ideal-buyers" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>Ideal Buyers</h3>
+                      <p>
+                        Identification of the most likely and highest-value potential acquirers for 
+                        {report.company_name}, with analysis of strategic fit and acquisition rationale.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="border p-4 rounded-md">
+                          <h4>Strategic Buyers</h4>
+                          <ul>
+                            <li>Market consolidators seeking specific capabilities</li>
+                            <li>Complementary product/service providers</li>
+                            <li>Competitors looking to expand market share</li>
+                          </ul>
+                        </div>
+                        <div className="border p-4 rounded-md">
+                          <h4>Financial Buyers</h4>
+                          <ul>
+                            <li>Private equity firms specializing in industry roll-ups</li>
+                            <li>Family offices interested in stable long-term returns</li>
+                            <li>Investment groups focusing on operational improvements</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="exit-proposition" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>'1 + 1' Exit Proposition</h3>
+                      <p>
+                        Analysis of how {report.company_name} creates synergistic value for potential acquirers,
+                        demonstrating why the combined entity would be worth more than the sum of its parts.
+                      </p>
+                      
+                      <div className="bg-muted p-4 rounded-md mt-4">
+                        <h4>Key Value Drivers</h4>
+                        <ul>
+                          <li>Customer base expansion opportunities</li>
+                          <li>Technology/IP integration benefits</li>
+                          <li>Operational efficiency improvements</li>
+                          <li>Market positioning advantages</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="leadership-delegation" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>Leadership & Delegation</h3>
+                      <p>
+                        Assessment of {report.company_name}'s leadership structure, delegation effectiveness,
+                        and recommendations for building a self-sustaining management team that enhances exit value.
+                      </p>
+                      
+                      <div className="mt-4">
+                        <h4>Current Delegation Score: 6/10</h4>
+                        <p>Primary delegation challenges:</p>
+                        <ul>
+                          <li>Strategic planning remains centralized and could benefit from team input</li>
+                          <li>Content creation bottlenecks slow down marketing efforts</li>
+                          <li>Team management delegation needs structure and clear processes</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="customer-relationship" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>Customer Relationship Strength</h3>
+                      <p>
+                        Analysis of {report.company_name}'s customer relationships, retention metrics,
+                        and strategies to enhance customer value as a critical component of exit valuation.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="border p-4 rounded-md">
+                          <h4>Strengths</h4>
+                          <ul>
+                            <li>High Net Promoter Score (62)</li>
+                            <li>Strong customer retention (87% annual)</li>
+                            <li>Diversified customer base across industries</li>
+                          </ul>
+                        </div>
+                        <div className="border p-4 rounded-md">
+                          <h4>Improvement Areas</h4>
+                          <ul>
+                            <li>Customer success metrics documentation</li>
+                            <li>Formalized feedback collection processes</li>
+                            <li>Case studies highlighting ROI for key accounts</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="recommendations" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>Strategic Recommendations</h3>
+                      <p>
+                        Actionable recommendations for {report.company_name} to maximize exit value,
+                        prioritized by impact and implementation timeline.
                       </p>
                       
                       <h4>Short-term Actions (1-3 months)</h4>
@@ -359,6 +493,85 @@ const ReportDetail = () => {
                         Achieve a delegation score of 8+/10 by creating self-managing teams that require minimal oversight,
                         freeing leadership to focus on business growth and innovation.
                       </p>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="readiness-scorecard" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>Exit-Readiness Scorecard</h3>
+                      <p>
+                        Comprehensive assessment of {report.company_name}'s exit readiness across key dimensions,
+                        with scores and priority improvement areas.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="border p-4 rounded-md">
+                          <h4>Financial Readiness: 7/10</h4>
+                          <ul>
+                            <li>Strong recurring revenue model</li>
+                            <li>Consistent profit margins</li>
+                            <li>Needs improved financial documentation</li>
+                          </ul>
+                        </div>
+                        <div className="border p-4 rounded-md">
+                          <h4>Operational Readiness: 6/10</h4>
+                          <ul>
+                            <li>Good process documentation</li>
+                            <li>Needs improved delegation structure</li>
+                            <li>Technology stack well-maintained</li>
+                          </ul>
+                        </div>
+                        <div className="border p-4 rounded-md">
+                          <h4>Market Positioning: 8/10</h4>
+                          <ul>
+                            <li>Strong brand recognition in niche</li>
+                            <li>Differentiated value proposition</li>
+                            <li>Competitive advantage well-articulated</li>
+                          </ul>
+                        </div>
+                        <div className="border p-4 rounded-md">
+                          <h4>Leadership Transferability: 5/10</h4>
+                          <ul>
+                            <li>Too dependent on founder</li>
+                            <li>Key decisions not delegated enough</li>
+                            <li>Management team needs development</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="resources" className="space-y-4">
+                    <div className="prose max-w-none dark:prose-invert">
+                      <h3>Purposeful-Exit Quote & Resources</h3>
+                      <blockquote className="italic border-l-4 border-primary pl-4 py-2 my-4">
+                        "The best time to prepare for an exit is the day you start your business. 
+                        The second best time is today."
+                      </blockquote>
+                      
+                      <h4>Recommended Resources</h4>
+                      <ul>
+                        <li>
+                          <strong>Book:</strong> Built to Sell: Creating a Business That Can Thrive Without You
+                        </li>
+                        <li>
+                          <strong>Assessment:</strong> Value Builder System - Business Value Assessment
+                        </li>
+                        <li>
+                          <strong>Expert Network:</strong> Exit Planning Institute - Find a Certified Exit Planning Advisor
+                        </li>
+                        <li>
+                          <strong>Workshop:</strong> Strategic Value Advisory - Exit Readiness Workshop
+                        </li>
+                      </ul>
+                      
+                      <div className="bg-muted p-4 rounded-md mt-4">
+                        <h4>Next Steps</h4>
+                        <p>
+                          Schedule a follow-up strategy session to prioritize exit-readiness actions and 
+                          develop an implementation timeline customized for {report.company_name}'s goals.
+                        </p>
+                      </div>
                     </div>
                   </TabsContent>
                 </Tabs>
