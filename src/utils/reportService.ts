@@ -87,11 +87,8 @@ export const reportService = {
       }
       
       const { data, error } = await supabase.functions.invoke(url, {
-        method: 'GET',
-        // Add cache-busting parameter to ensure fresh data
-        headers: {
-          'Cache-Control': 'no-cache'
-        }
+        method: 'GET'
+        // Removed Cache-Control header to avoid CORS issues
       });
 
       if (error) {
