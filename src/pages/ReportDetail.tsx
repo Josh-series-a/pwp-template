@@ -46,21 +46,29 @@ const ReportDetail = () => {
 
   useEffect(() => {
     const fetchReportDetails = async () => {
-      if (!exerciseId) return;
+      if (!exerciseId || !companySlug) return;
       
       setIsLoading(true);
       try {
-        // Fetch the report from Supabase
-        // In a real app, you'd fetch by both company slug and exercise ID
+        // Convert companySlug back to company name format (e.g., "acme" -> "Acme")
+        const companyName = companySlug.split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        
+        console.log(`Fetching report for company "${companyName}" and exerciseId "${exerciseId}"`);
+        
+        // Fetch the report from Supabase with BOTH company_name and exercise_id filters
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .select('*')
           .eq('exercise_id', exerciseId)
-          .maybeSingle();
+          .ilike('company_name', companyName) // Use case-insensitive matching
+          .maybeSingle(); // Use maybeSingle() instead of single()
         
         if (reportError) throw reportError;
         
         if (reportData) {
+          console.log("Found report:", reportData);
           setReport(reportData);
           
           // For demonstration, we'll simulate fetching submission data

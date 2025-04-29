@@ -44,14 +44,24 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
       
       setIsLoading(true);
       try {
-        // Fetch the report from Supabase
+        // Fetch the report from Supabase using maybeSingle
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .select('*')
           .eq('id', reportId)
-          .single();
+          .maybeSingle();
         
         if (reportError) throw reportError;
+        
+        if (!reportData) {
+          toast({
+            title: "Report not found",
+            description: "The requested report could not be found.",
+            variant: "destructive",
+          });
+          onClose();
+          return;
+        }
         
         setReport(reportData);
         
@@ -83,7 +93,7 @@ const ViewReportModal: React.FC<ViewReportModalProps> = ({ isOpen, onClose, repo
       setReport(null);
       setSubmissions([]);
     }
-  }, [isOpen, reportId, toast]);
+  }, [isOpen, reportId, toast, onClose]);
 
   // This function generates mock data based on the report type
   // In a real app, you would replace this with actual data from your backend
