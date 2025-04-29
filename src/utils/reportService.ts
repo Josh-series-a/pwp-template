@@ -112,6 +112,8 @@ export const reportService = {
     exerciseId: string,
     userId: string,
     snapshotData: {
+      tabId: string;
+      title: string;
       clientId: string;
       heroQuote: string;
       kpis: KPI[];
@@ -123,8 +125,8 @@ export const reportService = {
   ) {
     // Create a TabData object with snapshot data
     const tabData: TabData = {
-      tabId: 'executiveSnapshot',
-      title: 'Executive Snapshot',
+      tabId: snapshotData.tabId,
+      title: snapshotData.title,
       clientId: snapshotData.clientId,
       heroQuote: snapshotData.heroQuote,
       kpis: snapshotData.kpis,

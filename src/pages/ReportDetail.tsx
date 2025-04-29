@@ -173,6 +173,8 @@ const ReportDetail = () => {
       
       // Example executive snapshot data - in a real app you would collect this from the UI
       const executiveSnapshotData = {
+        tabId: "executiveSnapshot",  // Make sure we use consistent tabId format
+        title: "Executive Snapshot",
         clientId: userId,
         heroQuote: "Building business value today for greater returns tomorrow",
         kpis: [
@@ -212,7 +214,20 @@ const ReportDetail = () => {
       
       console.log('Saved report data:', result);
       
-      // Explicitly refresh data after save is complete
+      // Directly update the UI with the newly saved data - don't wait for refresh
+      if (result && result.report && result.report.tabs_data) {
+        const newExecutiveTab = result.report.tabs_data.find((tab: any) => 
+          tab.tabId === 'executiveSnapshot' || tab.tabId === 'executive-snapshot'
+        );
+        
+        if (newExecutiveTab) {
+          console.log("Setting new executive tab data directly:", newExecutiveTab);
+          setExecutiveTabData(newExecutiveTab);
+          setReport(result.report);
+        }
+      }
+      
+      // Also trigger the refresh to ensure consistency
       refreshData();
       
     } catch (error: any) {
