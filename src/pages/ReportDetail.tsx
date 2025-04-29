@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { reportService } from '@/utils/reportService';
 
 interface SubmissionData {
   type: string;
@@ -64,7 +65,39 @@ const ReportDetail = () => {
         
         console.log(`Fetching report for company "${companyName}" and exerciseId "${exerciseId}"`);
         
-        // Use the .eq operator for both fields and fetch as an array instead of using single()
+        // Try to fetch the report from the edge function first
+        try {
+          const reportData = await reportService.getReport(companyName, exerciseId);
+          
+          if (reportData) {
+            console.log("Found report from edge function:", reportData);
+            setReport(reportData);
+            
+            // If the report has tabs_data, use it
+            if (reportData.tabs_data && reportData.tabs_data.length > 0) {
+              // Process the tab data into submissions format
+              const tabSubmissions = reportData.tabs_data.map((tab: any) => ({
+                type: 'tab',
+                exerciseType: tab.title,
+                timestamp: reportData.updated_at,
+                data: tab.content,
+                submitter: {
+                  name: 'System',
+                  email: 'system@example.com'
+                }
+              }));
+              
+              setSubmissions(tabSubmissions);
+              setIsLoading(false);
+              return;
+            }
+          }
+        } catch (edgeError) {
+          console.error('Error fetching from edge function:', edgeError);
+          // Continue to fallback method if edge function fails
+        }
+        
+        // Fallback to direct database query if edge function fails or returns no data
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .select('*')
@@ -75,7 +108,7 @@ const ReportDetail = () => {
         if (reportError) throw reportError;
         
         if (reportData && reportData.length > 0) {
-          console.log("Found report:", reportData[0]);
+          console.log("Found report from direct query:", reportData[0]);
           setReport(reportData[0]);
           
           // For demonstration, we'll simulate fetching submission data
@@ -250,6 +283,58 @@ const ReportDetail = () => {
     );
   };
 
+  // Save tab data to edge function when tabs are updated
+  const handleSaveTabData = async () => {
+    if (!report || !companySlug || !exerciseId) return;
+    
+    try {
+      const companyName = report.company_name;
+      const userId = report.user_id;
+      
+      // Example tab data - in a real app you would collect this from the UI
+      const tabsData = [
+        {
+          tabId: 'executive-snapshot',
+          title: 'Executive Snapshot',
+          content: {
+            overview: 'Overview of current exit readiness positioning',
+            keyMetrics: ['Delegation Score: 6/10', 'Customer Retention: 87%']
+          }
+        },
+        {
+          tabId: 'exit-destination',
+          title: 'Exit Destination',
+          content: {
+            timeline: '3-5 years',
+            valuationMultiple: '6-8x annual recurring revenue'
+          }
+        }
+      ];
+      
+      const result = await reportService.saveReport({
+        companyName,
+        exerciseId,
+        tabs: tabsData,
+        userId
+      });
+      
+      toast({
+        title: "Success",
+        description: "Report data saved successfully",
+      });
+      
+      console.log('Saved report data:', result);
+      
+    } catch (error) {
+      console.error('Error saving tab data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save report data",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <DashboardLayout title={`Report: ${report?.title || 'Loading...'}`}>
       <div className="space-y-6">
@@ -269,7 +354,7 @@ const ReportDetail = () => {
             <Button variant="outline" size="sm">
               <Share2 className="h-4 w-4 mr-2" /> Share
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleSaveTabData}>
               <RefreshCw className="h-4 w-4 mr-2" /> Re-analyze
             </Button>
           </div>
