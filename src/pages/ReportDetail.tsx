@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -295,43 +294,45 @@ const ReportDetail = () => {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="executive-snapshot">
-                  <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap gap-1 mb-4">
-                    <TabsTrigger value="executive-snapshot">
-                      <Briefcase className="h-4 w-4 mr-2" />
-                      Executive Snapshot
-                    </TabsTrigger>
-                    <TabsTrigger value="exit-destination">
-                      <ArrowRight className="h-4 w-4 mr-2" />
-                      Exit Destination
-                    </TabsTrigger>
-                    <TabsTrigger value="ideal-buyers">
-                      <Users className="h-4 w-4 mr-2" />
-                      Ideal Buyers
-                    </TabsTrigger>
-                    <TabsTrigger value="exit-proposition">
-                      '1 + 1' Exit Proposition
-                    </TabsTrigger>
-                    <TabsTrigger value="leadership-delegation">
-                      <Users className="h-4 w-4 mr-2" />
-                      Leadership & Delegation
-                    </TabsTrigger>
-                    <TabsTrigger value="customer-relationship">
-                      <Handshake className="h-4 w-4 mr-2" />
-                      Customer Relationship
-                    </TabsTrigger>
-                    <TabsTrigger value="recommendations">
-                      <TrendingUp className="h-4 w-4 mr-2" />
-                      Strategic Recommendations
-                    </TabsTrigger>
-                    <TabsTrigger value="readiness-scorecard">
-                      <Award className="h-4 w-4 mr-2" />
-                      Exit-Readiness Scorecard
-                    </TabsTrigger>
-                    <TabsTrigger value="resources">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Purposeful-Exit Resources
-                    </TabsTrigger>
-                  </TabsList>
+                  <div className="relative">
+                    <TabsList className="flex items-center justify-start gap-1 mb-4 overflow-x-auto pb-2 no-scrollbar">
+                      <TabsTrigger value="executive-snapshot">
+                        <Briefcase className="h-4 w-4 mr-2" />
+                        Executive Snapshot
+                      </TabsTrigger>
+                      <TabsTrigger value="exit-destination">
+                        <ArrowRight className="h-4 w-4 mr-2" />
+                        Exit Destination
+                      </TabsTrigger>
+                      <TabsTrigger value="ideal-buyers">
+                        <Users className="h-4 w-4 mr-2" />
+                        Ideal Buyers
+                      </TabsTrigger>
+                      <TabsTrigger value="exit-proposition">
+                        '1 + 1' Exit Proposition
+                      </TabsTrigger>
+                      <TabsTrigger value="leadership-delegation">
+                        <Users className="h-4 w-4 mr-2" />
+                        Leadership & Delegation
+                      </TabsTrigger>
+                      <TabsTrigger value="customer-relationship">
+                        <Handshake className="h-4 w-4 mr-2" />
+                        Customer Relationship
+                      </TabsTrigger>
+                      <TabsTrigger value="recommendations">
+                        <TrendingUp className="h-4 w-4 mr-2" />
+                        Strategic Recommendations
+                      </TabsTrigger>
+                      <TabsTrigger value="readiness-scorecard">
+                        <Award className="h-4 w-4 mr-2" />
+                        Exit-Readiness Scorecard
+                      </TabsTrigger>
+                      <TabsTrigger value="resources">
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Purposeful-Exit Resources
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
                   
                   <TabsContent value="executive-snapshot" className="space-y-4">
                     <div className="prose max-w-none dark:prose-invert">
