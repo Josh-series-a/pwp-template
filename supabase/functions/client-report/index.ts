@@ -178,9 +178,25 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
 }
 
 async function handleGetRequest(req: Request, supabaseClient: any) {
+  let companyName: string | null = null;
+  let exerciseId: string | null = null;
+
+  // First try to get parameters from URL query string
   const url = new URL(req.url);
-  const companyName = url.searchParams.get('company');
-  const exerciseId = url.searchParams.get('exercise');
+  companyName = url.searchParams.get('company');
+  exerciseId = url.searchParams.get('exercise');
+
+  // If not found in URL, try to get from request body
+  if (!companyName || !exerciseId) {
+    try {
+      const body = await req.json();
+      companyName = body.company || null;
+      exerciseId = body.exercise || null;
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      // Continue with null values if body parsing fails
+    }
+  }
 
   if (!companyName || !exerciseId) {
     return new Response(

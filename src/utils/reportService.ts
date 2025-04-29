@@ -42,9 +42,10 @@ export const reportService = {
    */
   async getReport(companyName: string, exerciseId: string) {
     try {
+      // Use URL parameters in the body instead of query option
       const { data, error } = await supabase.functions.invoke('client-report', {
         method: 'GET',
-        query: {
+        body: {
           company: companyName,
           exercise: exerciseId
         }
