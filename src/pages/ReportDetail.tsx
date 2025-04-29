@@ -63,19 +63,19 @@ const ReportDetail = () => {
         
         console.log(`Fetching report for company "${companyName}" and exerciseId "${exerciseId}"`);
         
-        // Fetch the report from Supabase with BOTH company_name and exercise_id filters
+        // Use the .eq operator for both fields and fetch as an array instead of using single()
         const { data: reportData, error: reportError } = await supabase
           .from('reports')
           .select('*')
           .eq('exercise_id', exerciseId)
-          .ilike('company_name', companyName) // Use case-insensitive matching
-          .maybeSingle(); // Use maybeSingle() instead of single()
+          .ilike('company_name', companyName)
+          .limit(1);
         
         if (reportError) throw reportError;
         
-        if (reportData) {
-          console.log("Found report:", reportData);
-          setReport(reportData);
+        if (reportData && reportData.length > 0) {
+          console.log("Found report:", reportData[0]);
+          setReport(reportData[0]);
           
           // For demonstration, we'll simulate fetching submission data
           // In a real app, you would fetch this from your webhook destination or database
@@ -83,7 +83,7 @@ const ReportDetail = () => {
           // Simulate API delay
           setTimeout(() => {
             // This is mock data - in a real app you would fetch the actual submission data
-            const mockSubmissionData = generateMockData(reportData);
+            const mockSubmissionData = generateMockData(reportData[0]);
             setSubmissions(mockSubmissionData);
             setIsLoading(false);
           }, 1000);
@@ -293,45 +293,43 @@ const ReportDetail = () => {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="executive-snapshot">
-                  <div className="mb-4 overflow-x-auto">
-                    <TabsList className="w-max">
-                      <TabsTrigger value="executive-snapshot">
-                        <Briefcase className="h-4 w-4 mr-2" />
-                        Executive Snapshot
-                      </TabsTrigger>
-                      <TabsTrigger value="exit-destination">
-                        <ArrowRight className="h-4 w-4 mr-2" />
-                        Exit Destination
-                      </TabsTrigger>
-                      <TabsTrigger value="ideal-buyers">
-                        <Users className="h-4 w-4 mr-2" />
-                        Ideal Buyers
-                      </TabsTrigger>
-                      <TabsTrigger value="exit-proposition">
-                        '1 + 1' Exit Proposition
-                      </TabsTrigger>
-                      <TabsTrigger value="leadership-delegation">
-                        <Users className="h-4 w-4 mr-2" />
-                        Leadership & Delegation
-                      </TabsTrigger>
-                      <TabsTrigger value="customer-relationship">
-                        <Handshake className="h-4 w-4 mr-2" />
-                        Customer Relationship
-                      </TabsTrigger>
-                      <TabsTrigger value="recommendations">
-                        <TrendingUp className="h-4 w-4 mr-2" />
-                        Strategic Recommendations
-                      </TabsTrigger>
-                      <TabsTrigger value="readiness-scorecard">
-                        <Award className="h-4 w-4 mr-2" />
-                        Exit-Readiness Scorecard
-                      </TabsTrigger>
-                      <TabsTrigger value="resources">
-                        <MessageSquare className="h-4 w-4 mr-2" />
-                        Purposeful-Exit Resources
-                      </TabsTrigger>
-                    </TabsList>
-                  </div>
+                  <TabsList className="w-full mb-4">
+                    <TabsTrigger value="executive-snapshot">
+                      <Briefcase className="h-4 w-4 mr-2" />
+                      Executive Snapshot
+                    </TabsTrigger>
+                    <TabsTrigger value="exit-destination">
+                      <ArrowRight className="h-4 w-4 mr-2" />
+                      Exit Destination
+                    </TabsTrigger>
+                    <TabsTrigger value="ideal-buyers">
+                      <Users className="h-4 w-4 mr-2" />
+                      Ideal Buyers
+                    </TabsTrigger>
+                    <TabsTrigger value="exit-proposition">
+                      '1 + 1' Exit Proposition
+                    </TabsTrigger>
+                    <TabsTrigger value="leadership-delegation">
+                      <Users className="h-4 w-4 mr-2" />
+                      Leadership & Delegation
+                    </TabsTrigger>
+                    <TabsTrigger value="customer-relationship">
+                      <Handshake className="h-4 w-4 mr-2" />
+                      Customer Relationship
+                    </TabsTrigger>
+                    <TabsTrigger value="recommendations">
+                      <TrendingUp className="h-4 w-4 mr-2" />
+                      Strategic Recommendations
+                    </TabsTrigger>
+                    <TabsTrigger value="readiness-scorecard">
+                      <Award className="h-4 w-4 mr-2" />
+                      Exit-Readiness Scorecard
+                    </TabsTrigger>
+                    <TabsTrigger value="resources">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Purposeful-Exit Resources
+                    </TabsTrigger>
+                  </TabsList>
                   
                   <TabsContent value="executive-snapshot" className="space-y-4">
                     <div className="prose max-w-none dark:prose-invert">
