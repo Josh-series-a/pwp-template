@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -64,7 +65,6 @@ const ReportDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<any | null>(null);
-  const [submissions, setSubmissions] = useState<SubmissionData[]>([]);
   const [executiveTabData, setExecutiveTabData] = useState<any | null>(null);
   const { toast } = useToast();
 
@@ -132,32 +132,6 @@ const ReportDetail = () => {
             } else {
               console.log("No executive tab found in tabs_data");
             }
-            
-            // Process the tab data into submissions format
-            const tabSubmissions = reportData.tabs_data.map((tab: any) => ({
-              type: 'tab',
-              exerciseType: tab.title,
-              timestamp: reportData.updated_at,
-              data: tab.content || {
-                heroQuote: tab.heroQuote,
-                kpis: tab.kpis,
-                topRisks: tab.topRisks,
-                missionStatement: tab.missionStatement
-              },
-              submitter: {
-                name: 'System',
-                email: 'system@example.com'
-              }
-            }));
-            
-            setSubmissions(tabSubmissions);
-          } else {
-            console.log("No tabs_data found, creating mock data");
-            // For demonstration, we'll simulate fetching submission data
-            setTimeout(() => {
-              const mockSubmissionData = generateMockData(reportData);
-              setSubmissions(mockSubmissionData);
-            }, 500);
           }
           setIsLoading(false);
         } catch (fetchError: any) {
@@ -184,146 +158,6 @@ const ReportDetail = () => {
 
     fetchReportDetails();
   }, [companySlug, exerciseId, reportId, toast, navigate]);
-
-  // This function generates mock data based on the report type
-  // In a real app, you would replace this with actual data from your backend
-  const generateMockData = (report: any): SubmissionData[] => {
-    const submissions: SubmissionData[] = [];
-    
-    // Extract exercise number from the exercise_id
-    const exerciseNumber = report.exercise_id.split('-')[1] || '0';
-    const timestamp = new Date(report.created_at).toISOString();
-    
-    // Add exercise submission
-    if (report.exercise_id === 'exercise-4') {
-      submissions.push({
-        type: 'exercise',
-        exerciseType: 'Exit Strategy',
-        exerciseNumber,
-        timestamp,
-        data: {
-          hasStrategy: 'yes',
-          exitDateText: 'In 5 years',
-          hasPlan: 'Yes, we have a detailed plan to prepare the business for acquisition.',
-          implementationSteps: 'Building recurring revenue, documenting processes, expanding client base.',
-          resources: '20% of profits are allocated to implementing the exit strategy.'
-        },
-        submitter: {
-          name: 'John Smith',
-          email: 'john.smith@example.com'
-        },
-        companyId: 'comp-' + Math.floor(Math.random() * 1000)
-      });
-    } else if (report.exercise_id === 'exercise-6') {
-      submissions.push({
-        type: 'exercise',
-        exerciseType: 'Know Your Customer',
-        exerciseNumber,
-        timestamp,
-        data: {
-          personaDescription: 'Small business owner looking to grow',
-          age: '35-45',
-          gender: 'Mixed',
-          location: 'Urban areas',
-          personalSituation: 'Established business owners',
-          challenges: 'Time management, scaling operations, hiring difficulties',
-          goals: 'Growing revenue by 30%, reducing working hours'
-        },
-        submitter: {
-          name: 'Jane Doe',
-          email: 'jane.doe@example.com'
-        },
-        companyId: 'comp-' + Math.floor(Math.random() * 1000)
-      });
-    } else if (report.exercise_id === 'exercise-18') {
-      submissions.push({
-        type: 'exercise',
-        exerciseType: 'Measure Your Delegation',
-        exerciseNumber,
-        timestamp,
-        data: {
-          currentDelegationScore: '6/10',
-          delegatedTasks: 'Client onboarding, social media management, bookkeeping',
-          improvementAreas: 'Strategic planning, content creation, team management',
-          delegationGoals: 'Increase delegation by 30% in next quarter',
-          resourcesNeeded: 'Hiring a virtual assistant, implementing project management tools'
-        },
-        submitter: {
-          name: 'Lydia Smith',
-          email: 'lydia.smith@example.com'
-        },
-        companyId: 'comp-' + Math.floor(Math.random() * 1000)
-      });
-    } else {
-      submissions.push({
-        type: 'exercise',
-        exerciseType: 'General Analysis',
-        exerciseNumber,
-        timestamp,
-        data: {
-          information: 'This exercise data would be retrieved from your webhook destination.'
-        },
-        submitter: {
-          name: 'Alex Johnson',
-          email: 'alex.johnson@example.com'
-        },
-        companyId: 'comp-' + Math.floor(Math.random() * 1000)
-      });
-    }
-    
-    // Add company submission
-    submissions.push({
-      type: 'company',
-      timestamp,
-      data: {
-        companyName: report.company_name,
-        industry: 'Technology',
-        companySize: 'Small (10-50 employees)',
-        yearFounded: '2018',
-        location: 'London, UK'
-      },
-      submitter: {
-        name: 'Jane Doe',
-        email: 'jane.doe@example.com'
-      },
-      companyId: 'comp-' + Math.floor(Math.random() * 1000)
-    });
-    
-    return submissions;
-  };
-
-  const renderSubmissionData = (submission: SubmissionData) => {
-    return (
-      <div key={`${submission.type}-${submission.timestamp}`} className="mb-6 border rounded-md p-4">
-        <h3 className="text-lg font-medium mb-2 capitalize">
-          {submission.type === 'exercise' ? 
-            `${submission.exerciseType || 'Exercise'} Data` : 
-            'Company Information'}
-        </h3>
-        
-        <div className="grid grid-cols-1 gap-2">
-          {Object.entries(submission.data).map(([key, value]) => (
-            <div key={key} className="py-1">
-              <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}: </span>
-              <span className="text-sm">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</span>
-            </div>
-          ))}
-          
-          {/* Display submitter information */}
-          {submission.submitter && (
-            <div className="py-2 mt-2 border-t">
-              <h4 className="text-sm font-semibold mb-1">Submitted by:</h4>
-              <div className="text-sm">
-                <div>{submission.submitter.name}</div>
-                <div>{submission.submitter.email}</div>
-                {submission.companyId && <div>Company ID: {submission.companyId}</div>}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   // Save tab data to edge function when tabs are updated
   const handleSaveTabData = async () => {
@@ -438,6 +272,20 @@ const ReportDetail = () => {
       </div>
     );
   };
+
+  const renderEmptyTabContent = (tabTitle: string) => (
+    <div className="prose max-w-none dark:prose-invert">
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <AlertTriangle className="h-8 w-8 text-amber-500 mb-2" />
+        <p className="text-sm text-muted-foreground">
+          No data available for the {tabTitle} tab.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Please use the "Re-analyze" button to generate tab content.
+        </p>
+      </div>
+    </div>
+  );
 
   return (
     <DashboardLayout title={`Report: ${report?.title || 'Loading...'}`}>
@@ -572,238 +420,44 @@ const ReportDetail = () => {
                         </div>
                       )}
                       
-                      {/* Fallback to display submission data if no structured executive data available */}
-                      {(!executiveTabData || (!executiveTabData.kpis && !executiveTabData.topRisks)) && submissions.length > 0 && (
+                      {!executiveTabData && (
                         <div className="mt-4">
-                          {submissions
-                            .filter(s => s.type === 'exercise')
-                            .map(renderSubmissionData)}
+                          {renderEmptyTabContent("Executive Snapshot")}
                         </div>
                       )}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="exit-destination" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Exit Destination</h3>
-                      <p>
-                        Analysis of optimal exit strategies for {report.company_name}, including timeline
-                        projections and potential acquisition models that align with company goals.
-                      </p>
-                      
-                      <div className="bg-muted p-4 rounded-md mt-4">
-                        <h4>Exit Timeline</h4>
-                        <p>Target exit window: 3-5 years</p>
-                        <p>Optimal valuation multiple: 6-8x annual recurring revenue</p>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("Exit Destination")}
                   </TabsContent>
                   
                   <TabsContent value="ideal-buyers" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Ideal Buyers</h3>
-                      <p>
-                        Identification of the most likely and highest-value potential acquirers for 
-                        {report.company_name}, with analysis of strategic fit and acquisition rationale.
-                      </p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div className="border p-4 rounded-md">
-                          <h4>Strategic Buyers</h4>
-                          <ul>
-                            <li>Market consolidators seeking specific capabilities</li>
-                            <li>Complementary product/service providers</li>
-                            <li>Competitors looking to expand market share</li>
-                          </ul>
-                        </div>
-                        <div className="border p-4 rounded-md">
-                          <h4>Financial Buyers</h4>
-                          <ul>
-                            <li>Private equity firms specializing in industry roll-ups</li>
-                            <li>Family offices interested in stable long-term returns</li>
-                            <li>Investment groups focusing on operational improvements</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("Ideal Buyers")}
                   </TabsContent>
                   
                   <TabsContent value="exit-proposition" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>'1 + 1' Exit Proposition</h3>
-                      <p>
-                        Analysis of how {report.company_name} creates synergistic value for potential acquirers,
-                        demonstrating why the combined entity would be worth more than the sum of its parts.
-                      </p>
-                      
-                      <div className="bg-muted p-4 rounded-md mt-4">
-                        <h4>Key Value Drivers</h4>
-                        <ul>
-                          <li>Customer base expansion opportunities</li>
-                          <li>Technology/IP integration benefits</li>
-                          <li>Operational efficiency improvements</li>
-                          <li>Market positioning advantages</li>
-                        </ul>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("'1 + 1' Exit Proposition")}
                   </TabsContent>
                   
                   <TabsContent value="leadership-delegation" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Leadership & Delegation</h3>
-                      <p>
-                        Assessment of {report.company_name}'s leadership structure, delegation effectiveness,
-                        and recommendations for building a self-sustaining management team that enhances exit value.
-                      </p>
-                      
-                      <div className="mt-4">
-                        <h4>Current Delegation Score: 6/10</h4>
-                        <p>Primary delegation challenges:</p>
-                        <ul>
-                          <li>Strategic planning remains centralized and could benefit from team input</li>
-                          <li>Content creation bottlenecks slow down marketing efforts</li>
-                          <li>Team management delegation needs structure and clear processes</li>
-                        </ul>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("Leadership & Delegation")}
                   </TabsContent>
                   
                   <TabsContent value="customer-relationship" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Customer Relationship Strength</h3>
-                      <p>
-                        Analysis of {report.company_name}'s customer relationships, retention metrics,
-                        and strategies to enhance customer value as a critical component of exit valuation.
-                      </p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div className="border p-4 rounded-md">
-                          <h4>Strengths</h4>
-                          <ul>
-                            <li>High Net Promoter Score (62)</li>
-                            <li>Strong customer retention (87% annual)</li>
-                            <li>Diversified customer base across industries</li>
-                          </ul>
-                        </div>
-                        <div className="border p-4 rounded-md">
-                          <h4>Improvement Areas</h4>
-                          <ul>
-                            <li>Customer success metrics documentation</li>
-                            <li>Formalized feedback collection processes</li>
-                            <li>Case studies highlighting ROI for key accounts</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("Customer Relationship")}
                   </TabsContent>
                   
                   <TabsContent value="recommendations" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Strategic Recommendations</h3>
-                      <p>
-                        Actionable recommendations for {report.company_name} to maximize exit value,
-                        prioritized by impact and implementation timeline.
-                      </p>
-                      
-                      <h4>Short-term Actions (1-3 months)</h4>
-                      <ol>
-                        <li><strong>Hire a virtual assistant</strong> to handle administrative tasks and basic content creation</li>
-                        <li><strong>Implement project management tools</strong> to streamline task delegation and tracking</li>
-                        <li><strong>Create documented processes</strong> for currently delegated tasks to ensure consistency</li>
-                      </ol>
-                      
-                      <h4>Medium-term Actions (3-6 months)</h4>
-                      <ol>
-                        <li><strong>Develop a team input system</strong> for strategic planning to distribute decision-making</li>
-                        <li><strong>Train team leaders</strong> in key management responsibilities to take ownership of team performance</li>
-                        <li><strong>Establish content creation workflows</strong> with clear approval processes</li>
-                      </ol>
-                      
-                      <h4>Long-term Vision (6-12 months)</h4>
-                      <p>
-                        Achieve a delegation score of 8+/10 by creating self-managing teams that require minimal oversight,
-                        freeing leadership to focus on business growth and innovation.
-                      </p>
-                    </div>
+                    {renderEmptyTabContent("Strategic Recommendations")}
                   </TabsContent>
                   
                   <TabsContent value="readiness-scorecard" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Exit-Readiness Scorecard</h3>
-                      <p>
-                        Comprehensive assessment of {report.company_name}'s exit readiness across key dimensions,
-                        with scores and priority improvement areas.
-                      </p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div className="border p-4 rounded-md">
-                          <h4>Financial Readiness: 7/10</h4>
-                          <ul>
-                            <li>Strong recurring revenue model</li>
-                            <li>Consistent profit margins</li>
-                            <li>Needs improved financial documentation</li>
-                          </ul>
-                        </div>
-                        <div className="border p-4 rounded-md">
-                          <h4>Operational Readiness: 6/10</h4>
-                          <ul>
-                            <li>Good process documentation</li>
-                            <li>Needs improved delegation structure</li>
-                            <li>Technology stack well-maintained</li>
-                          </ul>
-                        </div>
-                        <div className="border p-4 rounded-md">
-                          <h4>Market Positioning: 8/10</h4>
-                          <ul>
-                            <li>Strong brand recognition in niche</li>
-                            <li>Differentiated value proposition</li>
-                            <li>Competitive advantage well-articulated</li>
-                          </ul>
-                        </div>
-                        <div className="border p-4 rounded-md">
-                          <h4>Leadership Transferability: 5/10</h4>
-                          <ul>
-                            <li>Too dependent on founder</li>
-                            <li>Key decisions not delegated enough</li>
-                            <li>Management team needs development</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("Exit-Readiness Scorecard")}
                   </TabsContent>
                   
                   <TabsContent value="resources" className="space-y-4">
-                    <div className="prose max-w-none dark:prose-invert">
-                      <h3>Purposeful-Exit Quote & Resources</h3>
-                      <blockquote className="italic border-l-4 border-primary pl-4 py-2 my-4">
-                        "The best time to prepare for an exit is the day you start your business. 
-                        The second best time is today."
-                      </blockquote>
-                      
-                      <h4>Recommended Resources</h4>
-                      <ul>
-                        <li>
-                          <strong>Book:</strong> Built to Sell: Creating a Business That Can Thrive Without You
-                        </li>
-                        <li>
-                          <strong>Assessment:</strong> Value Builder System - Business Value Assessment
-                        </li>
-                        <li>
-                          <strong>Expert Network:</strong> Exit Planning Institute - Find a Certified Exit Planning Advisor
-                        </li>
-                        <li>
-                          <strong>Workshop:</strong> Strategic Value Advisory - Exit Readiness Workshop
-                        </li>
-                      </ul>
-                      
-                      <div className="bg-muted p-4 rounded-md mt-4">
-                        <h4>Next Steps</h4>
-                        <p>
-                          Schedule a follow-up strategy session to prioritize exit-readiness actions and 
-                          develop an implementation timeline customized for {report.company_name}'s goals.
-                        </p>
-                      </div>
-                    </div>
+                    {renderEmptyTabContent("Purposeful-Exit Resources")}
                   </TabsContent>
                 </Tabs>
               </CardContent>
