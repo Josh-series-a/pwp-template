@@ -295,7 +295,7 @@ const ReportDetail = () => {
               <CardContent>
                 <Tabs defaultValue="executive-snapshot">
                   <div className="relative">
-                    <TabsList className="flex items-center justify-start gap-1 mb-4 overflow-x-auto pb-2 no-scrollbar">
+                    <TabsList className="flex items-center justify-start gap-1 mb-4 overflow-x-auto pb-2 scrollbar-visible">
                       <TabsTrigger value="executive-snapshot">
                         <Briefcase className="h-4 w-4 mr-2" />
                         Executive Snapshot
