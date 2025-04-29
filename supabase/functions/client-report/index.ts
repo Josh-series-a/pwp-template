@@ -150,13 +150,15 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     }
     
     // Update the report with the merged tabs data
-    const { error: updateError } = await supabaseClient
+    const { data: updatedReport, error: updateError } = await supabaseClient
       .from('reports')
       .update({ 
         updated_at: new Date().toISOString(),
         tabs_data: updatedTabsData
       })
-      .eq('id', reportId);
+      .eq('id', reportId)
+      .select()
+      .maybeSingle();
     
     if (updateError) {
       console.error('Error updating report by ID:', updateError);
@@ -176,7 +178,8 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       JSON.stringify({ 
         success: true, 
         message: 'Report data updated successfully',
-        reportId
+        reportId,
+        report: updatedReport // Return the updated report data
       }),
       { 
         status: 200, 
@@ -210,6 +213,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   }
 
   let reportId_response: string;
+  let updatedReport: any;
   
   // If report exists, update it, otherwise create new one
   if (existingReports && existingReports.length > 0) {
@@ -237,13 +241,17 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     }
     
     // Update the existing report
-    const { error: updateError } = await supabaseClient
+    const { data: updated, error: updateError } = await supabaseClient
       .from('reports')
       .update({ 
         updated_at: new Date().toISOString(),
         tabs_data: updatedTabsData
       })
-      .eq('id', reportId_response);
+      .eq('id', reportId_response)
+      .select()
+      .maybeSingle();
+
+    updatedReport = updated;
 
     if (updateError) {
       console.error('Error updating report:', updateError);
@@ -272,8 +280,10 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
         tabs_data: tabs,
         status: 'In Progress'
       })
-      .select('id')
-      .single();
+      .select()
+      .maybeSingle();
+
+    updatedReport = newReport;
 
     if (createError) {
       console.error('Error creating new report:', createError);
@@ -296,7 +306,8 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     JSON.stringify({ 
       success: true, 
       message: 'Report data saved successfully',
-      reportId: reportId_response
+      reportId: reportId_response,
+      report: updatedReport
     }),
     { 
       status: 200, 

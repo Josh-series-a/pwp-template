@@ -58,6 +58,7 @@ const ReportDetail = () => {
 
   // Function to trigger data refresh
   const refreshData = () => {
+    console.log("Refreshing data...");
     setRefreshKey(prevKey => prevKey + 1); // Increment refresh key to trigger useEffect
   };
 
@@ -113,7 +114,7 @@ const ReportDetail = () => {
           if (reportData.tabs_data && reportData.tabs_data.length > 0) {
             console.log("Processing tabs data:", reportData.tabs_data);
             
-            // Find the executive snapshot tab data
+            // Find the executive snapshot tab data - check for both possible formats of the tabId
             const executiveTab = reportData.tabs_data.find((tab: any) => 
               tab.tabId === 'executiveSnapshot' || tab.tabId === 'executive-snapshot'
             );
@@ -126,7 +127,7 @@ const ReportDetail = () => {
               setExecutiveTabData(null); // Reset to null if no executive tab is found
             }
           } else {
-            // Reset executive tab data if no tabs data is found
+            console.log("No tabs_data found in report or tabs_data is empty array");
             setExecutiveTabData(null);
           }
           setIsLoading(false);
@@ -211,7 +212,7 @@ const ReportDetail = () => {
       
       console.log('Saved report data:', result);
       
-      // Instead of full page reload, use the refresh function to update data
+      // Explicitly refresh data after save is complete
       refreshData();
       
     } catch (error: any) {
