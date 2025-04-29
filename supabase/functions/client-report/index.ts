@@ -13,6 +13,27 @@ interface TabData {
   tabId: string;
   title: string;
   content: Record<string, any>;
+  clientId?: string;
+  heroQuote?: string;
+  kpis?: Array<{
+    label: string;
+    current: number;
+    target: number;
+    unit?: string;
+  }>;
+  topRisks?: Array<{
+    risk: string;
+    severity: number;
+  }>;
+  missionStatement?: string;
+  uiSchema?: {
+    layout: string;
+    components: Array<{
+      type: string;
+      bind: string;
+      title?: string;
+    }>;
+  };
 }
 
 interface ClientReportRequest {

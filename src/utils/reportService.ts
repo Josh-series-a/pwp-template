@@ -1,10 +1,41 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
+// Executive Snapshot specific types
+interface KPI {
+  label: string;
+  current: number;
+  target: number;
+  unit?: string;
+}
+
+interface Risk {
+  risk: string;
+  severity: number;
+}
+
+interface UiComponent {
+  type: string;
+  bind: string;
+  title?: string;
+}
+
+interface UiSchema {
+  layout: string;
+  components: UiComponent[];
+}
+
+// Generic tab data interface with type-specific fields
 interface TabData {
   tabId: string;
   title: string;
-  content: Record<string, any>;
+  content?: Record<string, any>; // For backward compatibility
+  clientId?: string;
+  heroQuote?: string;
+  kpis?: KPI[];
+  topRisks?: Risk[];
+  missionStatement?: string;
+  uiSchema?: UiSchema;
 }
 
 interface ClientReportParams {
@@ -61,5 +92,35 @@ export const reportService = {
       console.error('Error in getReport:', err);
       throw err;
     }
+  },
+
+  /**
+   * Save Executive Snapshot tab data
+   */
+  async saveExecutiveSnapshot(
+    companyName: string,
+    exerciseId: string,
+    userId: string,
+    snapshotData: {
+      clientId: string;
+      heroQuote: string;
+      kpis: KPI[];
+      topRisks: Risk[];
+      missionStatement: string;
+      uiSchema: UiSchema;
+    }
+  ) {
+    const tabData: TabData = {
+      tabId: 'executiveSnapshot',
+      title: 'Executive Snapshot',
+      ...snapshotData
+    };
+
+    return this.saveReport({
+      companyName,
+      exerciseId,
+      tabs: [tabData],
+      userId
+    });
   }
 };
