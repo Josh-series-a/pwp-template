@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -45,7 +46,7 @@ interface SubmissionData {
 }
 
 const ReportDetail = () => {
-  const { companySlug, exerciseId } = useParams();
+  const { companySlug, exerciseId, reportId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [report, setReport] = useState<any | null>(null);
@@ -54,7 +55,7 @@ const ReportDetail = () => {
 
   useEffect(() => {
     const fetchReportDetails = async () => {
-      if (!exerciseId || !companySlug) return;
+      if (!companySlug) return;
       
       setIsLoading(true);
       try {
@@ -63,68 +64,112 @@ const ReportDetail = () => {
           .map(word => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
         
-        console.log(`Fetching report for company "${companyName}" and exerciseId "${exerciseId}"`);
+        console.log(`Fetching report for company "${companyName}", exerciseId "${exerciseId}", reportId "${reportId}"`);
         
-        // Try to fetch the report from the edge function first
-        try {
-          const reportData = await reportService.getReport(companyName, exerciseId);
-          
-          if (reportData) {
-            console.log("Found report from edge function:", reportData);
-            setReport(reportData);
-            
-            // If the report has tabs_data, use it
-            if (reportData.tabs_data && reportData.tabs_data.length > 0) {
-              // Process the tab data into submissions format
-              const tabSubmissions = reportData.tabs_data.map((tab: any) => ({
-                type: 'tab',
-                exerciseType: tab.title,
-                timestamp: reportData.updated_at,
-                data: tab.content,
-                submitter: {
-                  name: 'System',
-                  email: 'system@example.com'
-                }
-              }));
-              
-              setSubmissions(tabSubmissions);
-              setIsLoading(false);
-              return;
+        let reportData;
+        
+        // Try to fetch the report using the ID first if available
+        if (reportId) {
+          try {
+            reportData = await reportService.getReport(companyName, exerciseId || '', reportId);
+            if (reportData) {
+              console.log("Found report by ID:", reportData);
             }
+          } catch (idError) {
+            console.error('Error fetching report by ID:', idError);
           }
-        } catch (edgeError) {
-          console.error('Error fetching from edge function:', edgeError);
-          // Continue to fallback method if edge function fails
         }
         
-        // Fallback to direct database query if edge function fails or returns no data
-        const { data: reportData, error: reportError } = await supabase
-          .from('reports')
-          .select('*')
-          .eq('exercise_id', exerciseId)
-          .ilike('company_name', companyName)
-          .limit(1);
+        // If reportId was not provided or failed, try the standard route
+        if (!reportData && exerciseId) {
+          try {
+            reportData = await reportService.getReport(companyName, exerciseId);
+            
+            if (reportData) {
+              console.log("Found report from edge function:", reportData);
+              
+              // If a report was found but the URL doesn't include the reportId,
+              // update the URL to include it for future reference
+              if (reportData.id && !reportId) {
+                navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportData.id}`, { replace: true });
+              }
+            }
+          } catch (edgeError) {
+            console.error('Error fetching from edge function:', edgeError);
+          }
+        }
         
-        if (reportError) throw reportError;
-        
-        if (reportData && reportData.length > 0) {
-          console.log("Found report from direct query:", reportData[0]);
-          setReport(reportData[0]);
+        // If we found a report through any method, use it
+        if (reportData) {
+          setReport(reportData);
           
-          // For demonstration, we'll simulate fetching submission data
-          // In a real app, you would fetch this from your webhook destination or database
-          
-          // Simulate API delay
-          setTimeout(() => {
-            // This is mock data - in a real app you would fetch the actual submission data
-            const mockSubmissionData = generateMockData(reportData[0]);
-            setSubmissions(mockSubmissionData);
+          // If the report has tabs_data, use it
+          if (reportData.tabs_data && reportData.tabs_data.length > 0) {
+            // Process the tab data into submissions format
+            const tabSubmissions = reportData.tabs_data.map((tab: any) => ({
+              type: 'tab',
+              exerciseType: tab.title,
+              timestamp: reportData.updated_at,
+              data: tab.content || {},
+              submitter: {
+                name: 'System',
+                email: 'system@example.com'
+              }
+            }));
+            
+            setSubmissions(tabSubmissions);
             setIsLoading(false);
-          }, 1000);
-        } else {
+            return;
+          }
+        }
+        
+        // If we still don't have a report, fall back to direct database query
+        if (!reportData) {
+          const query = supabase
+            .from('reports')
+            .select('*')
+            .ilike('company_name', companyName)
+            .limit(1);
+          
+          // Add exercise_id filter if available
+          if (exerciseId) {
+            query.eq('exercise_id', exerciseId);
+          }
+          
+          // Add reportId filter if available
+          if (reportId) {
+            query.eq('id', reportId);
+          }
+          
+          const { data: dbReport, error: reportError } = await query.maybeSingle();
+          
+          if (reportError) throw reportError;
+          
+          if (dbReport) {
+            console.log("Found report from direct query:", dbReport);
+            setReport(dbReport);
+            
+            // If a report was found but the URL doesn't include the reportId,
+            // update the URL to include it for future reference
+            if (dbReport.id && !reportId) {
+              navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${dbReport.id}`, { replace: true });
+            }
+            
+            // For demonstration, we'll simulate fetching submission data
+            setTimeout(() => {
+              const mockSubmissionData = generateMockData(dbReport);
+              setSubmissions(mockSubmissionData);
+              setIsLoading(false);
+            }, 1000);
+            return;
+          }
+        }
+        
+        // If we get here, no report was found
+        if (!reportData) {
           toast({
             title: "Report not found",
-            description: `No report found for ${companySlug}/${exerciseId}`,
+            description: `No report found for the specified parameters`,
             variant: "destructive",
           });
           navigate('/dashboard/reports');
@@ -141,7 +186,7 @@ const ReportDetail = () => {
     };
 
     fetchReportDetails();
-  }, [companySlug, exerciseId, toast, navigate]);
+  }, [companySlug, exerciseId, reportId, toast, navigate]);
 
   // This function generates mock data based on the report type
   // In a real app, you would replace this with actual data from your backend
@@ -285,11 +330,12 @@ const ReportDetail = () => {
 
   // Save tab data to edge function when tabs are updated
   const handleSaveTabData = async () => {
-    if (!report || !companySlug || !exerciseId) return;
+    if (!report || !companySlug) return;
     
     try {
       const companyName = report.company_name;
       const userId = report.user_id;
+      const currentReportId = report.id;
       
       // Example tab data - in a real app you would collect this from the UI
       const tabsData = [
@@ -313,9 +359,10 @@ const ReportDetail = () => {
       
       const result = await reportService.saveReport({
         companyName,
-        exerciseId,
+        exerciseId: exerciseId || '',
         tabs: tabsData,
-        userId
+        userId,
+        reportId: currentReportId // Pass the current report ID for update
       });
       
       toast({

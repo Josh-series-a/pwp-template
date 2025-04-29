@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -44,6 +45,8 @@ interface Report {
 
 const Reports = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
@@ -99,10 +102,20 @@ const Reports = () => {
     setIsModalOpen(false);
   };
 
+  const openViewModal = (reportId: string) => {
+    setSelectedReportId(reportId);
+    setViewModalOpen(true);
+  };
+
+  const closeViewModal = () => {
+    setSelectedReportId(null);
+    setViewModalOpen(false);
+  };
+
   const navigateToReport = (report: Report) => {
     // Create a slug from the company name
     const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/dashboard/reports/${companySlug}/${report.exerciseId}`);
+    navigate(`/dashboard/reports/${companySlug}/${report.exerciseId}/${report.id}`);
   };
 
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
@@ -236,6 +249,17 @@ const Reports = () => {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            title="Quick View" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openViewModal(report.id);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
                           <Button variant="outline" size="icon" title="Download">
                             <DownloadCloud className="h-4 w-4" />
                           </Button>
@@ -308,6 +332,12 @@ const Reports = () => {
         isOpen={isModalOpen} 
         onClose={closeModal} 
         onSubmitComplete={handleAnalysisComplete} 
+      />
+
+      <ViewReportModal 
+        isOpen={viewModalOpen}
+        onClose={closeViewModal}
+        reportId={selectedReportId}
       />
     </DashboardLayout>
   );

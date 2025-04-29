@@ -41,6 +41,7 @@ interface ClientReportRequest {
   exerciseId: string;
   tabs: TabData[];
   userId: string;
+  reportId?: string; // Optional report ID for updates
 }
 
 serve(async (req) => {
@@ -96,9 +97,50 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   const requestData: ClientReportRequest = await req.json();
   console.log('Received report data:', requestData);
 
-  const { companyName, exerciseId, tabs, userId } = requestData;
+  const { companyName, exerciseId, tabs, userId, reportId } = requestData;
 
-  // First check if a report for this company/exercise exists
+  // If reportId is provided, try to update that specific report
+  if (reportId) {
+    console.log(`Attempting to update report with ID: ${reportId}`);
+    const { error: updateError } = await supabaseClient
+      .from('reports')
+      .update({ 
+        updated_at: new Date().toISOString(),
+        tabs_data: tabs
+      })
+      .eq('id', reportId);
+    
+    if (updateError) {
+      console.error('Error updating report by ID:', updateError);
+      return new Response(
+        JSON.stringify({ error: updateError.message }),
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        message: 'Report data updated successfully',
+        reportId
+      }),
+      { 
+        status: 200, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        } 
+      }
+    );
+  }
+
+  // If no reportId provided, check if a report for this company/exercise exists
   const { data: existingReport, error: fetchError } = await supabaseClient
     .from('reports')
     .select('id')
@@ -120,11 +162,11 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     );
   }
 
-  let reportId: string;
+  let reportId_response: string;
   
   // If report exists, update it, otherwise create new one
   if (existingReport && existingReport.length > 0) {
-    reportId = existingReport[0].id;
+    reportId_response = existingReport[0].id;
     
     // Update the existing report
     const { error: updateError } = await supabaseClient
@@ -133,7 +175,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
         updated_at: new Date().toISOString(),
         tabs_data: tabs
       })
-      .eq('id', reportId);
+      .eq('id', reportId_response);
 
     if (updateError) {
       console.error('Error updating report:', updateError);
@@ -179,14 +221,14 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       );
     }
     
-    reportId = newReport.id;
+    reportId_response = newReport.id;
   }
 
   return new Response(
     JSON.stringify({ 
       success: true, 
       message: 'Report data saved successfully',
-      reportId
+      reportId: reportId_response
     }),
     { 
       status: 200, 
@@ -201,11 +243,13 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
 async function handleGetRequest(req: Request, supabaseClient: any) {
   let companyName: string | null = null;
   let exerciseId: string | null = null;
+  let reportId: string | null = null;
 
   // First try to get parameters from URL query string
   const url = new URL(req.url);
   companyName = url.searchParams.get('company');
   exerciseId = url.searchParams.get('exercise');
+  reportId = url.searchParams.get('reportId');
 
   // If not found in URL, try to get from request body
   if (!companyName || !exerciseId) {
@@ -213,17 +257,42 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
       const body = await req.json();
       companyName = body.company || null;
       exerciseId = body.exercise || null;
+      reportId = body.reportId || null;
     } catch (e) {
       console.error('Error parsing request body:', e);
       // Continue with null values if body parsing fails
     }
   }
 
-  if (!companyName || !exerciseId) {
+  // If reportId is provided, use it to fetch the specific report
+  if (reportId) {
+    const { data: report, error } = await supabaseClient
+      .from('reports')
+      .select('*')
+      .eq('id', reportId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching report by ID:', error);
+      return new Response(
+        JSON.stringify({ error: error.message }),
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ error: 'Missing required parameters: company and exercise' }),
+      JSON.stringify({ 
+        success: true, 
+        report 
+      }),
       { 
-        status: 400, 
+        status: 200, 
         headers: { 
           'Content-Type': 'application/json',
           ...corsHeaders 
@@ -232,21 +301,38 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
     );
   }
 
-  // Get report data for the company and exercise
-  const { data: report, error } = await supabaseClient
-    .from('reports')
-    .select('*')
-    .eq('company_name', companyName)
-    .eq('exercise_id', exerciseId)
-    .limit(1)
-    .maybeSingle();
+  // If company and exercise are provided but no reportId, fetch by those parameters
+  if (companyName && exerciseId) {
+    // Get report data for the company and exercise
+    const { data: report, error } = await supabaseClient
+      .from('reports')
+      .select('*')
+      .eq('company_name', companyName)
+      .eq('exercise_id', exerciseId)
+      .limit(1)
+      .maybeSingle();
 
-  if (error) {
-    console.error('Error fetching report:', error);
+    if (error) {
+      console.error('Error fetching report:', error);
+      return new Response(
+        JSON.stringify({ error: error.message }),
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        success: true, 
+        report 
+      }),
       { 
-        status: 400, 
+        status: 200, 
         headers: { 
           'Content-Type': 'application/json',
           ...corsHeaders 
@@ -256,12 +342,9 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
   }
 
   return new Response(
-    JSON.stringify({ 
-      success: true, 
-      report 
-    }),
+    JSON.stringify({ error: 'Missing required parameters: company, exercise, or reportId' }),
     { 
-      status: 200, 
+      status: 400, 
       headers: { 
         'Content-Type': 'application/json',
         ...corsHeaders 

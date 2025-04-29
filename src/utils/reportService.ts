@@ -43,6 +43,7 @@ interface ClientReportParams {
   exerciseId: string;
   tabs: TabData[];
   userId: string;
+  reportId?: string; // Optional report ID for updates
 }
 
 export const reportService = {
@@ -71,14 +72,15 @@ export const reportService = {
   /**
    * Get client report data
    */
-  async getReport(companyName: string, exerciseId: string) {
+  async getReport(companyName: string, exerciseId: string, reportId?: string) {
     try {
       // Use URL parameters in the body instead of query option
       const { data, error } = await supabase.functions.invoke('client-report', {
         method: 'GET',
         body: {
           company: companyName,
-          exercise: exerciseId
+          exercise: exerciseId,
+          reportId: reportId // Add reportId parameter
         }
       });
 
@@ -108,7 +110,8 @@ export const reportService = {
       topRisks: Risk[];
       missionStatement: string;
       uiSchema: UiSchema;
-    }
+    },
+    reportId?: string // Add optional reportId parameter
   ) {
     const tabData: TabData = {
       tabId: 'executiveSnapshot',
@@ -120,7 +123,8 @@ export const reportService = {
       companyName,
       exerciseId,
       tabs: [tabData],
-      userId
+      userId,
+      reportId // Include reportId in the params
     });
   }
 };
