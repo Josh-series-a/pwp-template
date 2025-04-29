@@ -42,6 +42,7 @@ export type Database = {
           id: string
           pitch_deck_url: string | null
           status: string
+          tabs_data: Json | null
           title: string
           updated_at: string
           user_id: string
@@ -54,6 +55,7 @@ export type Database = {
           id?: string
           pitch_deck_url?: string | null
           status?: string
+          tabs_data?: Json | null
           title: string
           updated_at?: string
           user_id: string
@@ -66,6 +68,7 @@ export type Database = {
           id?: string
           pitch_deck_url?: string | null
           status?: string
+          tabs_data?: Json | null
           title?: string
           updated_at?: string
           user_id?: string

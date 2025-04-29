@@ -32,19 +32,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { reportService } from '@/utils/reportService';
 
-interface SubmissionData {
-  type: string;
-  exerciseType?: string;
-  exerciseNumber?: string;
-  timestamp: string;
-  data: Record<string, any>;
-  submitter?: {
-    name: string;
-    email: string;
-  };
-  companyId?: string;
-}
-
 // KPI Interface
 interface KPI {
   label: string;
@@ -99,7 +86,6 @@ const ReportDetail = () => {
         
         console.log(`Fetching report for company "${companyName}", exerciseId "${exerciseId}", reportId "${reportId}"`);
         
-        // Fetch the report using the reportId directly
         try {
           const reportData = await reportService.getReport(companyName, exerciseId, reportId);
           
