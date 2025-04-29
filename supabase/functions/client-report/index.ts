@@ -108,7 +108,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       .from('reports')
       .select('tabs_data')
       .eq('id', reportId)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to handle 0 or 1 rows
       
     if (fetchError) {
       console.error('Error fetching existing report:', fetchError);
@@ -189,12 +189,11 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   }
 
   // If no reportId provided, check if a report for this company/exercise exists
-  const { data: existingReport, error: fetchError } = await supabaseClient
+  const { data: existingReports, error: fetchError } = await supabaseClient
     .from('reports')
     .select('id, tabs_data')
     .eq('company_name', companyName)
-    .eq('exercise_id', exerciseId)
-    .limit(1);
+    .eq('exercise_id', exerciseId);
 
   if (fetchError) {
     console.error('Error checking existing report:', fetchError);
@@ -213,13 +212,13 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   let reportId_response: string;
   
   // If report exists, update it, otherwise create new one
-  if (existingReport && existingReport.length > 0) {
-    reportId_response = existingReport[0].id;
+  if (existingReports && existingReports.length > 0) {
+    reportId_response = existingReports[0].id;
     
     // Prepare tabs data by merging existing and new tabs
     let updatedTabsData = tabs;
-    if (existingReport[0].tabs_data) {
-      const existingTabs = existingReport[0].tabs_data;
+    if (existingReports[0].tabs_data) {
+      const existingTabs = existingReports[0].tabs_data;
       updatedTabsData = [...existingTabs];
       
       tabs.forEach(newTab => {
@@ -324,7 +323,7 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
       .from('reports')
       .select('*')
       .eq('id', reportId)
-      .maybeSingle();
+      .maybeSingle(); // Use maybeSingle instead of single to handle 0 or 1 rows
 
     if (error) {
       console.error('Error fetching report by ID:', error);
@@ -358,13 +357,12 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
   // If company and exercise are provided but no reportId, fetch by those parameters
   if (companyName && exerciseId) {
     // Get report data for the company and exercise
-    const { data: report, error } = await supabaseClient
+    const { data: reports, error } = await supabaseClient
       .from('reports')
       .select('*')
       .eq('company_name', companyName)
       .eq('exercise_id', exerciseId)
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
 
     if (error) {
       console.error('Error fetching report:', error);
@@ -379,6 +377,9 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
         }
       );
     }
+
+    // Return the first report or null if no reports match
+    const report = reports && reports.length > 0 ? reports[0] : null;
 
     return new Response(
       JSON.stringify({ 
