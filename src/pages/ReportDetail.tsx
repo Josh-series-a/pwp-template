@@ -54,6 +54,12 @@ const ReportDetail = () => {
   const [report, setReport] = useState<any | null>(null);
   const [executiveTabData, setExecutiveTabData] = useState<any | null>(null);
   const { toast } = useToast();
+  const [refreshKey, setRefreshKey] = useState(0); // Add refresh key state
+
+  // Function to trigger data refresh
+  const refreshData = () => {
+    setRefreshKey(prevKey => prevKey + 1); // Increment refresh key to trigger useEffect
+  };
 
   useEffect(() => {
     const fetchReportDetails = async () => {
@@ -117,7 +123,11 @@ const ReportDetail = () => {
               setExecutiveTabData(executiveTab);
             } else {
               console.log("No executive tab found in tabs_data");
+              setExecutiveTabData(null); // Reset to null if no executive tab is found
             }
+          } else {
+            // Reset executive tab data if no tabs data is found
+            setExecutiveTabData(null);
           }
           setIsLoading(false);
         } catch (fetchError: any) {
@@ -143,7 +153,7 @@ const ReportDetail = () => {
     };
 
     fetchReportDetails();
-  }, [companySlug, exerciseId, reportId, toast, navigate]);
+  }, [companySlug, exerciseId, reportId, toast, navigate, refreshKey]); // Add refreshKey dependency
 
   // Save tab data to edge function when tabs are updated
   const handleSaveTabData = async () => {
@@ -201,8 +211,8 @@ const ReportDetail = () => {
       
       console.log('Saved report data:', result);
       
-      // Reload the report data to display the updates
-      window.location.reload();
+      // Instead of full page reload, use the refresh function to update data
+      refreshData();
       
     } catch (error: any) {
       console.error('Error saving tab data:', error);
