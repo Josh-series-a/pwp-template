@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -171,7 +170,8 @@ const ReportDetail = () => {
       const companyName = report.company_name;
       const userId = report.user_id;
       
-      // Example executive snapshot data - in a real app you would collect this from the UI
+      // Test data for executive snapshot - simulate real data collection
+      // In a real app you would collect this from the UI
       const executiveSnapshotData = {
         tabId: "executiveSnapshot",  // Make sure we use consistent tabId format
         title: "Executive Snapshot",
@@ -199,6 +199,15 @@ const ReportDetail = () => {
         }
       };
       
+      // For debugging - display what we're about to save
+      console.log("Saving executive snapshot data:", {
+        companyName,
+        exerciseId,
+        userId,
+        executiveSnapshotData,
+        reportId
+      });
+      
       const result = await reportService.saveExecutiveSnapshot(
         companyName,
         exerciseId,
@@ -216,6 +225,8 @@ const ReportDetail = () => {
       
       // Directly update the UI with the newly saved data - don't wait for refresh
       if (result && result.report && result.report.tabs_data) {
+        console.log("New tabs_data received:", result.report.tabs_data);
+        
         const newExecutiveTab = result.report.tabs_data.find((tab: any) => 
           tab.tabId === 'executiveSnapshot' || tab.tabId === 'executive-snapshot'
         );
@@ -224,7 +235,11 @@ const ReportDetail = () => {
           console.log("Setting new executive tab data directly:", newExecutiveTab);
           setExecutiveTabData(newExecutiveTab);
           setReport(result.report);
+        } else {
+          console.error("Could not find executiveSnapshot tab in the response data");
         }
+      } else {
+        console.error("Missing or invalid data in the response:", result);
       }
       
       // Also trigger the refresh to ensure consistency

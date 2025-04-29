@@ -99,6 +99,21 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
 
   const { companyName, exerciseId, tabs, userId, reportId } = requestData;
 
+  // Validate tabs data
+  if (!tabs || !Array.isArray(tabs) || tabs.length === 0) {
+    console.error('Invalid tabs data:', tabs);
+    return new Response(
+      JSON.stringify({ error: 'Invalid tabs data: must be a non-empty array' }),
+      { 
+        status: 400, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        } 
+      }
+    );
+  }
+
   // If reportId is provided, try to update that specific report
   if (reportId) {
     console.log(`Attempting to update report with ID: ${reportId}`);
@@ -108,7 +123,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       .from('reports')
       .select('tabs_data')
       .eq('id', reportId)
-      .maybeSingle(); // Use maybeSingle instead of single to handle 0 or 1 rows
+      .maybeSingle();
       
     if (fetchError) {
       console.error('Error fetching existing report:', fetchError);
@@ -129,24 +144,35 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     
     // If there are existing tabs, merge the new tabs with existing ones
     if (existingReport && existingReport.tabs_data) {
-      const existingTabs = existingReport.tabs_data;
+      const existingTabs = Array.isArray(existingReport.tabs_data) 
+        ? existingReport.tabs_data 
+        : [];
       
-      // For each new tab, either update an existing tab or add it as a new tab
+      console.log('Existing tabs before merge:', existingTabs);
+      
+      // Create a new array instead of modifying the existing one
       updatedTabsData = [...existingTabs];
       
-      tabs.forEach(newTab => {
+      // For each new tab, either update an existing tab or add it as a new tab
+      for (const newTab of tabs) {
         const existingTabIndex = existingTabs.findIndex(
           (tab: TabData) => tab.tabId === newTab.tabId
         );
         
         if (existingTabIndex >= 0) {
           // Update existing tab
+          console.log(`Updating existing tab at index ${existingTabIndex}:`, newTab);
           updatedTabsData[existingTabIndex] = newTab;
         } else {
           // Add new tab
+          console.log('Adding new tab:', newTab);
           updatedTabsData.push(newTab);
         }
-      });
+      }
+      
+      console.log('Updated tabs after merge:', updatedTabsData);
+    } else {
+      console.log('No existing tabs, using new tabs directly:', tabs);
     }
     
     // Update the report with the merged tabs data
@@ -222,10 +248,13 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     // Prepare tabs data by merging existing and new tabs
     let updatedTabsData = tabs;
     if (existingReports[0].tabs_data) {
-      const existingTabs = existingReports[0].tabs_data;
+      const existingTabs = Array.isArray(existingReports[0].tabs_data) 
+        ? existingReports[0].tabs_data 
+        : [];
+        
       updatedTabsData = [...existingTabs];
       
-      tabs.forEach(newTab => {
+      for (const newTab of tabs) {
         const existingTabIndex = existingTabs.findIndex(
           (tab: TabData) => tab.tabId === newTab.tabId
         );
@@ -237,8 +266,10 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
           // Add new tab
           updatedTabsData.push(newTab);
         }
-      });
+      }
     }
+    
+    console.log('Updating existing report with merged tabs:', updatedTabsData);
     
     // Update the existing report
     const { data: updated, error: updateError } = await supabaseClient
@@ -269,6 +300,8 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   } else {
     // Create a new report
     const title = `${companyName} - ${exerciseId.replace(/-/g, ' ')}`;
+    
+    console.log('Creating new report with tabs:', tabs);
     
     const { data: newReport, error: createError } = await supabaseClient
       .from('reports')
@@ -334,7 +367,7 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
       .from('reports')
       .select('*')
       .eq('id', reportId)
-      .maybeSingle(); // Use maybeSingle instead of single to handle 0 or 1 rows
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching report by ID:', error);
@@ -348,6 +381,11 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
           } 
         }
       );
+    }
+    
+    // Ensure tabs_data is always an array
+    if (report && !report.tabs_data) {
+      report.tabs_data = [];
     }
 
     return new Response(
@@ -391,6 +429,11 @@ async function handleGetRequest(req: Request, supabaseClient: any) {
 
     // Return the first report or null if no reports match
     const report = reports && reports.length > 0 ? reports[0] : null;
+    
+    // Ensure tabs_data is always an array
+    if (report && !report.tabs_data) {
+      report.tabs_data = [];
+    }
 
     return new Response(
       JSON.stringify({ 

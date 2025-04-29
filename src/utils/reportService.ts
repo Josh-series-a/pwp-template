@@ -88,7 +88,6 @@ export const reportService = {
       
       const { data, error } = await supabase.functions.invoke(url, {
         method: 'GET'
-        // Removed Cache-Control header to avoid CORS issues
       });
 
       if (error) {
@@ -97,6 +96,16 @@ export const reportService = {
       }
 
       console.log('Report data received:', data);
+      
+      if (!data || !data.report) {
+        console.error('No report data found in response');
+        throw new Error('No report data found');
+      }
+      
+      if (!data.report.tabs_data || data.report.tabs_data.length === 0) {
+        console.warn('Report has no tabs_data or empty tabs_data array');
+      }
+      
       return data.report;
     } catch (err) {
       console.error('Error in getReport:', err);
