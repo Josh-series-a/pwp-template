@@ -293,7 +293,7 @@ const ReportDetail = () => {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="executive-snapshot">
-                  <TabsList className="w-full mb-4">
+                  <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap gap-1 mb-4">
                     <TabsTrigger value="executive-snapshot">
                       <Briefcase className="h-4 w-4 mr-2" />
                       Executive Snapshot
