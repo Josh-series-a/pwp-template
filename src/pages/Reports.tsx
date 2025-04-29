@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,16 +39,16 @@ interface Report {
   company: string;
   status: string;
   pitchDeckUrl?: string;
+  exerciseId?: string;
 }
 
 const Reports = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -71,7 +71,8 @@ const Reports = () => {
             title: report.title,
             date: report.created_at,
             company: report.company_name,
-            status: report.status
+            status: report.status,
+            exerciseId: report.exercise_id
           }));
           setReports(formattedReports);
         }
@@ -98,14 +99,10 @@ const Reports = () => {
     setIsModalOpen(false);
   };
 
-  const openViewModal = (reportId: string) => {
-    setSelectedReportId(reportId);
-    setIsViewModalOpen(true);
-  };
-
-  const closeViewModal = () => {
-    setIsViewModalOpen(false);
-    setSelectedReportId(null);
+  const navigateToReport = (report: Report) => {
+    // Create a slug from the company name
+    const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/dashboard/reports/${companySlug}/${report.exerciseId}`);
   };
 
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
@@ -146,7 +143,8 @@ const Reports = () => {
           date: reportData.created_at,
           company: reportData.company_name,
           status: reportData.status,
-          pitchDeckUrl: reportData.pitch_deck_url
+          pitchDeckUrl: reportData.pitch_deck_url,
+          exerciseId: reportData.exercise_id
         };
         
         setReports([newReport, ...reports]);
@@ -208,7 +206,7 @@ const Reports = () => {
                     <TableRow 
                       key={report.id} 
                       className="cursor-pointer hover:bg-muted/70"
-                      onClick={() => openViewModal(report.id)}
+                      onClick={() => navigateToReport(report)}
                     >
                       <TableCell className="font-medium">{report.title}</TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
@@ -233,7 +231,7 @@ const Reports = () => {
                             title="View" 
                             onClick={(e) => {
                               e.stopPropagation();
-                              openViewModal(report.id);
+                              navigateToReport(report);
                             }}
                           >
                             <Eye className="h-4 w-4" />
@@ -310,12 +308,6 @@ const Reports = () => {
         isOpen={isModalOpen} 
         onClose={closeModal} 
         onSubmitComplete={handleAnalysisComplete} 
-      />
-
-      <ViewReportModal
-        isOpen={isViewModalOpen}
-        onClose={closeViewModal}
-        reportId={selectedReportId}
       />
     </DashboardLayout>
   );

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +17,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
+import ReportDetail from "./pages/ReportDetail"; // Import the new ReportDetail component
 import Exercises from "./pages/Exercises";
 import BookInsights from "./pages/BookInsights";
 import BookSession from "./pages/BookSession";
@@ -56,6 +58,11 @@ const AppContent = () => {
           <Route path="reports" element={
             <ProtectedRoute>
               <Reports />
+            </ProtectedRoute>
+          } />
+          <Route path="reports/:companySlug/:exerciseId" element={
+            <ProtectedRoute>
+              <ReportDetail />
             </ProtectedRoute>
           } />
           <Route path="exercises" element={
