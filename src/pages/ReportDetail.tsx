@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -152,16 +151,15 @@ const ReportDetail = () => {
             }));
             
             setSubmissions(tabSubmissions);
-            setIsLoading(false);
-            return;
           } else {
+            console.log("No tabs_data found, creating mock data");
             // For demonstration, we'll simulate fetching submission data
             setTimeout(() => {
               const mockSubmissionData = generateMockData(reportData);
               setSubmissions(mockSubmissionData);
-              setIsLoading(false);
             }, 500);
           }
+          setIsLoading(false);
         } catch (fetchError: any) {
           console.error('Error fetching report:', fetchError);
           setError(`Error loading report: ${fetchError.message || 'Unknown error'}`);
@@ -373,7 +371,7 @@ const ReportDetail = () => {
         exerciseId,
         userId,
         executiveSnapshotData,
-        reportId // Pass the current report ID for update
+        reportId
       );
       
       toast({

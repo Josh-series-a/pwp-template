@@ -12,7 +12,7 @@ const corsHeaders = {
 interface TabData {
   tabId: string;
   title: string;
-  content: Record<string, any>;
+  content?: Record<string, any>;
   clientId?: string;
   heroQuote?: string;
   kpis?: Array<{
@@ -102,11 +102,59 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   // If reportId is provided, try to update that specific report
   if (reportId) {
     console.log(`Attempting to update report with ID: ${reportId}`);
+    
+    // First fetch the existing report to properly merge the tabs data
+    const { data: existingReport, error: fetchError } = await supabaseClient
+      .from('reports')
+      .select('tabs_data')
+      .eq('id', reportId)
+      .single();
+      
+    if (fetchError) {
+      console.error('Error fetching existing report:', fetchError);
+      return new Response(
+        JSON.stringify({ error: fetchError.message }),
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
+    // Prepare the tabs data for update
+    let updatedTabsData = tabs;
+    
+    // If there are existing tabs, merge the new tabs with existing ones
+    if (existingReport && existingReport.tabs_data) {
+      const existingTabs = existingReport.tabs_data;
+      
+      // For each new tab, either update an existing tab or add it as a new tab
+      updatedTabsData = [...existingTabs];
+      
+      tabs.forEach(newTab => {
+        const existingTabIndex = existingTabs.findIndex(
+          (tab: TabData) => tab.tabId === newTab.tabId
+        );
+        
+        if (existingTabIndex >= 0) {
+          // Update existing tab
+          updatedTabsData[existingTabIndex] = newTab;
+        } else {
+          // Add new tab
+          updatedTabsData.push(newTab);
+        }
+      });
+    }
+    
+    // Update the report with the merged tabs data
     const { error: updateError } = await supabaseClient
       .from('reports')
       .update({ 
         updated_at: new Date().toISOString(),
-        tabs_data: tabs
+        tabs_data: updatedTabsData
       })
       .eq('id', reportId);
     
@@ -143,7 +191,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   // If no reportId provided, check if a report for this company/exercise exists
   const { data: existingReport, error: fetchError } = await supabaseClient
     .from('reports')
-    .select('id')
+    .select('id, tabs_data')
     .eq('company_name', companyName)
     .eq('exercise_id', exerciseId)
     .limit(1);
@@ -168,12 +216,33 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   if (existingReport && existingReport.length > 0) {
     reportId_response = existingReport[0].id;
     
+    // Prepare tabs data by merging existing and new tabs
+    let updatedTabsData = tabs;
+    if (existingReport[0].tabs_data) {
+      const existingTabs = existingReport[0].tabs_data;
+      updatedTabsData = [...existingTabs];
+      
+      tabs.forEach(newTab => {
+        const existingTabIndex = existingTabs.findIndex(
+          (tab: TabData) => tab.tabId === newTab.tabId
+        );
+        
+        if (existingTabIndex >= 0) {
+          // Update existing tab
+          updatedTabsData[existingTabIndex] = newTab;
+        } else {
+          // Add new tab
+          updatedTabsData.push(newTab);
+        }
+      });
+    }
+    
     // Update the existing report
     const { error: updateError } = await supabaseClient
       .from('reports')
       .update({ 
         updated_at: new Date().toISOString(),
-        tabs_data: tabs
+        tabs_data: updatedTabsData
       })
       .eq('id', reportId_response);
 

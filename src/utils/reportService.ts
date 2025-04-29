@@ -63,6 +63,7 @@ export const reportService = {
         throw new Error(error.message);
       }
 
+      console.log('Report save response:', data);
       return data;
     } catch (err) {
       console.error('Error in saveReport:', err);
@@ -117,20 +118,29 @@ export const reportService = {
       missionStatement: string;
       uiSchema: UiSchema;
     },
-    reportId?: string // Add optional reportId parameter
+    reportId?: string
   ) {
+    // Create a TabData object with snapshot data
     const tabData: TabData = {
       tabId: 'executiveSnapshot',
       title: 'Executive Snapshot',
-      ...snapshotData
+      clientId: snapshotData.clientId,
+      heroQuote: snapshotData.heroQuote,
+      kpis: snapshotData.kpis,
+      topRisks: snapshotData.topRisks,
+      missionStatement: snapshotData.missionStatement,
+      uiSchema: snapshotData.uiSchema
     };
 
+    console.log('Saving executive snapshot with tabData:', tabData);
+
+    // Use saveReport to save the data
     return this.saveReport({
       companyName,
       exerciseId,
       tabs: [tabData],
       userId,
-      reportId // Include reportId in the params
+      reportId
     });
   }
 };
