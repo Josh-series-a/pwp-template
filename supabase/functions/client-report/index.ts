@@ -241,28 +241,13 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
 }
 
 async function handleGetRequest(req: Request, supabaseClient: any) {
-  let companyName: string | null = null;
-  let exerciseId: string | null = null;
-  let reportId: string | null = null;
-
-  // First try to get parameters from URL query string
+  // Parse URL to get query parameters
   const url = new URL(req.url);
-  companyName = url.searchParams.get('company');
-  exerciseId = url.searchParams.get('exercise');
-  reportId = url.searchParams.get('reportId');
-
-  // If not found in URL, try to get from request body
-  if (!companyName || !exerciseId) {
-    try {
-      const body = await req.json();
-      companyName = body.company || null;
-      exerciseId = body.exercise || null;
-      reportId = body.reportId || null;
-    } catch (e) {
-      console.error('Error parsing request body:', e);
-      // Continue with null values if body parsing fails
-    }
-  }
+  const companyName = url.searchParams.get('company');
+  const exerciseId = url.searchParams.get('exercise');
+  const reportId = url.searchParams.get('reportId');
+  
+  console.log(`GET request parameters: company=${companyName}, exercise=${exerciseId}, reportId=${reportId || 'none'}`);
 
   // If reportId is provided, use it to fetch the specific report
   if (reportId) {

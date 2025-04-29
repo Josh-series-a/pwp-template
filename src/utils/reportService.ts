@@ -77,14 +77,16 @@ export const reportService = {
     try {
       console.log(`Getting report: company=${companyName}, exercise=${exerciseId}, reportId=${reportId || 'none'}`);
       
-      // Use URL parameters in the body instead of query option
-      const { data, error } = await supabase.functions.invoke('client-report', {
-        method: 'GET',
-        body: {
-          company: companyName,
-          exercise: exerciseId,
-          reportId: reportId // Add reportId parameter
-        }
+      // Build URL with query parameters instead of using body for GET requests
+      let url = `client-report?company=${encodeURIComponent(companyName)}&exercise=${encodeURIComponent(exerciseId)}`;
+      
+      // Add reportId to URL if provided
+      if (reportId) {
+        url += `&reportId=${encodeURIComponent(reportId)}`;
+      }
+      
+      const { data, error } = await supabase.functions.invoke(url, {
+        method: 'GET'
       });
 
       if (error) {
