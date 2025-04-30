@@ -1,13 +1,14 @@
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
-const TooltipProvider = TooltipPrimitive.Provider
+import { cn } from "@/lib/utils";
 
-const Tooltip = TooltipPrimitive.Root
+const TooltipProvider = TooltipPrimitive.Provider;
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipRoot = TooltipPrimitive.Root;
+
+const TooltipTrigger = TooltipPrimitive.Trigger;
 
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
@@ -22,7 +23,34 @@ const TooltipContent = React.forwardRef<
     )}
     {...props}
   />
-))
-TooltipContent.displayName = TooltipPrimitive.Content.displayName
+));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+interface TooltipProps {
+  content: React.ReactNode;
+  children: React.ReactNode;
+  delayDuration?: number;
+  className?: string;
+}
+
+const Tooltip = ({
+  content,
+  children,
+  delayDuration = 300,
+  className,
+}: TooltipProps) => {
+  return (
+    <TooltipProvider>
+      <TooltipRoot delayDuration={delayDuration}>
+        <TooltipTrigger asChild>
+          <div className="inline-flex cursor-help">{children}</div>
+        </TooltipTrigger>
+        <TooltipContent className={className}>
+          {content}
+        </TooltipContent>
+      </TooltipRoot>
+    </TooltipProvider>
+  );
+};
+
+export { Tooltip, TooltipContent, TooltipProvider, TooltipRoot, TooltipTrigger };

@@ -5,8 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, FileText, BookOpen, ArrowRight, BarChart3, TrendingUp, Users, AlertCircle } from 'lucide-react';
+import { Calendar, FileText, BookOpen, ArrowRight, BarChart3, TrendingUp, Users, AlertCircle, InfoIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip } from '@/components/ui/tooltip';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -18,14 +20,34 @@ const Dashboard = () => {
   const totalSteps = 5;
   const completionPercentage = (completedSteps / totalSteps) * 100;
 
+  // Sample data badge for cards
+  const SampleDataBadge = ({ className }: { className?: string }) => (
+    <Badge variant="outline" className={`bg-muted/50 text-xs ${className}`}>
+      <div className="flex items-center gap-1">
+        <InfoIcon className="h-3 w-3" />
+        <span>Sample Data</span>
+      </div>
+    </Badge>
+  );
+
   return (
     <DashboardLayout title={`Welcome back, ${firstName}`}>
       <div className="grid gap-6">
         {/* Business Overview Section */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Business Overview</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Business Overview</h2>
+            <Tooltip content="This is sample data. Real metrics will be available soon.">
+              <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200">
+                Sample Dashboard
+              </Badge>
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 relative">
+              <div className="absolute top-2 right-2">
+                <SampleDataBadge />
+              </div>
               <CardHeader className="pb-2">
                 <CardDescription className="text-blue-700">Revenue</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-blue-900">
@@ -38,7 +60,10 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 relative">
+              <div className="absolute top-2 right-2">
+                <SampleDataBadge />
+              </div>
               <CardHeader className="pb-2">
                 <CardDescription className="text-green-700">New Customers</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-green-900">
@@ -51,7 +76,10 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 relative">
+              <div className="absolute top-2 right-2">
+                <SampleDataBadge />
+              </div>
               <CardHeader className="pb-2">
                 <CardDescription className="text-purple-700">Reports Generated</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-purple-900">
@@ -64,7 +92,10 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 relative">
+              <div className="absolute top-2 right-2">
+                <SampleDataBadge />
+              </div>
               <CardHeader className="pb-2">
                 <CardDescription className="text-amber-700">Action Items</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-amber-900">
@@ -80,7 +111,10 @@ const Dashboard = () => {
         </div>
         
         {/* Latest Report Summary */}
-        <Card className="shadow-md">
+        <Card className="shadow-md relative">
+          <div className="absolute top-2 right-2 z-10">
+            <SampleDataBadge className="border-primary/20" />
+          </div>
           <CardHeader className="border-b">
             <div className="flex justify-between items-center">
               <div>
@@ -125,7 +159,10 @@ const Dashboard = () => {
               <div className="pt-4 border-t">
                 <h4 className="text-sm font-medium mb-3">Key Insights</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="bg-background/50">
+                  <Card className="bg-background/50 relative">
+                    <div className="absolute top-2 right-2">
+                      <SampleDataBadge className="scale-90" />
+                    </div>
                     <CardHeader className="py-3">
                       <CardTitle className="text-base">Strengths</CardTitle>
                     </CardHeader>
@@ -147,7 +184,10 @@ const Dashboard = () => {
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-background/50">
+                  <Card className="bg-background/50 relative">
+                    <div className="absolute top-2 right-2">
+                      <SampleDataBadge className="scale-90" />
+                    </div>
                     <CardHeader className="py-3">
                       <CardTitle className="text-base">Areas for Improvement</CardTitle>
                     </CardHeader>
@@ -184,7 +224,10 @@ const Dashboard = () => {
         
         {/* Current Focus & Recommendations */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-sm">
+          <Card className="shadow-sm relative">
+            <div className="absolute top-2 right-2 z-10">
+              <SampleDataBadge />
+            </div>
             <CardHeader>
               <CardTitle>Current Focus</CardTitle>
               <CardDescription>
@@ -221,7 +264,10 @@ const Dashboard = () => {
             </CardFooter>
           </Card>
           
-          <Card className="shadow-sm">
+          <Card className="shadow-sm relative">
+            <div className="absolute top-2 right-2 z-10">
+              <SampleDataBadge />
+            </div>
             <CardHeader>
               <CardTitle>Expert Recommendations</CardTitle>
               <CardDescription>
@@ -265,7 +311,12 @@ const Dashboard = () => {
         </div>
         
         {/* Call to Action */}
-        <Card className="bg-primary text-primary-foreground">
+        <Card className="bg-primary text-primary-foreground relative">
+          <div className="absolute top-2 right-2">
+            <Badge variant="outline" className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground text-xs">
+              Coming Soon
+            </Badge>
+          </div>
           <CardHeader>
             <CardTitle>Ready to take your business to the next level?</CardTitle>
             <CardDescription className="text-primary-foreground/90">
