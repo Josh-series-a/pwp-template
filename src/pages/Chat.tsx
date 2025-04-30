@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Header from "@/components/Header";
 import UploadForm from "@/components/UploadForm";
 import ChatInterface from "@/components/ChatInterface";
 import ApiKeyForm from "@/components/ApiKeyForm";
@@ -38,8 +36,6 @@ const Chat = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      
       <main className="flex-1 pt-24 px-6 md:px-8 pb-10">
         <div className="max-w-6xl mx-auto">
           <TransitionWrapper>

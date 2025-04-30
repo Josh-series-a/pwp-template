@@ -71,7 +71,6 @@ const Header = () => {
         <nav className="hidden md:flex items-center space-x-8">
           <NavLink to="/" current={location.pathname === "/"}>Home</NavLink>
           <NavLink to="/products" current={location.pathname === "/products"}>Products</NavLink>
-          <NavLink to="/chat" current={location.pathname === "/chat"}>Analysis</NavLink>
         </nav>
         
         <button 
@@ -149,7 +148,6 @@ const Header = () => {
           <nav className="flex flex-col space-y-4 mb-4">
             <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavLink>
             <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)}>Products</MobileNavLink>
-            <MobileNavLink to="/chat" current={location.pathname === "/chat"} onClick={() => setIsMobileMenuOpen(false)}>Analysis</MobileNavLink>
           </nav>
           
           <div className="flex flex-col space-y-3">
