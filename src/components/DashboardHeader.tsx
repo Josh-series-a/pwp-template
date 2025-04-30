@@ -1,21 +1,25 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { User, LogOut, ChevronDown } from 'lucide-react';
+import { User, LogOut, ChevronDown, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import FeedbackForm from '@/components/FeedbackForm';
 
 const DashboardHeader = () => {
   const {
     user
   } = useAuth();
   const navigate = useNavigate();
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  
   const handleLogout = async () => {
     try {
       const result = await authService.signOut();
@@ -30,11 +34,14 @@ const DashboardHeader = () => {
       toast.error("An error occurred during logout.");
     }
   };
+  
   const getInitials = (name: string) => {
     return name.split(' ').map(part => part[0]).join('').toUpperCase();
   };
+  
   const userName = user?.user_metadata?.name || 'User';
   const userInitials = user?.user_metadata?.name ? getInitials(user.user_metadata.name) : 'U';
+  
   return <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background py-[18px] my-0 px-[49px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -46,6 +53,16 @@ const DashboardHeader = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setFeedbackOpen(true)}
+            className="flex items-center gap-1 mr-2"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">Feedback</span>
+          </Button>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2">
@@ -72,6 +89,16 @@ const DashboardHeader = () => {
           </DropdownMenu>
         </div>
       </div>
+      
+      <Dialog open={feedbackOpen} onOpenChange={setFeedbackOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send Feedback</DialogTitle>
+          </DialogHeader>
+          <FeedbackForm onSuccess={() => setFeedbackOpen(false)} />
+        </DialogContent>
+      </Dialog>
     </header>;
 };
+
 export default DashboardHeader;
