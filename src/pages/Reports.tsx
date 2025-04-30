@@ -246,6 +246,8 @@ const Reports = () => {
                               e.stopPropagation();
                               navigateToReport(report);
                             }}
+                            disabled={true}
+                            className="opacity-50 cursor-not-allowed"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
