@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Select,
   SelectContent,
@@ -10,26 +10,68 @@ import {
 import { Button } from '@/components/ui/button';
 import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface ExistingCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
   userData: any | null;
 }
 
-// Mock data for existing companies - this would come from an API in a real app
-const mockCompanies = [
-  { id: '1', name: 'Acme Corporation' },
-  { id: '2', name: 'TechStart Inc.' },
-  { id: '3', name: 'Global Solutions Ltd.' },
-  { id: '4', name: 'InnoVentures' },
-  { id: '5', name: 'Bright Future Holdings' }
-];
+interface Company {
+  id: string;
+  name: string;
+}
 
 const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, userData }) => {
   const [step, setStep] = useState<number>(1);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
   
+  // Fetch existing companies from reports table
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setLoading(true);
+      
+      try {
+        // Get unique company names from reports table
+        const { data, error } = await supabase
+          .from('reports')
+          .select('company_name')
+          .order('company_name')
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          // Create unique list of companies
+          const uniqueCompanies = Array.from(new Set(data.map(item => item.company_name)))
+            .map((name, index) => ({ 
+              id: `comp-${index}`, 
+              name: name as string 
+            }));
+            
+          setCompanies(uniqueCompanies);
+        }
+      } catch (error) {
+        console.error('Error fetching companies:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load companies. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompanies();
+  }, [toast]);
+
   // Handle company selection
   const handleSelectCompany = (companyId: string) => {
     setSelectedCompany(companyId);
@@ -44,7 +86,7 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
 
   // Find company name based on ID
   const getCompanyName = () => {
-    const company = mockCompanies.find(c => c.id === selectedCompany);
+    const company = companies.find(c => c.id === selectedCompany);
     return company ? company.name : 'Unknown Company';
   };
 
@@ -91,14 +133,19 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
 
           <Select onValueChange={handleSelectCompany}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a company" />
+              <SelectValue placeholder={loading ? "Loading companies..." : "Select a company"} />
             </SelectTrigger>
             <SelectContent>
-              {mockCompanies.map(company => (
+              {companies.map(company => (
                 <SelectItem key={company.id} value={company.id}>
                   {company.name}
                 </SelectItem>
               ))}
+              {companies.length === 0 && !loading && (
+                <SelectItem value="none" disabled>
+                  No companies found
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
 
