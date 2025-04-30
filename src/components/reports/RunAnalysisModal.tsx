@@ -51,7 +51,9 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
         <Tabs defaultValue="new-company" value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="new-company">New Company</TabsTrigger>
-            <TabsTrigger value="existing-company">Existing Company</TabsTrigger>
+            <TabsTrigger value="existing-company" disabled className="opacity-50 cursor-not-allowed">
+              Existing Company (Coming Soon)
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="new-company" className="mt-4">
