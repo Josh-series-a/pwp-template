@@ -374,36 +374,44 @@ const ReportDetail = () => {
                         <Briefcase className="h-4 w-4 mr-2" />
                         Executive Snapshot
                       </TabsTrigger>
-                      <TabsTrigger value="exit-destination">
+                      <TabsTrigger value="exit-destination" disabled className="opacity-50">
                         <ArrowRight className="h-4 w-4 mr-2" />
                         Exit Destination
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="ideal-buyers">
+                      <TabsTrigger value="ideal-buyers" disabled className="opacity-50">
                         <Users className="h-4 w-4 mr-2" />
                         Ideal Buyers
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="exit-proposition">
+                      <TabsTrigger value="exit-proposition" disabled className="opacity-50">
                         '1 + 1' Exit Proposition
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="leadership-delegation">
+                      <TabsTrigger value="leadership-delegation" disabled className="opacity-50">
                         <Users className="h-4 w-4 mr-2" />
                         Leadership & Delegation
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="customer-relationship">
+                      <TabsTrigger value="customer-relationship" disabled className="opacity-50">
                         <Handshake className="h-4 w-4 mr-2" />
                         Customer Relationship
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="recommendations">
+                      <TabsTrigger value="recommendations" disabled className="opacity-50">
                         <TrendingUp className="h-4 w-4 mr-2" />
                         Strategic Recommendations
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="readiness-scorecard">
+                      <TabsTrigger value="readiness-scorecard" disabled className="opacity-50">
                         <Award className="h-4 w-4 mr-2" />
                         Exit-Readiness Scorecard
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
-                      <TabsTrigger value="resources">
+                      <TabsTrigger value="resources" disabled className="opacity-50">
                         <MessageSquare className="h-4 w-4 mr-2" />
                         Purposeful-Exit Resources
+                        <span className="ml-2 text-xs font-normal opacity-70">(Coming Soon)</span>
                       </TabsTrigger>
                     </TabsList>
                   </div>
