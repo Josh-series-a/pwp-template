@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -95,12 +94,14 @@ const SidebarNavigation = () => {
     {
       name: 'Exercises',
       href: '/dashboard/exercises',
-      icon: Dumbbell
+      icon: Dumbbell,
+      disabled: true
     }, 
     {
       name: 'Book a Session',
       href: '/dashboard/book-session',
-      icon: Calendar
+      icon: Calendar,
+      disabled: true
     }
   ];
   return <SidebarGroup className="py-[60px]">
