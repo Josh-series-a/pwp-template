@@ -219,7 +219,7 @@ const Reports = () => {
                     <TableRow 
                       key={report.id} 
                       className="cursor-pointer hover:bg-muted/70"
-                      onClick={() => navigateToReport(report)}
+                      onClick={() => openViewModal(report.id)}
                     >
                       <TableCell className="font-medium">{report.title}</TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
