@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+
 const DashboardHeader = () => {
   const {
     user
@@ -37,6 +40,7 @@ const DashboardHeader = () => {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2 mr-8">
             <img src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" alt="Prosper with Purpose Logo" className="h-14" />
+            <Badge variant="outline" className="bg-primary/10 text-primary font-medium">Beta 1.01</Badge>
           </Link>
           
         </div>
