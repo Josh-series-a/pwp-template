@@ -260,13 +260,31 @@ const Reports = () => {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" title="Download">
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            title="Download"
+                            disabled={true}
+                            className="opacity-50 cursor-not-allowed"
+                          >
                             <DownloadCloud className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" title="Re-analyze">
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            title="Re-analyze"
+                            disabled={true}
+                            className="opacity-50 cursor-not-allowed"
+                          >
                             <RefreshCw className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" title="Share">
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            title="Share"
+                            disabled={true}
+                            className="opacity-50 cursor-not-allowed"
+                          >
                             <Share2 className="h-4 w-4" />
                           </Button>
                         </div>
