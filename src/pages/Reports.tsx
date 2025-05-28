@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -254,26 +253,16 @@ This report was generated on ${new Date().toLocaleDateString()}.
             webhookUrl.searchParams.append('pitchDeckUrl', pitchDeckUrl);
           }
 
-          // Add sample responses and questions as arrays
-          const sampleResponses = [
-            'Strong financial foundation with positive cash flow',
-            'Marketing strategy needs improvement',
-            'Leadership team is well-structured'
-          ];
-          
-          const sampleQuestions = [
-            'What is your current monthly revenue?',
-            'How many employees do you have?',
-            'What are your main marketing channels?'
+          // Combine questions and answers
+          const combinedQuestionsAnswers = [
+            'What is your current monthly revenue? Strong financial foundation with positive cash flow',
+            'How many employees do you have? Marketing strategy needs improvement', 
+            'What are your main marketing channels? Leadership team is well-structured'
           ];
 
-          // Add array parameters
-          sampleResponses.forEach((response, index) => {
-            webhookUrl.searchParams.append(`responses[${index}]`, response);
-          });
-
-          sampleQuestions.forEach((question, index) => {
-            webhookUrl.searchParams.append(`questions[${index}]`, question);
+          // Add combined question-answer parameters as array
+          combinedQuestionsAnswers.forEach((qa, index) => {
+            webhookUrl.searchParams.append(`questionsAnswers[${index}]`, qa);
           });
 
           console.log('Sending data to webhook with query parameters:', webhookUrl.toString());
