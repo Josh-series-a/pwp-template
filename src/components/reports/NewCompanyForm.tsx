@@ -7,7 +7,7 @@ import CompanyDetailsForm, { CompanyDetailsFormValues } from './forms/CompanyDet
 import StepSelector from './StepSelector';
 
 interface NewCompanyFormProps {
-  onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => void;
+  onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => void;
   userData: any;
 }
 
@@ -15,10 +15,11 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   const [step, setStep] = useState<number>(1);
   const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  const [companyId] = useState<string>(() => crypto.randomUUID());
   const { user } = useAuth();
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
-    console.log("Company details submitted with pitchDeckUrl:", data.pitchDeckUrl);
+    console.log("Company details submitted with pitchDeckUrl:", data.pitchDeckUrl, "and companyId:", companyId);
     setCompanyDetails(data);
     setStep(2);
   };
@@ -30,8 +31,8 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   const handleExerciseComplete = (exerciseTitle: string) => {
     if (companyDetails) {
-      console.log("Completing exercise with pitchDeckUrl:", companyDetails.pitchDeckUrl);
-      onComplete(companyDetails.companyName, exerciseTitle, companyDetails.pitchDeckUrl);
+      console.log("Completing exercise with pitchDeckUrl:", companyDetails.pitchDeckUrl, "and companyId:", companyId);
+      onComplete(companyDetails.companyName, exerciseTitle, companyDetails.pitchDeckUrl, companyId);
     }
   };
 
@@ -40,8 +41,6 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
       setStep(step - 1);
     }
   };
-
-  const companyId = `comp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
   return (
     <div className="space-y-6">

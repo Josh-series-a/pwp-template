@@ -22,7 +22,7 @@ import { useAuth } from '@/contexts/AuthContext';
 interface RunAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmitComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string) => void;
+  onSubmitComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string) => void;
 }
 
 const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({ 
@@ -33,10 +33,10 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   const [activeTab, setActiveTab] = useState('new-company');
   const { user } = useAuth();
 
-  const handleSubmitComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
-    console.log("Analysis complete with pitchDeckUrl:", pitchDeckUrl);
+  const handleSubmitComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => {
+    console.log("Analysis complete with pitchDeckUrl:", pitchDeckUrl, "and companyId:", companyId);
     const type = activeTab === 'new-company' ? 'New' : 'Existing';
-    onSubmitComplete(companyName, exerciseTitle, pitchDeckUrl, type);
+    onSubmitComplete(companyName, exerciseTitle, pitchDeckUrl, type, companyId);
   };
 
   return (

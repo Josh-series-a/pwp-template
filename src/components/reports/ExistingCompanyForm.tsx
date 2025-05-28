@@ -5,14 +5,17 @@ import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
 interface ExistingCompanyFormProps {
-  onComplete: (companyName: string, exerciseTitle: string) => void;
+  onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => void;
   userData: any | null;
 }
+
 interface Company {
   id: string;
   name: string;
 }
+
 const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
   onComplete,
   userData
@@ -22,9 +25,8 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const [companyId] = useState<string>(() => crypto.randomUUID());
+  const { toast } = useToast();
 
   // Fetch existing companies from reports table
   useEffect(() => {
@@ -79,9 +81,6 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
     return company ? company.name : 'Unknown Company';
   };
 
-  // Generate a unique company ID
-  const companyId = `comp-${selectedCompany}-${Date.now()}`;
-
   // Create company details object for passing to ExerciseForm
   const getCompanyDetails = () => {
     const companyName = getCompanyName();
@@ -98,7 +97,8 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
 
   // Handle exercise form submission
   const handleExerciseComplete = (exerciseTitle: string) => {
-    onComplete(getCompanyName(), exerciseTitle);
+    console.log("Completing existing company exercise with companyId:", companyId);
+    onComplete(getCompanyName(), exerciseTitle, undefined, companyId);
   };
 
   // Go back to previous step
@@ -107,9 +107,12 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
       setStep(step - 1);
     }
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       {/* Step 1: Select Existing Company */}
-      {step === 1 && <>
+      {step === 1 && (
+        <>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 1: Select Existing Company</h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -122,22 +125,33 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
               <SelectValue placeholder={loading ? "Loading companies..." : "Select a company"} />
             </SelectTrigger>
             <SelectContent>
-              {companies.map(company => <SelectItem key={company.id} value={company.id}>
+              {companies.map((company) => (
+                <SelectItem key={company.id} value={company.id}>
                   {company.name}
-                </SelectItem>)}
-              {companies.length === 0 && !loading && <SelectItem value="none" disabled>
+                </SelectItem>
+              ))}
+              {companies.length === 0 && !loading && (
+                <SelectItem value="none" disabled>
                   No companies found
-                </SelectItem>}
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
 
           <div className="pt-4">
-            <Button onClick={() => selectedCompany && setStep(2)} disabled={!selectedCompany}>Continue to Discovery Questions Selection</Button>
+            <Button 
+              onClick={() => selectedCompany && setStep(2)} 
+              disabled={!selectedCompany}
+            >
+              Continue to Discovery Questions Selection
+            </Button>
           </div>
-        </>}
+        </>
+      )}
 
       {/* Step 2: Exercise Selection */}
-      {step === 2 && <>
+      {step === 2 && (
+        <>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 2: Choose Discovery Questions</h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -155,10 +169,12 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
               Back
             </Button>
           </div>
-        </>}
+        </>
+      )}
 
       {/* Step 3: Exercise Form */}
-      {step === 3 && selectedExercise && <>
+      {step === 3 && selectedExercise && (
+        <>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 3: Complete Exercise</h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -166,9 +182,16 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
             </p>
           </div>
 
-          <ExerciseForm exerciseId={selectedExercise} onBack={handleBack} onComplete={handleExerciseComplete} companyDetails={getCompanyDetails()} // Pass company details to the ExerciseForm
-      />
-        </>}
-    </div>;
+          <ExerciseForm 
+            exerciseId={selectedExercise}
+            onBack={handleBack}
+            onComplete={handleExerciseComplete}
+            companyDetails={getCompanyDetails()}
+          />
+        </>
+      )}
+    </div>
+  );
 };
+
 export default ExistingCompanyForm;
