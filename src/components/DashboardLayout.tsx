@@ -30,12 +30,12 @@ const SidebarCollapseButton = () => {
 };
 
 const SidebarLogo = () => {
-  return <div className="flex items-center justify-between px-6 py-6">
-    <div className="flex items-center space-x-3">
+  return <div className="flex items-center justify-between px-3 py-6 group-data-[collapsible=icon]:px-2">
+    <div className="flex items-center space-x-3 group-data-[collapsible=icon]:space-x-0">
       <img 
         src="/lovable-uploads/PWP.svg" 
         alt="PWP Logo" 
-        className="h-14 w-14 rounded-lg flex-shrink-0"
+        className="h-10 w-10 rounded-lg flex-shrink-0 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
       />
       <span className="font-semibold text-base text-sidebar-foreground group-data-[collapsible=icon]:hidden">
         Prosper<br />With Purpose
