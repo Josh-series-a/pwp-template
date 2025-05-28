@@ -19,6 +19,7 @@ interface Exercise {
 
 interface ExerciseSelectorProps {
   onSelect: (exerciseId: string) => void;
+  isNewCompany?: boolean;
 }
 
 const exercises: Exercise[] = [
@@ -60,28 +61,56 @@ const exercises: Exercise[] = [
   }
 ];
 
-const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ onSelect }) => {
+const ExerciseSelector: React.FC<ExerciseSelectorProps> = ({ onSelect, isNewCompany = false }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {exercises.map((exercise) => (
-        <Card 
-          key={exercise.id}
-          className="cursor-pointer hover:border-primary/50 transition-all"
-          onClick={() => onSelect(exercise.id)}
-        >
-          <CardContent className="p-6 flex items-start space-x-4">
-            <div className="bg-primary/10 p-2 rounded-full">
-              <exercise.icon className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h4 className="font-medium">{exercise.title}</h4>
-              <p className="text-sm text-muted-foreground mt-1">
-                {exercise.description}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="space-y-4">
+      {isNewCompany && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <p className="text-sm text-blue-700">
+            For new companies, please complete the Business Health Score first to unlock other discovery questions.
+          </p>
+        </div>
+      )}
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {exercises.map((exercise) => {
+          const isDisabled = isNewCompany && exercise.id !== 'business-health-score';
+          
+          return (
+            <Card 
+              key={exercise.id}
+              className={`transition-all ${
+                isDisabled 
+                  ? 'opacity-50 cursor-not-allowed bg-gray-50' 
+                  : 'cursor-pointer hover:border-primary/50'
+              }`}
+              onClick={() => !isDisabled && onSelect(exercise.id)}
+            >
+              <CardContent className="p-6 flex items-start space-x-4">
+                <div className={`p-2 rounded-full ${
+                  isDisabled ? 'bg-gray-200' : 'bg-primary/10'
+                }`}>
+                  <exercise.icon className={`h-6 w-6 ${
+                    isDisabled ? 'text-gray-400' : 'text-primary'
+                  }`} />
+                </div>
+                <div>
+                  <h4 className={`font-medium ${
+                    isDisabled ? 'text-gray-400' : 'text-foreground'
+                  }`}>
+                    {exercise.title}
+                  </h4>
+                  <p className={`text-sm mt-1 ${
+                    isDisabled ? 'text-gray-400' : 'text-muted-foreground'
+                  }`}>
+                    {isDisabled ? 'Complete Business Health Score to unlock' : exercise.description}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };

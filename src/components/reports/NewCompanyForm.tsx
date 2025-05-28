@@ -51,7 +51,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
         )}
 
         {step === 2 && (
-          <ExerciseSelector onSelect={handleSelectExercise} />
+          <ExerciseSelector onSelect={handleSelectExercise} isNewCompany={true} />
         )}
 
         {step === 3 && selectedExercise && companyDetails && (
