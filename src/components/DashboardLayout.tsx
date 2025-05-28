@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -36,13 +35,15 @@ const SidebarLogo = () => {
       <img 
         src="/lovable-uploads/PWP.svg" 
         alt="PWP Logo" 
-        className="h-14 w-14 rounded-lg"
+        className="h-14 w-14 rounded-lg flex-shrink-0"
       />
       <span className="font-semibold text-base text-sidebar-foreground group-data-[collapsible=icon]:hidden">
         Prosper<br />With Purpose
       </span>
     </div>
-    <SidebarCollapseButton />
+    <div className="group-data-[collapsible=icon]:hidden">
+      <SidebarCollapseButton />
+    </div>
   </div>;
 };
 
