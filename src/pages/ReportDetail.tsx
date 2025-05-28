@@ -9,10 +9,32 @@ import { ArrowLeft, Target, Users, DollarSign, Heart, Brain } from 'lucide-react
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
 
+interface SubPillar {
+  Name: string;
+  Key_Question: string;
+  Signals_to_Look_For: string[];
+  Red_Flags: string[];
+  Scoring_Guidance: Record<string, string>;
+  Score: number;
+}
+
+interface BusinessHealthData {
+  id: string;
+  client_id: string;
+  tab_id: string;
+  overview: string | null;
+  purpose: string | null;
+  sub_pillars: SubPillar[];
+  total_score: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 const ReportDetail = () => {
   const { companySlug, exerciseId, reportId } = useParams();
   const navigate = useNavigate();
   const [report, setReport] = useState<any>(null);
+  const [businessHealthData, setBusinessHealthData] = useState<Record<string, BusinessHealthData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('plan');
 
@@ -34,16 +56,21 @@ const ReportDetail = () => {
         if (reportData) {
           setReport(reportData);
           
-          // Try to get detailed report data from the service
-          try {
-            const detailedReport = await reportService.getReport(
-              reportData.company_name, 
-              exerciseId, 
-              reportId
-            );
-            setReport({ ...reportData, ...detailedReport });
-          } catch (serviceError) {
-            console.log('Detailed report data not available, using basic data');
+          // Fetch business health data for this client
+          const { data: healthData, error: healthError } = await supabase
+            .from('business_health')
+            .select('*')
+            .eq('client_id', reportId);
+          
+          if (healthError) {
+            console.error('Error fetching business health data:', healthError);
+          } else if (healthData) {
+            // Organize data by tab_id
+            const organizedData: Record<string, BusinessHealthData> = {};
+            healthData.forEach((item: BusinessHealthData) => {
+              organizedData[item.tab_id] = item;
+            });
+            setBusinessHealthData(organizedData);
           }
         }
       } catch (error) {
@@ -55,6 +82,121 @@ const ReportDetail = () => {
 
     fetchReportData();
   }, [companySlug, exerciseId, reportId]);
+
+  const renderSubPillars = (subPillars: SubPillar[]) => {
+    if (!subPillars || subPillars.length === 0) {
+      return <p className="text-muted-foreground">No assessment data available for this pillar.</p>;
+    }
+
+    return (
+      <div className="space-y-6">
+        {subPillars.map((pillar, index) => (
+          <div key={index} className="border rounded-lg p-4">
+            <div className="flex justify-between items-start mb-3">
+              <h4 className="font-semibold text-lg">{pillar.Name}</h4>
+              <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
+                Score: {pillar.Score}/10
+              </div>
+            </div>
+            
+            <div className="mb-3">
+              <p className="font-medium text-blue-700 mb-1">Key Question:</p>
+              <p className="text-sm">{pillar.Key_Question}</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <p className="font-medium text-green-700 mb-2">Signals to Look For:</p>
+                <ul className="text-sm space-y-1">
+                  {pillar.Signals_to_Look_For?.map((signal, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className="text-green-600 mr-2">✓</span>
+                      {signal}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div>
+                <p className="font-medium text-red-700 mb-2">Red Flags:</p>
+                <ul className="text-sm space-y-1">
+                  {pillar.Red_Flags?.map((flag, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <span className="text-red-600 mr-2">⚠</span>
+                      {flag}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <p className="font-medium mb-2">Scoring Guidance:</p>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs">
+                {Object.entries(pillar.Scoring_Guidance || {}).map(([range, description]) => (
+                  <div key={range} className="bg-gray-50 p-2 rounded">
+                    <div className="font-medium">{range}</div>
+                    <div className="text-gray-600">{description}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderTabContent = (tabId: string, defaultTitle: string, defaultDescription: string) => {
+    const tabData = businessHealthData[tabId];
+    
+    if (!tabData) {
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle>{defaultTitle}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">{defaultDescription}</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center">
+              {defaultTitle}
+              {tabData.total_score && (
+                <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full">
+                  Overall Score: {tabData.total_score}/10
+                </div>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {tabData.overview && (
+              <div className="mb-4">
+                <h4 className="font-medium mb-2">Overview</h4>
+                <p className="text-muted-foreground">{tabData.overview}</p>
+              </div>
+            )}
+            
+            {tabData.purpose && (
+              <div className="mb-4">
+                <h4 className="font-medium mb-2">Purpose</h4>
+                <p className="text-muted-foreground">{tabData.purpose}</p>
+              </div>
+            )}
+            
+            {renderSubPillars(tabData.sub_pillars)}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -123,168 +265,23 @@ const ReportDetail = () => {
               </TabsList>
 
               <TabsContent value="plan" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="h-5 w-5 text-blue-600" />
-                      Strategic Planning & Goals
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Business Strategy</h4>
-                        <p className="text-muted-foreground">
-                          Strategic planning insights and recommendations will appear here based on your business health analysis.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Goal Setting</h4>
-                        <p className="text-muted-foreground">
-                          SMART goals and objectives aligned with your business vision.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Action Items</h4>
-                        <p className="text-muted-foreground">
-                          Prioritized action items to improve your business planning.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {renderTabContent('plan', 'Strategic Planning & Goals', 'Strategic planning insights and recommendations based on your business health analysis.')}
               </TabsContent>
 
               <TabsContent value="people" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-green-600" />
-                      People & Team Management
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Team Structure</h4>
-                        <p className="text-muted-foreground">
-                          Analysis of your current team structure and organizational effectiveness.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Hiring & Retention</h4>
-                        <p className="text-muted-foreground">
-                          Recommendations for talent acquisition and employee retention strategies.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Performance Management</h4>
-                        <p className="text-muted-foreground">
-                          Systems and processes for managing team performance and development.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {renderTabContent('people', 'People & Team Management', 'Analysis of your current team structure and organizational effectiveness.')}
               </TabsContent>
 
               <TabsContent value="profits" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <DollarSign className="h-5 w-5 text-yellow-600" />
-                      Financial Performance & Profitability
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Revenue Analysis</h4>
-                        <p className="text-muted-foreground">
-                          Revenue streams analysis and optimization opportunities.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Cost Management</h4>
-                        <p className="text-muted-foreground">
-                          Cost structure analysis and efficiency improvements.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Profit Optimization</h4>
-                        <p className="text-muted-foreground">
-                          Strategies to improve profit margins and financial sustainability.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {renderTabContent('profits', 'Financial Performance & Profitability', 'Revenue streams analysis and optimization opportunities.')}
               </TabsContent>
 
               <TabsContent value="purpose" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Heart className="h-5 w-5 text-purple-600" />
-                      Purpose, Values & Impact
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Mission & Vision</h4>
-                        <p className="text-muted-foreground">
-                          Assessment of your company mission, vision, and core values alignment.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Social Impact</h4>
-                        <p className="text-muted-foreground">
-                          Analysis of your business impact on community and stakeholders.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Sustainability</h4>
-                        <p className="text-muted-foreground">
-                          Environmental and social sustainability practices and opportunities.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {renderTabContent('purpose', 'Purpose, Values & Impact', 'Assessment of your company mission, vision, and core values alignment.')}
               </TabsContent>
 
               <TabsContent value="stress" className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Brain className="h-5 w-5 text-red-600" />
-                      Stress Management & Leadership
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Leadership Assessment</h4>
-                        <p className="text-muted-foreground">
-                          Analysis of leadership effectiveness and areas for development.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Stress Factors</h4>
-                        <p className="text-muted-foreground">
-                          Identification of key stress factors affecting business performance.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Work-Life Balance</h4>
-                        <p className="text-muted-foreground">
-                          Recommendations for maintaining healthy work-life balance and preventing burnout.
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {renderTabContent('stress_leadership', 'Stress Management & Leadership', 'Analysis of leadership effectiveness and stress management strategies.')}
               </TabsContent>
             </Tabs>
           </CardContent>
