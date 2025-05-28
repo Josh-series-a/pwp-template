@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -49,7 +48,6 @@ const Reports = () => {
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
 
