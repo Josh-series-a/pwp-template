@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package } from 'lucide-react';
+import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
 import PackagesCarousel from '@/components/PackagesCarousel';
@@ -305,7 +306,19 @@ const ReportDetail = () => {
               </TabsContent>
 
               <TabsContent value="packages" className="mt-6">
-                <PackagesCarousel />
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <Button className="flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      Generate Package
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <RefreshCw className="h-4 w-4" />
+                      Refresh
+                    </Button>
+                  </div>
+                  <PackagesCarousel />
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
