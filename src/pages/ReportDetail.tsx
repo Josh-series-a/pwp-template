@@ -269,11 +269,11 @@ const ReportDetail = () => {
                   <DollarSign className="h-4 w-4" />
                   Profits
                 </TabsTrigger>
-                <TabsTrigger value="purpose" className="flex items-center gap-2">
+                <TabsTrigger value="purposeImpact" className="flex items-center gap-2">
                   <Heart className="h-4 w-4" />
                   Purpose & Impact
                 </TabsTrigger>
-                <TabsTrigger value="stress" className="flex items-center gap-2">
+                <TabsTrigger value="stress_leadership" className="flex items-center gap-2">
                   <Brain className="h-4 w-4" />
                   Stress & Leadership
                 </TabsTrigger>
@@ -291,11 +291,11 @@ const ReportDetail = () => {
                 {renderTabContent('profits', 'Financial Performance & Profitability', 'Revenue streams analysis and optimization opportunities.')}
               </TabsContent>
 
-              <TabsContent value="purpose" className="mt-6">
-                {renderTabContent('purpose', 'Purpose, Values & Impact', 'Assessment of your company mission, vision, and core values alignment.')}
+              <TabsContent value="purposeImpact" className="mt-6">
+                {renderTabContent('purposeImpact', 'Purpose, Values & Impact', 'Assessment of your company mission, vision, and core values alignment.')}
               </TabsContent>
 
-              <TabsContent value="stress" className="mt-6">
+              <TabsContent value="stress_leadership" className="mt-6">
                 {renderTabContent('stress_leadership', 'Stress Management & Leadership', 'Analysis of leadership effectiveness and stress management strategies.')}
               </TabsContent>
             </Tabs>
