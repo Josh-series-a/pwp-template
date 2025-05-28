@@ -132,16 +132,19 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
           </Select>
 
           <div className="pt-4">
-            <Button onClick={() => selectedCompany && setStep(2)} disabled={!selectedCompany}>Continue to Discovery  QuestionsSelection</Button>
+            <Button onClick={() => selectedCompany && setStep(2)} disabled={!selectedCompany}>Continue to Discovery Questions Selection</Button>
           </div>
         </>}
 
       {/* Step 2: Exercise Selection */}
       {step === 2 && <>
           <div className="mb-6">
-            <h3 className="text-lg font-medium">Step 2: Choose Discovery  Questions</h3>
+            <h3 className="text-lg font-medium">Step 2: Choose Discovery Questions</h3>
             <p className="text-sm text-muted-foreground mt-1">
               Select an exercise to complete for {getCompanyName()}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              This will help tailor the insights, language, and recommendations in each document so that the final output is more relevant, actionable, and aligned with your Business's real needs.
             </p>
           </div>
 
