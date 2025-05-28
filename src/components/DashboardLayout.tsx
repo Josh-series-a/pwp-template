@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -33,9 +32,11 @@ const SidebarCollapseButton = () => {
 const SidebarLogo = () => {
   return <div className="flex items-center justify-between px-6 py-6">
     <div className="flex items-center space-x-3">
-      <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
-        <span className="text-primary-foreground font-bold text-sm">B</span>
-      </div>
+      <img 
+        src="/lovable-uploads/PWP.svg" 
+        alt="PWP Logo" 
+        className="h-8 w-8 rounded-lg"
+      />
       <span className="font-semibold text-lg text-sidebar-foreground group-data-[collapsible=icon]:hidden">
         BookChat
       </span>
