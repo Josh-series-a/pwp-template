@@ -132,9 +132,7 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
           </Select>
 
           <div className="pt-4">
-            <Button onClick={() => selectedCompany && setStep(2)} disabled={!selectedCompany}>
-              Continue to Exercise Selection
-            </Button>
+            <Button onClick={() => selectedCompany && setStep(2)} disabled={!selectedCompany}>Continue to Discovery  QuestionsSelection</Button>
           </div>
         </>}
 
