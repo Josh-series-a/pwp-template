@@ -17,7 +17,7 @@ const Account = () => {
 
   return (
     <DashboardLayout title="Account Settings">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         {/* Profile Section */}
         <Card>
           <CardHeader>
