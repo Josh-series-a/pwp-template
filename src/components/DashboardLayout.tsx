@@ -30,8 +30,8 @@ const SidebarCollapseButton = () => {
 };
 
 const SidebarLogo = () => {
-  return <div className="flex items-center justify-between px-3 py-6 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:justify-center">
-    <div className="flex items-center space-x-3 group-data-[collapsible=icon]:space-x-0">
+  return <div className="flex items-center justify-between px-3 py-6 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:justify-between group-data-[collapsible=icon]:relative">
+    <div className="flex items-center space-x-3 group-data-[collapsible=icon]:space-x-0 group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:left-1/2 group-data-[collapsible=icon]:-translate-x-1/2">
       <img 
         src="/lovable-uploads/PWP.svg" 
         alt="PWP Logo" 
@@ -41,7 +41,7 @@ const SidebarLogo = () => {
         Prosper<br />With Purpose
       </span>
     </div>
-    <div className="group-data-[collapsible=icon]:hidden">
+    <div className="group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:right-0 group-data-[collapsible=icon]:top-1/2 group-data-[collapsible=icon]:-translate-y-1/2">
       <SidebarCollapseButton />
     </div>
   </div>;
