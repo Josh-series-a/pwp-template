@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -232,6 +233,39 @@ This report was generated on ${new Date().toLocaleDateString()}.
         };
         
         setReports([newReport, ...reports]);
+
+        // Send data to webhook
+        try {
+          const webhookData = {
+            reportId: reportData.id,
+            companyName: companyName,
+            exerciseTitle: exerciseTitle,
+            exerciseId: exerciseId,
+            userId: user.id,
+            userEmail: user.email,
+            userName: user.user_metadata?.name || 'Unknown User',
+            pitchDeckUrl: pitchDeckUrl,
+            status: 'In Progress',
+            createdAt: reportData.created_at,
+            timestamp: new Date().toISOString()
+          };
+
+          console.log('Sending data to webhook:', webhookData);
+
+          await fetch('https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            mode: 'no-cors',
+            body: JSON.stringify(webhookData),
+          });
+
+          console.log('Webhook data sent successfully');
+        } catch (webhookError) {
+          console.error('Error sending data to webhook:', webhookError);
+          // Don't show error to user as this shouldn't block the main flow
+        }
       }
       
       closeModal();
