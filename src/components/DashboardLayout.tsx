@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut } from 'lucide-react';
+import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut, Book } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -120,6 +120,11 @@ const SidebarNavigation = () => {
       name: 'Reports',
       href: '/dashboard/reports',
       icon: FileText
+    }, 
+    {
+      name: 'Read',
+      href: '/dashboard/read',
+      icon: Book
     }, 
     {
       name: 'Book Insights',
