@@ -24,6 +24,11 @@ const BookInsights = () => {
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [isListenDialogOpen, setIsListenDialogOpen] = useState(false);
 
+  // Only show chapters that have actual content (available for reading)
+  const availableChapters = bookChapters.filter(chapter => 
+    chapter.content && chapter.content.trim().length > 0
+  );
+
   // Map relevance based on chapter positions
   const getRelevanceForChapter = (chapterId: number) => {
     if (chapterId <= 3) return "high";
@@ -54,7 +59,7 @@ const BookInsights = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {bookChapters.map((chapter) => {
+          {availableChapters.map((chapter) => {
             const relevance = getRelevanceLabel(getRelevanceForChapter(chapter.id));
             const exercises = chapter.content
               .split('\n\n')
@@ -156,7 +161,7 @@ const BookInsights = () => {
             setActiveChapter(null);
           }}
           chapterId={activeChapter}
-          chapterTitle={bookChapters.find(c => c.id === activeChapter)?.title || ''}
+          chapterTitle={availableChapters.find(c => c.id === activeChapter)?.title || ''}
         />
       )}
     </DashboardLayout>
