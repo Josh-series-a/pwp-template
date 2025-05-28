@@ -117,7 +117,7 @@ const Reports = () => {
   const navigateToReport = (report: Report) => {
     // Create a slug from the company name
     const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/dashboard/reports/${companySlug}/${report.exerciseId}/${report.id}`);
+    navigate(`/dashboard/reports/${companySlug}/${report.exerciseId || 'unknown'}/${report.id}`);
   };
 
   const handleDownload = async (report: Report) => {
@@ -174,7 +174,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
   const handleShare = async (report: Report) => {
     try {
-      const shareUrl = `${window.location.origin}/dashboard/reports/${report.company.toLowerCase().replace(/\s+/g, '-')}/${report.exerciseId}/${report.id}`;
+      const shareUrl = `${window.location.origin}/dashboard/reports/${report.company.toLowerCase().replace(/\s+/g, '-')}/${report.exerciseId || 'unknown'}/${report.id}`;
       
       if (navigator.share) {
         await navigator.share({
@@ -346,7 +346,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
                     <TableRow 
                       key={report.id} 
                       className="cursor-pointer hover:bg-muted/70"
-                      onClick={() => openViewModal(report.id)}
+                      onClick={() => navigateToReport(report)}
                     >
                       <TableCell className="font-medium">{report.title}</TableCell>
                       <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
