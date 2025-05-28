@@ -22,6 +22,7 @@ import Exercises from "./pages/Exercises";
 import BookInsights from "./pages/BookInsights";
 import BookSession from "./pages/BookSession";
 import Profile from "./pages/Profile";
+import Account from "./pages/Account";
 import PreloaderDemo from './pages/PreloaderDemo';
 import Read from './pages/Read';
 
@@ -89,6 +90,11 @@ const AppContent = () => {
           <Route path="profile" element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="account" element={
+            <ProtectedRoute>
+              <Account />
             </ProtectedRoute>
           } />
           <Route path="read" element={
