@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -32,6 +31,7 @@ import ViewReportModal from '@/components/reports/ViewReportModal';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface Report {
   id: string;
@@ -116,6 +116,79 @@ const Reports = () => {
     // Create a slug from the company name
     const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
     navigate(`/dashboard/reports/${companySlug}/${report.exerciseId}/${report.id}`);
+  };
+
+  const handleDownload = async (report: Report) => {
+    try {
+      // Create a simple text report for download
+      const reportContent = `
+Business Health Check Report
+Company: ${report.company}
+Exercise: ${report.title}
+Date: ${new Date(report.date).toLocaleDateString()}
+Status: ${report.status}
+
+This report was generated on ${new Date().toLocaleDateString()}.
+      `.trim();
+
+      const blob = new Blob([reportContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${report.company}-${report.title.replace(/[^a-zA-Z0-9]/g, '-')}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('Report downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading report:', error);
+      toast.error('Failed to download report');
+    }
+  };
+
+  const handleReAnalyze = async (report: Report) => {
+    try {
+      // Update report status to "In Progress"
+      const { error } = await supabase
+        .from('reports')
+        .update({ status: 'In Progress' })
+        .eq('id', report.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setReports(reports.map(r => 
+        r.id === report.id ? { ...r, status: 'In Progress' } : r
+      ));
+
+      toast.success(`Re-analysis started for ${report.company}. Estimated completion: 20 minutes.`);
+    } catch (error) {
+      console.error('Error re-analyzing report:', error);
+      toast.error('Failed to start re-analysis');
+    }
+  };
+
+  const handleShare = async (report: Report) => {
+    try {
+      const shareUrl = `${window.location.origin}/dashboard/reports/${report.company.toLowerCase().replace(/\s+/g, '-')}/${report.exerciseId}/${report.id}`;
+      
+      if (navigator.share) {
+        await navigator.share({
+          title: `Business Health Check: ${report.company}`,
+          text: `Check out this business health analysis for ${report.company}`,
+          url: shareUrl,
+        });
+      } else {
+        // Fallback: copy to clipboard
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success('Report link copied to clipboard');
+      }
+    } catch (error) {
+      console.error('Error sharing report:', error);
+      toast.error('Failed to share report');
+    }
   };
 
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
@@ -241,13 +314,11 @@ const Reports = () => {
                           <Button 
                             variant="outline" 
                             size="icon" 
-                            title="View" 
+                            title="View Report" 
                             onClick={(e) => {
                               e.stopPropagation();
                               navigateToReport(report);
                             }}
-                            disabled={true}
-                            className="opacity-50 cursor-not-allowed"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -266,8 +337,10 @@ const Reports = () => {
                             variant="outline" 
                             size="icon" 
                             title="Download"
-                            disabled={true}
-                            className="opacity-50 cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownload(report);
+                            }}
                           >
                             <DownloadCloud className="h-4 w-4" />
                           </Button>
@@ -275,8 +348,10 @@ const Reports = () => {
                             variant="outline" 
                             size="icon" 
                             title="Re-analyze"
-                            disabled={true}
-                            className="opacity-50 cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleReAnalyze(report);
+                            }}
                           >
                             <RefreshCw className="h-4 w-4" />
                           </Button>
@@ -284,8 +359,10 @@ const Reports = () => {
                             variant="outline" 
                             size="icon" 
                             title="Share"
-                            disabled={true}
-                            className="opacity-50 cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare(report);
+                            }}
                           >
                             <Share2 className="h-4 w-4" />
                           </Button>
