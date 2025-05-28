@@ -106,12 +106,10 @@ const SidebarNavigation = () => {
       {navigation.map(item => {
         const isActive = location.pathname === item.href;
         return <div key={item.name}>
-          <SidebarMenuButton 
-            asChild 
-            isActive={isActive} 
-            tooltip={item.name} 
+          <Link 
+            to={item.disabled ? "#" : item.href}
             className={cn(
-              "w-full h-12 px-3 py-3 transition-all duration-200 rounded-lg flex items-center space-x-3", 
+              "w-full h-12 px-3 py-3 transition-all duration-200 rounded-lg flex items-center space-x-3 block",
               isActive 
                 ? "bg-primary text-primary-foreground shadow-sm font-medium" 
                 : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground/80",
@@ -119,19 +117,17 @@ const SidebarNavigation = () => {
             )}
             aria-disabled={item.disabled}
           >
-            <Link to={item.disabled ? "#" : item.href} className="flex items-center space-x-3 w-full">
-              <item.icon className={cn(
-                "h-5 w-5 transition-colors duration-200 stroke-[2.5px] flex-shrink-0", 
-                isActive ? "text-primary-foreground" : "text-sidebar-foreground/70"
-              )} />
-              <span className={cn(
-                "transition-colors duration-200 font-medium group-data-[collapsible=icon]:hidden text-base",
-                isActive ? "text-primary-foreground" : "text-sidebar-foreground/90"
-              )}>
-                {item.name}
-              </span>
-            </Link>
-          </SidebarMenuButton>
+            <item.icon className={cn(
+              "h-5 w-5 transition-colors duration-200 stroke-[2.5px] flex-shrink-0", 
+              isActive ? "text-primary-foreground" : "text-sidebar-foreground/70"
+            )} />
+            <span className={cn(
+              "transition-colors duration-200 font-medium group-data-[collapsible=icon]:hidden text-base",
+              isActive ? "text-primary-foreground" : "text-sidebar-foreground/90"
+            )}>
+              {item.name}
+            </span>
+          </Link>
         </div>;
       })}
     </div>
