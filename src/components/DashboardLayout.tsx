@@ -31,20 +31,15 @@ const SidebarCollapseButton = () => {
 
 const SidebarLogo = () => {
   return <div className="flex items-center justify-between px-6 py-6">
-    <div className="flex flex-col space-y-2">
-      <div className="flex items-center space-x-3">
-        <img 
-          src="/lovable-uploads/PWP.svg" 
-          alt="PWP Logo" 
-          className="h-10 w-10 rounded-lg"
-        />
-        <span className="font-semibold text-lg text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-          BookChat
-        </span>
-      </div>
-      <div className="text-xs text-sidebar-foreground/70 font-medium group-data-[collapsible=icon]:hidden">
+    <div className="flex items-center space-x-3">
+      <img 
+        src="/lovable-uploads/PWP.svg" 
+        alt="PWP Logo" 
+        className="h-10 w-10 rounded-lg"
+      />
+      <span className="font-semibold text-lg text-sidebar-foreground group-data-[collapsible=icon]:hidden">
         Prosper<br />With Purpose
-      </div>
+      </span>
     </div>
     <SidebarCollapseButton />
   </div>;
