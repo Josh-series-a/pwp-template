@@ -129,8 +129,7 @@ const SidebarNavigation = () => {
     {
       name: 'Book Insights',
       href: '/dashboard/book-insights',
-      icon: BookOpen,
-      disabled: true
+      icon: BookOpen
     }, 
     {
       name: 'Exercises',
