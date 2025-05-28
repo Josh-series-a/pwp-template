@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import DashboardHeader from '@/components/DashboardHeader';
 import { cn } from '@/lib/utils';
 import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
@@ -142,10 +140,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title
 }) => {
   return <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex flex-col w-full">
-        <DashboardHeader />
-        
-        <div className="flex flex-1 pt-14">
+      <div className="min-h-screen flex flex-col w-full">        
+        <div className="flex flex-1">
           <Sidebar collapsible="icon" className="z-30 shadow-sm border-r border-sidebar-border/30" style={{
           "--sidebar-width": "18rem",
           "--sidebar-width-icon": "3.5rem"
