@@ -1,10 +1,12 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Package, RefreshCw } from 'lucide-react';
 
 const PackagesCarousel = () => {
   return (
-    <div className="w-full">
+    <div className="w-full space-y-6">
       <Card className="bg-gradient-to-t from-yellow-400 to-white border-yellow-300 max-w-md h-96 flex flex-col justify-end">
         <CardHeader className="pb-4 pt-4">
           <CardTitle className="text-2xl font-bold text-gray-900 leading-tight">
@@ -17,6 +19,17 @@ const PackagesCarousel = () => {
           </p>
         </CardContent>
       </Card>
+      
+      <div className="flex gap-4">
+        <Button className="flex items-center gap-2">
+          <Package className="h-4 w-4" />
+          Generate Package
+        </Button>
+        <Button variant="outline" className="flex items-center gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Refresh
+        </Button>
+      </div>
     </div>
   );
 };
