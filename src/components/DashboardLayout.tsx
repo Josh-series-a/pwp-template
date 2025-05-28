@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -147,7 +148,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           className="z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar" 
           style={{
             "--sidebar-width": "16rem",
-            "--sidebar-width-icon": "4rem"
+            "--sidebar-width-icon": "5rem"
           } as React.CSSProperties}
         >
           <SidebarContent className="flex flex-col h-full">
