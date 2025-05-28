@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Check } from 'lucide-react';
 
 const Account = () => {
   const { user } = useAuth();
@@ -15,6 +17,57 @@ const Account = () => {
   const userName = user?.user_metadata?.name || 'User';
   const userEmail = user?.email || '';
   const userInitials = user?.user_metadata?.name ? userName.split(' ').map(part => part[0]).join('').toUpperCase() : 'U';
+
+  const subscriptionPlans = [
+    {
+      name: 'Basic',
+      price: '$19',
+      period: '/month',
+      description: 'Perfect for small teams and personal use',
+      features: [
+        'Up to 10 reports per month',
+        '2,000 API calls',
+        'Basic analytics',
+        'Email support',
+        '5 team members'
+      ],
+      current: true
+    },
+    {
+      name: 'Premium',
+      price: '$49',
+      period: '/month',
+      description: 'Best for growing businesses',
+      features: [
+        'Up to 50 reports per month',
+        '10,000 API calls',
+        'Advanced analytics',
+        'Priority support',
+        '25 team members',
+        'Custom integrations',
+        'Data export'
+      ],
+      current: false,
+      popular: true
+    },
+    {
+      name: 'Enterprise',
+      price: '$99',
+      period: '/month',
+      description: 'For large organizations',
+      features: [
+        'Unlimited reports',
+        'Unlimited API calls',
+        'Advanced analytics & insights',
+        '24/7 dedicated support',
+        'Unlimited team members',
+        'Custom integrations',
+        'Priority data processing',
+        'SLA guarantee'
+      ],
+      current: false
+    }
+  ];
 
   return (
     <DashboardLayout title="Account Settings">
@@ -121,15 +174,54 @@ const Account = () => {
                   Manage your subscription and billing information
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <h3 className="font-semibold">Free Plan</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Basic features with limited usage
-                    </p>
-                  </div>
-                  <Button>Upgrade</Button>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {subscriptionPlans.map((plan) => (
+                    <div
+                      key={plan.name}
+                      className={`relative p-6 border rounded-lg ${
+                        plan.current
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border'
+                      }`}
+                    >
+                      {plan.popular && (
+                        <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary">
+                          Most Popular
+                        </Badge>
+                      )}
+                      {plan.current && (
+                        <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-green-500">
+                          Current Plan
+                        </Badge>
+                      )}
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl font-semibold">{plan.name}</h3>
+                        <div className="mt-2">
+                          <span className="text-3xl font-bold">{plan.price}</span>
+                          <span className="text-muted-foreground">{plan.period}</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+                      </div>
+                      
+                      <ul className="space-y-2 mb-6">
+                        {plan.features.map((feature, index) => (
+                          <li key={index} className="flex items-center text-sm">
+                            <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      <Button 
+                        className="w-full" 
+                        variant={plan.current ? "outline" : "default"}
+                        disabled={plan.current}
+                      >
+                        {plan.current ? "Current Plan" : `Upgrade to ${plan.name}`}
+                      </Button>
+                    </div>
+                  ))}
                 </div>
                 
                 <div className="space-y-4">
@@ -137,11 +229,17 @@ const Account = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 border rounded-lg">
                       <p className="text-sm text-muted-foreground">Reports Generated</p>
-                      <p className="text-2xl font-semibold">3 / 5</p>
+                      <p className="text-2xl font-semibold">3 / 10</p>
+                      <div className="w-full bg-muted rounded-full h-2 mt-2">
+                        <div className="bg-primary h-2 rounded-full" style={{ width: '30%' }}></div>
+                      </div>
                     </div>
                     <div className="p-4 border rounded-lg">
                       <p className="text-sm text-muted-foreground">API Calls</p>
-                      <p className="text-2xl font-semibold">247 / 1000</p>
+                      <p className="text-2xl font-semibold">247 / 2000</p>
+                      <div className="w-full bg-muted rounded-full h-2 mt-2">
+                        <div className="bg-primary h-2 rounded-full" style={{ width: '12%' }}></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -160,18 +258,18 @@ const Account = () => {
                   <div>
                     <p className="font-medium">Payment Method</p>
                     <p className="text-sm text-muted-foreground">
-                      No payment method on file
+                      •••• •••• •••• 4242 (Visa)
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
-                    Add Payment Method
+                    Update Payment Method
                   </Button>
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Billing History</p>
+                    <p className="font-medium">Next Billing Date</p>
                     <p className="text-sm text-muted-foreground">
-                      View and download your invoices
+                      January 15, 2025
                     </p>
                   </div>
                   <Button variant="outline" size="sm">
