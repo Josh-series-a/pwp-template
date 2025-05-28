@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -24,7 +23,7 @@ interface BusinessHealthData {
   tab_id: string;
   overview: string | null;
   purpose: string | null;
-  sub_pillars: SubPillar[];
+  sub_pillars: any; // Changed from SubPillar[] to any to match Json type
   total_score: number | null;
   created_at: string;
   updated_at: string;
@@ -67,8 +66,8 @@ const ReportDetail = () => {
           } else if (healthData) {
             // Organize data by tab_id
             const organizedData: Record<string, BusinessHealthData> = {};
-            healthData.forEach((item: BusinessHealthData) => {
-              organizedData[item.tab_id] = item;
+            healthData.forEach((item) => {
+              organizedData[item.tab_id] = item as BusinessHealthData;
             });
             setBusinessHealthData(organizedData);
           }
@@ -83,14 +82,30 @@ const ReportDetail = () => {
     fetchReportData();
   }, [companySlug, exerciseId, reportId]);
 
-  const renderSubPillars = (subPillars: SubPillar[]) => {
-    if (!subPillars || subPillars.length === 0) {
+  const renderSubPillars = (subPillars: any) => {
+    // Safely parse subPillars if it's a string or already an array
+    let pillarsArray: SubPillar[] = [];
+    
+    if (Array.isArray(subPillars)) {
+      pillarsArray = subPillars;
+    } else if (typeof subPillars === 'string') {
+      try {
+        pillarsArray = JSON.parse(subPillars);
+      } catch (e) {
+        console.error('Error parsing sub_pillars:', e);
+        return <p className="text-muted-foreground">Error loading assessment data.</p>;
+      }
+    } else if (subPillars && typeof subPillars === 'object') {
+      pillarsArray = subPillars;
+    }
+
+    if (!pillarsArray || pillarsArray.length === 0) {
       return <p className="text-muted-foreground">No assessment data available for this pillar.</p>;
     }
 
     return (
       <div className="space-y-6">
-        {subPillars.map((pillar, index) => (
+        {pillarsArray.map((pillar, index) => (
           <div key={index} className="border rounded-lg p-4">
             <div className="flex justify-between items-start mb-3">
               <h4 className="font-semibold text-lg">{pillar.Name}</h4>
