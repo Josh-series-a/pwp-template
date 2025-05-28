@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -160,7 +161,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </Sidebar>
           
           <main className="flex-1 bg-background/50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-[90px] md:px-[40px]">
+            <div className="w-full px-4 sm:px-6 py-[90px] md:px-[40px]">
               <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-bold">{title}</h1>
               </div>
