@@ -31,7 +31,8 @@ import {
   RefreshCw,
   Share2, 
   Plus,
-  MoreHorizontal
+  MoreHorizontal,
+  Trash2
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
@@ -242,6 +243,25 @@ This report was generated on ${new Date().toLocaleDateString()}.
     }
   };
 
+  const handleDelete = async (report: Report) => {
+    try {
+      const { error } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', report.id);
+
+      if (error) throw error;
+
+      // Update local state by removing the deleted report
+      setReports(reports.filter(r => r.id !== report.id));
+
+      toast.success(`Report for ${report.company} has been deleted successfully`);
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      toast.error('Failed to delete report');
+    }
+  };
+
   return (
     <DashboardLayout title="My Reports">
       <div className="space-y-6">
@@ -325,6 +345,13 @@ This report was generated on ${new Date().toLocaleDateString()}.
                               <DropdownMenuItem onClick={() => handleShare(report)}>
                                 <Share2 className="mr-2 h-4 w-4" />
                                 Share
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => handleDelete(report)}
+                                className="text-red-600 focus:text-red-600"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
