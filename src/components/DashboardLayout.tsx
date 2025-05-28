@@ -134,8 +134,7 @@ const SidebarNavigation = () => {
     {
       name: 'Exercises',
       href: '/dashboard/exercises',
-      icon: Dumbbell,
-      disabled: true
+      icon: Dumbbell
     }, 
     {
       name: 'Book a Session',
