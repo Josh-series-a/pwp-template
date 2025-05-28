@@ -110,7 +110,7 @@ const SidebarNavigation = () => {
           <Link 
             to={item.disabled ? "#" : item.href}
             className={cn(
-              "w-full h-12 px-3 py-3 transition-all duration-200 rounded-lg flex items-center space-x-3 block",
+              "w-full h-12 px-3 py-3 transition-all duration-200 rounded-lg flex items-center space-x-3",
               "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:space-x-0",
               isActive 
                 ? "bg-primary text-primary-foreground shadow-sm font-medium" 
