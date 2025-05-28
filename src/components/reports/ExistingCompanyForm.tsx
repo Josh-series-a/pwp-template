@@ -1,60 +1,50 @@
-
 import React, { useState, useEffect } from 'react';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
 interface ExistingCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string) => void;
   userData: any | null;
 }
-
 interface Company {
   id: string;
   name: string;
 }
-
-const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, userData }) => {
+const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
+  onComplete,
+  userData
+}) => {
   const [step, setStep] = useState<number>(1);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
+
   // Fetch existing companies from reports table
   useEffect(() => {
     const fetchCompanies = async () => {
       setLoading(true);
-      
       try {
         // Get unique company names from reports table
-        const { data, error } = await supabase
-          .from('reports')
-          .select('company_name')
-          .order('company_name')
-          
+        const {
+          data,
+          error
+        } = await supabase.from('reports').select('company_name').order('company_name');
         if (error) {
           throw error;
         }
-        
         if (data) {
           // Create unique list of companies
-          const uniqueCompanies = Array.from(new Set(data.map(item => item.company_name)))
-            .map((name, index) => ({ 
-              id: `comp-${index}`, 
-              name: name as string 
-            }));
-            
+          const uniqueCompanies = Array.from(new Set(data.map(item => item.company_name))).map((name, index) => ({
+            id: `comp-${index}`,
+            name: name as string
+          }));
           setCompanies(uniqueCompanies);
         }
       } catch (error) {
@@ -62,13 +52,12 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
         toast({
           title: "Error",
           description: "Failed to load companies. Please try again.",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoading(false);
       }
     };
-
     fetchCompanies();
   }, [toast]);
 
@@ -118,12 +107,9 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
       setStep(step - 1);
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Step 1: Select Existing Company */}
-      {step === 1 && (
-        <>
+      {step === 1 && <>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 1: Select Existing Company</h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -136,35 +122,26 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
               <SelectValue placeholder={loading ? "Loading companies..." : "Select a company"} />
             </SelectTrigger>
             <SelectContent>
-              {companies.map(company => (
-                <SelectItem key={company.id} value={company.id}>
+              {companies.map(company => <SelectItem key={company.id} value={company.id}>
                   {company.name}
-                </SelectItem>
-              ))}
-              {companies.length === 0 && !loading && (
-                <SelectItem value="none" disabled>
+                </SelectItem>)}
+              {companies.length === 0 && !loading && <SelectItem value="none" disabled>
                   No companies found
-                </SelectItem>
-              )}
+                </SelectItem>}
             </SelectContent>
           </Select>
 
           <div className="pt-4">
-            <Button 
-              onClick={() => selectedCompany && setStep(2)} 
-              disabled={!selectedCompany}
-            >
+            <Button onClick={() => selectedCompany && setStep(2)} disabled={!selectedCompany}>
               Continue to Exercise Selection
             </Button>
           </div>
-        </>
-      )}
+        </>}
 
       {/* Step 2: Exercise Selection */}
-      {step === 2 && (
-        <>
+      {step === 2 && <>
           <div className="mb-6">
-            <h3 className="text-lg font-medium">Step 2: Choose Exercise</h3>
+            <h3 className="text-lg font-medium">Step 2: Choose Discovery  Questions</h3>
             <p className="text-sm text-muted-foreground mt-1">
               Select an exercise to complete for {getCompanyName()}
             </p>
@@ -177,12 +154,10 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
               Back
             </Button>
           </div>
-        </>
-      )}
+        </>}
 
       {/* Step 3: Exercise Form */}
-      {step === 3 && selectedExercise && (
-        <>
+      {step === 3 && selectedExercise && <>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 3: Complete Exercise</h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -190,16 +165,9 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({ onComplete, u
             </p>
           </div>
 
-          <ExerciseForm 
-            exerciseId={selectedExercise}
-            onBack={handleBack}
-            onComplete={handleExerciseComplete}
-            companyDetails={getCompanyDetails()} // Pass company details to the ExerciseForm
-          />
-        </>
-      )}
-    </div>
-  );
+          <ExerciseForm exerciseId={selectedExercise} onBack={handleBack} onComplete={handleExerciseComplete} companyDetails={getCompanyDetails()} // Pass company details to the ExerciseForm
+      />
+        </>}
+    </div>;
 };
-
 export default ExistingCompanyForm;
