@@ -35,9 +35,9 @@ const SidebarLogo = () => {
       <img 
         src="/lovable-uploads/PWP.svg" 
         alt="PWP Logo" 
-        className="h-10 w-10 rounded-lg"
+        className="h-14 w-14 rounded-lg"
       />
-      <span className="font-semibold text-lg text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+      <span className="font-semibold text-base text-sidebar-foreground group-data-[collapsible=icon]:hidden">
         Prosper<br />With Purpose
       </span>
     </div>
