@@ -11,6 +11,12 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   Pagination,
   PaginationContent,
@@ -24,7 +30,8 @@ import {
   Eye, 
   RefreshCw,
   Share2, 
-  Plus
+  Plus,
+  MoreHorizontal
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
@@ -290,64 +297,37 @@ This report was generated on ${new Date().toLocaleDateString()}.
                       </TableCell>
                       <TableCell className="text-right">
                         <div 
-                          className="flex justify-end space-x-2"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            title="View Report" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigateToReport(report);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            title="Quick View" 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openViewModal(report.id);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            title="Download"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDownload(report);
-                            }}
-                          >
-                            <DownloadCloud className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            title="Re-analyze"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleReAnalyze(report);
-                            }}
-                          >
-                            <RefreshCw className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="icon" 
-                            title="Share"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleShare(report);
-                            }}
-                          >
-                            <Share2 className="h-4 w-4" />
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => navigateToReport(report)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Report
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openViewModal(report.id)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Quick View
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDownload(report)}>
+                                <DownloadCloud className="mr-2 h-4 w-4" />
+                                Download
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
+                                <RefreshCw className="mr-2 h-4 w-4" />
+                                Re-analyze
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleShare(report)}>
+                                <Share2 className="mr-2 h-4 w-4" />
+                                Share
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </TableCell>
                     </TableRow>
