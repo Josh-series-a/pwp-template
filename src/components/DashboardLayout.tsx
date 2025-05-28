@@ -1,13 +1,16 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell } from 'lucide-react';
+import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/utils/authService';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -49,25 +52,60 @@ const SidebarLogo = () => {
 };
 
 const SidebarProfile = () => {
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
   const userName = user?.user_metadata?.name || 'User';
   const userInitials = user?.user_metadata?.name ? userName.split(' ').map(part => part[0]).join('').toUpperCase() : 'U';
-  return <div className="px-4 py-4 mt-auto border-t border-sidebar-border/40">
-    <Link to="/dashboard/profile" className="flex items-center space-x-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors duration-200">
-      <Avatar className="h-9 w-9 ring-2 ring-sidebar-accent/30">
-        <AvatarImage src={user?.user_metadata?.avatar_url} />
-        <AvatarFallback className="bg-primary text-primary-foreground font-medium text-sm">
-          {userInitials}
-        </AvatarFallback>
-      </Avatar>
-      <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-        <span className="text-sm font-medium text-sidebar-foreground">{userName}</span>
-        <span className="text-xs text-sidebar-foreground/60">View profile</span>
-      </div>
-    </Link>
-  </div>;
+  
+  const handleSignOut = async () => {
+    try {
+      const result = await authService.signOut();
+      if (result.success) {
+        toast.success("You have been logged out.");
+        navigate('/');
+      } else {
+        toast.error("Logout failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("An error occurred during logout.");
+    }
+  };
+  
+  return (
+    <div className="px-4 py-4 mt-auto border-t border-sidebar-border/40">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center space-x-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 w-full text-left">
+            <Avatar className="h-9 w-9 ring-2 ring-sidebar-accent/30">
+              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarFallback className="bg-primary text-primary-foreground font-medium text-sm">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col group-data-[collapsible=icon]:hidden">
+              <span className="text-sm font-medium text-sidebar-foreground">{userName}</span>
+              <span className="text-xs text-sidebar-foreground/60">View profile</span>
+            </div>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuItem asChild>
+            <Link to="/dashboard/profile" className="cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              Account Settings
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
 };
 
 const SidebarNavigation = () => {
