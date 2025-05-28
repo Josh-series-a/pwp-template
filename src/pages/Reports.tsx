@@ -234,34 +234,56 @@ This report was generated on ${new Date().toLocaleDateString()}.
         
         setReports([newReport, ...reports]);
 
-        // Send data to webhook
+        // Send data to webhook as query parameters
         try {
-          const webhookData = {
-            reportId: reportData.id,
-            companyName: companyName,
-            exerciseTitle: exerciseTitle,
-            exerciseId: exerciseId,
-            userId: user.id,
-            userEmail: user.email,
-            userName: user.user_metadata?.name || 'Unknown User',
-            pitchDeckUrl: pitchDeckUrl,
-            status: 'In Progress',
-            createdAt: reportData.created_at,
-            timestamp: new Date().toISOString()
-          };
+          const webhookUrl = new URL('https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n');
+          
+          // Add query parameters
+          webhookUrl.searchParams.append('reportId', reportData.id);
+          webhookUrl.searchParams.append('companyName', companyName);
+          webhookUrl.searchParams.append('exerciseTitle', exerciseTitle);
+          webhookUrl.searchParams.append('exerciseId', exerciseId);
+          webhookUrl.searchParams.append('userId', user.id);
+          webhookUrl.searchParams.append('userEmail', user.email || '');
+          webhookUrl.searchParams.append('userName', user.user_metadata?.name || 'Unknown User');
+          webhookUrl.searchParams.append('status', 'In Progress');
+          webhookUrl.searchParams.append('createdAt', reportData.created_at);
+          webhookUrl.searchParams.append('timestamp', new Date().toISOString());
+          
+          if (pitchDeckUrl) {
+            webhookUrl.searchParams.append('pitchDeckUrl', pitchDeckUrl);
+          }
 
-          console.log('Sending data to webhook:', webhookData);
+          // Add sample responses and questions as arrays
+          const sampleResponses = [
+            'Strong financial foundation with positive cash flow',
+            'Marketing strategy needs improvement',
+            'Leadership team is well-structured'
+          ];
+          
+          const sampleQuestions = [
+            'What is your current monthly revenue?',
+            'How many employees do you have?',
+            'What are your main marketing channels?'
+          ];
 
-          await fetch('https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            mode: 'no-cors',
-            body: JSON.stringify(webhookData),
+          // Add array parameters
+          sampleResponses.forEach((response, index) => {
+            webhookUrl.searchParams.append(`responses[${index}]`, response);
           });
 
-          console.log('Webhook data sent successfully');
+          sampleQuestions.forEach((question, index) => {
+            webhookUrl.searchParams.append(`questions[${index}]`, question);
+          });
+
+          console.log('Sending data to webhook with query parameters:', webhookUrl.toString());
+
+          await fetch(webhookUrl.toString(), {
+            method: 'GET',
+            mode: 'no-cors',
+          });
+
+          console.log('Webhook data sent successfully via query parameters');
         } catch (webhookError) {
           console.error('Error sending data to webhook:', webhookError);
           // Don't show error to user as this shouldn't block the main flow
