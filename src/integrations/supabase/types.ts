@@ -35,6 +35,7 @@ export type Database = {
       }
       reports: {
         Row: {
+          company_id: string | null
           company_name: string
           completion_date: string | null
           created_at: string
@@ -48,6 +49,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          company_id?: string | null
           company_name: string
           completion_date?: string | null
           created_at?: string
@@ -61,6 +63,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          company_id?: string | null
           company_name?: string
           completion_date?: string | null
           created_at?: string

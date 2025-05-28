@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -211,7 +212,8 @@ This report was generated on ${new Date().toLocaleDateString()}.
           exercise_id: exerciseId,
           status: 'In Progress',
           user_id: user.id,
-          pitch_deck_url: pitchDeckUrl
+          pitch_deck_url: pitchDeckUrl,
+          company_id: companyId
         })
         .select()
         .single();
