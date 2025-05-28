@@ -30,7 +30,7 @@ const SidebarCollapseButton = () => {
 };
 
 const SidebarLogo = () => {
-  return <div className="flex items-center justify-between px-3 py-6 group-data-[collapsible=icon]:px-2">
+  return <div className="flex items-center justify-between px-3 py-6 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:justify-center">
     <div className="flex items-center space-x-3 group-data-[collapsible=icon]:space-x-0">
       <img 
         src="/lovable-uploads/PWP.svg" 
