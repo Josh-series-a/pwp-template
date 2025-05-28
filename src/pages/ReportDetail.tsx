@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -8,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
+import PackagesCarousel from '@/components/PackagesCarousel';
 
 interface SubPillar {
   Name: string;
@@ -305,7 +305,7 @@ const ReportDetail = () => {
               </TabsContent>
 
               <TabsContent value="packages" className="mt-6">
-                {renderTabContent('packages', 'Package & Service Offerings', 'Analysis of your current product packages and service delivery methods.')}
+                <PackagesCarousel />
               </TabsContent>
             </Tabs>
           </CardContent>
