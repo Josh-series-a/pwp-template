@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Target, Users, DollarSign, Heart, Brain } from 'lucide-react';
+import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
 
@@ -256,7 +257,7 @@ const ReportDetail = () => {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="plan" className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
                   Plan
@@ -276,6 +277,10 @@ const ReportDetail = () => {
                 <TabsTrigger value="stress_leadership" className="flex items-center gap-2">
                   <Brain className="h-4 w-4" />
                   Stress & Leadership
+                </TabsTrigger>
+                <TabsTrigger value="packages" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Packages
                 </TabsTrigger>
               </TabsList>
 
@@ -297,6 +302,10 @@ const ReportDetail = () => {
 
               <TabsContent value="stress_leadership" className="mt-6">
                 {renderTabContent('stress_leadership', 'Stress Management & Leadership', 'Analysis of leadership effectiveness and stress management strategies.')}
+              </TabsContent>
+
+              <TabsContent value="packages" className="mt-6">
+                {renderTabContent('packages', 'Package & Service Offerings', 'Analysis of your current product packages and service delivery methods.')}
               </TabsContent>
             </Tabs>
           </CardContent>
