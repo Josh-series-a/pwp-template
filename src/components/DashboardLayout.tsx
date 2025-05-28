@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -109,7 +110,7 @@ const SidebarNavigation = () => {
             isActive={isActive} 
             tooltip={item.name} 
             className={cn(
-              "w-full h-10 px-3 py-2 transition-all duration-200 rounded-lg flex items-center space-x-3", 
+              "w-full h-12 px-3 py-3 transition-all duration-200 rounded-lg flex items-center space-x-3", 
               isActive 
                 ? "bg-primary text-primary-foreground shadow-sm font-medium" 
                 : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground/80",
@@ -119,11 +120,11 @@ const SidebarNavigation = () => {
           >
             <Link to={item.disabled ? "#" : item.href} className="flex items-center space-x-3 w-full">
               <item.icon className={cn(
-                "h-4 w-4 transition-colors duration-200 stroke-[2.5px] flex-shrink-0", 
+                "h-5 w-5 transition-colors duration-200 stroke-[2.5px] flex-shrink-0", 
                 isActive ? "text-primary-foreground" : "text-sidebar-foreground/70"
               )} />
               <span className={cn(
-                "transition-colors duration-200 font-medium group-data-[collapsible=icon]:hidden text-sm",
+                "transition-colors duration-200 font-medium group-data-[collapsible=icon]:hidden text-base",
                 isActive ? "text-primary-foreground" : "text-sidebar-foreground/90"
               )}>
                 {item.name}
