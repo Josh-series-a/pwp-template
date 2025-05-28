@@ -193,7 +193,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
     }
   };
 
-  const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
+  const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string) => {
     try {
       if (!user) {
         toast.error("You must be logged in to create a report.");
@@ -248,6 +248,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
           webhookUrl.searchParams.append('status', 'In Progress');
           webhookUrl.searchParams.append('createdAt', reportData.created_at);
           webhookUrl.searchParams.append('timestamp', new Date().toISOString());
+          webhookUrl.searchParams.append('type', type || 'New');
           
           if (pitchDeckUrl) {
             webhookUrl.searchParams.append('pitchDeckUrl', pitchDeckUrl);
