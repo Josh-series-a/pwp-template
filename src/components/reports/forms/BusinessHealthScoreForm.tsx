@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -105,6 +104,45 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     }
   });
 
+  const autoFillForm = () => {
+    const sampleData = {
+      hoursInVsOn: '3',
+      businessWithoutYou: 'no' as const,
+      stressManagement: 'C' as const,
+      valuesAlignment: '4',
+      lastWeekendOff: 'Last weekend I took off was about 3 months ago. It was possible because my team stepped up to handle operations, but I still received several urgent calls that required my attention.',
+      missionWritten: 'yes' as const,
+      scheduleAlignment: '3',
+      exitStrategy: 'B' as const,
+      futureBackThinking: 'yes' as const,
+      nonNegotiables: '1. Quality standards must never be compromised\n2. Customer satisfaction above short-term profits\n3. Team development and growth opportunities',
+      businessWithout30Days: 'C' as const,
+      delegationAccountability: 'yes' as const,
+      rightPeopleConfidence: '4',
+      teamDevelopmentTime: '3',
+      retentionSystems: 'We offer flexible working arrangements, professional development budgets, regular one-on-ones, and performance-based bonuses. We also have a mentorship program and career progression pathways.',
+      grossProfitMargin: 'yes' as const,
+      cashFlowProcess: 'C' as const,
+      pricingValue: '4',
+      invoiceFollowUp: 'yes' as const,
+      debtorCreditorTrends: 'Debtor days have increased from 35 to 42 days over the past year due to economic pressures on clients. Plan: Implement stricter credit checks and offer early payment discounts.',
+      trackingItems: ['energy', 'wellbeing'],
+      purposeInfluencesBuying: 'yes' as const,
+      purposeCommercialValue: '4',
+      staffEmpowerment: 'We have green champions in each department who lead sustainability initiatives. Staff can propose environmental projects with dedicated budget allocation and implementation support.',
+      netZeroCommitment: 'yes' as const
+    };
+
+    Object.entries(sampleData).forEach(([key, value]) => {
+      form.setValue(key as any, value);
+    });
+
+    toast({
+      title: "Form auto-filled",
+      description: "Sample data has been populated for development testing.",
+    });
+  };
+
   const onSubmit = async (data: z.infer<typeof businessHealthScoreSchema>) => {
     setIsSubmitting(true);
     console.log('Business Health Score data:', data);
@@ -142,6 +180,18 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         
+        {/* Development Auto-Fill Button */}
+        <div className="flex justify-end">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={autoFillForm}
+            className="mb-4"
+          >
+            Auto-Fill (Dev)
+          </Button>
+        </div>
+
         {/* STRESS & LEADERSHIP */}
         <div className="space-y-6">
           <h3 className="text-lg font-semibold text-primary">STRESS & LEADERSHIP</h3>
