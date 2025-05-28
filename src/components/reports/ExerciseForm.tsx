@@ -24,6 +24,7 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import BusinessHealthScoreForm from './forms/BusinessHealthScoreForm';
 
 interface ExerciseFormProps {
   exerciseId: string;
@@ -94,6 +95,7 @@ const keyCustomersSchema = z.object({
 
 const getExerciseTitle = (exerciseId: string): string => {
   switch (exerciseId) {
+    case 'business-health-score': return 'Business Health Score';
     case 'exercise-4': return 'Exercise 4: Define Your Exit Strategy';
     case 'exercise-6': return 'Exercise 6: Know Your Customer';
     case 'exercise-7': return 'Exercise 7: Create Your "1+1" Proposition';
@@ -118,6 +120,8 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onCompl
 
   const renderForm = () => {
     switch (exerciseId) {
+      case 'business-health-score':
+        return <BusinessHealthScoreForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       case 'exercise-4':
         return <ExitStrategyForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
       case 'exercise-6':
