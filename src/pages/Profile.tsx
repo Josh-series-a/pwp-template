@@ -90,7 +90,7 @@ const Profile = () => {
 
   return (
     <DashboardLayout title="Profile Settings">
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="w-full space-y-8">
         <p className="text-muted-foreground">
           Manage your personal information and preferences
         </p>
