@@ -81,18 +81,14 @@ const Reports = () => {
         }
       } catch (error) {
         console.error('Error fetching reports:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load reports. Please try again later.",
-          variant: "destructive",
-        });
+        toast.error("Failed to load reports. Please try again later.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchReports();
-  }, [toast, user]);
+  }, [user]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -194,11 +190,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string) => {
     try {
       if (!user) {
-        toast({
-          title: "Authentication Error",
-          description: "You must be logged in to create a report.",
-          variant: "destructive",
-        });
+        toast.error("You must be logged in to create a report.");
         return;
       }
       
@@ -238,18 +230,10 @@ This report was generated on ${new Date().toLocaleDateString()}.
       
       closeModal();
       
-      toast({
-        title: "Analysis Started",
-        description: `Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`,
-        duration: 5000,
-      });
+      toast.success(`Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`);
     } catch (error) {
       console.error('Error creating report:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create report. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to create report. Please try again.");
     }
   };
 
