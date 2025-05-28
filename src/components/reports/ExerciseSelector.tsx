@@ -6,7 +6,8 @@ import {
   Calendar, 
   Users, 
   ArrowRightCircle, 
-  Clipboard 
+  Clipboard,
+  TrendingUp
 } from 'lucide-react';
 
 interface Exercise {
@@ -21,6 +22,12 @@ interface ExerciseSelectorProps {
 }
 
 const exercises: Exercise[] = [
+  {
+    id: 'business-health-score',
+    title: 'Business Health Score',
+    description: 'Assess your business across strategy, team, finance, impact, and leadership.',
+    icon: TrendingUp
+  },
   {
     id: 'exercise-4',
     title: 'Exercise 4: Define Your Exit Strategy',
