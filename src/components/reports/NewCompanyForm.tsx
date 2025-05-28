@@ -15,11 +15,12 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   const [step, setStep] = useState<number>(1);
   const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues | null>(null);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  // Generate UUID once when component mounts for this new company
   const [companyId] = useState<string>(() => crypto.randomUUID());
   const { user } = useAuth();
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
-    console.log("Company details submitted with pitchDeckUrl:", data.pitchDeckUrl, "and companyId:", companyId);
+    console.log("Company details submitted for new company with companyId:", companyId);
     setCompanyDetails(data);
     setStep(2);
   };
@@ -31,7 +32,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
 
   const handleExerciseComplete = (exerciseTitle: string) => {
     if (companyDetails) {
-      console.log("Completing exercise with pitchDeckUrl:", companyDetails.pitchDeckUrl, "and companyId:", companyId);
+      console.log("Completing new company exercise with companyId:", companyId);
       onComplete(companyDetails.companyName, exerciseTitle, companyDetails.pitchDeckUrl, companyId);
     }
   };

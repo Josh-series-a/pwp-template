@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ interface ExistingCompanyFormProps {
 interface Company {
   id: string;
   name: string;
+  company_id: string | null;
 }
 
 const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
@@ -25,7 +27,6 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
-  const [companyId] = useState<string>(() => crypto.randomUUID());
   const { toast } = useToast();
 
   // Fetch existing companies from reports table
@@ -33,20 +34,27 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        // Get unique company names from reports table
+        // Get unique company names with their company_id from reports table
         const {
           data,
           error
-        } = await supabase.from('reports').select('company_name').order('company_name');
+        } = await supabase.from('reports').select('company_name, company_id').order('company_name');
         if (error) {
           throw error;
         }
         if (data) {
-          // Create unique list of companies
-          const uniqueCompanies = Array.from(new Set(data.map(item => item.company_name))).map((name, index) => ({
-            id: `comp-${index}`,
-            name: name as string
-          }));
+          // Create unique list of companies with their company_id
+          const uniqueCompaniesMap = new Map();
+          data.forEach(item => {
+            if (!uniqueCompaniesMap.has(item.company_name)) {
+              uniqueCompaniesMap.set(item.company_name, {
+                id: `comp-${item.company_name}`,
+                name: item.company_name,
+                company_id: item.company_id
+              });
+            }
+          });
+          const uniqueCompanies = Array.from(uniqueCompaniesMap.values());
           setCompanies(uniqueCompanies);
         }
       } catch (error) {
@@ -75,19 +83,20 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
     setStep(3);
   };
 
-  // Find company name based on ID
-  const getCompanyName = () => {
-    const company = companies.find(c => c.id === selectedCompany);
-    return company ? company.name : 'Unknown Company';
+  // Find company details based on ID
+  const getSelectedCompany = () => {
+    return companies.find(c => c.id === selectedCompany);
   };
 
   // Create company details object for passing to ExerciseForm
   const getCompanyDetails = () => {
-    const companyName = getCompanyName();
+    const company = getSelectedCompany();
+    if (!company) return null;
+    
     return {
-      companyName,
+      companyName: company.name,
       fromExisting: true,
-      companyId: companyId,
+      companyId: company.company_id || crypto.randomUUID(), // Fallback to new UUID if none exists
       userData: {
         name: userData?.user_metadata?.name || 'Unknown User',
         email: userData?.email || 'unknown@example.com'
@@ -97,8 +106,11 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
 
   // Handle exercise form submission
   const handleExerciseComplete = (exerciseTitle: string) => {
-    console.log("Completing existing company exercise with companyId:", companyId);
-    onComplete(getCompanyName(), exerciseTitle, undefined, companyId);
+    const company = getSelectedCompany();
+    if (company) {
+      console.log("Completing existing company exercise with companyId:", company.company_id);
+      onComplete(company.name, exerciseTitle, undefined, company.company_id || crypto.randomUUID());
+    }
   };
 
   // Go back to previous step
@@ -155,7 +167,7 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 2: Choose Discovery Questions</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Select an exercise to complete for {getCompanyName()}
+              Select an exercise to complete for {getSelectedCompany()?.name}
             </p>
             <p className="text-sm text-muted-foreground mt-2">
               This will help tailor the insights, language, and recommendations in each document so that the final output is more relevant, actionable, and aligned with your Business's real needs.
@@ -178,7 +190,7 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
           <div className="mb-6">
             <h3 className="text-lg font-medium">Step 3: Complete Exercise</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Fill out the form for {getCompanyName()}
+              Fill out the form for {getSelectedCompany()?.name}
             </p>
           </div>
 

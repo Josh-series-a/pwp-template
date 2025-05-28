@@ -49,6 +49,7 @@ interface Report {
   status: string;
   pitchDeckUrl?: string;
   exerciseId?: string;
+  companyId?: string; // Add companyId to interface
 }
 
 const Reports = () => {
@@ -82,7 +83,8 @@ const Reports = () => {
             date: report.created_at,
             company: report.company_name,
             status: report.status,
-            exerciseId: report.exercise_id
+            exerciseId: report.exercise_id,
+            companyId: report.company_id // Include company_id from database
           }));
           setReports(formattedReports);
         }
@@ -213,7 +215,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
           status: 'In Progress',
           user_id: user.id,
           pitch_deck_url: pitchDeckUrl,
-          company_id: companyId
+          company_id: companyId // Store the company UUID
         })
         .select()
         .single();
@@ -230,7 +232,8 @@ This report was generated on ${new Date().toLocaleDateString()}.
           company: reportData.company_name,
           status: reportData.status,
           pitchDeckUrl: reportData.pitch_deck_url,
-          exerciseId: reportData.exercise_id
+          exerciseId: reportData.exercise_id,
+          companyId: reportData.company_id
         };
         
         setReports([newReport, ...reports]);
