@@ -35,7 +35,7 @@ const SidebarLogo = () => {
       <img 
         src="/lovable-uploads/PWP.svg" 
         alt="PWP Logo" 
-        className="h-8 w-8 rounded-lg"
+        className="h-10 w-10 rounded-lg"
       />
       <span className="font-semibold text-lg text-sidebar-foreground group-data-[collapsible=icon]:hidden">
         BookChat
