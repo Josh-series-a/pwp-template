@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,14 +50,16 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 
     // Return multiple view-only URL formats to try
     const viewUrls = [
-      // Primary view-only URL (no editing interface)
-      `https://docs.google.com/document/d/${docId}/preview`,
-      // Embedded viewer with minimal UI
+      // Embedded viewer with full document display
+      `https://docs.google.com/document/d/${docId}/pub?embedded=true&single=true&gid=0&range=A1:Z1000`,
+      // Preview mode with better scaling
+      `https://docs.google.com/document/d/${docId}/preview?usp=embed_facebook`,
+      // Standard embed
       `https://docs.google.com/document/d/${docId}/pub?embedded=true`,
-      // Alternative embed format
-      `https://docs.google.com/viewer?url=https://docs.google.com/document/d/${docId}/export?format=pdf&embedded=true`,
-      // PDF export embedded
-      `https://drive.google.com/file/d/${docId}/preview`
+      // Drive preview
+      `https://drive.google.com/file/d/${docId}/preview?usp=embed_facebook`,
+      // Alternative preview format
+      `https://docs.google.com/document/d/${docId}/preview`
     ];
 
     return viewUrls;
@@ -197,7 +198,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="relative border-t bg-white overflow-hidden"
+          className="relative border-t bg-white"
           style={{ height }}
         >
           {!currentUrl && !isLoading ? (
@@ -242,11 +243,11 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                 </div>
               )}
               
-              <div className="w-full h-full rounded-b-lg">
+              <div className="w-full h-full">
                 <iframe
                   key={currentUrl}
                   src={currentUrl}
-                  className="w-full h-full border-0 rounded-b-lg"
+                  className="w-full h-full border-0 block"
                   title={title}
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
@@ -254,8 +255,12 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                   style={{ 
                     border: 'none',
                     outline: 'none',
-                    background: 'white'
+                    background: 'white',
+                    minHeight: '100%',
+                    width: '100%',
+                    display: 'block'
                   }}
+                  allowFullScreen
                 />
               </div>
             </>
