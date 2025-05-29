@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -410,7 +409,7 @@ const Index = () => {
                 <img 
                   src="/lovable-uploads/1a148eb6-0e62-40db-929b-b964ed70ae22.png" 
                   alt="SRB Member" 
-                  className="h-16 w-auto filter brightness-0 invert opacity-80 hover:opacity-100 transition-all duration-300"
+                  className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
                 />
               </div>
             </div>
