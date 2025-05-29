@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,16 +51,16 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 
     // Return multiple view-only URL formats to try
     const viewUrls = [
-      // Embedded viewer with full document display
-      `https://docs.google.com/document/d/${docId}/pub?embedded=true&single=true&gid=0&range=A1:Z1000`,
-      // Preview mode with better scaling
-      `https://docs.google.com/document/d/${docId}/preview?usp=embed_facebook`,
-      // Standard embed
+      // Standard embedded view (most compatible)
       `https://docs.google.com/document/d/${docId}/pub?embedded=true`,
-      // Drive preview
-      `https://drive.google.com/file/d/${docId}/preview?usp=embed_facebook`,
+      // Drive preview mode
+      `https://drive.google.com/file/d/${docId}/preview`,
       // Alternative preview format
-      `https://docs.google.com/document/d/${docId}/preview`
+      `https://docs.google.com/document/d/${docId}/preview`,
+      // Google Viewer fallback
+      `https://docs.google.com/viewer?url=https://docs.google.com/document/d/${docId}/export?format=pdf&embedded=true`,
+      // Direct export as PDF
+      `https://docs.google.com/document/d/${docId}/export?format=pdf`
     ];
 
     return viewUrls;
@@ -88,15 +89,14 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
     setCurrentUrl(processedUrl);
     setFallbackUrls(fallbacks);
     
-    // Simulate loading time
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    console.log('Loading document with URL:', processedUrl);
+    console.log('Available fallbacks:', fallbacks);
   };
 
   const handleIframeLoad = () => {
     setIsLoading(false);
     setHasError(false);
+    console.log('Document loaded successfully');
   };
 
   const handleIframeError = () => {
@@ -113,7 +113,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       // Give it a moment to load
       setTimeout(() => {
         setIsLoading(false);
-      }, 2000);
+      }, 3000);
     } else {
       console.log('All fallback URLs failed');
       setIsLoading(false);
@@ -137,8 +137,20 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       setCurrentUrl(processedUrl);
       setFallbackUrls(fallbacks);
       setDocUrl(initialUrl);
+      console.log('Initial document URL processed:', processedUrl);
     }
   }, [initialUrl]);
+
+  // Auto-load when currentUrl changes and we're not in an error state
+  useEffect(() => {
+    if (currentUrl && !hasError) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentUrl, hasError]);
 
   return (
     <Card className={cn("w-full", className)}>
@@ -245,9 +257,9 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               
               <div className="w-full h-full">
                 <iframe
-                  key={currentUrl}
+                  key={`${currentUrl}-${currentFallbackIndex}`}
                   src={currentUrl}
-                  className="w-full h-full border-0 block"
+                  className="w-full h-full border-0"
                   title={title}
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
@@ -256,9 +268,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                     border: 'none',
                     outline: 'none',
                     background: 'white',
-                    minHeight: '100%',
                     width: '100%',
-                    display: 'block'
+                    height: '100%'
                   }}
                   allowFullScreen
                 />
