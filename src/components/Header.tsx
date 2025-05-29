@@ -133,7 +133,7 @@ const Header = () => {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard/overview" className="cursor-pointer text-white hover:bg-white/10">
+                    <Link to="/dashboard" className="cursor-pointer text-white hover:bg-white/10">
                       <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                     </Link>
                   </DropdownMenuItem>
@@ -188,7 +188,7 @@ const Header = () => {
                   <Button 
                     variant="ghost" 
                     onClick={() => {
-                      navigate('/dashboard/overview');
+                      navigate('/dashboard');
                       setIsMobileMenuOpen(false);
                     }}
                     className="w-full justify-center rounded-full border border-white/30 text-white hover:bg-white/10"
