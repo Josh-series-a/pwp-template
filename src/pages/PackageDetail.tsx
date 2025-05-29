@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -68,7 +67,7 @@ const PackageDetail = () => {
         </div>
 
         <div className="space-y-8">
-          <div className="text-center">
+          <div className="text-left">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Plan Your Business Legacy with Confidence
             </h1>
