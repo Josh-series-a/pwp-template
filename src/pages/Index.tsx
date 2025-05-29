@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -64,12 +65,11 @@ const Index = () => {
             {/* Right Book Image */}
             <TransitionWrapper animation="slide-left" delay={200}>
               <div className="flex justify-center lg:justify-end">
-                <div className="relative transform hover:scale-105 transition-transform duration-500">
-                  <div className="absolute inset-0 bg-yellow-400/20 rounded-2xl blur-2xl transform translate-x-4 translate-y-4"></div>
+                <div className="relative">
                   <img 
                     src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
                     alt="Prosper with Purpose book" 
-                    className="relative w-80 lg:w-96 h-auto drop-shadow-2xl rounded-lg transform transition-transform duration-500"
+                    className="w-80 lg:w-96 h-auto"
                   />
                 </div>
               </div>
@@ -380,3 +380,4 @@ const Index = () => {
 };
 
 export default Index;
+
