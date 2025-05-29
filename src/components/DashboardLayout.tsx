@@ -92,7 +92,7 @@ const SidebarProfile = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem asChild>
-            <Link to="/dashboard/account" className="cursor-pointer">
+            <Link to="/account" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               Account Settings
             </Link>
@@ -113,7 +113,7 @@ const SidebarNavigation = () => {
   const navigation = [
     {
       name: 'Dashboard',
-      href: '/dashboard/overview',
+      href: '/dashboard',
       icon: Home
     }, 
     {
