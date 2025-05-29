@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -22,28 +23,28 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-24 px-6 md:px-8 bg-gradient-to-br from-yellow-400 via-yellow-300 to-amber-400 relative overflow-hidden">
+      <section className="pt-32 pb-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <TransitionWrapper animation="slide-right">
               <div className="space-y-8">
                 <div className="space-y-6">
-                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight">
+                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
                     Build Stronger
                     <br />
-                    Businesses <span className="text-blue-700 italic">With</span>
+                    Businesses <span className="text-yellow-400 italic">With</span>
                     <br />
-                    <span className="text-blue-700 italic">Less Stress</span>
+                    <span className="text-yellow-400 italic">Less Stress</span>
                   </h1>
                   
-                  <p className="text-xl md:text-2xl text-slate-800 leading-relaxed max-w-2xl">
-                    Transform your business with AI-powered insights from <span className="font-semibold text-slate-900">Prosper With Purpose</span>
+                  <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-2xl">
+                    Transform your business with AI-powered insights from <span className="font-semibold text-white">Prosper With Purpose</span>
                   </p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button asChild size="lg" className="bg-white text-slate-900 hover:bg-gray-50 rounded-full px-8 py-6 text-lg font-semibold shadow-lg border-0">
+                  <Button asChild size="lg" className="bg-yellow-400 text-slate-900 hover:bg-yellow-300 rounded-full px-8 py-6 text-lg font-semibold shadow-lg border-0">
                     <Link to="/chat">
                       Get Your Free Business Health Check
                     </Link>
@@ -51,7 +52,7 @@ const Index = () => {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="rounded-full px-8 py-6 text-lg font-semibold border-2 border-slate-900 bg-transparent text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-300"
+                    className="rounded-full px-8 py-6 text-lg font-semibold border-2 border-white bg-transparent text-white hover:bg-white hover:text-slate-900 transition-all duration-300"
                     onClick={() => setIsTalkToAuthorOpen(true)}
                   >
                     Talk to the Author
@@ -63,12 +64,12 @@ const Index = () => {
             {/* Right Book Image */}
             <TransitionWrapper animation="slide-left" delay={200}>
               <div className="flex justify-center lg:justify-end">
-                <div className="relative transform rotate-12 hover:rotate-6 transition-transform duration-500">
-                  <div className="absolute inset-0 bg-slate-900/20 rounded-2xl blur-2xl transform translate-x-4 translate-y-4"></div>
+                <div className="relative transform hover:scale-105 transition-transform duration-500">
+                  <div className="absolute inset-0 bg-yellow-400/20 rounded-2xl blur-2xl transform translate-x-4 translate-y-4"></div>
                   <img 
                     src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
                     alt="Prosper with Purpose book" 
-                    className="relative w-80 lg:w-96 h-auto drop-shadow-2xl rounded-lg transform hover:scale-105 transition-transform duration-500"
+                    className="relative w-80 lg:w-96 h-auto drop-shadow-2xl rounded-lg transform transition-transform duration-500"
                   />
                 </div>
               </div>
