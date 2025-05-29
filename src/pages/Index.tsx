@@ -419,9 +419,24 @@ const Index = () => {
             </div>
             
             <div className="pt-8 border-t border-white/10">
-              <p className="text-gray-500 text-sm">
-                &copy; {new Date().getFullYear()} Prosper with Purpose. All rights reserved.
-              </p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
+                  <Link to="/privacy-policy" className="hover:text-white transition-colors duration-300">
+                    Privacy Policy
+                  </Link>
+                  <span className="text-white/30">•</span>
+                  <Link to="/terms-of-service" className="hover:text-white transition-colors duration-300">
+                    Terms of Service
+                  </Link>
+                  <span className="text-white/30">•</span>
+                  <Link to="/cookie-policy" className="hover:text-white transition-colors duration-300">
+                    Cookie Policy
+                  </Link>
+                </div>
+                <p className="text-gray-500 text-sm">
+                  &copy; {new Date().getFullYear()} Prosper with Purpose. All rights reserved.
+                </p>
+              </div>
             </div>
           </div>
         </div>
