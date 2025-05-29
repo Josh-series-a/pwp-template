@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -100,8 +99,8 @@ const Index = () => {
       
       {/* How It Works Section */}
       <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(59,130,246,0.1),transparent_50%)] bg-[radial-gradient(circle_at_75%_75%,rgba(168,85,247,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-slate-900"></div>
+        <div className="absolute inset-0 bg-slate-900"></div>
         
         <div className="max-w-6xl mx-auto relative z-10">
           <TransitionWrapper>
