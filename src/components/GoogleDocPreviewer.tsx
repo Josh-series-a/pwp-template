@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,19 +41,19 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
       if (match) {
         const docId = match[1];
         
-        // Determine document type and return appropriate embed URL
+        // Determine document type and return appropriate embed URL (not preview)
         if (url.includes('spreadsheets')) {
-          return `https://docs.google.com/spreadsheets/d/${docId}/preview`;
+          return `https://docs.google.com/spreadsheets/d/${docId}/embed`;
         } else if (url.includes('presentation')) {
-          return `https://docs.google.com/presentation/d/${docId}/preview`;
+          return `https://docs.google.com/presentation/d/${docId}/embed`;
         } else {
-          return `https://docs.google.com/document/d/${docId}/preview`;
+          return `https://docs.google.com/document/d/${docId}/embed`;
         }
       }
     }
 
-    // If already a preview URL, return as is
-    if (url.includes('/preview')) {
+    // If already an embed URL, return as is
+    if (url.includes('/embed')) {
       return url;
     }
 
