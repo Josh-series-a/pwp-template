@@ -157,10 +157,7 @@ const Index = () => {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <TransitionWrapper animation="slide-right" delay={100}>
               <div className="relative">
-                <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-3xl blur-3xl"></div>
-                <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl">
-                  <img src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" alt="Prosper with Purpose book cover" className="relative w-full max-w-md mx-auto shadow-2xl rounded-2xl" />
-                </div>
+                <img src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" alt="Prosper with Purpose book cover" className="relative w-full max-w-md mx-auto" />
               </div>
             </TransitionWrapper>
             
