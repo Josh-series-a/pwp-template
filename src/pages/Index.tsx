@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -214,12 +215,14 @@ const Index = () => {
       </section>
       
       {/* Report Features */}
-      <section className="py-24 px-6 md:px-8">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-slate-900"></div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <TransitionWrapper>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">Your Complete Business Analysis</h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Your Complete Business Analysis</h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                 Everything you need to take your business to the next level
               </p>
             </div>
@@ -227,26 +230,45 @@ const Index = () => {
           
           <div className="grid md:grid-cols-2 gap-8">
             {[{
-            icon: FileText,
-            title: "Executive Summary",
-            description: "AI-powered analysis based on your business profile",
-            gradient: "from-blue-500 to-cyan-500"
-          }, {
-            icon: Lightbulb,
-            title: "Strategic Insights",
-            description: "Key observations aligned with proven business principles",
-            gradient: "from-amber-500 to-orange-500"
-          }, {
-            icon: Target,
-            title: "Action Plan",
-            description: "Step-by-step exercises to implement immediately",
-            gradient: "from-green-500 to-emerald-500"
-          }, {
-            icon: BarChart3,
-            title: "Growth Roadmap",
-            description: "Data-driven recommendations for sustainable expansion",
-            gradient: "from-purple-500 to-pink-500"
-          }].map((feature, index) => <FeatureCard key={index} icon={<feature.icon className="h-6 w-6" />} title={feature.title} description={feature.description} delay={index * 100} />)}
+              icon: FileText,
+              title: "Executive Summary",
+              description: "AI-powered analysis based on your business profile",
+              gradient: "from-blue-500 to-cyan-500"
+            }, {
+              icon: Lightbulb,
+              title: "Strategic Insights",
+              description: "Key observations aligned with proven business principles",
+              gradient: "from-amber-500 to-orange-500"
+            }, {
+              icon: Target,
+              title: "Action Plan",
+              description: "Step-by-step exercises to implement immediately",
+              gradient: "from-green-500 to-emerald-500"
+            }, {
+              icon: BarChart3,
+              title: "Growth Roadmap",
+              description: "Data-driven recommendations for sustainable expansion",
+              gradient: "from-purple-500 to-pink-500"
+            }].map((feature, index) => (
+              <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
+                <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group">
+                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient}`}></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  <CardHeader className="pb-4 relative z-10">
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <feature.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <CardTitle className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors duration-300">{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    <CardDescription className="text-gray-300 leading-relaxed text-base">
+                      {feature.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </TransitionWrapper>
+            ))}
           </div>
         </div>
       </section>
