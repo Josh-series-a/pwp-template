@@ -5,13 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ExternalLink, FileText, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { 
-  isGoogleDocument, 
-  getDocumentViewerUrl, 
-  getCleanEmbedUrl,
-  getDocumentInfo,
-  getEmbedFallbackUrls
-} from '@/components/documents/utils/document-utils';
 
 interface CustomDocumentViewerProps {
   docUrl?: string;
@@ -35,19 +28,52 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  const getDocumentIdFromUrl = (url: string): string | null => {
+    const patterns = [
+      /\/document\/d\/([a-zA-Z0-9-_]+)/,
+      /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/,
+      /\/presentation\/d\/([a-zA-Z0-9-_]+)/,
+      /id=([a-zA-Z0-9-_]+)/
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return match[1];
+      }
+    }
+    return null;
+  };
+
+  const getViewOnlyUrls = (url: string): string[] => {
+    const docId = getDocumentIdFromUrl(url);
+    if (!docId) return [url];
+
+    // Return multiple view-only URL formats to try
+    const viewUrls = [
+      // Primary view-only URL (no editing interface)
+      `https://docs.google.com/document/d/${docId}/preview`,
+      // Embedded viewer with minimal UI
+      `https://docs.google.com/document/d/${docId}/pub?embedded=true`,
+      // Alternative embed format
+      `https://docs.google.com/viewer?url=https://docs.google.com/document/d/${docId}/export?format=pdf&embedded=true`,
+      // PDF export embedded
+      `https://drive.google.com/file/d/${docId}/preview`
+    ];
+
+    return viewUrls;
+  };
+
   const processDocumentUrl = (url: string) => {
     if (!url.trim()) return { processedUrl: '', fallbacks: [] };
     
-    const docInfo = getDocumentInfo(url);
-    
-    if (docInfo.isGoogleDocument && docInfo.fileId) {
-      // Get multiple fallback URLs to try
-      const fallbacks = getEmbedFallbackUrls(url);
+    try {
+      const fallbacks = getViewOnlyUrls(url);
       return { processedUrl: fallbacks[0], fallbacks };
+    } catch (error) {
+      console.error('Error processing document URL:', error);
+      return { processedUrl: url, fallbacks: [url] };
     }
-    
-    // For non-Google documents, return as-is
-    return { processedUrl: url, fallbacks: [url] };
   };
 
   const handleLoadDocument = () => {
@@ -57,20 +83,14 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
     setHasError(false);
     setCurrentFallbackIndex(0);
     
-    try {
-      const { processedUrl, fallbacks } = processDocumentUrl(docUrl);
-      setCurrentUrl(processedUrl);
-      setFallbackUrls(fallbacks);
-      
-      // Simulate loading time
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error('Error processing document URL:', error);
-      setHasError(true);
+    const { processedUrl, fallbacks } = processDocumentUrl(docUrl);
+    setCurrentUrl(processedUrl);
+    setFallbackUrls(fallbacks);
+    
+    // Simulate loading time
+    setTimeout(() => {
       setIsLoading(false);
-    }
+    }, 1000);
   };
 
   const handleIframeLoad = () => {
@@ -177,7 +197,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="relative border-t bg-white"
+          className="relative border-t bg-white overflow-hidden"
           style={{ height }}
         >
           {!currentUrl && !isLoading ? (
@@ -222,11 +242,11 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                 </div>
               )}
               
-              <div className="w-full h-full overflow-hidden rounded-b-lg">
+              <div className="w-full h-full rounded-b-lg">
                 <iframe
-                  key={currentUrl} // Force re-render when URL changes
+                  key={currentUrl}
                   src={currentUrl}
-                  className="w-full h-full border-0"
+                  className="w-full h-full border-0 rounded-b-lg"
                   title={title}
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
