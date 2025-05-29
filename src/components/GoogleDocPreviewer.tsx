@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,13 +42,14 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
       if (match) {
         const docId = match[1];
         
-        // Use published URLs that show only document content without any Google interface
+        // Use embedded viewer URLs that show minimal interface
         if (url.includes('spreadsheets')) {
-          return `https://docs.google.com/spreadsheets/d/${docId}/pub?output=html`;
+          return `https://docs.google.com/spreadsheets/d/${docId}/pubhtml?gid=0&single=true&widget=true&headers=false`;
         } else if (url.includes('presentation')) {
-          return `https://docs.google.com/presentation/d/${docId}/pub?start=false&loop=false&delayms=3000`;
+          return `https://docs.google.com/presentation/d/${docId}/embed?start=false&loop=false&delayms=3000`;
         } else {
-          return `https://docs.google.com/document/d/${docId}/pub`;
+          // For documents, use the embedded viewer with minimal UI
+          return `https://docs.google.com/document/d/${docId}/pub?embedded=true`;
         }
       }
     }
@@ -174,10 +176,15 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
               
               <iframe
                 src={currentUrl}
-                className="w-full h-full border-0 rounded-b-lg"
+                className="w-full h-full border-0 rounded-b-lg bg-white"
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
                 title={title}
+                sandbox="allow-scripts allow-same-origin allow-popups"
+                style={{ 
+                  border: 'none',
+                  outline: 'none'
+                }}
               />
             </>
           )}
