@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -67,7 +68,7 @@ const Index = () => {
                   <img 
                     src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
                     alt="Prosper with Purpose book" 
-                    className="w-80 lg:w-96 h-auto"
+                    className="w-96 lg:w-[500px] xl:w-[600px] h-auto"
                   />
                 </div>
               </div>
