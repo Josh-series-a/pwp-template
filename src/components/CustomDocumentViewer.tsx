@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,7 +32,6 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       /\/document\/d\/([a-zA-Z0-9-_]+)/,
       /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/,
       /\/presentation\/d\/([a-zA-Z0-9-_]+)/,
-      /\/file\/d\/([a-zA-Z0-9-_]+)/,
       /id=([a-zA-Z0-9-_]+)/
     ];
 
@@ -52,14 +50,14 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 
     // Return multiple view-only URL formats to try
     const viewUrls = [
-      // Google Drive preview - most reliable for iframes
-      `https://drive.google.com/file/d/${docId}/preview`,
-      // Document embed format
-      `https://docs.google.com/document/d/${docId}/edit?usp=sharing&embedded=true`,
+      // Primary view-only URL (no editing interface)
+      `https://docs.google.com/document/d/${docId}/preview`,
+      // Embedded viewer with minimal UI
+      `https://docs.google.com/document/d/${docId}/pub?embedded=true`,
       // Alternative embed format
-      `https://docs.google.com/document/d/${docId}/preview?embedded=true`,
-      // Published format
-      `https://docs.google.com/document/d/${docId}/pub?embedded=true`
+      `https://docs.google.com/viewer?url=https://docs.google.com/document/d/${docId}/export?format=pdf&embedded=true`,
+      // PDF export embedded
+      `https://drive.google.com/file/d/${docId}/preview`
     ];
 
     return viewUrls;
@@ -198,7 +196,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="w-full border-t bg-white overflow-hidden"
+          className="relative border-t bg-white"
           style={{ height }}
         >
           {!currentUrl && !isLoading ? (
@@ -233,7 +231,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               </div>
             </div>
           ) : (
-            <div className="w-full h-full relative">
+            <div className="relative w-full h-full">
               {isLoading && (
                 <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10">
                   <div className="text-center">
@@ -246,15 +244,18 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               <iframe
                 key={currentUrl}
                 src={currentUrl}
-                className="w-full h-full border-0"
+                className="w-full h-full border-0 rounded-b-lg"
                 title={title}
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
-                allow="autoplay"
-                style={{
-                  minHeight: height,
+                allowFullScreen
+                style={{ 
+                  border: 'none',
+                  outline: 'none',
+                  background: 'white',
                   width: '100%',
-                  height: '100%'
+                  height: '100%',
+                  display: 'block'
                 }}
               />
             </div>
