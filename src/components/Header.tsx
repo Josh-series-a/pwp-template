@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -69,9 +70,9 @@ const Header = () => {
   
   return (
     <header className={cn(
-      "fixed w-full top-0 z-50 transition-all duration-300 ease-in-out",
+      "fixed w-full top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
       "px-6 md:px-8 py-4"
-    )}>
+    )} style={{ position: 'fixed' }}>
       <div className={cn(
         "max-w-6xl mx-auto rounded-2xl transition-all duration-300 ease-in-out px-6 py-3",
         "backdrop-blur-md border border-white/10",
