@@ -47,7 +47,7 @@ const Index = () => {
                       Get Your Free Business Health Check
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-lg font-semibold border-2 border-white bg-transparent text-black hover:bg-white hover:text-slate-900 transition-all duration-300" onClick={() => setIsTalkToAuthorOpen(true)}>
+                  <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-lg font-semibold border-2 border-white bg-transparent text-white hover:bg-white hover:text-slate-900 transition-all duration-300" onClick={() => setIsTalkToAuthorOpen(true)}>
                     Talk to the Author
                   </Button>
                 </div>
