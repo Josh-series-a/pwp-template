@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -336,6 +335,24 @@ This report was generated on ${new Date().toLocaleDateString()}.
     return score !== null && score !== undefined ? Math.round(score * 10) / 10 : '-';
   };
 
+  const ScoreCell = ({ score }: { score: number | null | undefined }) => {
+    if (score === null || score === undefined) {
+      return (
+        <TableCell className="text-center">
+          <div className="flex justify-center">
+            <Skeleton className="h-4 w-8" />
+          </div>
+        </TableCell>
+      );
+    }
+    
+    return (
+      <TableCell className={`text-center font-medium ${getScoreColor(score)}`}>
+        {formatScore(score)}
+      </TableCell>
+    );
+  };
+
   return (
     <DashboardLayout title="My Reports">
       <div className="space-y-6">
@@ -399,24 +416,12 @@ This report was generated on ${new Date().toLocaleDateString()}.
                             {report.status}
                           </span>
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.plan)}`}>
-                          {formatScore(report.plan)}
-                        </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.people)}`}>
-                          {formatScore(report.people)}
-                        </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.profits)}`}>
-                          {formatScore(report.profits)}
-                        </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.purposeImpact)}`}>
-                          {formatScore(report.purposeImpact)}
-                        </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.stressLeadership)}`}>
-                          {formatScore(report.stressLeadership)}
-                        </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.overall)}`}>
-                          {formatScore(report.overall)}
-                        </TableCell>
+                        <ScoreCell score={report.plan} />
+                        <ScoreCell score={report.people} />
+                        <ScoreCell score={report.profits} />
+                        <ScoreCell score={report.purposeImpact} />
+                        <ScoreCell score={report.stressLeadership} />
+                        <ScoreCell score={report.overall} />
                         <TableCell className="text-right">
                           <div 
                             onClick={(e) => e.stopPropagation()}
