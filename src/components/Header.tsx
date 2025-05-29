@@ -75,7 +75,7 @@ const Header = () => {
       <div className={cn(
         "max-w-6xl mx-auto rounded-2xl transition-all duration-300 ease-in-out px-6 py-3",
         "backdrop-blur-md border border-white/10",
-        "bg-slate-900/95 shadow-xl border-white/20"
+        "bg-slate-900 shadow-xl border-white/20"
       )}>
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
