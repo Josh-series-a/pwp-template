@@ -5,6 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ExternalLink, FileText, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { 
+  isGoogleDocument, 
+  getDocumentViewerUrl, 
+  getCleanEmbedUrl,
+  getDocumentInfo 
+} from '@/components/documents/utils/document-utils';
 
 interface CustomDocumentViewerProps {
   docUrl?: string;
@@ -22,61 +28,53 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   showUrlInput = true
 }) => {
   const [docUrl, setDocUrl] = useState(initialUrl);
-  const [currentUrl, setCurrentUrl] = useState(initialUrl);
+  const [currentUrl, setCurrentUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [documentContent, setDocumentContent] = useState<string>('');
 
-  const extractDocumentId = (url: string): string | null => {
-    const patterns = [
-      /\/document\/d\/([a-zA-Z0-9-_]+)/,
-      /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/,
-      /\/presentation\/d\/([a-zA-Z0-9-_]+)/,
-      /id=([a-zA-Z0-9-_]+)/
-    ];
-
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) {
-        return match[1];
-      }
+  const processDocumentUrl = (url: string) => {
+    if (!url.trim()) return '';
+    
+    const docInfo = getDocumentInfo(url);
+    
+    if (docInfo.isGoogleDocument && docInfo.fileId) {
+      // Use clean embed URL for minimal Google interface
+      return getCleanEmbedUrl(url);
     }
-    return null;
+    
+    // For non-Google documents, return as-is
+    return url;
   };
 
-  const fetchDocumentContent = async (url: string) => {
+  const handleLoadDocument = () => {
+    if (!docUrl.trim()) return;
+    
     setIsLoading(true);
     setHasError(false);
     
     try {
-      const docId = extractDocumentId(url);
-      if (!docId) {
-        throw new Error('Invalid document URL');
-      }
-
-      // Use the export URL to get HTML content
-      const exportUrl = `https://docs.google.com/document/d/${docId}/export?format=html`;
-      
-      // Note: Due to CORS restrictions, we'll need to use a proxy or alternative approach
-      // For now, we'll create a clean iframe with minimal Google interface
-      const cleanUrl = `https://docs.google.com/document/d/${docId}/pub?embedded=true`;
-      setCurrentUrl(cleanUrl);
+      const processedUrl = processDocumentUrl(docUrl);
+      setCurrentUrl(processedUrl);
       
       // Simulate loading time
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
-      
     } catch (error) {
-      console.error('Error fetching document:', error);
+      console.error('Error processing document URL:', error);
       setHasError(true);
       setIsLoading(false);
     }
   };
 
-  const handleLoadDocument = () => {
-    if (!docUrl.trim()) return;
-    fetchDocumentContent(docUrl);
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  const handleIframeError = () => {
+    setIsLoading(false);
+    setHasError(true);
   };
 
   const openInNewTab = () => {
@@ -87,7 +85,9 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 
   useEffect(() => {
     if (initialUrl) {
-      fetchDocumentContent(initialUrl);
+      const processedUrl = processDocumentUrl(initialUrl);
+      setCurrentUrl(processedUrl);
+      setDocUrl(initialUrl);
     }
   }, [initialUrl]);
 
@@ -181,6 +181,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                   src={currentUrl}
                   className="w-full h-full border-0"
                   title={title}
+                  onLoad={handleIframeLoad}
+                  onError={handleIframeError}
                   sandbox="allow-scripts allow-same-origin"
                   style={{ 
                     border: 'none',
@@ -188,12 +190,6 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                     background: 'white'
                   }}
                 />
-                {/* Overlay to hide Google branding */}
-                <style>{`
-                  iframe {
-                    filter: contrast(1.1) brightness(0.98);
-                  }
-                `}</style>
               </div>
             </>
           )}
