@@ -84,21 +84,23 @@ const PackageDetail = () => {
                 className="cursor-pointer hover:shadow-lg transition-shadow duration-200 hover:scale-105 transform"
                 onClick={() => handleDocumentClick(doc)}
               >
-                <CardHeader className="pb-4">
-                  <div className="mb-4">
-                    <img 
-                      src={doc.thumbnail} 
-                      alt={doc.title}
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
+                <CardHeader className="pb-2">
+                  <div className="mb-3">
+                    <div className="w-full aspect-[3/4] overflow-hidden rounded-lg bg-gray-100">
+                      <img 
+                        src={doc.thumbnail} 
+                        alt={doc.title}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
                   </div>
-                  <CardTitle className="text-lg text-center">{doc.title}</CardTitle>
+                  <CardTitle className="text-sm text-center leading-tight">{doc.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-gray-600 text-center mb-4">
+                <CardContent className="pt-0 pb-4">
+                  <p className="text-xs text-gray-600 text-center mb-3 line-clamp-2">
                     {doc.description}
                   </p>
-                  <div className="flex justify-center gap-2">
+                  <div className="flex justify-center">
                     <Button
                       size="sm"
                       variant="outline"
@@ -107,7 +109,7 @@ const PackageDetail = () => {
                         openInNewTab(doc.url);
                       }}
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      <ExternalLink className="h-3 w-3" />
                     </Button>
                   </div>
                 </CardContent>
