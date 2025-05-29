@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -26,7 +25,7 @@ const Index = () => {
       <section 
         className="pt-32 pb-24 px-6 md:px-8 relative overflow-hidden bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/lovable-uploads/PWPhero.png')`
+          backgroundImage: `url('/lovable-uploads/PWPhero.png')`
         }}
       >
         {/* Background Elements */}
