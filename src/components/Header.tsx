@@ -69,7 +69,7 @@ const Header = () => {
   
   return (
     <header className={cn(
-      "sticky w-full top-0 z-50 transition-all duration-300 ease-in-out",
+      "fixed w-full top-0 z-50 transition-all duration-300 ease-in-out",
       "px-6 md:px-8 py-4"
     )}>
       <div className={cn(
