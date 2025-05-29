@@ -97,6 +97,7 @@ const Header = () => {
           
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink to="/" current={location.pathname === "/"} isScrolled={true}>Home</NavLink>
+            <NavLink to="/about" current={location.pathname === "/about"} isScrolled={true}>About</NavLink>
             <NavLink to="/products" current={location.pathname === "/products"} isScrolled={true}>Products</NavLink>
           </nav>
           
@@ -170,6 +171,7 @@ const Header = () => {
           <div className="md:hidden mt-4 pt-4 border-t border-white/20 rounded-xl p-4 backdrop-blur-md bg-slate-800/50">
             <nav className="flex flex-col space-y-4 mb-4">
               <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={true}>Home</MobileNavLink>
+              <MobileNavLink to="/about" current={location.pathname === "/about"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={true}>About</MobileNavLink>
               <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={true}>Products</MobileNavLink>
             </nav>
             
