@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,13 +41,13 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
       if (match) {
         const docId = match[1];
         
-        // Use direct iframe URLs for clean document viewing
+        // Use preview URLs that show only document content without editor
         if (url.includes('spreadsheets')) {
-          return `https://docs.google.com/spreadsheets/d/${docId}/edit?usp=sharing&rm=minimal`;
+          return `https://docs.google.com/spreadsheets/d/${docId}/preview`;
         } else if (url.includes('presentation')) {
-          return `https://docs.google.com/presentation/d/${docId}/edit?usp=sharing&rm=minimal`;
+          return `https://docs.google.com/presentation/d/${docId}/preview`;
         } else {
-          return `https://docs.google.com/document/d/${docId}/edit?usp=sharing&rm=minimal`;
+          return `https://docs.google.com/document/d/${docId}/preview`;
         }
       }
     }
@@ -179,8 +178,6 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
                 title={title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
               />
             </>
           )}
