@@ -22,69 +22,58 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section 
-        className="pt-32 pb-24 px-6 md:px-8 relative overflow-hidden bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url('/lovable-uploads/PWPhero.png')`
-        }}
-      >
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-green-400/10 to-blue-600/10 rounded-full blur-3xl"></div>
-        </div>
-        
+      <section className="pt-32 pb-24 px-6 md:px-8 bg-gradient-to-br from-yellow-400 via-yellow-300 to-amber-400 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
-          <div className="text-center max-w-4xl mx-auto space-y-8">
-            <TransitionWrapper animation="fade">
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white mb-6">
-                <Zap className="w-4 h-4" />
-                <span className="text-sm font-semibold">AI-Powered Business Intelligence</span>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <TransitionWrapper animation="slide-right">
+              <div className="space-y-8">
+                <div className="space-y-6">
+                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight">
+                    Build Stronger
+                    <br />
+                    Businesses <span className="text-blue-700 italic">With</span>
+                    <br />
+                    <span className="text-blue-700 italic">Less Stress</span>
+                  </h1>
+                  
+                  <p className="text-xl md:text-2xl text-slate-800 leading-relaxed max-w-2xl">
+                    Transform your business with AI-powered insights from <span className="font-semibold text-slate-900">Prosper With Purpose</span>
+                  </p>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button asChild size="lg" className="bg-white text-slate-900 hover:bg-gray-50 rounded-full px-8 py-6 text-lg font-semibold shadow-lg border-0">
+                    <Link to="/chat">
+                      Get Your Free Business Health Check
+                    </Link>
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="rounded-full px-8 py-6 text-lg font-semibold border-2 border-slate-900 bg-transparent text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-300"
+                    onClick={() => setIsTalkToAuthorOpen(true)}
+                  >
+                    Talk to the Author
+                  </Button>
+                </div>
               </div>
             </TransitionWrapper>
             
-            <TransitionWrapper animation="slide-down" delay={100}>
-              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight tracking-tight drop-shadow-lg">
-                Build Stronger Businesses
-                <span className="block text-4xl md:text-6xl mt-2">With Less Stress</span>
-              </h1>
-            </TransitionWrapper>
-            
-            <TransitionWrapper animation="slide-up" delay={200}>
-              <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-md">
-                Transform your business with AI-powered insights from <span className="text-blue-300 font-semibold">Prosper With Purpose</span>
-              </p>
-            </TransitionWrapper>
-            
-            <TransitionWrapper animation="slide-up" delay={300}>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
-                <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white border-0 rounded-2xl px-8 py-6 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                  <Link to="/chat">
-                    Get Your Free Business Health Check
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="rounded-2xl px-8 py-6 text-lg font-semibold border-2 border-white/50 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300" onClick={() => setIsTalkToAuthorOpen(true)}>
-                  <Headphones className="mr-2 h-5 w-5" />
-                  Talk to the Author
-                </Button>
+            {/* Right Book Image */}
+            <TransitionWrapper animation="slide-left" delay={200}>
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative transform rotate-12 hover:rotate-6 transition-transform duration-500">
+                  <div className="absolute inset-0 bg-slate-900/20 rounded-2xl blur-2xl transform translate-x-4 translate-y-4"></div>
+                  <img 
+                    src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
+                    alt="Prosper with Purpose book" 
+                    className="relative w-80 lg:w-96 h-auto drop-shadow-2xl rounded-lg transform hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
               </div>
             </TransitionWrapper>
           </div>
-          
-          {/* Book Image - Modern Floating Design */}
-          <TransitionWrapper animation="fade" delay={400}>
-            <div className="mt-20 flex justify-center">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-3xl blur-2xl transform rotate-6 scale-110 opacity-75 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <img 
-                  src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
-                  alt="Prosper with Purpose book" 
-                  className="relative w-80 h-auto drop-shadow-2xl rounded-2xl transform hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-            </div>
-          </TransitionWrapper>
         </div>
       </section>
       
