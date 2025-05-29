@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -81,12 +80,20 @@ const Header = () => {
           : "bg-white/5 hover:bg-white/10"
       )}>
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-3">
             <img 
-              src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" 
+              src="/lovable-uploads/PWP.svg" 
               alt="Prosper with Purpose Logo" 
-              className="h-8 md:h-10"
+              className="h-8 md:h-10 w-8 md:w-10"
             />
+            <div className="hidden sm:block">
+              <span className={cn(
+                "text-lg md:text-xl font-bold leading-tight transition-colors duration-300",
+                isScrolled ? "text-white" : "text-white/90"
+              )}>
+                Prosper<br />With Purpose
+              </span>
+            </div>
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
