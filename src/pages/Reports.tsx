@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -49,7 +48,13 @@ interface Report {
   status: string;
   pitchDeckUrl?: string;
   exerciseId?: string;
-  companyId?: string; // Add companyId to interface
+  companyId?: string;
+  plan?: number;
+  people?: number;
+  profits?: number;
+  purposeImpact?: number;
+  stressLeadership?: number;
+  overall?: number;
 }
 
 const Reports = () => {
@@ -84,7 +89,14 @@ const Reports = () => {
             company: report.company_name,
             status: report.status,
             exerciseId: report.exercise_id,
-            companyId: report.company_id // Include company_id from database
+            companyId: report.company_id,
+            // Mock data for the new columns - in a real app these would come from the database
+            plan: Math.floor(Math.random() * 100) + 1,
+            people: Math.floor(Math.random() * 100) + 1,
+            profits: Math.floor(Math.random() * 100) + 1,
+            purposeImpact: Math.floor(Math.random() * 100) + 1,
+            stressLeadership: Math.floor(Math.random() * 100) + 1,
+            overall: Math.floor(Math.random() * 100) + 1,
           }));
           setReports(formattedReports);
         }
@@ -233,7 +245,13 @@ This report was generated on ${new Date().toLocaleDateString()}.
           status: reportData.status,
           pitchDeckUrl: reportData.pitch_deck_url,
           exerciseId: reportData.exercise_id,
-          companyId: reportData.company_id
+          companyId: reportData.company_id,
+          plan: Math.floor(Math.random() * 100) + 1,
+          people: Math.floor(Math.random() * 100) + 1,
+          profits: Math.floor(Math.random() * 100) + 1,
+          purposeImpact: Math.floor(Math.random() * 100) + 1,
+          stressLeadership: Math.floor(Math.random() * 100) + 1,
+          overall: Math.floor(Math.random() * 100) + 1,
         };
         
         setReports([newReport, ...reports]);
@@ -317,6 +335,12 @@ This report was generated on ${new Date().toLocaleDateString()}.
     }
   };
 
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
   return (
     <DashboardLayout title="My Reports">
       <div className="space-y-6">
@@ -341,81 +365,107 @@ This report was generated on ${new Date().toLocaleDateString()}.
             {isLoading ? (
               <div className="text-center py-8">Loading reports...</div>
             ) : reports.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Company</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {reports.map((report) => (
-                    <TableRow 
-                      key={report.id} 
-                      className="cursor-pointer hover:bg-muted/70"
-                      onClick={() => navigateToReport(report)}
-                    >
-                      <TableCell className="font-medium">{report.title}</TableCell>
-                      <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
-                      <TableCell>{report.company}</TableCell>
-                      <TableCell>
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          report.status === 'In Progress' 
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-green-100 text-green-800'
-                        }`}>
-                          {report.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div 
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => navigateToReport(report)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Report
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => openViewModal(report.id)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Quick View
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDownload(report)}>
-                                <DownloadCloud className="mr-2 h-4 w-4" />
-                                Download
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
-                                <RefreshCw className="mr-2 h-4 w-4" />
-                                Re-analyze
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleShare(report)}>
-                                <Share2 className="mr-2 h-4 w-4" />
-                                Share
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => handleDelete(report)}
-                                className="text-red-600 focus:text-red-600"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-center">Plan</TableHead>
+                      <TableHead className="text-center">People</TableHead>
+                      <TableHead className="text-center">Profits</TableHead>
+                      <TableHead className="text-center">Purpose & Impact</TableHead>
+                      <TableHead className="text-center">Stress & Leadership</TableHead>
+                      <TableHead className="text-center">Overall</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.map((report) => (
+                      <TableRow 
+                        key={report.id} 
+                        className="cursor-pointer hover:bg-muted/70"
+                        onClick={() => navigateToReport(report)}
+                      >
+                        <TableCell className="font-medium">{report.title}</TableCell>
+                        <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
+                        <TableCell>{report.company}</TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            report.status === 'In Progress' 
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-green-100 text-green-800'
+                          }`}>
+                            {report.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.plan || 0)}`}>
+                          {report.plan || '-'}
+                        </TableCell>
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.people || 0)}`}>
+                          {report.people || '-'}
+                        </TableCell>
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.profits || 0)}`}>
+                          {report.profits || '-'}
+                        </TableCell>
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.purposeImpact || 0)}`}>
+                          {report.purposeImpact || '-'}
+                        </TableCell>
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.stressLeadership || 0)}`}>
+                          {report.stressLeadership || '-'}
+                        </TableCell>
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.overall || 0)}`}>
+                          {report.overall || '-'}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div 
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => navigateToReport(report)}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  View Report
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => openViewModal(report.id)}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  Quick View
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownload(report)}>
+                                  <DownloadCloud className="mr-2 h-4 w-4" />
+                                  Download
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
+                                  <RefreshCw className="mr-2 h-4 w-4" />
+                                  Re-analyze
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare(report)}>
+                                  <Share2 className="mr-2 h-4 w-4" />
+                                  Share
+                                </DropdownMenuItem>
+                                <DropdownMenuItem 
+                                  onClick={() => handleDelete(report)}
+                                  className="text-red-600 focus:text-red-600"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             ) : (
               <div className="text-center py-8">
                 No reports found. Click "Run New Analysis" to create your first report.
