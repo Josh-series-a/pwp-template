@@ -69,16 +69,10 @@ const Header = () => {
   const userInitials = user?.user_metadata?.name ? getInitials(user.user_metadata.name) : 'U';
   
   return (
-    <header 
-      className="w-full px-6 md:px-8 py-4 transition-all duration-300 ease-in-out"
-      style={{ 
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 50
-      }}
-    >
+    <header className={cn(
+      "w-full top-0 z-50 transition-all duration-300 ease-in-out",
+      "px-6 md:px-8 py-4"
+    )}>
       <div className={cn(
         "max-w-6xl mx-auto rounded-2xl transition-all duration-300 ease-in-out px-6 py-3",
         "backdrop-blur-md border border-white/10",
