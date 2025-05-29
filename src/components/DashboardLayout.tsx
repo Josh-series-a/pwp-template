@@ -123,17 +123,17 @@ const SidebarNavigation = () => {
     }, 
     {
       name: 'Read',
-      href: '/dashboard/read',
+      href: '/read',
       icon: Book
     }, 
     {
       name: 'Book Insights',
-      href: '/dashboard/book-insights',
+      href: '/insights',
       icon: BookOpen
     }, 
     {
       name: 'Exercises',
-      href: '/dashboard/exercises',
+      href: '/exercises',
       icon: Dumbbell
     }, 
     {
