@@ -57,7 +57,7 @@ const Index = () => {
             <TransitionWrapper animation="slide-left" delay={200}>
               <div className="flex justify-center lg:justify-end">
                 <div className="relative">
-                  <img src="/lovable-uploads/img_20191225_164551120.webp" alt="Prosper with Purpose book" className="w-96 lg:w-[500px] xl:w-[600px] h-auto" />
+                  <img src="/lovable-uploads/BookDigital.png" alt="Prosper with Purpose book" className="w-96 lg:w-[500px] xl:w-[600px] h-auto" />
                 </div>
               </div>
             </TransitionWrapper>
