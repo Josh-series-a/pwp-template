@@ -75,9 +75,7 @@ const Header = () => {
       <div className={cn(
         "max-w-6xl mx-auto rounded-2xl transition-all duration-300 ease-in-out px-6 py-3",
         "backdrop-blur-md border border-white/10",
-        isScrolled 
-          ? "bg-slate-900/95 shadow-xl border-white/20" 
-          : "bg-white/5 hover:bg-white/10"
+        "bg-slate-900/95 shadow-xl border-white/20"
       )}>
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
@@ -89,7 +87,7 @@ const Header = () => {
             <div className="hidden sm:block">
               <span className={cn(
                 "text-lg md:text-xl font-bold leading-tight transition-colors duration-300",
-                isScrolled ? "text-white" : "text-white/90"
+                "text-white"
               )}>
                 Prosper<br />With Purpose
               </span>
@@ -97,15 +95,12 @@ const Header = () => {
           </Link>
           
           <nav className="hidden md:flex items-center space-x-8">
-            <NavLink to="/" current={location.pathname === "/"} isScrolled={isScrolled}>Home</NavLink>
-            <NavLink to="/products" current={location.pathname === "/products"} isScrolled={isScrolled}>Products</NavLink>
+            <NavLink to="/" current={location.pathname === "/"} isScrolled={true}>Home</NavLink>
+            <NavLink to="/products" current={location.pathname === "/products"} isScrolled={true}>Products</NavLink>
           </nav>
           
           <button 
-            className={cn(
-              "md:hidden transition-colors duration-300",
-              isScrolled ? "text-white" : "text-white/90"
-            )}
+            className="md:hidden text-white transition-colors duration-300"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
           >
@@ -118,11 +113,7 @@ const Header = () => {
             ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className={cn(
-                    "flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300",
-                    "hover:bg-white/10 border border-white/20",
-                    isScrolled ? "text-white" : "text-white/90"
-                  )}>
+                  <Button variant="ghost" className="flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:bg-white/10 border border-white/20 text-white">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user?.user_metadata?.avatar_url} />
                       <AvatarFallback className="bg-white/20 text-white text-xs">{userInitials}</AvatarFallback>
@@ -158,22 +149,14 @@ const Header = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" className={cn(
-                    "rounded-full border border-white/30 backdrop-blur-sm transition-all duration-300",
-                    "hover:bg-white/10 hover:border-white/50",
-                    isScrolled ? "text-white" : "text-white/90"
-                  )}>
+                  <Button variant="ghost" className="rounded-full border border-white/30 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-white/50 text-white">
                     <LogIn className="mr-2 h-3 w-3" />
                     Login
                   </Button>
                 </Link>
                 <Link 
                   to="/signup"
-                  className={cn(
-                    "px-6 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                    "bg-yellow-400 text-slate-900 hover:bg-yellow-300 shadow-lg",
-                    "border-0 hover:scale-105"
-                  )}
+                  className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-yellow-400 text-slate-900 hover:bg-yellow-300 shadow-lg border-0 hover:scale-105"
                 >
                   Sign up
                 </Link>
@@ -183,14 +166,10 @@ const Header = () => {
         </div>
         
         {isMobileMenuOpen && (
-          <div className={cn(
-            "md:hidden mt-4 pt-4 border-t border-white/20",
-            "rounded-xl p-4 backdrop-blur-md",
-            isScrolled ? "bg-slate-800/50" : "bg-white/10"
-          )}>
+          <div className="md:hidden mt-4 pt-4 border-t border-white/20 rounded-xl p-4 backdrop-blur-md bg-slate-800/50">
             <nav className="flex flex-col space-y-4 mb-4">
-              <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={isScrolled}>Home</MobileNavLink>
-              <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={isScrolled}>Products</MobileNavLink>
+              <MobileNavLink to="/" current={location.pathname === "/"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={true}>Home</MobileNavLink>
+              <MobileNavLink to="/products" current={location.pathname === "/products"} onClick={() => setIsMobileMenuOpen(false)} isScrolled={true}>Products</MobileNavLink>
             </nav>
             
             <div className="flex flex-col space-y-3">
