@@ -23,32 +23,37 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-24 px-6 md:px-8 relative overflow-hidden">
+      <section 
+        className="pt-32 pb-24 px-6 md:px-8 relative overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/lovable-uploads/PWPhero.png')`
+        }}
+      >
         {/* Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-600/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-green-400/20 to-blue-600/20 rounded-full blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-green-400/10 to-blue-600/10 rounded-full blur-3xl"></div>
         </div>
         
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center max-w-4xl mx-auto space-y-8">
             <TransitionWrapper animation="fade">
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border border-blue-200/50 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 mb-6">
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white mb-6">
                 <Zap className="w-4 h-4" />
                 <span className="text-sm font-semibold">AI-Powered Business Intelligence</span>
               </div>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-down" delay={100}>
-              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 dark:from-white dark:via-blue-200 dark:to-white bg-clip-text text-transparent leading-tight tracking-tight">
+              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight tracking-tight drop-shadow-lg">
                 Build Stronger Businesses
                 <span className="block text-4xl md:text-6xl mt-2">With Less Stress</span>
               </h1>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-up" delay={200}>
-              <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
-                Transform your business with AI-powered insights from <span className="text-blue-600 dark:text-blue-400 font-semibold">Prosper With Purpose</span>
+              <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-md">
+                Transform your business with AI-powered insights from <span className="text-blue-300 font-semibold">Prosper With Purpose</span>
               </p>
             </TransitionWrapper>
             
@@ -60,7 +65,7 @@ const Index = () => {
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-2xl px-8 py-6 text-lg font-semibold border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300" onClick={() => setIsTalkToAuthorOpen(true)}>
+                <Button size="lg" variant="outline" className="rounded-2xl px-8 py-6 text-lg font-semibold border-2 border-white/50 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300" onClick={() => setIsTalkToAuthorOpen(true)}>
                   <Headphones className="mr-2 h-5 w-5" />
                   Talk to the Author
                 </Button>
