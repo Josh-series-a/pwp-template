@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -196,8 +197,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="relative border-t bg-white"
-          style={{ height }}
+          className="relative border-t bg-white overflow-hidden"
+          style={{ height, position: 'relative' }}
         >
           {!currentUrl && !isLoading ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -244,18 +245,20 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               <iframe
                 key={currentUrl}
                 src={currentUrl}
-                className="w-full h-full border-0 rounded-b-lg"
+                className="absolute inset-0 w-full h-full border-0 rounded-b-lg"
                 title={title}
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
-                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                allowFullScreen
                 style={{ 
                   border: 'none',
                   outline: 'none',
                   background: 'white',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
                   width: '100%',
-                  height: '100%',
-                  display: 'block'
+                  height: '100%'
                 }}
               />
             </>
