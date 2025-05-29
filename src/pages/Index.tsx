@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -332,29 +333,58 @@ const Index = () => {
       </section>
       
       {/* CTA Section */}
-      <section className="py-24 px-6 md:px-8">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-slate-900"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/3 right-1/3 w-96 h-96 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
+        </div>
+        
         <TransitionWrapper animation="slide-up">
-          <div className="max-w-4xl mx-auto text-center">
-            <Card className="border-0 shadow-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-purple-600/90"></div>
-              <CardContent className="relative p-12">
-                <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                  Ready to Transform Your Business?
-                </h2>
-                <p className="text-xl mb-8 text-blue-100">
-                  Get your personalized business health check and start building with purpose
-                </p>
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20 group hover:bg-white/15 transition-all duration-500 transform hover:-translate-y-2">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500"></div>
+              <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500"></div>
+              
+              <CardContent className="relative p-12 z-10">
+                <div className="mb-8">
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 group-hover:text-yellow-400 transition-colors duration-300">
+                    Ready to Transform Your Business?
+                  </h2>
+                  <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-3xl mx-auto group-hover:text-gray-200 transition-colors duration-300">
+                    Get your personalized business health check and start building with purpose
+                  </p>
+                </div>
+                
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                  <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-blue-50 rounded-2xl px-8 py-6 text-lg font-semibold shadow-xl">
+                  <Button asChild size="lg" className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-300 hover:to-yellow-400 rounded-2xl px-8 py-6 text-lg font-semibold shadow-xl border-0 transform hover:scale-105 transition-all duration-300 group/btn">
                     <Link to="/chat">
-                      Start Your Free Analysis
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-5 h-5 group-hover/btn:animate-pulse" />
+                        Start Your Free Analysis
+                        <ArrowRight className="ml-2 h-5 w-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </div>
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 rounded-2xl px-8 py-6 text-lg font-semibold" onClick={() => setIsTalkToAuthorOpen(true)}>
-                    <Headphones className="mr-2 h-5 w-5" />
+                  <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 rounded-2xl px-8 py-6 text-lg font-semibold backdrop-blur-sm transform hover:scale-105 transition-all duration-300 group/btn2" onClick={() => setIsTalkToAuthorOpen(true)}>
+                    <Headphones className="mr-2 h-5 w-5 group-hover/btn2:animate-pulse" />
                     Talk to the Author
                   </Button>
+                </div>
+                
+                <div className="mt-8 pt-8 border-t border-white/20">
+                  <div className="flex items-center justify-center gap-4 text-sm text-gray-400">
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>No credit card required</span>
+                    <span className="text-white/30">•</span>
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Instant results</span>
+                    <span className="text-white/30">•</span>
+                    <CheckCircle className="h-4 w-4 text-green-400" />
+                    <span>Trusted by 10,000+ businesses</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
