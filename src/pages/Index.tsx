@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -98,12 +99,15 @@ const Index = () => {
       </section>
       
       {/* How It Works Section */}
-      <section className="py-24 px-6 md:px-8">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(59,130,246,0.1),transparent_50%)] bg-[radial-gradient(circle_at_75%_75%,rgba(168,85,247,0.1),transparent_50%)]"></div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <TransitionWrapper>
             <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">How It Works</h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">How It Works</h2>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                 Our AI system combines your business data with proven methodologies to deliver actionable insights
               </p>
             </div>
@@ -134,17 +138,19 @@ const Index = () => {
               }
             ].map((item, index) => (
               <TransitionWrapper key={index} animation="slide-up" delay={index * 150}>
-                <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group">
                   <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${item.gradient}`}></div>
-                  <CardHeader className="pb-4">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${item.gradient} flex items-center justify-center mb-6`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  <CardHeader className="pb-4 relative z-10">
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${item.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                       <item.icon className="w-8 h-8 text-white" />
                     </div>
-                    <div className="text-sm font-bold text-slate-400 dark:text-slate-500 mb-2">STEP {item.step}</div>
-                    <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">{item.title}</CardTitle>
+                    <div className="text-sm font-bold text-gray-400 mb-2 tracking-wider">STEP {item.step}</div>
+                    <CardTitle className="text-xl font-bold text-white group-hover:text-yellow-400 transition-colors duration-300">{item.title}</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <CardContent className="relative z-10">
+                    <CardDescription className="text-gray-300 leading-relaxed">
                       {item.description}
                     </CardDescription>
                   </CardContent>
