@@ -47,6 +47,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/products" element={<Products />} />
               <Route path="/preloader-demo" element={<PreloaderDemo />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
@@ -62,7 +63,6 @@ const App = () => (
               <Route path="/read" element={<ProtectedRoute><Read /></ProtectedRoute>} />
               <Route path="/read/:chapterId" element={<ProtectedRoute><BookSession /></ProtectedRoute>} />
               <Route path="/insights" element={<ProtectedRoute><BookInsights /></ProtectedRoute>} />
-              <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
               <Route path="/exercises" element={<ProtectedRoute><Exercises /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
