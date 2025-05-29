@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -292,18 +291,18 @@ const Index = () => {
             initials: "AH",
             rating: 5
           }].map((testimonial, index) => <TransitionWrapper key={index} animation="fade" delay={index * 100}>
-                <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group">
+                <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group h-full flex flex-col">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
-                  <CardContent className="p-8 relative z-10">
+                  <CardContent className="p-8 relative z-10 flex-1 flex flex-col">
                     <div className="flex mb-6">
                       {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />)}
                     </div>
-                    <blockquote className="text-lg text-gray-300 mb-8 italic leading-relaxed font-medium">
+                    <blockquote className="text-lg text-gray-300 mb-8 italic leading-relaxed font-medium flex-1">
                       "{testimonial.quote}"
                     </blockquote>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 mt-auto">
                       <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                         <span className="text-white font-bold text-lg">{testimonial.initials}</span>
                       </div>
