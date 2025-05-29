@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -7,13 +8,13 @@ import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import FeatureCard from '@/components/FeatureCard';
 import TalkToAuthorDialog from '@/components/TalkToAuthorDialog';
+
 const Index = () => {
   const [isTalkToAuthorOpen, setIsTalkToAuthorOpen] = useState(false);
-  return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       <Header />
-      
-      {/* Gradient fade below header */}
-      
       
       {/* Talk to Author Dialog */}
       <TalkToAuthorDialog isOpen={isTalkToAuthorOpen} onClose={() => setIsTalkToAuthorOpen(false)} />
@@ -396,6 +397,24 @@ const Index = () => {
               </p>
             </div>
             
+            {/* Member Images */}
+            <div className="flex justify-center items-center gap-8 mb-8">
+              <div className="flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/c0234353-eebf-43ea-b165-ff877c7f060c.png" 
+                  alt="FSB Member" 
+                  className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                />
+              </div>
+              <div className="flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/1a148eb6-0e62-40db-929b-b964ed70ae22.png" 
+                  alt="SRB Member" 
+                  className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                />
+              </div>
+            </div>
+            
             <div className="flex flex-col items-center gap-6 mb-12">
               <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 backdrop-blur-sm border border-white/10">
                 <CheckCircle className="h-5 w-5 text-green-400" />
@@ -441,6 +460,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
