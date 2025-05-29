@@ -79,41 +79,32 @@ const PackageDetail = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {documents.map((doc, index) => (
-              <Card 
+              <div 
                 key={index}
-                className="cursor-pointer hover:shadow-lg transition-shadow duration-200 hover:scale-105 transform"
+                className="relative cursor-pointer hover:scale-105 transform transition-all duration-200"
                 onClick={() => handleDocumentClick(doc)}
               >
-                <CardHeader className="pb-2">
-                  <div className="mb-3">
-                    <div className="w-full aspect-[3/4] overflow-hidden rounded-lg bg-gray-100">
-                      <img 
-                        src={doc.thumbnail} 
-                        alt={doc.title}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  </div>
-                  <CardTitle className="text-sm text-center leading-tight">{doc.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0 pb-4">
-                  <p className="text-xs text-gray-600 text-center mb-3 line-clamp-2">
-                    {doc.description}
-                  </p>
-                  <div className="flex justify-center">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openInNewTab(doc.url);
-                      }}
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                <div className="w-full aspect-[3/4] overflow-hidden rounded-lg bg-gray-100 shadow-md hover:shadow-lg">
+                  <img 
+                    src={doc.thumbnail} 
+                    alt={doc.title}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="absolute bottom-2 right-2">
+                  <Button
+                    size="sm"
+                    variant="default"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openInNewTab(doc.url);
+                    }}
+                    className="shadow-lg"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
