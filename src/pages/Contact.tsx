@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import TransitionWrapper from '@/components/TransitionWrapper';
 
 const Contact = () => {
@@ -167,6 +167,9 @@ const Contact = () => {
           </div>
         </TransitionWrapper>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
