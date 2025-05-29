@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -8,16 +7,13 @@ import Header from "@/components/Header";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import FeatureCard from '@/components/FeatureCard';
 import TalkToAuthorDialog from '@/components/TalkToAuthorDialog';
-
 const Index = () => {
   const [isTalkToAuthorOpen, setIsTalkToAuthorOpen] = useState(false);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       <Header />
       
       {/* Gradient fade below header */}
-      <div className="h-24 bg-gradient-to-b from-slate-900 to-transparent"></div>
+      
       
       {/* Talk to Author Dialog */}
       <TalkToAuthorDialog isOpen={isTalkToAuthorOpen} onClose={() => setIsTalkToAuthorOpen(false)} />
@@ -177,27 +173,22 @@ const Index = () => {
                 </div>
                 
                 <div className="space-y-6">
-                  {[
-                    {
-                      icon: Compass,
-                      title: "Plan",
-                      description: "Strategic direction with clear, actionable roadmaps",
-                      gradient: "from-blue-500 to-cyan-500"
-                    },
-                    {
-                      icon: Users,
-                      title: "People",
-                      description: "Build and lead high-performing, engaged teams",
-                      gradient: "from-green-500 to-emerald-500"
-                    },
-                    {
-                      icon: PieChart,
-                      title: "Profits",
-                      description: "Sustainable growth with smart financial management",
-                      gradient: "from-purple-500 to-pink-500"
-                    }
-                  ].map((pillar, index) => (
-                    <div key={index} className="flex items-start gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 group">
+                  {[{
+                  icon: Compass,
+                  title: "Plan",
+                  description: "Strategic direction with clear, actionable roadmaps",
+                  gradient: "from-blue-500 to-cyan-500"
+                }, {
+                  icon: Users,
+                  title: "People",
+                  description: "Build and lead high-performing, engaged teams",
+                  gradient: "from-green-500 to-emerald-500"
+                }, {
+                  icon: PieChart,
+                  title: "Profits",
+                  description: "Sustainable growth with smart financial management",
+                  gradient: "from-purple-500 to-pink-500"
+                }].map((pillar, index) => <div key={index} className="flex items-start gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 group">
                       <div className={`p-4 rounded-2xl bg-gradient-to-r ${pillar.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                         <pillar.icon className="w-6 h-6 text-white" />
                       </div>
@@ -205,8 +196,7 @@ const Index = () => {
                         <h3 className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors duration-300">{pillar.title}</h3>
                         <p className="text-gray-300 leading-relaxed">{pillar.description}</p>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
             </TransitionWrapper>
@@ -230,27 +220,26 @@ const Index = () => {
           
           <div className="grid md:grid-cols-2 gap-8">
             {[{
-              icon: FileText,
-              title: "Executive Summary",
-              description: "AI-powered analysis based on your business profile",
-              gradient: "from-blue-500 to-cyan-500"
-            }, {
-              icon: Lightbulb,
-              title: "Strategic Insights",
-              description: "Key observations aligned with proven business principles",
-              gradient: "from-amber-500 to-orange-500"
-            }, {
-              icon: Target,
-              title: "Action Plan",
-              description: "Step-by-step exercises to implement immediately",
-              gradient: "from-green-500 to-emerald-500"
-            }, {
-              icon: BarChart3,
-              title: "Growth Roadmap",
-              description: "Data-driven recommendations for sustainable expansion",
-              gradient: "from-purple-500 to-pink-500"
-            }].map((feature, index) => (
-              <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
+            icon: FileText,
+            title: "Executive Summary",
+            description: "AI-powered analysis based on your business profile",
+            gradient: "from-blue-500 to-cyan-500"
+          }, {
+            icon: Lightbulb,
+            title: "Strategic Insights",
+            description: "Key observations aligned with proven business principles",
+            gradient: "from-amber-500 to-orange-500"
+          }, {
+            icon: Target,
+            title: "Action Plan",
+            description: "Step-by-step exercises to implement immediately",
+            gradient: "from-green-500 to-emerald-500"
+          }, {
+            icon: BarChart3,
+            title: "Growth Roadmap",
+            description: "Data-driven recommendations for sustainable expansion",
+            gradient: "from-purple-500 to-pink-500"
+          }].map((feature, index) => <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
                 <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group">
                   <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient}`}></div>
                   <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -267,8 +256,7 @@ const Index = () => {
                     </CardDescription>
                   </CardContent>
                 </Card>
-              </TransitionWrapper>
-            ))}
+              </TransitionWrapper>)}
           </div>
         </div>
       </section>
@@ -438,8 +426,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
