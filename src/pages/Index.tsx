@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -24,7 +22,7 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="pt-40 pb-32 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
@@ -380,4 +378,3 @@ const Index = () => {
 };
 
 export default Index;
-
