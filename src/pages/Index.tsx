@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -164,25 +165,30 @@ const Index = () => {
       </section>
       
       {/* Book Details Section */}
-      <section className="py-24 px-6 md:px-8 bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-purple-900/20"></div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <TransitionWrapper animation="slide-right" delay={100}>
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-3xl blur-2xl"></div>
-                <img 
-                  src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
-                  alt="Prosper with Purpose book cover" 
-                  className="relative w-full max-w-md mx-auto shadow-2xl rounded-2xl"
-                />
+                <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-3xl blur-3xl"></div>
+                <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl">
+                  <img 
+                    src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
+                    alt="Prosper with Purpose book cover" 
+                    className="relative w-full max-w-md mx-auto shadow-2xl rounded-2xl"
+                  />
+                </div>
               </div>
             </TransitionWrapper>
             
             <TransitionWrapper animation="slide-left" delay={200}>
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">The Three Pillars</h2>
-                  <p className="text-xl text-slate-600 dark:text-slate-300">
+                  <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">The Three Pillars</h2>
+                  <p className="text-xl text-gray-300">
                     Build success without burnout through our proven framework
                   </p>
                 </div>
@@ -193,28 +199,28 @@ const Index = () => {
                       icon: Compass,
                       title: "Plan",
                       description: "Strategic direction with clear, actionable roadmaps",
-                      color: "text-blue-600 dark:text-blue-400"
+                      gradient: "from-blue-500 to-cyan-500"
                     },
                     {
                       icon: Users,
                       title: "People", 
                       description: "Build and lead high-performing, engaged teams",
-                      color: "text-green-600 dark:text-green-400"
+                      gradient: "from-green-500 to-emerald-500"
                     },
                     {
                       icon: PieChart,
                       title: "Profits",
                       description: "Sustainable growth with smart financial management",
-                      color: "text-purple-600 dark:text-purple-400"
+                      gradient: "from-purple-500 to-pink-500"
                     }
                   ].map((pillar, index) => (
-                    <div key={index} className="flex items-start gap-4 p-4 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors">
-                      <div className={`p-3 rounded-xl bg-gradient-to-r ${pillar.color === 'text-blue-600 dark:text-blue-400' ? 'from-blue-100 to-blue-200 dark:from-blue-900/50 dark:to-blue-800/50' : pillar.color === 'text-green-600 dark:text-green-400' ? 'from-green-100 to-green-200 dark:from-green-900/50 dark:to-green-800/50' : 'from-purple-100 to-purple-200 dark:from-purple-900/50 dark:to-purple-800/50'}`}>
-                        <pillar.icon className={`w-6 h-6 ${pillar.color}`} />
+                    <div key={index} className="flex items-start gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:-translate-y-1 group">
+                      <div className={`p-4 rounded-2xl bg-gradient-to-r ${pillar.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <pillar.icon className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{pillar.title}</h3>
-                        <p className="text-slate-600 dark:text-slate-300">{pillar.description}</p>
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors duration-300">{pillar.title}</h3>
+                        <p className="text-gray-300 leading-relaxed">{pillar.description}</p>
                       </div>
                     </div>
                   ))}
