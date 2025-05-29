@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import GoogleDocPreviewer from '@/components/GoogleDocPreviewer';
+import CustomDocumentViewer from '@/components/CustomDocumentViewer';
 
 const PackageDetail = () => {
   const { companySlug, exerciseId, reportId, packageId } = useParams();
@@ -119,13 +119,13 @@ const PackageDetail = () => {
                   onClick={() => openInNewTab(selectedDoc?.url)}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  Open in New Tab
+                  Open in Google Docs
                 </Button>
               </DialogTitle>
             </DialogHeader>
             <div className="h-[70vh]">
               {selectedDoc && (
-                <GoogleDocPreviewer
+                <CustomDocumentViewer
                   docUrl={selectedDoc.url}
                   title={selectedDoc.title}
                   height="100%"
