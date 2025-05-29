@@ -9,63 +9,69 @@ import TransitionWrapper from '@/components/TransitionWrapper';
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+      <section className="pt-32 pb-20 px-6 md:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90"></div>
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse-subtle"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-full blur-3xl animate-pulse-subtle"></div>
         </div>
-        <div className="max-w-4xl mx-auto relative z-10">
+        <div className="max-w-5xl mx-auto relative z-10">
           <TransitionWrapper animation="slide-up">
-            <div className="text-center space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
-                About <span className="text-yellow-400 italic">Prosper With Purpose</span>
+            <div className="text-center space-y-8">
+              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+                About <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 italic">Prosper With Purpose</span>
               </h1>
-              <p className="text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
+              <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-4xl mx-auto">
                 Transforming businesses worldwide through proven methodologies that prioritize sustainable growth without burnout
               </p>
+              <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 mx-auto rounded-full"></div>
             </div>
           </TransitionWrapper>
         </div>
       </section>
 
       {/* Colin Crooks Background Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-r from-green-500/5 to-emerald-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-full h-full bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
         </div>
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           <TransitionWrapper>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-6">Meet Colin Crooks MBE</h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-5xl md:text-6xl font-bold text-white mb-8">Meet Colin Crooks MBE</h2>
+              <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
                 A good listener who creates rapport and asks the right questions to identify the salient issues
               </p>
+              <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-emerald-500 mx-auto rounded-full mt-8"></div>
             </div>
           </TransitionWrapper>
 
-          <div className="grid lg:grid-cols-3 gap-16 items-start">
+          <div className="grid lg:grid-cols-5 gap-12 items-start">
             <TransitionWrapper animation="slide-up" delay={100}>
-              <div className="lg:col-span-1">
-                <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <div className="lg:col-span-2">
+                <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/5 backdrop-blur-xl border border-white/10 group hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
-                  <CardContent className="p-8">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <CardContent className="p-10 relative z-10">
                     <div className="relative">
-                      <img 
-                        src="/lovable-uploads/img_20191225_164551120.webp" 
-                        alt="Colin Crooks MBE" 
-                        className="w-full rounded-2xl shadow-lg mb-6"
-                      />
-                      <div className="text-center">
-                        <h3 className="text-2xl font-bold text-white mb-2">Colin Crooks MBE</h3>
-                        <p className="text-gray-300 text-lg mb-4">Serial Social Entrepreneur & Author</p>
+                      <div className="relative mb-8">
+                        <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-3xl blur-xl"></div>
+                        <img 
+                          src="/lovable-uploads/img_20191225_164551120.webp" 
+                          alt="Colin Crooks MBE" 
+                          className="relative w-full aspect-[3/4] object-cover rounded-3xl shadow-2xl"
+                        />
+                      </div>
+                      <div className="text-center space-y-4">
+                        <h3 className="text-3xl font-bold text-white">Colin Crooks MBE</h3>
+                        <p className="text-gray-300 text-xl">Serial Social Entrepreneur & Author</p>
                         <div className="flex justify-center">
-                          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
-                            <Award className="w-8 h-8 text-white" />
+                          <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-xl">
+                            <Award className="w-10 h-10 text-white" />
                           </div>
                         </div>
                       </div>
@@ -76,44 +82,51 @@ const About = () => {
             </TransitionWrapper>
 
             <TransitionWrapper animation="slide-right" delay={200}>
-              <div className="lg:col-span-2">
-                <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20 h-full">
+              <div className="lg:col-span-3">
+                <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/5 backdrop-blur-xl border border-white/10 h-full group hover:bg-white/10 transition-all duration-500">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
-                  <CardContent className="p-8 space-y-6">
-                    <p className="text-gray-300 leading-relaxed">
-                      As a serial social entrepreneur with a track record of establishing impactful and sustainable social enterprises, Colin was awarded an MBE in the 2019 New Year's Honours list for services to disadvantaged people and the environment.
-                    </p>
-                    
-                    <p className="text-gray-300 leading-relaxed">
-                      He believes that significant social and environmental benefits can be created through ethical business and his book 'How to Make a Million Jobs, A charter for social enterprise' set out a route map for encouraging social enterprise.
-                    </p>
+                  <CardContent className="p-10 space-y-8 relative z-10">
+                    <div className="space-y-6 text-lg">
+                      <p className="text-gray-300 leading-relaxed">
+                        As a serial social entrepreneur with a track record of establishing impactful and sustainable social enterprises, Colin was awarded an MBE in the 2019 New Year's Honours list for services to disadvantaged people and the environment.
+                      </p>
+                      
+                      <p className="text-gray-300 leading-relaxed">
+                        He believes that significant social and environmental benefits can be created through ethical business and his book 'How to Make a Million Jobs, A charter for social enterprise' set out a route map for encouraging social enterprise.
+                      </p>
+                    </div>
 
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-yellow-400" />
-                        <a href="mailto:colin@intentionality.co.uk" className="text-gray-300 hover:text-yellow-400 transition-colors">
+                    <div className="grid grid-cols-1 gap-6 py-6 border-y border-white/10">
+                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                          <Mail className="w-6 h-6 text-white" />
+                        </div>
+                        <a href="mailto:colin@intentionality.co.uk" className="text-gray-300 hover:text-yellow-400 transition-colors text-lg">
                           colin@intentionality.co.uk
                         </a>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Twitter className="w-5 h-5 text-yellow-400" />
-                        <span className="text-gray-300">@ColinCrooks</span>
+                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors">
+                        <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center">
+                          <Twitter className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="text-gray-300 text-lg">@ColinCrooks</span>
                       </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                        <span className="text-gray-300">Qualified coach in enterprise and start-up development</span>
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-4 p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+                        <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                        <span className="text-gray-300 text-lg">Qualified coach in enterprise and start-up development</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                        <span className="text-gray-300">Author of "How to make a million jobs – A Charter for Social Enterprise"</span>
+                      <div className="flex items-start gap-4 p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
+                        <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                        <span className="text-gray-300 text-lg">Author of "How to make a million jobs – A Charter for Social Enterprise"</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Trophy className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                        <span className="text-gray-300">Queen's Award for Enterprise (Sustainable Development) 2008</span>
+                      <div className="flex items-start gap-4 p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/20">
+                        <Trophy className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-1" />
+                        <span className="text-gray-300 text-lg">Queen's Award for Enterprise (Sustainable Development) 2008</span>
                       </div>
                     </div>
                   </CardContent>
@@ -122,40 +135,54 @@ const About = () => {
             </TransitionWrapper>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mt-16">
+          <div className="grid md:grid-cols-2 gap-10 mt-20">
             <TransitionWrapper animation="slide-left" delay={300}>
-              <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/5 backdrop-blur-xl border border-white/10 group hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
-                <CardContent className="p-8">
-                  <h3 className="text-xl font-bold text-white mb-4">Philosophy</h3>
-                  <p className="text-gray-300 leading-relaxed mb-4">
-                    Starting or growing a business can be very demanding and at times confusing. Founders and directors are often too close to the detail to see the bigger picture and at certain crucial points they need help to gain a different perspective.
-                  </p>
-                  <p className="text-gray-300 leading-relaxed">
-                    Colin has a proven track record of being able to get to the heart of the issue and put together a plan that matches the challenge. He will put together the right blend of experienced and empathetic people that is right for your situation.
-                  </p>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <CardContent className="p-10 relative z-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+                      <Heart className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Philosophy</h3>
+                  </div>
+                  <div className="space-y-6 text-lg">
+                    <p className="text-gray-300 leading-relaxed">
+                      Starting or growing a business can be very demanding and at times confusing. Founders and directors are often too close to the detail to see the bigger picture and at certain crucial points they need help to gain a different perspective.
+                    </p>
+                    <p className="text-gray-300 leading-relaxed">
+                      Colin has a proven track record of being able to get to the heart of the issue and put together a plan that matches the challenge. He will put together the right blend of experienced and empathetic people that is right for your situation.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </TransitionWrapper>
 
             <TransitionWrapper animation="slide-left" delay={400}>
-              <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
+              <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/5 backdrop-blur-xl border border-white/10 group hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2">
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
-                <CardContent className="p-8">
-                  <h3 className="text-xl font-bold text-white mb-4">Current Roles</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Building2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <CardContent className="p-10 relative z-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                      <Building2 className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Current Roles</h3>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/10">
+                      <Building2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-white">Director at Locality</h4>
-                        <p className="text-gray-300 text-sm">National network supporting community organisations with responsibility for Diversity, Equality and Inclusion</p>
+                        <h4 className="font-semibold text-white text-lg mb-2">Director at Locality</h4>
+                        <p className="text-gray-300">National network supporting community organisations with responsibility for Diversity, Equality and Inclusion</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <Building2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
+                    <div className="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/10">
+                      <Building2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-white">Director at SE24</h4>
-                        <p className="text-gray-300 text-sm">Community Benefit Society dedicated to locally-owned renewable energy projects and energy conservation</p>
+                        <h4 className="font-semibold text-white text-lg mb-2">Director at SE24</h4>
+                        <p className="text-gray-300">Community Benefit Society dedicated to locally-owned renewable energy projects and energy conservation</p>
                       </div>
                     </div>
                   </div>
@@ -167,20 +194,21 @@ const About = () => {
       </section>
 
       {/* Career Timeline */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"></div>
-          <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-900/50 via-slate-800/50 to-slate-900/50"></div>
+          <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
         </div>
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           <TransitionWrapper>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-6">Track Record of Success</h2>
-              <p className="text-xl text-gray-300">Over 30 years of building impactful social enterprises</p>
+            <div className="text-center mb-20">
+              <h2 className="text-5xl md:text-6xl font-bold text-white mb-8">Track Record of Success</h2>
+              <p className="text-xl md:text-2xl text-gray-300">Over 30 years of building impactful social enterprises</p>
+              <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full mt-8"></div>
             </div>
           </TransitionWrapper>
 
-          <div className="space-y-8">
+          <div className="space-y-10">
             {[
               {
                 period: "2011 – 2021",
@@ -212,17 +240,18 @@ const About = () => {
               }
             ].map((experience, index) => (
               <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
-                <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20 group hover:bg-white/15 transition-all duration-300">
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${experience.gradient}`}></div>
-                  <CardContent className="p-8">
-                    <div className="grid md:grid-cols-4 gap-6">
+                <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/5 backdrop-blur-xl border border-white/10 group hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2">
+                  <div className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${experience.gradient}`}></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <CardContent className="p-10 relative z-10">
+                    <div className="grid md:grid-cols-4 gap-8 items-center">
                       <div className="md:col-span-1">
-                        <div className="text-sm text-yellow-400 font-semibold mb-2">{experience.period}</div>
-                        <h3 className="text-xl font-bold text-white mb-1">{experience.title}</h3>
-                        <div className="text-gray-400 text-sm">{experience.role}</div>
+                        <div className="text-sm text-yellow-400 font-semibold mb-3 text-lg">{experience.period}</div>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{experience.title}</h3>
+                        <div className="text-gray-400 text-lg">{experience.role}</div>
                       </div>
                       <div className="md:col-span-3">
-                        <p className="text-gray-300 leading-relaxed">{experience.description}</p>
+                        <p className="text-gray-300 leading-relaxed text-lg">{experience.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -234,17 +263,18 @@ const About = () => {
       </section>
 
       {/* Mission Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-cyan-500/5 to-blue-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
         </div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid md:grid-cols-2 gap-20 items-center">
             <TransitionWrapper animation="slide-right">
-              <div className="space-y-8">
+              <div className="space-y-10">
                 <div>
-                  <h2 className="text-4xl font-bold text-white mb-6">Our Mission</h2>
-                  <p className="text-xl text-gray-300 leading-relaxed mb-6">
+                  <h2 className="text-5xl md:text-6xl font-bold text-white mb-8">Our Mission</h2>
+                  <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-8"></div>
+                  <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-8">
                     We believe that business success shouldn't come at the cost of personal well-being. Our mission is to help entrepreneurs and business leaders build thriving companies while maintaining their health, relationships, and sense of purpose.
                   </p>
                   <p className="text-lg text-gray-400 leading-relaxed">
@@ -252,13 +282,13 @@ const About = () => {
                   </p>
                 </div>
                 
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                    <Target className="w-8 h-8 text-white" />
+                <div className="flex items-center gap-6 p-6 rounded-3xl bg-white/5 border border-white/10">
+                  <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl flex items-center justify-center shadow-xl">
+                    <Target className="w-10 h-10 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Purpose-Driven Growth</h3>
-                    <p className="text-gray-400">Building businesses that matter</p>
+                    <h3 className="text-2xl font-bold text-white mb-2">Purpose-Driven Growth</h3>
+                    <p className="text-gray-400 text-lg">Building businesses that matter</p>
                   </div>
                 </div>
               </div>
@@ -266,12 +296,14 @@ const About = () => {
             
             <TransitionWrapper animation="slide-left" delay={200}>
               <div className="relative">
-                <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-3xl blur-3xl"></div>
-                <img 
-                  src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
-                  alt="Prosper with Purpose book" 
-                  className="relative w-full max-w-md mx-auto shadow-2xl rounded-2xl bg-white/10 backdrop-blur-lg border border-white/20 p-8"
-                />
+                <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-3xl blur-3xl"></div>
+                <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl">
+                  <img 
+                    src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
+                    alt="Prosper with Purpose book" 
+                    className="w-full max-w-md mx-auto rounded-2xl shadow-2xl"
+                  />
+                </div>
               </div>
             </TransitionWrapper>
           </div>
@@ -279,13 +311,13 @@ const About = () => {
       </section>
 
       {/* The Three Pillars */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 transform -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400/5 to-orange-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 w-full h-full bg-gradient-to-br from-slate-900/50 via-slate-800/50 to-slate-900/50 transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 rounded-full blur-3xl"></div>
         </div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="grid md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid md:grid-cols-3 gap-10">
             {[
               {
                 title: "Plan",
@@ -310,25 +342,25 @@ const About = () => {
               }
             ].map((pillar, index) => (
               <TransitionWrapper key={index} animation="slide-up" delay={index * 150}>
-                <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group h-full">
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${pillar.gradient}`}></div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <Card className="relative overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-4 bg-white/5 backdrop-blur-xl border border-white/10 group h-full">
+                  <div className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${pillar.gradient}`}></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
-                  <CardHeader className="pb-4 relative z-10">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${pillar.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                      <pillar.icon className="w-8 h-8 text-white" />
+                  <CardHeader className="pb-6 relative z-10">
+                    <div className={`w-20 h-20 rounded-3xl bg-gradient-to-r ${pillar.gradient} flex items-center justify-center mb-8 shadow-xl group-hover:scale-110 transition-transform duration-300`}>
+                      <pillar.icon className="w-10 h-10 text-white" />
                     </div>
-                    <CardTitle className="text-2xl font-bold text-white group-hover:text-yellow-400 transition-colors duration-300">{pillar.title}</CardTitle>
-                    <CardDescription className="text-gray-300 leading-relaxed text-base">
+                    <CardTitle className="text-3xl font-bold text-white group-hover:text-yellow-400 transition-colors duration-300">{pillar.title}</CardTitle>
+                    <CardDescription className="text-gray-300 leading-relaxed text-lg mt-4">
                       {pillar.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="relative z-10">
-                    <ul className="space-y-3">
+                    <ul className="space-y-4">
                       {pillar.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-center gap-3 text-gray-300">
-                          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                          <span>{feature}</span>
+                        <li key={featureIndex} className="flex items-center gap-4 text-gray-300 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                          <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0" />
+                          <span className="text-lg">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -341,7 +373,7 @@ const About = () => {
       </section>
 
       {/* Impact Stats */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-900"></div>
           <div className="absolute bottom-1/3 left-1/3 w-96 h-96 bg-gradient-to-r from-green-500/5 to-emerald-500/5 rounded-full blur-3xl"></div>
@@ -366,7 +398,7 @@ const About = () => {
       </section>
 
       {/* Values Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 right-1/2 w-96 h-96 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-full blur-3xl"></div>
         </div>
@@ -422,7 +454,7 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="py-32 px-6 md:px-8 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"></div>
           <div className="absolute top-1/2 left-1/2 w-full h-full bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
