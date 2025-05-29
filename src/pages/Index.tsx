@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -154,8 +153,7 @@ const Index = () => {
       {/* Book Details Section */}
       <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
         <div className="absolute inset-0 bg-slate-900"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-cyan-500/10 opacity-50"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-purple-600/20"></div>
+        <div className="absolute inset-0 bg-slate-900"></div>
         
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-16 items-center">
