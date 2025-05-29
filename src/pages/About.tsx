@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Target, Users, Heart, Award, CheckCircle, Mail, Twitter, Building2, Trophy } from 'lucide-react';
@@ -10,12 +9,17 @@ import TransitionWrapper from '@/components/TransitionWrapper';
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-slate-900">
       <Header />
       
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-4xl mx-auto relative z-10">
           <TransitionWrapper animation="slide-up">
             <div className="text-center space-y-6">
               <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
@@ -30,8 +34,11 @@ const About = () => {
       </section>
 
       {/* Colin Crooks Background Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-r from-green-500/5 to-emerald-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <TransitionWrapper>
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-white mb-6">Meet Colin Crooks MBE</h2>
@@ -144,8 +151,12 @@ const About = () => {
       </section>
 
       {/* Career Timeline */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"></div>
+          <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <TransitionWrapper>
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-white mb-6">Track Record of Success</h2>
@@ -206,9 +217,12 @@ const About = () => {
         </div>
       </section>
 
-      {/* Non-Executive Roles */}
-      <section className="py-24 px-6 md:px-8">
-        <div className="max-w-6xl mx-auto">
+      {/* Mission Section */}
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-cyan-500/5 to-blue-500/5 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <TransitionWrapper animation="slide-right">
               <div className="space-y-8">
@@ -223,7 +237,7 @@ const About = () => {
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
                     <Target className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -236,7 +250,7 @@ const About = () => {
             
             <TransitionWrapper animation="slide-left" delay={200}>
               <div className="relative">
-                <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-3xl blur-3xl"></div>
+                <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-3xl blur-3xl"></div>
                 <img 
                   src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
                   alt="Prosper with Purpose book" 
@@ -249,17 +263,12 @@ const About = () => {
       </section>
 
       {/* The Three Pillars */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
-          <TransitionWrapper>
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">The Three Pillars Framework</h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Our proven methodology that has transformed thousands of businesses worldwide
-              </p>
-            </div>
-          </TransitionWrapper>
-          
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 left-1/2 w-full h-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-yellow-400/5 to-orange-500/5 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
@@ -316,15 +325,12 @@ const About = () => {
       </section>
 
       {/* Impact Stats */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
-          <TransitionWrapper>
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-6">Our Impact</h2>
-              <p className="text-xl text-gray-300">Real results from real businesses</p>
-            </div>
-          </TransitionWrapper>
-          
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-800 to-slate-900"></div>
+          <div className="absolute bottom-1/3 left-1/3 w-96 h-96 bg-gradient-to-r from-green-500/5 to-emerald-500/5 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
               { number: "10,000+", label: "Businesses Transformed" },
@@ -344,17 +350,11 @@ const About = () => {
       </section>
 
       {/* Values Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
-          <TransitionWrapper>
-            <div className="text-center mb-20">
-              <h2 className="text-4xl font-bold text-white mb-6">Our Values</h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                The principles that guide everything we do
-              </p>
-            </div>
-          </TransitionWrapper>
-          
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 right-1/2 w-96 h-96 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
@@ -406,9 +406,13 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
+      <section className="py-24 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"></div>
+          <div className="absolute top-1/2 left-1/2 w-full h-full bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
         <TransitionWrapper animation="slide-up">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center relative z-10">
             <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/10 backdrop-blur-lg border border-white/20 group hover:bg-white/15 transition-all duration-500 transform hover:-translate-y-2">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
               <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
