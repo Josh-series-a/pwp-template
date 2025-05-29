@@ -403,14 +403,14 @@ const Index = () => {
                 <img 
                   src="/lovable-uploads/c0234353-eebf-43ea-b165-ff877c7f060c.png" 
                   alt="FSB Member" 
-                  className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  className="h-16 w-auto filter brightness-0 invert opacity-80 hover:opacity-100 transition-all duration-300"
                 />
               </div>
               <div className="flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/1a148eb6-0e62-40db-929b-b964ed70ae22.png" 
                   alt="SRB Member" 
-                  className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  className="h-16 w-auto filter brightness-0 invert opacity-80 hover:opacity-100 transition-all duration-300"
                 />
               </div>
             </div>
