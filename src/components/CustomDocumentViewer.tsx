@@ -196,7 +196,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="relative border-t bg-white overflow-hidden"
+          className="relative border-t bg-white"
           style={{ height }}
         >
           {!currentUrl && !isLoading ? (
@@ -241,24 +241,23 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                 </div>
               )}
               
-              <div className="w-full h-full rounded-b-lg">
-                <iframe
-                  key={currentUrl}
-                  src={currentUrl}
-                  className="w-full h-full border-0 rounded-b-lg"
-                  title={title}
-                  onLoad={handleIframeLoad}
-                  onError={handleIframeError}
-                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                  style={{ 
-                    border: 'none',
-                    outline: 'none',
-                    background: 'white',
-                    width: '100%',
-                    height: '100%'
-                  }}
-                />
-              </div>
+              <iframe
+                key={currentUrl}
+                src={currentUrl}
+                className="w-full h-full border-0 rounded-b-lg"
+                title={title}
+                onLoad={handleIframeLoad}
+                onError={handleIframeError}
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                style={{ 
+                  border: 'none',
+                  outline: 'none',
+                  background: 'white',
+                  width: '100%',
+                  height: '100%',
+                  display: 'block'
+                }}
+              />
             </>
           )}
         </div>
