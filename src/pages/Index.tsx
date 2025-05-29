@@ -15,6 +15,9 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       <Header />
       
+      {/* Gradient fade below header */}
+      <div className="h-8 bg-gradient-to-b from-slate-900 to-transparent"></div>
+      
       {/* Talk to Author Dialog */}
       <TalkToAuthorDialog 
         isOpen={isTalkToAuthorOpen}
@@ -22,7 +25,7 @@ const Index = () => {
       />
       
       {/* Hero Section */}
-      <section className="pt-40 pb-32 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="pt-32 pb-32 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
