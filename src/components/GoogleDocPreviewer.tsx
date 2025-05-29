@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const formatGoogleDocUrl = (url: string): string => {
+  const formatDocumentUrl = (url: string): string => {
     if (!url) return '';
     
     // Extract document ID from various Google Docs URL formats
@@ -41,23 +42,18 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
       if (match) {
         const docId = match[1];
         
-        // Determine document type and return appropriate embed URL with parameters to hide editor
+        // Use direct iframe URLs for clean document viewing
         if (url.includes('spreadsheets')) {
-          return `https://docs.google.com/spreadsheets/d/${docId}/embed?widget=true&headers=false`;
+          return `https://docs.google.com/spreadsheets/d/${docId}/edit?usp=sharing&rm=minimal`;
         } else if (url.includes('presentation')) {
-          return `https://docs.google.com/presentation/d/${docId}/embed?start=false&loop=false&delayms=3000`;
+          return `https://docs.google.com/presentation/d/${docId}/edit?usp=sharing&rm=minimal`;
         } else {
-          return `https://docs.google.com/document/d/${docId}/embed?embedded=true`;
+          return `https://docs.google.com/document/d/${docId}/edit?usp=sharing&rm=minimal`;
         }
       }
     }
 
-    // If already an embed URL, return as is
-    if (url.includes('/embed')) {
-      return url;
-    }
-
-    // If no pattern matches, assume it's already a valid URL
+    // If no pattern matches, return the original URL
     return url;
   };
 
@@ -67,7 +63,7 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
     setIsLoading(true);
     setHasError(false);
     
-    const formattedUrl = formatGoogleDocUrl(docUrl);
+    const formattedUrl = formatDocumentUrl(docUrl);
     setCurrentUrl(formattedUrl);
     
     // Simulate loading time
@@ -183,7 +179,8 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
                 title={title}
-                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
               />
             </>
           )}
