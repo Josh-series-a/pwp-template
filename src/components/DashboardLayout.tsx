@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -182,32 +183,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title
 }) => {
   return <SidebarProvider defaultOpen={false}>
-    <div className="min-h-screen flex flex-col w-full">        
-      <div className="flex flex-1">
-        <Sidebar 
-          collapsible="icon" 
-          className="z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar" 
-          style={{
-            "--sidebar-width": "16rem",
-            "--sidebar-width-icon": "5rem"
-          } as React.CSSProperties}
-        >
-          <SidebarContent className="flex flex-col h-full">
-            <SidebarLogo />
-            <SidebarNavigation />
-            <SidebarProfile />
-          </SidebarContent>
-        </Sidebar>
-        
-        <main className="flex-1 bg-background/50">
-          <div className="w-full px-6 sm:px-8 py-8 md:px-12">
-            <div className="flex items-center mb-8">
-              <h1 className="text-3xl font-bold text-foreground">{title}</h1>
-            </div>
-            {children}
+    <div className="min-h-screen flex w-full">        
+      <Sidebar 
+        collapsible="icon" 
+        className="fixed inset-y-0 left-0 z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar" 
+        style={{
+          "--sidebar-width": "16rem",
+          "--sidebar-width-icon": "5rem"
+        } as React.CSSProperties}
+      >
+        <SidebarContent className="flex flex-col h-full">
+          <SidebarLogo />
+          <SidebarNavigation />
+          <SidebarProfile />
+        </SidebarContent>
+      </Sidebar>
+      
+      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] group-data-[state=expanded]:ml-[16rem]">
+        <div className="w-full px-6 sm:px-8 py-8 md:px-12">
+          <div className="flex items-center mb-8">
+            <h1 className="text-3xl font-bold text-foreground">{title}</h1>
           </div>
-        </main>
-      </div>
+          {children}
+        </div>
+      </main>
     </div>
   </SidebarProvider>;
 };
