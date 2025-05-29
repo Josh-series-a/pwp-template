@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -254,7 +253,9 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                   style={{ 
                     border: 'none',
                     outline: 'none',
-                    background: 'white'
+                    background: 'white',
+                    width: '100%',
+                    height: '100%'
                   }}
                 />
               </div>
