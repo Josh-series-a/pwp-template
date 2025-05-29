@@ -23,6 +23,7 @@ interface BusinessHealthData {
   Purpose: string;
   Sub_Pillars: SubPillar[];
   Total_Score: number;
+  Recommended_CIKs?: string[];
 }
 
 serve(async (req) => {
@@ -83,6 +84,7 @@ serve(async (req) => {
         purpose: requestData.Purpose || null,
         sub_pillars: requestData.Sub_Pillars || [],
         total_score: requestData.Total_Score || null,
+        recommended_ciks: requestData.Recommended_CIKs || null,
         updated_at: new Date().toISOString()
       };
 
