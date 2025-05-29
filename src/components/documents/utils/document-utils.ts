@@ -83,6 +83,7 @@ export const getDocumentType = (url: string): 'docs' | 'sheets' | 'slides' | 'dr
 
 /**
  * Converts Google Docs URLs to preview-friendly embed URLs
+ * Uses viewer URLs that work with more sharing permission levels
  */
 export const getDocumentViewerUrl = (url: string): string => {
   const fileId = extractFileIdFromUrl(url);
@@ -92,14 +93,15 @@ export const getDocumentViewerUrl = (url: string): string => {
   
   switch (docType) {
     case 'docs':
-      return `https://docs.google.com/document/d/${fileId}/preview`;
+      // Use the viewer URL which works with "Anyone with the link" sharing
+      return `https://docs.google.com/document/d/${fileId}/edit?usp=sharing`;
     case 'sheets':
-      return `https://docs.google.com/spreadsheets/d/${fileId}/pubhtml?gid=0&single=true&widget=true&headers=false`;
+      return `https://docs.google.com/spreadsheets/d/${fileId}/edit?usp=sharing`;
     case 'slides':
-      return `https://docs.google.com/presentation/d/${fileId}/embed?start=false&loop=false&delayms=3000`;
+      return `https://docs.google.com/presentation/d/${fileId}/edit?usp=sharing`;
     case 'drive':
-      // For general Drive files, try the preview endpoint
-      return `https://drive.google.com/file/d/${fileId}/preview`;
+      // For general Drive files, use the view endpoint
+      return `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
     default:
       return url;
   }
@@ -127,6 +129,39 @@ export const getDocumentInfo = (url: string, documentType?: string): DocumentInf
 };
 
 /**
+ * Generates multiple fallback URLs to try when embedding fails
+ */
+export const getEmbedFallbackUrls = (url: string): string[] => {
+  const fileId = extractFileIdFromUrl(url);
+  if (!fileId) return [url];
+  
+  const docType = getDocumentType(url);
+  const fallbackUrls: string[] = [];
+  
+  switch (docType) {
+    case 'docs':
+      // Try different embed approaches
+      fallbackUrls.push(`https://docs.google.com/document/d/${fileId}/edit?usp=sharing`);
+      fallbackUrls.push(`https://docs.google.com/document/d/${fileId}/preview`);
+      fallbackUrls.push(`https://drive.google.com/file/d/${fileId}/preview`);
+      break;
+    case 'sheets':
+      fallbackUrls.push(`https://docs.google.com/spreadsheets/d/${fileId}/edit?usp=sharing`);
+      fallbackUrls.push(`https://docs.google.com/spreadsheets/d/${fileId}/pubhtml?widget=true&headers=false`);
+      break;
+    case 'slides':
+      fallbackUrls.push(`https://docs.google.com/presentation/d/${fileId}/edit?usp=sharing`);
+      fallbackUrls.push(`https://docs.google.com/presentation/d/${fileId}/embed`);
+      break;
+    default:
+      fallbackUrls.push(`https://drive.google.com/file/d/${fileId}/view?usp=sharing`);
+      fallbackUrls.push(`https://drive.google.com/file/d/${fileId}/preview`);
+  }
+  
+  return fallbackUrls;
+};
+
+/**
  * Generates an embedded iframe URL with minimal Google interface
  */
 export const getCleanEmbedUrl = (url: string): string => {
@@ -137,12 +172,13 @@ export const getCleanEmbedUrl = (url: string): string => {
   
   switch (docType) {
     case 'docs':
-      return `https://docs.google.com/document/d/${fileId}/pub?embedded=true`;
+      // Use edit URL with sharing parameter - works better than pub endpoint
+      return `https://docs.google.com/document/d/${fileId}/edit?usp=sharing`;
     case 'sheets':
-      return `https://docs.google.com/spreadsheets/d/${fileId}/pubhtml?widget=true&headers=false`;
+      return `https://docs.google.com/spreadsheets/d/${fileId}/edit?usp=sharing`;
     case 'slides':
-      return `https://docs.google.com/presentation/d/${fileId}/embed?rm=minimal`;
+      return `https://docs.google.com/presentation/d/${fileId}/edit?usp=sharing`;
     default:
-      return getDocumentViewerUrl(url);
+      return `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
   }
 };

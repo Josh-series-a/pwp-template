@@ -9,7 +9,8 @@ import {
   isGoogleDocument, 
   getDocumentViewerUrl, 
   getCleanEmbedUrl,
-  getDocumentInfo 
+  getDocumentInfo,
+  getEmbedFallbackUrls
 } from '@/components/documents/utils/document-utils';
 
 interface CustomDocumentViewerProps {
@@ -29,21 +30,24 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 }) => {
   const [docUrl, setDocUrl] = useState(initialUrl);
   const [currentUrl, setCurrentUrl] = useState('');
+  const [fallbackUrls, setFallbackUrls] = useState<string[]>([]);
+  const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   const processDocumentUrl = (url: string) => {
-    if (!url.trim()) return '';
+    if (!url.trim()) return { processedUrl: '', fallbacks: [] };
     
     const docInfo = getDocumentInfo(url);
     
     if (docInfo.isGoogleDocument && docInfo.fileId) {
-      // Use clean embed URL for minimal Google interface
-      return getCleanEmbedUrl(url);
+      // Get multiple fallback URLs to try
+      const fallbacks = getEmbedFallbackUrls(url);
+      return { processedUrl: fallbacks[0], fallbacks };
     }
     
     // For non-Google documents, return as-is
-    return url;
+    return { processedUrl: url, fallbacks: [url] };
   };
 
   const handleLoadDocument = () => {
@@ -51,10 +55,12 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
     
     setIsLoading(true);
     setHasError(false);
+    setCurrentFallbackIndex(0);
     
     try {
-      const processedUrl = processDocumentUrl(docUrl);
+      const { processedUrl, fallbacks } = processDocumentUrl(docUrl);
       setCurrentUrl(processedUrl);
+      setFallbackUrls(fallbacks);
       
       // Simulate loading time
       setTimeout(() => {
@@ -73,8 +79,25 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   };
 
   const handleIframeError = () => {
-    setIsLoading(false);
-    setHasError(true);
+    console.log('Iframe error occurred, trying fallback URLs...');
+    
+    // Try the next fallback URL
+    const nextIndex = currentFallbackIndex + 1;
+    if (nextIndex < fallbackUrls.length) {
+      console.log(`Trying fallback URL ${nextIndex}: ${fallbackUrls[nextIndex]}`);
+      setCurrentFallbackIndex(nextIndex);
+      setCurrentUrl(fallbackUrls[nextIndex]);
+      setIsLoading(true);
+      
+      // Give it a moment to load
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+    } else {
+      console.log('All fallback URLs failed');
+      setIsLoading(false);
+      setHasError(true);
+    }
   };
 
   const openInNewTab = () => {
@@ -83,10 +106,15 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
     }
   };
 
+  const tryDifferentUrl = () => {
+    handleIframeError();
+  };
+
   useEffect(() => {
     if (initialUrl) {
-      const processedUrl = processDocumentUrl(initialUrl);
+      const { processedUrl, fallbacks } = processDocumentUrl(initialUrl);
       setCurrentUrl(processedUrl);
+      setFallbackUrls(fallbacks);
       setDocUrl(initialUrl);
     }
   }, [initialUrl]);
@@ -99,17 +127,29 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
             <FileText className="h-5 w-5" />
             {title}
           </CardTitle>
-          {docUrl && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={openInNewTab}
-              className="flex items-center gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Open Original
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {hasError && fallbackUrls.length > 1 && currentFallbackIndex < fallbackUrls.length - 1 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={tryDifferentUrl}
+                className="flex items-center gap-2"
+              >
+                Try Different View
+              </Button>
+            )}
+            {docUrl && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={openInNewTab}
+                className="flex items-center gap-2"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Open Original
+              </Button>
+            )}
+          </div>
         </div>
         
         {showUrlInput && (
@@ -156,13 +196,19 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
             <div className="flex items-center justify-center h-full text-destructive">
               <div className="text-center">
                 <AlertCircle className="h-12 w-12 mx-auto mb-4" />
-                <p className="text-lg font-medium mb-2">Failed to Load Document</p>
+                <p className="text-lg font-medium mb-2">Document Access Issue</p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  The document could not be loaded. Please check the URL and try again.
+                  This document may be private or require special permissions. 
+                  {currentFallbackIndex < fallbackUrls.length - 1 && " Trying alternative view..."}
                 </p>
-                <Button variant="outline" onClick={handleLoadDocument}>
-                  Try Again
-                </Button>
+                <div className="flex gap-2 justify-center">
+                  <Button variant="outline" onClick={handleLoadDocument}>
+                    Try Again
+                  </Button>
+                  <Button variant="default" onClick={openInNewTab}>
+                    Open in Google Docs
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
@@ -178,12 +224,13 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               
               <div className="w-full h-full overflow-hidden rounded-b-lg">
                 <iframe
+                  key={currentUrl} // Force re-render when URL changes
                   src={currentUrl}
                   className="w-full h-full border-0"
                   title={title}
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
-                  sandbox="allow-scripts allow-same-origin"
+                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                   style={{ 
                     border: 'none',
                     outline: 'none',
