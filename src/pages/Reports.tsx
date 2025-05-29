@@ -90,13 +90,12 @@ const Reports = () => {
             status: report.status,
             exerciseId: report.exercise_id,
             companyId: report.company_id,
-            // Mock data for the new columns - in a real app these would come from the database
-            plan: Math.floor(Math.random() * 100) + 1,
-            people: Math.floor(Math.random() * 100) + 1,
-            profits: Math.floor(Math.random() * 100) + 1,
-            purposeImpact: Math.floor(Math.random() * 100) + 1,
-            stressLeadership: Math.floor(Math.random() * 100) + 1,
-            overall: Math.floor(Math.random() * 100) + 1,
+            plan: report.plan_score,
+            people: report.people_score,
+            profits: report.profits_score,
+            purposeImpact: report.purpose_impact_score,
+            stressLeadership: report.stress_leadership_score,
+            overall: report.overall_score,
           }));
           setReports(formattedReports);
         }
@@ -130,14 +129,12 @@ const Reports = () => {
   };
 
   const navigateToReport = (report: Report) => {
-    // Create a slug from the company name
     const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
     navigate(`/dashboard/reports/${companySlug}/${report.exerciseId || 'unknown'}/${report.id}`);
   };
 
   const handleDownload = async (report: Report) => {
     try {
-      // Create a simple text report for download
       const reportContent = `
 Business Health Check Report
 Company: ${report.company}
@@ -167,7 +164,6 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
   const handleReAnalyze = async (report: Report) => {
     try {
-      // Update report status to "In Progress"
       const { error } = await supabase
         .from('reports')
         .update({ status: 'In Progress' })
@@ -175,7 +171,6 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
       if (error) throw error;
 
-      // Update local state
       setReports(reports.map(r => 
         r.id === report.id ? { ...r, status: 'In Progress' } : r
       ));
@@ -198,7 +193,6 @@ This report was generated on ${new Date().toLocaleDateString()}.
           url: shareUrl,
         });
       } else {
-        // Fallback: copy to clipboard
         await navigator.clipboard.writeText(shareUrl);
         toast.success('Report link copied to clipboard');
       }
@@ -227,7 +221,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
           status: 'In Progress',
           user_id: user.id,
           pitch_deck_url: pitchDeckUrl,
-          company_id: companyId // Store the company UUID
+          company_id: companyId
         })
         .select()
         .single();
@@ -246,21 +240,19 @@ This report was generated on ${new Date().toLocaleDateString()}.
           pitchDeckUrl: reportData.pitch_deck_url,
           exerciseId: reportData.exercise_id,
           companyId: reportData.company_id,
-          plan: Math.floor(Math.random() * 100) + 1,
-          people: Math.floor(Math.random() * 100) + 1,
-          profits: Math.floor(Math.random() * 100) + 1,
-          purposeImpact: Math.floor(Math.random() * 100) + 1,
-          stressLeadership: Math.floor(Math.random() * 100) + 1,
-          overall: Math.floor(Math.random() * 100) + 1,
+          plan: reportData.plan_score,
+          people: reportData.people_score,
+          profits: reportData.profits_score,
+          purposeImpact: reportData.purpose_impact_score,
+          stressLeadership: reportData.stress_leadership_score,
+          overall: reportData.overall_score,
         };
         
         setReports([newReport, ...reports]);
 
-        // Send data to webhook as query parameters
         try {
           const webhookUrl = new URL('https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n');
           
-          // Add query parameters
           webhookUrl.searchParams.append('reportId', reportData.id);
           webhookUrl.searchParams.append('companyName', companyName);
           webhookUrl.searchParams.append('exerciseTitle', exerciseTitle);
@@ -281,14 +273,12 @@ This report was generated on ${new Date().toLocaleDateString()}.
             webhookUrl.searchParams.append('pitchDeckUrl', pitchDeckUrl);
           }
 
-          // Combine questions and answers
           const combinedQuestionsAnswers = [
             'What is your current monthly revenue? Strong financial foundation with positive cash flow',
             'How many employees do you have? Marketing strategy needs improvement', 
             'What are your main marketing channels? Leadership team is well-structured'
           ];
 
-          // Add combined question-answer parameters as array
           combinedQuestionsAnswers.forEach((qa, index) => {
             webhookUrl.searchParams.append(`questionsAnswers[${index}]`, qa);
           });
@@ -303,7 +293,6 @@ This report was generated on ${new Date().toLocaleDateString()}.
           console.log('Webhook data sent successfully via query parameters');
         } catch (webhookError) {
           console.error('Error sending data to webhook:', webhookError);
-          // Don't show error to user as this shouldn't block the main flow
         }
       }
       
@@ -325,7 +314,6 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
       if (error) throw error;
 
-      // Update local state by removing the deleted report
       setReports(reports.filter(r => r.id !== report.id));
 
       toast.success(`Report for ${report.company} has been deleted successfully`);
@@ -335,10 +323,15 @@ This report was generated on ${new Date().toLocaleDateString()}.
     }
   };
 
-  const getScoreColor = (score: number) => {
+  const getScoreColor = (score: number | null | undefined) => {
+    if (score === null || score === undefined) return 'text-gray-400';
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  const formatScore = (score: number | null | undefined) => {
+    return score !== null && score !== undefined ? Math.round(score * 10) / 10 : '-';
   };
 
   return (
@@ -401,23 +394,23 @@ This report was generated on ${new Date().toLocaleDateString()}.
                             {report.status}
                           </span>
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.plan || 0)}`}>
-                          {report.plan || '-'}
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.plan)}`}>
+                          {formatScore(report.plan)}
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.people || 0)}`}>
-                          {report.people || '-'}
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.people)}`}>
+                          {formatScore(report.people)}
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.profits || 0)}`}>
-                          {report.profits || '-'}
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.profits)}`}>
+                          {formatScore(report.profits)}
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.purposeImpact || 0)}`}>
-                          {report.purposeImpact || '-'}
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.purposeImpact)}`}>
+                          {formatScore(report.purposeImpact)}
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.stressLeadership || 0)}`}>
-                          {report.stressLeadership || '-'}
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.stressLeadership)}`}>
+                          {formatScore(report.stressLeadership)}
                         </TableCell>
-                        <TableCell className={`text-center font-medium ${getScoreColor(report.overall || 0)}`}>
-                          {report.overall || '-'}
+                        <TableCell className={`text-center font-medium ${getScoreColor(report.overall)}`}>
+                          {formatScore(report.overall)}
                         </TableCell>
                         <TableCell className="text-right">
                           <div 

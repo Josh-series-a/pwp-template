@@ -77,8 +77,14 @@ export type Database = {
           created_at: string
           exercise_id: string
           id: string
+          overall_score: number | null
+          people_score: number | null
           pitch_deck_url: string | null
+          plan_score: number | null
+          profits_score: number | null
+          purpose_impact_score: number | null
           status: string
+          stress_leadership_score: number | null
           tabs_data: Json | null
           title: string
           updated_at: string
@@ -91,8 +97,14 @@ export type Database = {
           created_at?: string
           exercise_id: string
           id?: string
+          overall_score?: number | null
+          people_score?: number | null
           pitch_deck_url?: string | null
+          plan_score?: number | null
+          profits_score?: number | null
+          purpose_impact_score?: number | null
           status?: string
+          stress_leadership_score?: number | null
           tabs_data?: Json | null
           title: string
           updated_at?: string
@@ -105,8 +117,14 @@ export type Database = {
           created_at?: string
           exercise_id?: string
           id?: string
+          overall_score?: number | null
+          people_score?: number | null
           pitch_deck_url?: string | null
+          plan_score?: number | null
+          profits_score?: number | null
+          purpose_impact_score?: number | null
           status?: string
+          stress_leadership_score?: number | null
           tabs_data?: Json | null
           title?: string
           updated_at?: string
