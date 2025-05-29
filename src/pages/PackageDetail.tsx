@@ -23,25 +23,25 @@ const PackageDetail = () => {
       url: 'https://docs.google.com/document/d/1D-MHsXuKA1EeZzARQA3XW8eF8d1j6U-rxKcFU_CR7As/edit?usp=drive_link',
       title: 'Business Legacy Plan - Document 1',
       description: 'Strategic planning and business foundation',
-      thumbnail: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop'
+      thumbnail: 'https://lh3.googleusercontent.com/d/1D-MHsXuKA1EeZzARQA3XW8eF8d1j6U-rxKcFU_CR7As=w1000?authuser=0'
     },
     {
       url: 'https://docs.google.com/document/d/1kuNM_OYoJykQb9Qw8un-8KQc_N_v8fpm82aBQzNep_0/edit?usp=drive_link',
       title: 'Business Legacy Plan - Document 2',
       description: 'Operational excellence and processes',
-      thumbnail: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=300&fit=crop'
+      thumbnail: 'https://lh3.googleusercontent.com/d/1kuNM_OYoJykQb9Qw8un-8KQc_N_v8fpm82aBQzNep_0=w1000?authuser=0'
     },
     {
       url: 'https://docs.google.com/document/d/1rimSYTJtoBge0ivtcFeiR7kOKaxZpbSokGXNu8VoGgo/edit?usp=drive_link',
       title: 'Business Legacy Plan - Document 3',
       description: 'Financial planning and sustainability',
-      thumbnail: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop'
+      thumbnail: 'https://lh3.googleusercontent.com/d/1rimSYTJtoBge0ivtcFeiR7kOKaxZpbSokGXNu8VoGgo=w1000?authuser=0'
     },
     {
       url: 'https://docs.google.com/document/d/12xzDB8dHSZJ_E7xZ4v5pE-Oclwr8B0eN5FfgiydB7aQ/edit?usp=drive_link',
       title: 'Business Legacy Plan - Document 4',
       description: 'Implementation and next steps',
-      thumbnail: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=300&fit=crop'
+      thumbnail: 'https://lh3.googleusercontent.com/d/12xzDB8dHSZJ_E7xZ4v5pE-Oclwr8B0eN5FfgiydB7aQ=w1000?authuser=0'
     }
   ];
 
