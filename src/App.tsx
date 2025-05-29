@@ -60,10 +60,10 @@ const App = () => (
               <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId" element={<ProtectedRoute><ReportDetail /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId" element={<ProtectedRoute><PackageDetail /></ProtectedRoute>} />
-              <Route path="/read" element={<ProtectedRoute><Read /></ProtectedRoute>} />
-              <Route path="/read/:chapterId" element={<ProtectedRoute><BookSession /></ProtectedRoute>} />
-              <Route path="/insights" element={<ProtectedRoute><BookInsights /></ProtectedRoute>} />
-              <Route path="/exercises" element={<ProtectedRoute><Exercises /></ProtectedRoute>} />
+              <Route path="/dashboard/read" element={<ProtectedRoute><Read /></ProtectedRoute>} />
+              <Route path="/dashboard/read/:chapterId" element={<ProtectedRoute><BookSession /></ProtectedRoute>} />
+              <Route path="/dashboard/insights" element={<ProtectedRoute><BookInsights /></ProtectedRoute>} />
+              <Route path="/dashboard/exercises" element={<ProtectedRoute><Exercises /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
