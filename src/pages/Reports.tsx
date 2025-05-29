@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -36,6 +37,7 @@ import {
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
+import LoadingRayMeter from '@/components/LoadingRayMeter';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -356,7 +358,10 @@ This report was generated on ${new Date().toLocaleDateString()}.
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="text-center py-8">Loading reports...</div>
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                <LoadingRayMeter size="lg" autoAnimate={true} />
+                <p className="text-muted-foreground">Loading reports...</p>
+              </div>
             ) : reports.length > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
@@ -460,8 +465,12 @@ This report was generated on ${new Date().toLocaleDateString()}.
                 </Table>
               </div>
             ) : (
-              <div className="text-center py-8">
-                No reports found. Click "Run New Analysis" to create your first report.
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                <LoadingRayMeter size="lg" progress={0} autoAnimate={false} />
+                <div className="text-center space-y-2">
+                  <p className="text-lg font-medium">No reports found</p>
+                  <p className="text-muted-foreground">Click "Run New Analysis" to create your first report.</p>
+                </div>
               </div>
             )}
           </CardContent>
