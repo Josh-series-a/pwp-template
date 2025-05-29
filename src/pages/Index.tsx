@@ -65,7 +65,7 @@ const Index = () => {
               <div className="flex justify-center lg:justify-end">
                 <div className="relative">
                   <img 
-                    src="/lovable-uploads/c84b7480-caf5-42d4-b90e-0507c12129e0.png" 
+                    src="/lovable-uploads/img_20191225_164551120.webp" 
                     alt="Prosper with Purpose book" 
                     className="w-96 lg:w-[500px] xl:w-[600px] h-auto"
                   />
