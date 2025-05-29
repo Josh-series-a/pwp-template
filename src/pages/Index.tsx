@@ -280,16 +280,16 @@ const Index = () => {
           
           <div className="grid md:grid-cols-2 gap-8">
             {[{
-            quote: "Colin has really helped me focus on the key priorities… It's been invaluable having an experienced and empathetic person to talk to.",
+            quote: "Colin has really helped me to focus on the key priorities for CGX. He's helped me to think through where we want to be and currently, we're developing a marketing plan for how to get there. On the way we're also addressing essentials like our pricing model and cash management. It's been invaluable having an experienced and empathetic person to talk to especially when the going has been tough.",
             author: "Dr Lia Hunter",
             role: "Founder, CGX",
             initials: "LH",
             rating: 5
           }, {
-            quote: "After going through a structural change, Colin helped us define our mission and set us on the path to achieving it.",
-            author: "Deborah Allen",
-            role: "Founder, DouglasJane Studio",
-            initials: "DA",
+            quote: "Colin took time to get to know the business and observe my way-too-deep involvement in many aspects of it. .. I am now no longer involved in managing most of the manufacturing process and have far fewer worries — and phone calls —when I'm away from the office. I have worked only 3 Saturdays in the last six months.",
+            author: "Andy Hall",
+            role: "Co-Founder and Managing Director, Just Electronics Ltd.",
+            initials: "AH",
             rating: 5
           }].map((testimonial, index) => <TransitionWrapper key={index} animation="fade" delay={index * 100}>
                 <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 bg-white/10 backdrop-blur-lg border border-white/20 group">
