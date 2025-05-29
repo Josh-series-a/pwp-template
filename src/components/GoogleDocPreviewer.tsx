@@ -41,13 +41,13 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
       if (match) {
         const docId = match[1];
         
-        // Use preview URLs that show only document content without editor
+        // Use published URLs that show only document content without any Google interface
         if (url.includes('spreadsheets')) {
-          return `https://docs.google.com/spreadsheets/d/${docId}/preview`;
+          return `https://docs.google.com/spreadsheets/d/${docId}/pub?output=html`;
         } else if (url.includes('presentation')) {
-          return `https://docs.google.com/presentation/d/${docId}/preview`;
+          return `https://docs.google.com/presentation/d/${docId}/pub?start=false&loop=false&delayms=3000`;
         } else {
-          return `https://docs.google.com/document/d/${docId}/preview`;
+          return `https://docs.google.com/document/d/${docId}/pub`;
         }
       }
     }
