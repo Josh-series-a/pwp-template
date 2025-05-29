@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -158,10 +157,10 @@ const Header = () => {
                   </Button>
                 </Link>
                 <Link 
-                  to="/signup"
+                  to="/contact"
                   className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-yellow-400 text-slate-900 hover:bg-yellow-300 shadow-lg border-0 hover:scale-105"
                 >
-                  Sign up
+                  Schedule a Demo
                 </Link>
               </>
             )}
@@ -222,10 +221,10 @@ const Header = () => {
                       Login
                     </Button>
                   </Link>
-                  <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button className="w-full justify-center rounded-full bg-yellow-400 text-slate-900 hover:bg-yellow-300">
                       <User className="mr-2 h-4 w-4" />
-                      Sign up
+                      Schedule a Demo
                     </Button>
                   </Link>
                 </>
