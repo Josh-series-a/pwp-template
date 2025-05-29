@@ -48,103 +48,119 @@ const About = () => {
             </div>
           </TransitionWrapper>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-            <TransitionWrapper animation="slide-right">
-              <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20 h-full">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
-                
-                <CardHeader className="pb-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
-                      <Award className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-2xl font-bold text-white">Colin Crooks MBE</CardTitle>
-                      <CardDescription className="text-gray-300 text-lg">
-                        Serial Social Entrepreneur & Author
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-6">
-                  <p className="text-gray-300 leading-relaxed">
-                    As a serial social entrepreneur with a track record of establishing impactful and sustainable social enterprises, Colin was awarded an MBE in the 2019 New Year's Honours list for services to disadvantaged people and the environment.
-                  </p>
-                  
-                  <p className="text-gray-300 leading-relaxed">
-                    He believes that significant social and environmental benefits can be created through ethical business and his book 'How to Make a Million Jobs, A charter for social enterprise' set out a route map for encouraging social enterprise.
-                  </p>
-
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-yellow-400" />
-                      <a href="mailto:colin@intentionality.co.uk" className="text-gray-300 hover:text-yellow-400 transition-colors">
-                        colin@intentionality.co.uk
-                      </a>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Twitter className="w-5 h-5 text-yellow-400" />
-                      <span className="text-gray-300">@ColinCrooks</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-gray-300">Qualified coach in enterprise and start-up development</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                      <span className="text-gray-300">Author of "How to make a million jobs – A Charter for Social Enterprise"</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Trophy className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                      <span className="text-gray-300">Queen's Award for Enterprise (Sustainable Development) 2008</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TransitionWrapper>
-
-            <TransitionWrapper animation="slide-left" delay={200}>
-              <div className="space-y-8">
+          <div className="grid lg:grid-cols-3 gap-16 items-start">
+            <TransitionWrapper animation="slide-up" delay={100}>
+              <div className="lg:col-span-1">
                 <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 to-orange-500"></div>
                   <CardContent className="p-8">
-                    <h3 className="text-xl font-bold text-white mb-4">Philosophy</h3>
-                    <p className="text-gray-300 leading-relaxed mb-4">
-                      Starting or growing a business can be very demanding and at times confusing. Founders and directors are often too close to the detail to see the bigger picture and at certain crucial points they need help to gain a different perspective.
-                    </p>
-                    <p className="text-gray-300 leading-relaxed">
-                      Colin has a proven track record of being able to get to the heart of the issue and put together a plan that matches the challenge. He will put together the right blend of experienced and empathetic people that is right for your situation.
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
-                  <CardContent className="p-8">
-                    <h3 className="text-xl font-bold text-white mb-4">Current Roles</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <Building2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-white">Director at Locality</h4>
-                          <p className="text-gray-300 text-sm">National network supporting community organisations with responsibility for Diversity, Equality and Inclusion</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Building2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-white">Director at SE24</h4>
-                          <p className="text-gray-300 text-sm">Community Benefit Society dedicated to locally-owned renewable energy projects and energy conservation</p>
+                    <div className="relative">
+                      <img 
+                        src="/lovable-uploads/img_20191225_164551120.webp" 
+                        alt="Colin Crooks MBE" 
+                        className="w-full rounded-2xl shadow-lg mb-6"
+                      />
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-white mb-2">Colin Crooks MBE</h3>
+                        <p className="text-gray-300 text-lg mb-4">Serial Social Entrepreneur & Author</p>
+                        <div className="flex justify-center">
+                          <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
+                            <Award className="w-8 h-8 text-white" />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
+            </TransitionWrapper>
+
+            <TransitionWrapper animation="slide-right" delay={200}>
+              <div className="lg:col-span-2">
+                <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20 h-full">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                  
+                  <CardContent className="p-8 space-y-6">
+                    <p className="text-gray-300 leading-relaxed">
+                      As a serial social entrepreneur with a track record of establishing impactful and sustainable social enterprises, Colin was awarded an MBE in the 2019 New Year's Honours list for services to disadvantaged people and the environment.
+                    </p>
+                    
+                    <p className="text-gray-300 leading-relaxed">
+                      He believes that significant social and environmental benefits can be created through ethical business and his book 'How to Make a Million Jobs, A charter for social enterprise' set out a route map for encouraging social enterprise.
+                    </p>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="flex items-center gap-3">
+                        <Mail className="w-5 h-5 text-yellow-400" />
+                        <a href="mailto:colin@intentionality.co.uk" className="text-gray-300 hover:text-yellow-400 transition-colors">
+                          colin@intentionality.co.uk
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Twitter className="w-5 h-5 text-yellow-400" />
+                        <span className="text-gray-300">@ColinCrooks</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                        <span className="text-gray-300">Qualified coach in enterprise and start-up development</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                        <span className="text-gray-300">Author of "How to make a million jobs – A Charter for Social Enterprise"</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Trophy className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                        <span className="text-gray-300">Queen's Award for Enterprise (Sustainable Development) 2008</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TransitionWrapper>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mt-16">
+            <TransitionWrapper animation="slide-left" delay={300}>
+              <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold text-white mb-4">Philosophy</h3>
+                  <p className="text-gray-300 leading-relaxed mb-4">
+                    Starting or growing a business can be very demanding and at times confusing. Founders and directors are often too close to the detail to see the bigger picture and at certain crucial points they need help to gain a different perspective.
+                  </p>
+                  <p className="text-gray-300 leading-relaxed">
+                    Colin has a proven track record of being able to get to the heart of the issue and put together a plan that matches the challenge. He will put together the right blend of experienced and empathetic people that is right for your situation.
+                  </p>
+                </CardContent>
+              </Card>
+            </TransitionWrapper>
+
+            <TransitionWrapper animation="slide-left" delay={400}>
+              <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold text-white mb-4">Current Roles</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <Building2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-white">Director at Locality</h4>
+                        <p className="text-gray-300 text-sm">National network supporting community organisations with responsibility for Diversity, Equality and Inclusion</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Building2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-1" />
+                      <div>
+                        <h4 className="font-semibold text-white">Director at SE24</h4>
+                        <p className="text-gray-300 text-sm">Community Benefit Society dedicated to locally-owned renewable energy projects and energy conservation</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TransitionWrapper>
           </div>
         </div>
