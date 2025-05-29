@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import TransitionWrapper from "./components/TransitionWrapper";
 
 import Index from "./pages/Index";
+import About from "./pages/About";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
@@ -38,6 +39,7 @@ const App = () => (
           <TransitionWrapper>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/about" element={<About />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/preloader-demo" element={<PreloaderDemo />} />
