@@ -51,16 +51,14 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 
     // Return multiple view-only URL formats to try
     const viewUrls = [
-      // Google Drive preview (most reliable for public docs)
-      `https://drive.google.com/file/d/${docId}/preview`,
-      // Google Docs viewer 
-      `https://docs.google.com/viewer?srcid=${docId}&pid=explorer&efh=false&a=v&chrome=false&embedded=true`,
-      // Alternative viewer format
-      `https://docs.google.com/viewer?url=https://drive.google.com/uc?id=${docId}%26export=download&embedded=true`,
-      // Published version
+      // Primary view-only URL (no editing interface)
+      `https://docs.google.com/document/d/${docId}/preview`,
+      // Embedded viewer with minimal UI
       `https://docs.google.com/document/d/${docId}/pub?embedded=true`,
-      // Fallback to original URL
-      url
+      // Alternative embed format
+      `https://docs.google.com/viewer?url=https://docs.google.com/document/d/${docId}/export?format=pdf&embedded=true`,
+      // PDF export embedded
+      `https://drive.google.com/file/d/${docId}/preview`
     ];
 
     return viewUrls;
@@ -89,14 +87,15 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
     setCurrentUrl(processedUrl);
     setFallbackUrls(fallbacks);
     
-    console.log('Loading document with URL:', processedUrl);
-    console.log('Available fallbacks:', fallbacks);
+    // Simulate loading time
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   };
 
   const handleIframeLoad = () => {
     setIsLoading(false);
     setHasError(false);
-    console.log('Document loaded successfully');
   };
 
   const handleIframeError = () => {
@@ -137,21 +136,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       setCurrentUrl(processedUrl);
       setFallbackUrls(fallbacks);
       setDocUrl(initialUrl);
-      setIsLoading(true);
-      console.log('Initial document URL processed:', processedUrl);
     }
   }, [initialUrl]);
-
-  // Auto-load timeout
-  useEffect(() => {
-    if (currentUrl && isLoading) {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 5000); // 5 second timeout
-      
-      return () => clearTimeout(timer);
-    }
-  }, [currentUrl, isLoading]);
 
   return (
     <Card className={cn("w-full", className)}>
@@ -211,7 +197,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="relative border-t bg-white"
+          className="relative border-t bg-white overflow-hidden"
           style={{ height }}
         >
           {!currentUrl && !isLoading ? (
@@ -256,22 +242,22 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                 </div>
               )}
               
-              <iframe
-                key={`${currentUrl}-${currentFallbackIndex}`}
-                src={currentUrl}
-                className="w-full h-full border-0"
-                title={title}
-                onLoad={handleIframeLoad}
-                onError={handleIframeError}
-                style={{ 
-                  border: 'none',
-                  outline: 'none',
-                  background: 'white',
-                  width: '100%',
-                  height: '100%'
-                }}
-                allowFullScreen
-              />
+              <div className="w-full h-full rounded-b-lg">
+                <iframe
+                  key={currentUrl}
+                  src={currentUrl}
+                  className="w-full h-full border-0 rounded-b-lg"
+                  title={title}
+                  onLoad={handleIframeLoad}
+                  onError={handleIframeError}
+                  sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                  style={{ 
+                    border: 'none',
+                    outline: 'none',
+                    background: 'white'
+                  }}
+                />
+              </div>
             </>
           )}
         </div>
