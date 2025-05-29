@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -69,7 +70,7 @@ const Header = () => {
   
   return (
     <header className={cn(
-      "fixed w-full top-0 z-50 transition-all duration-300 ease-in-out",
+      "w-full top-0 z-50 transition-all duration-300 ease-in-out",
       "px-6 md:px-8 py-4"
     )}>
       <div className={cn(
