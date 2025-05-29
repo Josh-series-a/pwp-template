@@ -160,7 +160,7 @@ const Header = () => {
                   to="/contact"
                   className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-yellow-400 text-slate-900 hover:bg-yellow-300 shadow-lg border-0 hover:scale-105"
                 >
-                  Schedule a Demo
+                  Book Free Discovery Call
                 </Link>
               </>
             )}
@@ -224,7 +224,7 @@ const Header = () => {
                   <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button className="w-full justify-center rounded-full bg-yellow-400 text-slate-900 hover:bg-yellow-300">
                       <User className="mr-2 h-4 w-4" />
-                      Schedule a Demo
+                      Book Free Discovery Call
                     </Button>
                   </Link>
                 </>
