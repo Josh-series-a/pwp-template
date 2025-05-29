@@ -41,13 +41,13 @@ const GoogleDocPreviewer: React.FC<GoogleDocPreviewerProps> = ({
       if (match) {
         const docId = match[1];
         
-        // Determine document type and return appropriate embed URL (not preview)
+        // Determine document type and return appropriate embed URL with parameters to hide editor
         if (url.includes('spreadsheets')) {
-          return `https://docs.google.com/spreadsheets/d/${docId}/embed`;
+          return `https://docs.google.com/spreadsheets/d/${docId}/embed?widget=true&headers=false`;
         } else if (url.includes('presentation')) {
-          return `https://docs.google.com/presentation/d/${docId}/embed`;
+          return `https://docs.google.com/presentation/d/${docId}/embed?start=false&loop=false&delayms=3000`;
         } else {
-          return `https://docs.google.com/document/d/${docId}/embed`;
+          return `https://docs.google.com/document/d/${docId}/embed?embedded=true`;
         }
       }
     }
