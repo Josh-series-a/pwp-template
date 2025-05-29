@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -78,7 +77,7 @@ const Index = () => {
       </section>
       
       {/* Stats Section */}
-      <section className="py-16 px-6 md:px-8 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+      <section className="py-24 px-6 md:px-8 bg-slate-900">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -88,9 +87,9 @@ const Index = () => {
               { number: "4.9★", label: "Average Rating" }
             ].map((stat, index) => (
               <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">{stat.number}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">{stat.label}</div>
+                <div className="text-center p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="text-4xl md:text-5xl font-bold text-yellow-400 mb-3">{stat.number}</div>
+                  <div className="text-sm text-gray-300 font-medium uppercase tracking-wider">{stat.label}</div>
                 </div>
               </TransitionWrapper>
             ))}
