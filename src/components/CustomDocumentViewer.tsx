@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -141,8 +139,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   }, [initialUrl]);
 
   return (
-    <Card className={cn("w-full", className)}>
-      <CardHeader className="pb-4">
+    <Card className={cn("w-full flex flex-col", className)}>
+      <CardHeader className="pb-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
@@ -196,9 +194,9 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
         )}
       </CardHeader>
       
-      <CardContent className="p-0">
+      <CardContent className="p-0 flex-1 flex flex-col min-h-0">
         <div 
-          className="border-t bg-white"
+          className="border-t bg-white flex-1 min-h-0"
           style={{ height }}
         >
           {!currentUrl && !isLoading ? (
@@ -252,6 +250,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
                   allowFullScreen
+                  style={{ minHeight: '100%' }}
                 />
               )}
             </div>
@@ -263,4 +262,3 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
 };
 
 export default CustomDocumentViewer;
-
