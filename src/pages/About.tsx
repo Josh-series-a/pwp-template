@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Target, Users, Heart, Award, CheckCircle, Mail, Twitter, Building2, Trophy } from 'lucide-react';
@@ -143,7 +144,7 @@ const About = () => {
       </section>
 
       {/* Career Timeline */}
-      <section className="py-24 px-6 md:px-8 bg-slate-50">
+      <section className="py-24 px-6 md:px-8 bg-slate-900">
         <div className="max-w-6xl mx-auto">
           <TransitionWrapper>
             <div className="text-center mb-16">
