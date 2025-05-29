@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -197,8 +196,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
       
       <CardContent className="p-0">
         <div 
-          className="relative border-t bg-white overflow-hidden"
-          style={{ height, position: 'relative' }}
+          className="relative border-t bg-white"
+          style={{ height }}
         >
           {!currentUrl && !isLoading ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -232,7 +231,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               </div>
             </div>
           ) : (
-            <>
+            <div className="relative w-full h-full">
               {isLoading && (
                 <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10">
                   <div className="text-center">
@@ -245,7 +244,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               <iframe
                 key={currentUrl}
                 src={currentUrl}
-                className="absolute inset-0 w-full h-full border-0 rounded-b-lg"
+                className="w-full h-full border-0 rounded-b-lg"
                 title={title}
                 onLoad={handleIframeLoad}
                 onError={handleIframeError}
@@ -254,14 +253,12 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                   border: 'none',
                   outline: 'none',
                   background: 'white',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
                   width: '100%',
-                  height: '100%'
+                  height: '100%',
+                  display: 'block'
                 }}
               />
-            </>
+            </div>
           )}
         </div>
       </CardContent>
