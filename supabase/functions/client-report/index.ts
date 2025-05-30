@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
@@ -103,7 +102,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   const { companyName, exerciseId, tabs, userId, reportId, scores, status } = requestData;
 
   // Handle score-only updates (simpler path)
-  if (reportId && userId && scores && !tabs) {
+  if (reportId && userId && scores) {
     console.log(`Updating scores for report ${reportId}`);
     
     const updateData: any = {
@@ -126,13 +125,15 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       }
     }
     
+    console.log('Update data:', updateData);
+    
     const { data: updatedReport, error: updateError } = await supabaseClient
       .from('reports')
       .update(updateData)
       .eq('id', reportId)
       .eq('user_id', userId) // Ensure user owns the report
       .select()
-      .maybeSingle();
+      .single();
     
     if (updateError) {
       console.error('Error updating report scores:', updateError);
