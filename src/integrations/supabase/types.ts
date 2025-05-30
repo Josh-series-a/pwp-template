@@ -16,7 +16,6 @@ export type Database = {
           id: string
           overview: string | null
           purpose: string | null
-          report_id: string | null
           sub_pillars: Json
           tab_id: string
           total_score: number | null
@@ -28,7 +27,6 @@ export type Database = {
           id?: string
           overview?: string | null
           purpose?: string | null
-          report_id?: string | null
           sub_pillars?: Json
           tab_id: string
           total_score?: number | null
@@ -40,7 +38,6 @@ export type Database = {
           id?: string
           overview?: string | null
           purpose?: string | null
-          report_id?: string | null
           sub_pillars?: Json
           tab_id?: string
           total_score?: number | null

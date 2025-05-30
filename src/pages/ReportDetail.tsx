@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -29,7 +28,6 @@ interface BusinessHealthData {
   total_score: number | null;
   created_at: string;
   updated_at: string;
-  report_id: string | null;
 }
 
 const ReportDetail = () => {
@@ -58,16 +56,15 @@ const ReportDetail = () => {
         if (reportData) {
           setReport(reportData);
           
-          // Fetch business health data for this report using report_id
+          // Fetch business health data for this client
           const { data: healthData, error: healthError } = await supabase
             .from('business_health')
             .select('*')
-            .eq('report_id', reportId);
+            .eq('client_id', reportId);
           
           if (healthError) {
             console.error('Error fetching business health data:', healthError);
           } else if (healthData) {
-            console.log('Fetched business health data:', healthData);
             // Organize data by tab_id
             const organizedData: Record<string, BusinessHealthData> = {};
             healthData.forEach((item) => {
