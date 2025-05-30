@@ -19,7 +19,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
+import { businessHealthService } from '@/utils/businessHealthService';
 
 const businessHealthScoreSchema = z.object({
   // STRESS & LEADERSHIP
@@ -194,6 +194,15 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   };
 
   const onSubmit = async (data: z.infer<typeof businessHealthScoreSchema>) => {
+    if (!user?.id || !reportId) {
+      toast({
+        title: "Missing information",
+        description: "User ID or Report ID is missing. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -201,8 +210,8 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       
       // Create business health data structure
       const businessHealthData = {
-        clientId: reportId,
-        reportId: reportId,
+        clientId: user.id, // Use user ID as clientId
+        reportId: reportId, // Use reportId from URL params
         tabId: 'business-health-score',
         Overview: 'Comprehensive business health assessment covering stress & leadership, planning, people management, financial performance, and purpose-driven impact.',
         Purpose: 'To evaluate the overall health and sustainability of the business across five key pillars.',
@@ -280,41 +289,21 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       console.log('Submitting business health data:', businessHealthData);
 
       // Save to business health function
-      const { data: healthResponse, error: healthError } = await supabase.functions.invoke('business-health', {
-        method: 'POST',
-        body: businessHealthData
-      });
-
-      if (healthError) {
-        throw healthError;
-      }
-
+      const healthResponse = await businessHealthService.saveBusinessHealth(businessHealthData);
       console.log('Business health data saved:', healthResponse);
 
       // Update the reports table with the calculated scores
       if (reportId) {
-        const { data: reportResponse, error: reportError } = await supabase.functions.invoke('client-report', {
-          method: 'POST',
-          body: {
-            reportId: reportId,
-            scores: {
-              Score_Leadership: scores.stressLeadershipScore,
-              Score_Plan: scores.planScore,
-              Score_People: scores.peopleScore,
-              Score_Profits: scores.profitsScore,
-              Score_Purpose: scores.purposeScore,
-              Business_Health_Score: scores.totalScore
-            },
-            status: 'completed'
-          }
-        });
+        const reportResponse = await businessHealthService.updateReportScores(reportId, {
+          Score_Leadership: scores.stressLeadershipScore,
+          Score_Plan: scores.planScore,
+          Score_People: scores.peopleScore,
+          Score_Profits: scores.profitsScore,
+          Score_Purpose: scores.purposeScore,
+          Business_Health_Score: scores.totalScore
+        }, 'completed');
 
-        if (reportError) {
-          console.error('Error updating report scores:', reportError);
-          // Don't throw here, as the health data was already saved successfully
-        } else {
-          console.log('Report scores updated:', reportResponse);
-        }
+        console.log('Report scores updated:', reportResponse);
       }
 
       onComplete();
