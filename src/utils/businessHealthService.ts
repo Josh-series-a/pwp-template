@@ -5,11 +5,11 @@ interface BusinessHealthParams {
   clientId: string;
   tabId: string;
   reportId?: string;
-  overview: string;
-  purpose: string;
-  subPillars: any[];
-  totalScore: number;
-  recommendedCIKs?: string[];
+  Overview: string;
+  Purpose: string;
+  Sub_Pillars: any[];
+  Total_Score: number;
+  Recommended_CIKs?: string[];
 }
 
 export const businessHealthService = {
@@ -26,11 +26,11 @@ export const businessHealthService = {
           clientId: params.clientId,
           tabId: params.tabId,
           reportId: params.reportId,
-          Overview: params.overview,
-          Purpose: params.purpose,
-          Sub_Pillars: params.subPillars,
-          Total_Score: params.totalScore,
-          Recommended_CIKs: params.recommendedCIKs
+          Overview: params.Overview,
+          Purpose: params.Purpose,
+          Sub_Pillars: params.Sub_Pillars,
+          Total_Score: params.Total_Score,
+          Recommended_CIKs: params.Recommended_CIKs
         }
       });
 
