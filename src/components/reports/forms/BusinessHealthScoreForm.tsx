@@ -76,11 +76,8 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const { user } = useAuth();
   const params = useParams();
 
-  // Extract reportId properly - handle both string and object cases
-  const reportId = typeof params.reportId === 'string' ? params.reportId : 
-                   (params.reportId && typeof params.reportId === 'object' && 'value' in params.reportId) ? 
-                   params.reportId.value : 
-                   String(params.reportId || '');
+  // Extract reportId safely with proper type handling
+  const reportId = params.reportId ? String(params.reportId) : '';
 
   console.log('BusinessHealthScoreForm - User from context:', user);
   console.log('BusinessHealthScoreForm - Raw params object:', params);
