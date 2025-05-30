@@ -91,6 +91,7 @@ const Reports = () => {
             date: report.created_at,
             company: report.company_name,
             status: report.status,
+            statusType: report.status_type,
             exerciseId: report.exercise_id,
             companyId: report.company_id,
             plan: report.plan_score,
