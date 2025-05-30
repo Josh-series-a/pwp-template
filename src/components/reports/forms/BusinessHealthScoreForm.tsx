@@ -203,16 +203,19 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       return;
     }
 
+    console.log('User ID:', user.id);
+    console.log('Report ID:', reportId);
+
     setIsSubmitting(true);
     
     try {
       const scores = calculateBusinessHealthScore(data);
       
-      // Create business health data structure
+      // Create business health data structure with correct parameter names
       const businessHealthData = {
-        clientId: user.id, // Use user ID as clientId
-        reportId: reportId, // Use reportId from URL params
+        clientId: user.id,
         tabId: 'business-health-score',
+        reportId: reportId,
         Overview: 'Comprehensive business health assessment covering stress & leadership, planning, people management, financial performance, and purpose-driven impact.',
         Purpose: 'To evaluate the overall health and sustainability of the business across five key pillars.',
         Sub_Pillars: [
@@ -246,7 +249,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
             Name: 'People Management',
             Key_Question: 'How well does the business develop and retain talent?',
             Signals_to_Look_For: ['Team independence', 'Accountability systems', 'Development programs'],
-            Red_Flags: ['High dependence on owner', 'Poor delegation', 'High turnover'],
+            Red_Flags: ['Heavy owner dependence', 'Poor delegation', 'High turnover'],
             Scoring_Guidance: {
               '1-5': 'Heavy owner dependence',
               '6-10': 'Some team development',
@@ -287,6 +290,9 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       };
 
       console.log('Submitting business health data:', businessHealthData);
+      console.log('ClientId being sent:', businessHealthData.clientId);
+      console.log('TabId being sent:', businessHealthData.tabId);
+      console.log('ReportId being sent:', businessHealthData.reportId);
 
       // Save to business health function
       const healthResponse = await businessHealthService.saveBusinessHealth(businessHealthData);
