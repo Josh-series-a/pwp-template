@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -63,25 +62,22 @@ interface BusinessHealthScoreFormProps {
   onBack: () => void;
   onComplete: () => void;
   companyDetails?: any;
+  reportId?: string; // Make reportId optional and passed as prop
 }
 
 const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({ 
   exerciseId, 
   onBack, 
   onComplete, 
-  companyDetails 
+  companyDetails,
+  reportId // Use reportId from props instead of URL params
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const params = useParams();
-
-  // Extract reportId safely with proper type handling
-  const reportId = params.reportId ? String(params.reportId) : '';
 
   console.log('BusinessHealthScoreForm - User from context:', user);
-  console.log('BusinessHealthScoreForm - Raw params object:', params);
-  console.log('BusinessHealthScoreForm - Extracted reportId:', reportId);
+  console.log('BusinessHealthScoreForm - ReportId from props:', reportId);
   console.log('BusinessHealthScoreForm - ReportId type:', typeof reportId);
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
@@ -205,8 +201,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     console.log('=== FORM SUBMISSION START ===');
     console.log('User object:', user);
     console.log('User ID:', user?.id);
-    console.log('Raw params from useParams:', params);
-    console.log('Extracted Report ID:', reportId);
+    console.log('Report ID from props:', reportId);
     console.log('Report ID type:', typeof reportId);
     console.log('Form data received:', data);
 
@@ -224,7 +219,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       console.error('Report ID is missing or invalid:', reportId);
       toast({
         title: "Missing report ID",
-        description: "Report ID is missing or invalid. Please try accessing this form from a valid report.",
+        description: "Report ID is missing or invalid. Please try starting the process again.",
         variant: "destructive",
       });
       return;

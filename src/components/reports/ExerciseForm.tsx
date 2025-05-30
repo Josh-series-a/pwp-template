@@ -1,30 +1,8 @@
 
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage,
-  FormDescription
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
 import BusinessHealthScoreForm from './forms/BusinessHealthScoreForm';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ExerciseFormProps {
   exerciseId: string;
@@ -33,1058 +11,120 @@ interface ExerciseFormProps {
   companyDetails?: any;
 }
 
-interface ExerciseFormComponentProps {
-  exerciseId: string;
-  onBack: () => void;
-  onComplete: () => void;
-  companyDetails?: any;
-}
-
-const exitStrategySchema = z.object({
-  hasStrategy: z.enum(['yes', 'no'], {
-    required_error: "Please select an option",
-  }),
-  exitDate: z.date().optional(),
-  exitDateText: z.string().optional(),
-  hasPlan: z.string().min(1, { message: "Please provide details about your plan" }),
-  implementationSteps: z.string().min(1, { message: "Please outline your implementation steps" }),
-  resources: z.string().min(1, { message: "Please describe the resources allocated" })
-});
-
-const customerSchema = z.object({
-  personaDescription: z.string().min(1, { message: "Please provide a description" }),
-  age: z.string().min(1, { message: "Age is required" }),
-  gender: z.string().min(1, { message: "Gender is required" }),
-  location: z.string().min(1, { message: "Location is required" }),
-  personalSituation: z.string().min(1, { message: "Personal situation is required" }),
-  jobTitle: z.string().min(1, { message: "Job title is required" }),
-  spareTime: z.string().min(1, { message: "Please describe how they spend spare time" }),
-  disposableIncome: z.string().min(1, { message: "Income/budget is required" }),
-  challenges: z.string().min(1, { message: "Please describe their challenges" }),
-  goals: z.string().min(1, { message: "Please describe their goals" }),
-  idealCustomerReason: z.string().min(1, { message: "Please explain why this is your ideal customer" }),
-  offerRequirements: z.string().min(1, { message: "Please describe what you must offer" })
-});
-
-const propositionSchema = z.object({
-  primaryValue: z.enum(['price', 'quality', 'delivery', 'flexibility', 'service'], {
-    required_error: "Please select a primary value",
-  }),
-  plusOneValue: z.enum(['price', 'quality', 'delivery', 'flexibility', 'service'], {
-    required_error: "Please select a +1 value",
-  }),
-  explanation: z.string().min(1, { message: "Please explain your choice" })
-});
-
-const delegationSchema = z.object({
-  knowStaff: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
-  staffKnowYou: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
-  reportCount: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
-  meetingFrequency: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
-  monitoringProcess: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
-  writtenProcesses: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" }),
-  teamTraining: z.enum(['a', 'b', 'c'], { required_error: "Please select an option" })
-});
-
-const keyCustomersSchema = z.object({
-  customerList: z.string().min(1, { message: "Please list your key customers" }),
-  customerKnowledge: z.string().min(1, { message: "Please rate your knowledge of customers" }),
-  improvementIdeas: z.string().min(1, { message: "Please suggest improvements" }),
-  relationshipImprovements: z.string().min(1, { message: "Please describe relationship improvements" })
-});
-
-const getExerciseTitle = (exerciseId: string): string => {
-  switch (exerciseId) {
-    case 'business-health-score': return 'Business Health Score';
-    case 'exercise-4': return 'Exercise 4: Define Your Exit Strategy';
-    case 'exercise-6': return 'Exercise 6: Know Your Customer';
-    case 'exercise-7': return 'Exercise 7: Create Your "1+1" Proposition';
-    case 'exercise-18': return 'Exercise 18: Measure Your Delegation';
-    case 'exercise-27': return 'Exercise 27: Know Your Key Customers';
-    default: return '';
-  }
-};
-
-const getExerciseNumber = (exerciseId: string): string => {
-  const match = exerciseId.match(/exercise-(\d+)/);
-  return match ? match[1] : '';
-};
-
-const WEBHOOK_URL = "https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n";
-
-const ExerciseForm: React.FC<ExerciseFormProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const exerciseTitle = getExerciseTitle(exerciseId);
+const ExerciseForm: React.FC<ExerciseFormProps> = ({
+  exerciseId,
+  onBack,
+  onComplete,
+  companyDetails
+}) => {
+  const [reportId, setReportId] = useState<string | null>(null);
+  const [isCreatingReport, setIsCreatingReport] = useState(true);
   const { toast } = useToast();
-  const { user } = useAuth();
 
-  const renderForm = () => {
-    switch (exerciseId) {
-      case 'business-health-score':
-        return <BusinessHealthScoreForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
-      case 'exercise-4':
-        return <ExitStrategyForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
-      case 'exercise-6':
-        return <CustomerForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
-      case 'exercise-7':
-        return <PropositionForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
-      case 'exercise-18':
-        return <DelegationForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
-      case 'exercise-27':
-        return <KeyCustomersForm exerciseId={exerciseId} onBack={onBack} onComplete={() => onComplete(exerciseTitle)} companyDetails={companyDetails} />;
-      default:
-        return <div>Unknown exercise</div>;
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <h3 className="text-xl font-medium">{exerciseTitle}</h3>
-      {renderForm()}
-    </div>
-  );
-};
-
-const sendToWebhook = async (data: any, exerciseType: string, userId: string | undefined, exerciseId: string, companyDetails?: any) => {
-  try {
-    const exerciseNumber = getExerciseNumber(exerciseId);
-    
-    // Build single query string for all data
-    const params = new URLSearchParams();
-    params.append('type', 'exercise_submission');
-    params.append('exerciseType', exerciseType);
-    params.append('exerciseNumber', exerciseNumber);
-    params.append('exerciseId', exerciseId);
-    params.append('userId', userId || 'anonymous');
-    params.append('timestamp', new Date().toISOString());
-    
-    // Add company details to query string
-    if (companyDetails) {
-      if (companyDetails.fullName) params.append('company_name', companyDetails.fullName);
-      if (companyDetails.companyName) params.append('company_businessName', companyDetails.companyName);
-      if (companyDetails.websiteUrl) params.append('company_websiteUrl', companyDetails.websiteUrl);
-      if (companyDetails.companyId) params.append('company_id', companyDetails.companyId);
-      
-      // Add pitchDeckUrl to the webhook data
-      if (companyDetails.pitchDeckUrl) params.append('company_pitchDeckUrl', companyDetails.pitchDeckUrl);
-      
-      // Add user data
-      if (companyDetails.userData) {
-        if (companyDetails.userData.name) params.append('user_name', companyDetails.userData.name);
-        if (companyDetails.userData.email) params.append('user_email', companyDetails.userData.email);
+  // Create report when component mounts
+  useEffect(() => {
+    const createReport = async () => {
+      if (!companyDetails) {
+        console.error('Company details are required to create a report');
+        toast({
+          title: "Error",
+          description: "Company details are missing. Please go back and complete the previous steps.",
+          variant: "destructive",
+        });
+        return;
       }
-    }
-    
-    // Add exercise questions and answers in format "question: answer"
-    const questionLabels = getQuestionLabels(exerciseId);
-    
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        // Find matching question label for this field
-        const questionLabel = questionLabels[key];
-        if (questionLabel) {
-          // Convert Date objects to formatted strings
-          const formattedValue = value instanceof Date 
-            ? format(value, 'PPP') 
-            : String(value);
-          
-          // Append as "Question: Answer" format
-          params.append(`qa_${key}`, `${questionLabel}: ${formattedValue}`);
+
+      try {
+        console.log('Creating report with company details:', companyDetails);
+        
+        const reportData = {
+          title: `Business Health Assessment - ${companyDetails.companyName}`,
+          company_name: companyDetails.companyName,
+          exercise_id: exerciseId,
+          status: 'In Progress',
+          user_id: companyDetails.userData?.id || companyDetails.companyId,
+          company_id: companyDetails.companyId,
+          pitch_deck_url: companyDetails.pitchDeckUrl || null
+        };
+
+        console.log('Report data to insert:', reportData);
+
+        const { data, error } = await supabase
+          .from('reports')
+          .insert([reportData])
+          .select()
+          .single();
+
+        if (error) {
+          throw error;
         }
+
+        console.log('Report created successfully:', data);
+        setReportId(data.id);
+        setIsCreatingReport(false);
+      } catch (error) {
+        console.error('Error creating report:', error);
+        toast({
+          title: "Error creating report",
+          description: "Failed to create report. Please try again.",
+          variant: "destructive",
+        });
+        setIsCreatingReport(false);
       }
-    });
-    
-    // Send combined data
-    await fetch(`${WEBHOOK_URL}?${params.toString()}`, {
-      method: 'GET',
-      mode: 'no-cors',
-    });
-    
-    console.log('Webhook submission sent via query string', {
-      url: `${WEBHOOK_URL}?${params.toString()}`,
-      pitchDeckUrl: companyDetails?.pitchDeckUrl
-    });
-    return true;
-  } catch (error) {
-    console.error('Error sending to webhook:', error);
-    return false;
+    };
+
+    createReport();
+  }, [companyDetails, exerciseId, toast]);
+
+  const handleFormComplete = () => {
+    onComplete('Business Health Score Assessment');
+  };
+
+  if (isCreatingReport) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Creating your report...</p>
+        </div>
+      </div>
+    );
   }
-};
 
-const getQuestionLabels = (exerciseId: string): Record<string, string> => {
-  switch (exerciseId) {
-    case 'exercise-4':
-      return {
-        hasStrategy: 'Do you have an exit strategy?',
-        exitDateText: 'When would you like to exit?',
-        exitDate: 'Specific exit date',
-        hasPlan: 'Do you have a plan for making the exit strategy happen in that timeframe?',
-        implementationSteps: 'What steps have you put in place to make the plan happen?',
-        resources: 'How much time and resources have you allocated to making this strategy happen?'
-      };
-    case 'exercise-6':
-      return {
-        personaDescription: 'Short description of customer persona',
-        age: 'Age',
-        gender: 'Gender',
-        location: 'Where do they live?',
-        personalSituation: 'Personal situation',
-        jobTitle: 'Job title',
-        spareTime: 'How do they spend their spare time?',
-        disposableIncome: 'Disposable income or project budget',
-        challenges: 'Concerns/challenges/fears',
-        goals: 'Big goals (work and personal)',
-        idealCustomerReason: 'Why is this your ideal customer?',
-        offerRequirements: 'What must you offer to attract them?'
-      };
-    case 'exercise-7':
-      return {
-        primaryValue: 'Choose your primary value',
-        plusOneValue: 'Choose your "+1" value',
-        explanation: 'In your words, explain why you chose this combination'
-      };
-    case 'exercise-18':
-      return {
-        knowStaff: 'How well do you know your senior staff?',
-        staffKnowYou: 'How well do they know you?',
-        reportCount: 'How many people report to you?',
-        meetingFrequency: 'How often do you meet them (for longer than 45 minutes)?',
-        monitoringProcess: 'Do you have a process for monitoring them?',
-        writtenProcesses: 'Are your processes written down?',
-        teamTraining: 'Do you train your team?'
-      };
-    case 'exercise-27':
-      return {
-        customerList: 'List your main/key customers',
-        customerKnowledge: 'How well do you know these customers?',
-        improvementIdeas: 'What would you like to improve or change?',
-        relationshipImprovements: 'How will you improve your relationship with these customers?'
-      };
-    default:
-      return {};
+  if (!reportId) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-red-600">Failed to create report. Please try again.</p>
+          <button onClick={onBack} className="mt-4 px-4 py-2 bg-gray-200 rounded">
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
   }
-};
 
-const ExitStrategyForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useAuth();
-  
-  const form = useForm<z.infer<typeof exitStrategySchema>>({
-    resolver: zodResolver(exitStrategySchema),
-    defaultValues: {
-      hasStrategy: undefined,
-      exitDateText: '',
-      hasPlan: '',
-      implementationSteps: '',
-      resources: ''
-    }
-  });
+  // Render the appropriate form based on exerciseId
+  if (exerciseId === 'business-health-score') {
+    return (
+      <BusinessHealthScoreForm
+        exerciseId={exerciseId}
+        onBack={onBack}
+        onComplete={handleFormComplete}
+        companyDetails={companyDetails}
+        reportId={reportId}
+      />
+    );
+  }
 
-  const onSubmit = async (data: z.infer<typeof exitStrategySchema>) => {
-    setIsSubmitting(true);
-    console.log(data);
-    
-    try {
-      await sendToWebhook(data, 'Exit Strategy', user?.id, exerciseId, companyDetails);
-      
-      onComplete();
-      toast({
-        title: "Form submitted successfully",
-        description: "Your exit strategy analysis has been started.",
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Submission error",
-        description: "The form was processed but there was an error with the webhook submission.",
-        variant: "destructive",
-      });
-      onComplete();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
+  // Default fallback
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="hasStrategy"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Do you have an exit strategy?</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="yes" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Yes</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="no" />
-                    </FormControl>
-                    <FormLabel className="font-normal">No</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="space-y-4">
-          <div className="flex space-x-4">
-            <FormField
-              control={form.control}
-              name="exitDateText"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>When would you like to exit?</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., In 5 years, 2028, etc." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="exitDate"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>Or select specific date (optional)</FormLabel>
-                  <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => {
-                          field.onChange(date);
-                          setShowDatePicker(false);
-                        }}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="hasPlan"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Do you have a plan for making the exit strategy happen in that timeframe?</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe your plan..."
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="implementationSteps"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>What steps have you put in place to make the plan happen?</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="List your implementation steps..."
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="resources"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>How much time and resources have you allocated to making this strategy happen?</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe allocated resources..."
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
-
-const CustomerForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useAuth();
-  
-  const form = useForm<z.infer<typeof customerSchema>>({
-    resolver: zodResolver(customerSchema),
-    defaultValues: {
-      personaDescription: '',
-      age: '',
-      gender: '',
-      location: '',
-      personalSituation: '',
-      jobTitle: '',
-      spareTime: '',
-      disposableIncome: '',
-      challenges: '',
-      goals: '',
-      idealCustomerReason: '',
-      offerRequirements: ''
-    }
-  });
-
-  const onSubmit = async (data: z.infer<typeof customerSchema>) => {
-    setIsSubmitting(true);
-    console.log(data);
-    
-    try {
-      await sendToWebhook(data, 'Know Your Customer', user?.id, exerciseId, companyDetails);
-      
-      onComplete();
-      toast({
-        title: "Form submitted successfully",
-        description: "Your customer analysis has been started.",
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Submission error",
-        description: "The form was processed but there was an error with the webhook submission.",
-        variant: "destructive",
-      });
-      onComplete();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="personaDescription"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Short description of customer persona</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe your ideal customer..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Age</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., 25-34" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Male, Female, Non-binary" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="location"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Where do they live?</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Urban area, New York" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="personalSituation"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Personal situation</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Married with kids" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="jobTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Job title</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Marketing Director" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="disposableIncome"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Disposable income or project budget</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., $5,000-$10,000" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="spareTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How do they spend their spare time?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe their hobbies and interests..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="challenges"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Concerns/challenges/fears</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="List their main challenges..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="goals"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Big goals (work and personal)</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe their main goals..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="idealCustomerReason"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Why is this your ideal customer?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Explain why they're ideal for your business..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="offerRequirements"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>What must you offer to attract them?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe your offering strategy..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
-
-const PropositionForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useAuth();
-  
-  const form = useForm<z.infer<typeof propositionSchema>>({
-    resolver: zodResolver(propositionSchema),
-    defaultValues: {
-      primaryValue: undefined,
-      plusOneValue: undefined,
-      explanation: ''
-    }
-  });
-
-  const onSubmit = async (data: z.infer<typeof propositionSchema>) => {
-    setIsSubmitting(true);
-    console.log(data);
-    
-    try {
-      await sendToWebhook(data, 'Create Your 1+1 Proposition', user?.id, exerciseId, companyDetails);
-      
-      onComplete();
-      toast({
-        title: "Form submitted successfully",
-        description: "Your proposition analysis has been started.",
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Submission error",
-        description: "The form was processed but there was an error with the webhook submission.",
-        variant: "destructive",
-      });
-      onComplete();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="primaryValue"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Choose your primary value</FormLabel>
-              <FormDescription>
-                Select the most important value your business offers
-              </FormDescription>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  {['price', 'quality', 'delivery', 'flexibility', 'service'].map((value) => (
-                    <FormItem key={value} className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value={value} />
-                      </FormControl>
-                      <FormLabel className="font-normal capitalize">{value}</FormLabel>
-                    </FormItem>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="plusOneValue"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Choose your '+1' value</FormLabel>
-              <FormDescription>
-                Select your secondary value proposition
-              </FormDescription>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  {['price', 'quality', 'delivery', 'flexibility', 'service'].map((value) => (
-                    <FormItem key={value} className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value={value} />
-                      </FormControl>
-                      <FormLabel className="font-normal capitalize">{value}</FormLabel>
-                    </FormItem>
-                  ))}
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="explanation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>In your words, explain why you chose this combination</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Explain your choice..."
-                  className="min-h-[150px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
-
-const DelegationForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useAuth();
-  
-  const form = useForm<z.infer<typeof delegationSchema>>({
-    resolver: zodResolver(delegationSchema),
-    defaultValues: {
-      knowStaff: undefined,
-      staffKnowYou: undefined,
-      reportCount: undefined,
-      meetingFrequency: undefined,
-      monitoringProcess: undefined,
-      writtenProcesses: undefined,
-      teamTraining: undefined
-    }
-  });
-
-  const options = [
-    { label: 'A', value: 'a' },
-    { label: 'B', value: 'b' },
-    { label: 'C', value: 'c' }
-  ];
-
-  const questions = [
-    { name: 'knowStaff', label: 'How well do you know your senior staff?' },
-    { name: 'staffKnowYou', label: 'How well do they know you?' },
-    { name: 'reportCount', label: 'How many people report to you?' },
-    { name: 'meetingFrequency', label: 'How often do you meet them (for longer than 45 minutes)?' },
-    { name: 'monitoringProcess', label: 'Do you have a process for monitoring them?' },
-    { name: 'writtenProcesses', label: 'Are your processes written down?' },
-    { name: 'teamTraining', label: 'Do you train your team?' }
-  ];
-
-  const onSubmit = async (data: z.infer<typeof delegationSchema>) => {
-    setIsSubmitting(true);
-    console.log(data);
-    
-    try {
-      await sendToWebhook(data, 'Measure Your Delegation', user?.id, exerciseId, companyDetails);
-      
-      onComplete();
-      toast({
-        title: "Form submitted successfully",
-        description: "Your delegation analysis has been started.",
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Submission error",
-        description: "The form was processed but there was an error with the webhook submission.",
-        variant: "destructive",
-      });
-      onComplete();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {questions.map((question) => (
-          <FormField
-            key={question.name}
-            control={form.control}
-            name={question.name as keyof z.infer<typeof delegationSchema>}
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>{question.label}</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex space-x-4"
-                  >
-                    {options.map((option) => (
-                      <FormItem key={option.value} className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value={option.value} />
-                        </FormControl>
-                        <FormLabel className="font-normal">{option.label}</FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
-
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
-
-const KeyCustomersForm: React.FC<ExerciseFormComponentProps> = ({ exerciseId, onBack, onComplete, companyDetails }) => {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useAuth();
-  
-  const form = useForm<z.infer<typeof keyCustomersSchema>>({
-    resolver: zodResolver(keyCustomersSchema),
-    defaultValues: {
-      customerList: '',
-      customerKnowledge: '',
-      improvementIdeas: '',
-      relationshipImprovements: ''
-    }
-  });
-
-  const onSubmit = async (data: z.infer<typeof keyCustomersSchema>) => {
-    setIsSubmitting(true);
-    console.log(data);
-    
-    try {
-      await sendToWebhook(data, 'Know Your Key Customers', user?.id, exerciseId, companyDetails);
-      
-      onComplete();
-      toast({
-        title: "Form submitted successfully",
-        description: "Your key customers analysis has been started.",
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Submission error",
-        description: "The form was processed but there was an error with the webhook submission.",
-        variant: "destructive",
-      });
-      onComplete();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="customerList"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>List your main/key customers</FormLabel>
-              <FormDescription>
-                Enter one customer per line or separate with commas
-              </FormDescription>
-              <FormControl>
-                <Textarea
-                  placeholder="e.g., Acme Inc., TechCorp, Global Solutions..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="customerKnowledge"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How well do you know these customers?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Rate your knowledge and understanding..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="improvementIdeas"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>What would you like to improve or change?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="List your improvement ideas..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="relationshipImprovements"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How will you improve your relationship with these customers?</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe your strategy for improvement..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <div className="p-8 text-center">
+      <p>Exercise form for "{exerciseId}" is not yet implemented.</p>
+      <button onClick={onBack} className="mt-4 px-4 py-2 bg-gray-200 rounded">
+        Go Back
+      </button>
+    </div>
   );
 };
 
