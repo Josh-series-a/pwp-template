@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -18,6 +19,7 @@ interface SubPillar {
 interface BusinessHealthData {
   clientId: string;
   tabId: string;
+  reportId?: string;
   Overview: string;
   Purpose: string;
   Sub_Pillars: SubPillar[];
@@ -79,6 +81,7 @@ serve(async (req) => {
       const businessHealthRecord = {
         client_id: requestData.clientId,
         tab_id: requestData.tabId,
+        report_id: requestData.reportId || null,
         overview: requestData.Overview || null,
         purpose: requestData.Purpose || null,
         sub_pillars: requestData.Sub_Pillars || [],
@@ -150,6 +153,7 @@ serve(async (req) => {
       // Fetch business health data
       const clientId = url.searchParams.get('clientId');
       const tabId = url.searchParams.get('tabId');
+      const reportId = url.searchParams.get('reportId');
 
       if (!clientId) {
         return new Response(
@@ -171,6 +175,11 @@ serve(async (req) => {
         query = query.eq('tab_id', tabId);
       }
 
+      // If reportId is provided, filter by it as well
+      if (reportId) {
+        query = query.eq('report_id', reportId);
+      }
+
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
@@ -184,7 +193,7 @@ serve(async (req) => {
         );
       }
 
-      console.log(`Fetched ${data?.length || 0} business health records for clientId: ${clientId}${tabId ? `, tabId: ${tabId}` : ''}`);
+      console.log(`Fetched ${data?.length || 0} business health records for clientId: ${clientId}${tabId ? `, tabId: ${tabId}` : ''}${reportId ? `, reportId: ${reportId}` : ''}`);
 
       return new Response(
         JSON.stringify({ 
