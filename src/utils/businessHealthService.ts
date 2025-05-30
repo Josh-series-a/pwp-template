@@ -18,21 +18,36 @@ export const businessHealthService = {
    */
   async saveBusinessHealth(params: BusinessHealthParams) {
     try {
-      console.log('Saving business health assessment:', params);
+      console.log('=== BUSINESS HEALTH SERVICE START ===');
+      console.log('Service received params:', params);
+      console.log('Params type check:');
+      console.log('- clientId:', params.clientId, 'type:', typeof params.clientId);
+      console.log('- tabId:', params.tabId, 'type:', typeof params.tabId);
+      console.log('- reportId:', params.reportId, 'type:', typeof params.reportId);
+      
+      const requestBody = {
+        clientId: params.clientId,
+        tabId: params.tabId,
+        reportId: params.reportId,
+        Overview: params.Overview,
+        Purpose: params.Purpose,
+        Sub_Pillars: params.Sub_Pillars,
+        Total_Score: params.Total_Score,
+        Recommended_CIKs: params.Recommended_CIKs
+      };
+
+      console.log('=== ABOUT TO INVOKE SUPABASE FUNCTION ===');
+      console.log('Request body to send:', requestBody);
+      console.log('Request body JSON:', JSON.stringify(requestBody, null, 2));
       
       const { data, error } = await supabase.functions.invoke('business-health', {
         method: 'POST',
-        body: {
-          clientId: params.clientId,
-          tabId: params.tabId,
-          reportId: params.reportId,
-          Overview: params.Overview,
-          Purpose: params.Purpose,
-          Sub_Pillars: params.Sub_Pillars,
-          Total_Score: params.Total_Score,
-          Recommended_CIKs: params.Recommended_CIKs
-        }
+        body: requestBody
       });
+
+      console.log('=== SUPABASE FUNCTION RESPONSE ===');
+      console.log('Response data:', data);
+      console.log('Response error:', error);
 
       if (error) {
         console.error('Error saving business health data:', error);
@@ -42,6 +57,7 @@ export const businessHealthService = {
       console.log('Business health data saved successfully:', data);
       return data;
     } catch (err) {
+      console.error('=== ERROR IN BUSINESS HEALTH SERVICE ===');
       console.error('Error in saveBusinessHealth:', err);
       throw err;
     }

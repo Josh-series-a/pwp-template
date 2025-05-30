@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -75,6 +76,9 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const { toast } = useToast();
   const { user } = useAuth();
   const { reportId } = useParams();
+
+  console.log('BusinessHealthScoreForm - User from context:', user);
+  console.log('BusinessHealthScoreForm - Report ID from params:', reportId);
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
     resolver: zodResolver(businessHealthScoreSchema),
@@ -194,22 +198,37 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   };
 
   const onSubmit = async (data: z.infer<typeof businessHealthScoreSchema>) => {
-    if (!user?.id || !reportId) {
+    console.log('=== FORM SUBMISSION START ===');
+    console.log('User object:', user);
+    console.log('User ID:', user?.id);
+    console.log('Report ID from params:', reportId);
+    console.log('Form data received:', data);
+
+    if (!user?.id) {
+      console.error('User ID is missing from context');
       toast({
-        title: "Missing information",
-        description: "User ID or Report ID is missing. Please try again.",
+        title: "Authentication error",
+        description: "User is not properly authenticated. Please try logging in again.",
         variant: "destructive",
       });
       return;
     }
 
-    console.log('User ID:', user.id);
-    console.log('Report ID:', reportId);
+    if (!reportId) {
+      console.error('Report ID is missing from URL params');
+      toast({
+        title: "Missing report ID",
+        description: "Report ID is missing. Please try accessing this form from a valid report.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     
     try {
       const scores = calculateBusinessHealthScore(data);
+      console.log('Calculated scores:', scores);
       
       // Create business health data structure with correct parameter names
       const businessHealthData = {
@@ -289,14 +308,19 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
         Recommended_CIKs: scores.totalScore < 50 ? ['Business Health Improvement Plan', 'Leadership Development Program'] : ['Growth Acceleration Package', 'Exit Readiness Assessment']
       };
 
-      console.log('Submitting business health data:', businessHealthData);
+      console.log('=== ABOUT TO SEND TO SERVICE ===');
+      console.log('Business health data to send:', businessHealthData);
       console.log('ClientId being sent:', businessHealthData.clientId);
       console.log('TabId being sent:', businessHealthData.tabId);
       console.log('ReportId being sent:', businessHealthData.reportId);
+      console.log('Data type check:');
+      console.log('- clientId type:', typeof businessHealthData.clientId);
+      console.log('- tabId type:', typeof businessHealthData.tabId);
+      console.log('- reportId type:', typeof businessHealthData.reportId);
 
       // Save to business health function
       const healthResponse = await businessHealthService.saveBusinessHealth(businessHealthData);
-      console.log('Business health data saved:', healthResponse);
+      console.log('Business health data saved successfully:', healthResponse);
 
       // Update the reports table with the calculated scores
       if (reportId) {
@@ -318,10 +342,14 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
         description: `Total score: ${scores.totalScore}/100. Your detailed analysis has been saved.`,
       });
     } catch (error) {
-      console.error("Error submitting assessment:", error);
+      console.error("=== ERROR SUBMITTING ASSESSMENT ===");
+      console.error("Full error object:", error);
+      console.error("Error message:", error instanceof Error ? error.message : String(error));
+      console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
+      
       toast({
         title: "Submission error",
-        description: "There was an error submitting your assessment. Please try again.",
+        description: `There was an error submitting your assessment: ${error instanceof Error ? error.message : 'Unknown error'}`,
         variant: "destructive",
       });
     } finally {
