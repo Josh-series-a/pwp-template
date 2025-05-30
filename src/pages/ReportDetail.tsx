@@ -81,6 +81,14 @@ const ReportDetail = () => {
               // Map stressLeadership to stress_leadership for frontend compatibility
               const tabKey = item.tab_id === 'stressLeadership' ? 'stress_leadership' : item.tab_id;
               organizedData[tabKey] = item;
+              
+              // Debug logging for each item
+              console.log(`Processing tab: ${tabKey}`, {
+                tab_id: item.tab_id,
+                recommended_ciks: item.recommended_ciks,
+                sub_pillars: item.sub_pillars,
+                full_item: item
+              });
             });
             setBusinessHealthData(organizedData);
             console.log('Fetched business health data:', organizedData);
@@ -179,6 +187,13 @@ const ReportDetail = () => {
   const renderTabContent = (tabId: string, defaultTitle: string, defaultDescription: string) => {
     const tabData = businessHealthData[tabId];
     
+    console.log(`Rendering tab ${tabId}:`, {
+      hasTabData: !!tabData,
+      tabData: tabData,
+      recommended_ciks: tabData?.recommended_ciks,
+      sub_pillars: tabData?.sub_pillars
+    });
+    
     if (!tabData) {
       return (
         <Card>
@@ -198,6 +213,7 @@ const ReportDetail = () => {
     // First check if it's directly on the tabData
     if (tabData.recommended_ciks && Array.isArray(tabData.recommended_ciks)) {
       recommendedCIKs = tabData.recommended_ciks;
+      console.log(`Found CIKs directly on tabData for ${tabId}:`, recommendedCIKs);
     }
     // Then check in sub_pillars data
     else if (tabData.sub_pillars) {
@@ -206,16 +222,29 @@ const ReportDetail = () => {
           ? tabData.sub_pillars 
           : JSON.parse(tabData.sub_pillars);
         
+        console.log(`Checking sub_pillars for ${tabId}:`, pillarsData);
+        
         // Look for Recommended_CIKs in the data structure
         if (pillarsData && typeof pillarsData === 'object' && pillarsData.Recommended_CIKs) {
           recommendedCIKs = pillarsData.Recommended_CIKs;
+          console.log(`Found CIKs in sub_pillars for ${tabId}:`, recommendedCIKs);
+        }
+        
+        // Also check if it's an array and each item has Recommended_CIKs
+        if (Array.isArray(pillarsData)) {
+          pillarsData.forEach((pillar, index) => {
+            if (pillar.Recommended_CIKs) {
+              console.log(`Found CIKs in pillar ${index} for ${tabId}:`, pillar.Recommended_CIKs);
+              recommendedCIKs = [...recommendedCIKs, ...pillar.Recommended_CIKs];
+            }
+          });
         }
       } catch (e) {
         console.error('Error parsing recommended CIKs:', e);
       }
     }
 
-    console.log(`Tab ${tabId} - Recommended CIKs:`, recommendedCIKs);
+    console.log(`Final CIKs for tab ${tabId}:`, recommendedCIKs);
 
     return (
       <div className="space-y-6">
@@ -239,6 +268,11 @@ const ReportDetail = () => {
                         {cik}
                       </Badge>
                     ))}
+                  </div>
+                )}
+                {recommendedCIKs.length === 0 && (
+                  <div className="text-xs text-muted-foreground">
+                    No CIKs found for this tab
                   </div>
                 )}
               </div>
@@ -380,4 +414,3 @@ const ReportDetail = () => {
 };
 
 export default ReportDetail;
-
