@@ -84,6 +84,7 @@ export type Database = {
           profits_score: number | null
           purpose_impact_score: number | null
           status: string
+          status_type: string
           stress_leadership_score: number | null
           tabs_data: Json | null
           title: string
@@ -104,6 +105,7 @@ export type Database = {
           profits_score?: number | null
           purpose_impact_score?: number | null
           status?: string
+          status_type?: string
           stress_leadership_score?: number | null
           tabs_data?: Json | null
           title: string
@@ -124,6 +126,7 @@ export type Database = {
           profits_score?: number | null
           purpose_impact_score?: number | null
           status?: string
+          status_type?: string
           stress_leadership_score?: number | null
           tabs_data?: Json | null
           title?: string

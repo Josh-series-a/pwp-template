@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -49,6 +48,7 @@ interface Report {
   date: string;
   company: string;
   status: string;
+  statusType: string;
   pitchDeckUrl?: string;
   exerciseId?: string;
   companyId?: string;
@@ -113,6 +113,25 @@ const Reports = () => {
 
     fetchReports();
   }, [user]);
+
+  const findOriginalNewReport = async (companyName: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('reports')
+        .select('id')
+        .eq('company_name', companyName)
+        .eq('status_type', 'New')
+        .order('created_at', { ascending: true })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      return data && data.length > 0 ? data[0].id : null;
+    } catch (error) {
+      console.error('Error finding original report:', error);
+      return null;
+    }
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -216,6 +235,15 @@ This report was generated on ${new Date().toLocaleDateString()}.
       const exerciseMatch = exerciseTitle.match(/Exercise (\d+):/);
       const exerciseId = exerciseMatch ? `exercise-${exerciseMatch[1]}` : 'unknown';
       
+      let finalCompanyId = companyId;
+      
+      if (type === 'Existing') {
+        const originalReportId = await findOriginalNewReport(companyName);
+        if (originalReportId) {
+          finalCompanyId = originalReportId;
+        }
+      }
+      
       const { data: reportData, error } = await supabase
         .from('reports')
         .insert({
@@ -223,9 +251,10 @@ This report was generated on ${new Date().toLocaleDateString()}.
           company_name: companyName,
           exercise_id: exerciseId,
           status: 'In Progress',
+          status_type: type || 'New',
           user_id: user.id,
           pitch_deck_url: pitchDeckUrl,
-          company_id: companyId
+          company_id: finalCompanyId
         })
         .select()
         .single();
@@ -241,6 +270,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
           date: reportData.created_at,
           company: reportData.company_name,
           status: reportData.status,
+          statusType: reportData.status_type,
           pitchDeckUrl: reportData.pitch_deck_url,
           exerciseId: reportData.exercise_id,
           companyId: reportData.company_id,
@@ -269,8 +299,8 @@ This report was generated on ${new Date().toLocaleDateString()}.
           webhookUrl.searchParams.append('timestamp', new Date().toISOString());
           webhookUrl.searchParams.append('type', type || 'New');
           
-          if (companyId) {
-            webhookUrl.searchParams.append('companyId', companyId);
+          if (finalCompanyId) {
+            webhookUrl.searchParams.append('companyId', finalCompanyId);
           }
           
           if (pitchDeckUrl) {
@@ -390,6 +420,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
                       <TableHead>Title</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Company</TableHead>
+                      <TableHead>Type</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-center">Plan</TableHead>
                       <TableHead className="text-center">People</TableHead>
@@ -410,6 +441,15 @@ This report was generated on ${new Date().toLocaleDateString()}.
                         <TableCell className="font-medium">{report.title}</TableCell>
                         <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
                         <TableCell>{report.company}</TableCell>
+                        <TableCell>
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            report.statusType === 'New' 
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            {report.statusType}
+                          </span>
+                        </TableCell>
                         <TableCell>
                           <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             report.status === 'In Progress' 
