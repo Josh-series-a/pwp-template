@@ -22,9 +22,10 @@ interface BusinessHealthData {
   id: string;
   client_id: string;
   tab_id: string;
+  report_id: string | null;
   overview: string | null;
   purpose: string | null;
-  sub_pillars: any; // Changed from SubPillar[] to any to match Json type
+  sub_pillars: any;
   total_score: number | null;
   created_at: string;
   updated_at: string;
@@ -56,21 +57,29 @@ const ReportDetail = () => {
         if (reportData) {
           setReport(reportData);
           
-          // Fetch business health data for this client
-          const { data: healthData, error: healthError } = await supabase
-            .from('business_health')
-            .select('*')
-            .eq('client_id', reportId);
+          // Fetch business health data using reportId via the edge function
+          const { data: healthResponse, error: healthError } = await supabase.functions.invoke('business-health', {
+            method: 'GET',
+            body: null,
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }, {
+            search: new URLSearchParams({
+              reportId: reportId
+            }).toString()
+          });
           
           if (healthError) {
             console.error('Error fetching business health data:', healthError);
-          } else if (healthData) {
+          } else if (healthResponse?.success && healthResponse?.data) {
             // Organize data by tab_id
             const organizedData: Record<string, BusinessHealthData> = {};
-            healthData.forEach((item) => {
-              organizedData[item.tab_id] = item as BusinessHealthData;
+            healthResponse.data.forEach((item: BusinessHealthData) => {
+              organizedData[item.tab_id] = item;
             });
             setBusinessHealthData(organizedData);
+            console.log('Fetched business health data:', organizedData);
           }
         }
       } catch (error) {

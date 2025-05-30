@@ -155,9 +155,50 @@ serve(async (req) => {
       const tabId = url.searchParams.get('tabId');
       const reportId = url.searchParams.get('reportId');
 
+      // Primary query by reportId if provided
+      if (reportId) {
+        let query = supabaseClient
+          .from('business_health')
+          .select('*')
+          .eq('report_id', reportId);
+
+        // If tabId is also provided, filter by it as well
+        if (tabId) {
+          query = query.eq('tab_id', tabId);
+        }
+
+        const { data, error } = await query.order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching business health data by reportId:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to fetch business health data' }),
+            { 
+              status: 500, 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            }
+          );
+        }
+
+        console.log(`Fetched ${data?.length || 0} business health records for reportId: ${reportId}${tabId ? `, tabId: ${tabId}` : ''}`);
+
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            data: data || [],
+            count: data?.length || 0
+          }),
+          { 
+            status: 200, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+
+      // Fallback to clientId query for backward compatibility
       if (!clientId) {
         return new Response(
-          JSON.stringify({ error: 'clientId parameter is required' }),
+          JSON.stringify({ error: 'Either reportId or clientId parameter is required' }),
           { 
             status: 400, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -175,11 +216,6 @@ serve(async (req) => {
         query = query.eq('tab_id', tabId);
       }
 
-      // If reportId is provided, filter by it as well
-      if (reportId) {
-        query = query.eq('report_id', reportId);
-      }
-
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
@@ -193,7 +229,7 @@ serve(async (req) => {
         );
       }
 
-      console.log(`Fetched ${data?.length || 0} business health records for clientId: ${clientId}${tabId ? `, tabId: ${tabId}` : ''}${reportId ? `, reportId: ${reportId}` : ''}`);
+      console.log(`Fetched ${data?.length || 0} business health records for clientId: ${clientId}${tabId ? `, tabId: ${tabId}` : ''}`);
 
       return new Response(
         JSON.stringify({ 
