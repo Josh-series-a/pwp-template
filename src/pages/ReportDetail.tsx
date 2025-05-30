@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -58,21 +57,13 @@ const ReportDetail = () => {
         if (reportData) {
           setReport(reportData);
           
-          // Fetch business health data using reportId via the edge function
-          const { data: healthResponse, error: healthError } = await supabase.functions.invoke('business-health', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          
           // Construct the URL with query parameters manually for GET requests
           const healthUrl = `https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/business-health?reportId=${reportId}`;
           
           const healthFetch = await fetch(healthUrl, {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${supabase.supabaseKey}`,
+              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
               'Content-Type': 'application/json',
             },
           });
