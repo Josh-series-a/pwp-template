@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -60,22 +61,28 @@ const ReportDetail = () => {
           // Fetch business health data using reportId via the edge function
           const { data: healthResponse, error: healthError } = await supabase.functions.invoke('business-health', {
             method: 'GET',
-            body: null,
             headers: {
               'Content-Type': 'application/json',
-            }
-          }, {
-            search: new URLSearchParams({
-              reportId: reportId
-            }).toString()
+            },
           });
           
-          if (healthError) {
-            console.error('Error fetching business health data:', healthError);
-          } else if (healthResponse?.success && healthResponse?.data) {
+          // Construct the URL with query parameters manually for GET requests
+          const healthUrl = `https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/business-health?reportId=${reportId}`;
+          
+          const healthFetch = await fetch(healthUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${supabase.supabaseKey}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          const healthData = await healthFetch.json();
+          
+          if (healthData?.success && healthData?.data) {
             // Organize data by tab_id
             const organizedData: Record<string, BusinessHealthData> = {};
-            healthResponse.data.forEach((item: BusinessHealthData) => {
+            healthData.data.forEach((item: BusinessHealthData) => {
               organizedData[item.tab_id] = item;
             });
             setBusinessHealthData(organizedData);
