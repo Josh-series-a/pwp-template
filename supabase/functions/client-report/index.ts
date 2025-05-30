@@ -105,6 +105,55 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   if (reportId && userId && scores) {
     console.log(`Updating scores for report ${reportId}`);
     
+    // First check if the report exists and belongs to the user
+    const { data: existingReport, error: checkError } = await supabaseClient
+      .from('reports')
+      .select('id, user_id')
+      .eq('id', reportId)
+      .maybeSingle();
+    
+    if (checkError) {
+      console.error('Error checking report existence:', checkError);
+      return new Response(
+        JSON.stringify({ error: checkError.message }),
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
+    if (!existingReport) {
+      console.error('Report not found:', reportId);
+      return new Response(
+        JSON.stringify({ error: 'Report not found' }),
+        { 
+          status: 404, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
+    if (existingReport.user_id !== userId) {
+      console.error('Access denied - user does not own report');
+      return new Response(
+        JSON.stringify({ error: 'Access denied' }),
+        { 
+          status: 403, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
     const updateData: any = {
       updated_at: new Date().toISOString()
     };
@@ -131,7 +180,6 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       .from('reports')
       .update(updateData)
       .eq('id', reportId)
-      .eq('user_id', userId) // Ensure user owns the report
       .select()
       .single();
     
@@ -141,19 +189,6 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
         JSON.stringify({ error: updateError.message }),
         { 
           status: 400, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders 
-          } 
-        }
-      );
-    }
-    
-    if (!updatedReport) {
-      return new Response(
-        JSON.stringify({ error: 'Report not found or access denied' }),
-        { 
-          status: 404, 
           headers: { 
             'Content-Type': 'application/json',
             ...corsHeaders 
