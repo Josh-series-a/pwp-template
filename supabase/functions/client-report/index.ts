@@ -37,11 +37,14 @@ interface TabData {
 }
 
 interface ClientReportRequest {
-  companyName: string;
-  exerciseId: string;
-  tabs: TabData[];
+  companyName?: string;
+  exerciseId?: string;
+  tabs?: TabData[];
   userId: string;
-  reportId?: string; // Optional report ID for updates
+  reportId?: string;
+  // New fields for score updates
+  scores?: Record<string, number>;
+  status?: string;
 }
 
 serve(async (req) => {
@@ -97,9 +100,86 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   const requestData: ClientReportRequest = await req.json();
   console.log('Received report data:', requestData);
 
-  const { companyName, exerciseId, tabs, userId, reportId } = requestData;
+  const { companyName, exerciseId, tabs, userId, reportId, scores, status } = requestData;
 
-  // Validate tabs data
+  // Handle score-only updates (simpler path)
+  if (reportId && userId && scores && !tabs) {
+    console.log(`Updating scores for report ${reportId}`);
+    
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
+    
+    // Map scores to database columns
+    if (scores.Score_Plan !== undefined) updateData.plan_score = scores.Score_Plan;
+    if (scores.Score_People !== undefined) updateData.people_score = scores.Score_People;
+    if (scores.Score_Profits !== undefined) updateData.profits_score = scores.Score_Profits;
+    if (scores.Score_Purpose !== undefined) updateData.purpose_impact_score = scores.Score_Purpose;
+    if (scores.Score_Leadership !== undefined) updateData.stress_leadership_score = scores.Score_Leadership;
+    if (scores.Business_Health_Score !== undefined) updateData.overall_score = scores.Business_Health_Score;
+    
+    // Update status if provided
+    if (status) {
+      updateData.status = status;
+      if (status === 'completed') {
+        updateData.completion_date = new Date().toISOString();
+      }
+    }
+    
+    const { data: updatedReport, error: updateError } = await supabaseClient
+      .from('reports')
+      .update(updateData)
+      .eq('id', reportId)
+      .eq('user_id', userId) // Ensure user owns the report
+      .select()
+      .maybeSingle();
+    
+    if (updateError) {
+      console.error('Error updating report scores:', updateError);
+      return new Response(
+        JSON.stringify({ error: updateError.message }),
+        { 
+          status: 400, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
+    if (!updatedReport) {
+      return new Response(
+        JSON.stringify({ error: 'Report not found or access denied' }),
+        { 
+          status: 404, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          } 
+        }
+      );
+    }
+    
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        message: 'Report scores updated successfully',
+        reportId,
+        report: updatedReport
+      }),
+      { 
+        status: 200, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        } 
+      }
+    );
+  }
+
+  // Original tab-based logic (existing functionality)
+  // Validate tabs data for tab-based requests
   if (!tabs || !Array.isArray(tabs) || tabs.length === 0) {
     console.error('Invalid tabs data:', tabs);
     return new Response(
