@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
@@ -105,12 +106,23 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
   if (reportId && userId && scores) {
     console.log(`Updating scores for report ${reportId}`);
     
+    // Debug: First let's see what reports exist for this user
+    const { data: userReports, error: debugError } = await supabaseClient
+      .from('reports')
+      .select('id, title, company_name, created_at')
+      .eq('user_id', userId);
+    
+    console.log('All reports for user:', userReports);
+    
     // First check if the report exists and belongs to the user
     const { data: existingReport, error: checkError } = await supabaseClient
       .from('reports')
-      .select('id, user_id')
+      .select('id, user_id, title, company_name')
       .eq('id', reportId)
       .maybeSingle();
+    
+    console.log('Report lookup result:', existingReport);
+    console.log('Report lookup error:', checkError);
     
     if (checkError) {
       console.error('Error checking report existence:', checkError);
@@ -128,8 +140,15 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     
     if (!existingReport) {
       console.error('Report not found:', reportId);
+      console.log('Available reports:', userReports);
       return new Response(
-        JSON.stringify({ error: 'Report not found' }),
+        JSON.stringify({ 
+          error: 'Report not found',
+          debug: {
+            requestedId: reportId,
+            availableReports: userReports?.map(r => ({ id: r.id, title: r.title, company: r.company_name }))
+          }
+        }),
         { 
           status: 404, 
           headers: { 
