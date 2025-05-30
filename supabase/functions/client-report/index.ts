@@ -55,36 +55,14 @@ serve(async (req) => {
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // Get the authenticated user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    
-    if (userError || !user) {
-      console.error('Authentication error:', userError);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { 
-          status: 401, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders
-          } 
-        }
-      );
-    }
-
-    console.log('Authenticated user ID:', user.id);
+    console.log('Client-report function called without auth requirement');
 
     // Handle different HTTP methods
     if (req.method === 'POST') {
-      return await handlePostRequest(req, supabaseClient, user.id);
+      return await handlePostRequest(req, supabaseClient);
     } else if (req.method === 'GET') {
       return await handleGetRequest(req, supabaseClient);
     } else {
@@ -114,44 +92,23 @@ serve(async (req) => {
   }
 });
 
-async function handlePostRequest(req: Request, supabaseClient: any, authenticatedUserId: string) {
+async function handlePostRequest(req: Request, supabaseClient: any) {
   const requestData: ClientReportRequest = await req.json();
   console.log('Received report data:', requestData);
 
   const { companyName, exerciseId, tabs, userId, reportId, scores, status } = requestData;
 
-  // Use the authenticated user ID instead of the one from request body
-  const actualUserId = authenticatedUserId;
-  console.log('Using authenticated user ID:', actualUserId);
+  console.log('Using user ID from request:', userId);
 
   // Handle score-only updates (simpler path)
   if (reportId && scores) {
     console.log(`Updating scores for report ${reportId}`);
     
-    // Debug: First let's see what reports exist for this user
-    const { data: userReports, error: debugError } = await supabaseClient
-      .from('reports')
-      .select('id, title, company_name, created_at, user_id')
-      .eq('user_id', actualUserId);
-    
-    console.log('All reports for authenticated user:', userReports);
-    
-    // Also check if the report exists regardless of user (for debugging)
-    const { data: reportCheck, error: reportCheckError } = await supabaseClient
-      .from('reports')
-      .select('id, user_id, title, company_name')
-      .eq('id', reportId)
-      .maybeSingle();
-    
-    console.log('Report exists check:', reportCheck);
-    console.log('Report check error:', reportCheckError);
-    
-    // First check if the report exists and belongs to the user
+    // Check if the report exists
     const { data: existingReport, error: checkError } = await supabaseClient
       .from('reports')
       .select('id, user_id, title, company_name')
       .eq('id', reportId)
-      .eq('user_id', actualUserId)
       .maybeSingle();
     
     console.log('Report lookup result:', existingReport);
@@ -172,19 +129,12 @@ async function handlePostRequest(req: Request, supabaseClient: any, authenticate
     }
     
     if (!existingReport) {
-      console.error('Report not found for user:', reportId);
-      console.log('Available reports:', userReports);
-      console.log('Report exists but belongs to different user:', reportCheck);
+      console.error('Report not found:', reportId);
       return new Response(
         JSON.stringify({ 
-          error: 'Report not found or access denied',
+          error: 'Report not found',
           debug: {
-            requestedId: reportId,
-            authenticatedUserId: actualUserId,
-            requestBodyUserId: userId,
-            availableReports: userReports?.map(r => ({ id: r.id, title: r.title, company: r.company_name })),
-            reportExists: reportCheck ? true : false,
-            reportOwner: reportCheck?.user_id
+            requestedId: reportId
           }
         }),
         { 
@@ -223,7 +173,6 @@ async function handlePostRequest(req: Request, supabaseClient: any, authenticate
       .from('reports')
       .update(updateData)
       .eq('id', reportId)
-      .eq('user_id', actualUserId)
       .select()
       .single();
     
