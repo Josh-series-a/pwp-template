@@ -46,12 +46,27 @@ serve(async (req) => {
       // Save business health data
       const requestData: BusinessHealthData = await req.json();
       
-      console.log('Received business health data:', JSON.stringify(requestData, null, 2));
+      console.log('Received request data:', JSON.stringify(requestData, null, 2));
+      console.log('clientId received:', requestData.clientId);
+      console.log('tabId received:', requestData.tabId);
+      console.log('reportId received:', requestData.reportId);
 
-      // Validate required fields
-      if (!requestData.clientId || !requestData.tabId) {
+      // Validate required fields with better error messages
+      if (!requestData.clientId) {
+        console.error('Missing clientId in request data');
         return new Response(
-          JSON.stringify({ error: 'clientId and tabId are required' }),
+          JSON.stringify({ error: 'clientId is required', received: requestData }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+
+      if (!requestData.tabId) {
+        console.error('Missing tabId in request data');
+        return new Response(
+          JSON.stringify({ error: 'tabId is required', received: requestData }),
           { 
             status: 400, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -70,7 +85,7 @@ serve(async (req) => {
       if (selectError) {
         console.error('Error checking existing record:', selectError);
         return new Response(
-          JSON.stringify({ error: 'Failed to check existing record' }),
+          JSON.stringify({ error: 'Failed to check existing record', details: selectError }),
           { 
             status: 500, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -89,6 +104,8 @@ serve(async (req) => {
         updated_at: new Date().toISOString()
       };
 
+      console.log('Prepared record for database:', businessHealthRecord);
+
       let result;
       
       if (existingData) {
@@ -104,7 +121,7 @@ serve(async (req) => {
         if (error) {
           console.error('Error updating business health data:', error);
           return new Response(
-            JSON.stringify({ error: 'Failed to update business health data' }),
+            JSON.stringify({ error: 'Failed to update business health data', details: error }),
             { 
               status: 500, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -125,7 +142,7 @@ serve(async (req) => {
         if (error) {
           console.error('Error inserting business health data:', error);
           return new Response(
-            JSON.stringify({ error: 'Failed to save business health data' }),
+            JSON.stringify({ error: 'Failed to save business health data', details: error }),
             { 
               status: 500, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -170,12 +187,10 @@ serve(async (req) => {
         .select('*')
         .eq('client_id', clientId);
 
-      // If tabId is provided, filter by it as well
       if (tabId) {
         query = query.eq('tab_id', tabId);
       }
 
-      // If reportId is provided, filter by it as well
       if (reportId) {
         query = query.eq('report_id', reportId);
       }
@@ -220,7 +235,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Unexpected error in business-health function:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', details: error.message }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
