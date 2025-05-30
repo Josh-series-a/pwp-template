@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -84,7 +83,6 @@ serve(async (req) => {
         purpose: requestData.Purpose || null,
         sub_pillars: requestData.Sub_Pillars || [],
         total_score: requestData.Total_Score || null,
-        recommended_ciks: requestData.Recommended_CIKs || null,
         updated_at: new Date().toISOString()
       };
 
