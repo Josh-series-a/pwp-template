@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -71,10 +72,12 @@ const ReportDetail = () => {
           const healthData = await healthFetch.json();
           
           if (healthData?.success && healthData?.data) {
-            // Organize data by tab_id
+            // Organize data by tab_id with mapping for stress leadership
             const organizedData: Record<string, BusinessHealthData> = {};
             healthData.data.forEach((item: BusinessHealthData) => {
-              organizedData[item.tab_id] = item;
+              // Map stressLeadership to stress_leadership for frontend compatibility
+              const tabKey = item.tab_id === 'stressLeadership' ? 'stress_leadership' : item.tab_id;
+              organizedData[tabKey] = item;
             });
             setBusinessHealthData(organizedData);
             console.log('Fetched business health data:', organizedData);
