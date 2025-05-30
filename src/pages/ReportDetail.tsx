@@ -192,9 +192,15 @@ const ReportDetail = () => {
       );
     }
 
-    // Parse recommended CIKs from sub_pillars data
+    // Parse recommended CIKs from multiple possible locations
     let recommendedCIKs: string[] = [];
-    if (tabData.sub_pillars) {
+    
+    // First check if it's directly on the tabData
+    if (tabData.recommended_ciks && Array.isArray(tabData.recommended_ciks)) {
+      recommendedCIKs = tabData.recommended_ciks;
+    }
+    // Then check in sub_pillars data
+    else if (tabData.sub_pillars) {
       try {
         const pillarsData = Array.isArray(tabData.sub_pillars) 
           ? tabData.sub_pillars 
@@ -208,6 +214,8 @@ const ReportDetail = () => {
         console.error('Error parsing recommended CIKs:', e);
       }
     }
+
+    console.log(`Tab ${tabId} - Recommended CIKs:`, recommendedCIKs);
 
     return (
       <div className="space-y-6">
@@ -223,6 +231,9 @@ const ReportDetail = () => {
                 )}
                 {recommendedCIKs.length > 0 && (
                   <div className="flex flex-wrap gap-1 max-w-xs">
+                    <div className="text-xs font-medium text-muted-foreground mb-1 w-full text-right">
+                      Recommended CIKs:
+                    </div>
                     {recommendedCIKs.map((cik, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {cik}
