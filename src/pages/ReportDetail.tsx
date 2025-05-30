@@ -1,10 +1,12 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
@@ -30,6 +32,7 @@ interface BusinessHealthData {
   total_score: number | null;
   created_at: string;
   updated_at: string;
+  recommended_ciks?: string[];
 }
 
 const ReportDetail = () => {
@@ -189,17 +192,45 @@ const ReportDetail = () => {
       );
     }
 
+    // Parse recommended CIKs from sub_pillars data
+    let recommendedCIKs: string[] = [];
+    if (tabData.sub_pillars) {
+      try {
+        const pillarsData = Array.isArray(tabData.sub_pillars) 
+          ? tabData.sub_pillars 
+          : JSON.parse(tabData.sub_pillars);
+        
+        // Look for Recommended_CIKs in the data structure
+        if (pillarsData && typeof pillarsData === 'object' && pillarsData.Recommended_CIKs) {
+          recommendedCIKs = pillarsData.Recommended_CIKs;
+        }
+      } catch (e) {
+        console.error('Error parsing recommended CIKs:', e);
+      }
+    }
+
     return (
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              {defaultTitle}
-              {tabData.total_score && (
-                <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full">
-                  Overall Score: {tabData.total_score}/10
-                </div>
-              )}
+            <CardTitle className="flex justify-between items-start">
+              <span>{defaultTitle}</span>
+              <div className="flex flex-col gap-2 items-end">
+                {tabData.total_score && (
+                  <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full">
+                    Overall Score: {tabData.total_score}/10
+                  </div>
+                )}
+                {recommendedCIKs.length > 0 && (
+                  <div className="flex flex-wrap gap-1 max-w-xs">
+                    {recommendedCIKs.map((cik, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {cik}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -338,3 +369,4 @@ const ReportDetail = () => {
 };
 
 export default ReportDetail;
+
