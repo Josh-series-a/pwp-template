@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,6 +19,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const businessHealthScoreSchema = z.object({
   // STRESS & LEADERSHIP
@@ -73,6 +74,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { reportId } = useParams();
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
     resolver: zodResolver(businessHealthScoreSchema),
@@ -144,24 +146,187 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     });
   };
 
+  const calculateBusinessHealthScore = (data: z.infer<typeof businessHealthScoreSchema>) => {
+    // Calculate individual pillar scores based on responses
+    let stressLeadershipScore = 0;
+    let planScore = 0;
+    let peopleScore = 0;
+    let profitsScore = 0;
+    let purposeScore = 0;
+
+    // STRESS & LEADERSHIP (20 points max)
+    stressLeadershipScore += parseInt(data.hoursInVsOn) * 2; // 0-10 points
+    stressLeadershipScore += data.businessWithoutYou === 'yes' ? 5 : 0; // 0-5 points
+    stressLeadershipScore += data.stressManagement === 'D' ? 3 : data.stressManagement === 'C' ? 2 : data.stressManagement === 'B' ? 1 : 0; // 0-3 points
+    stressLeadershipScore += parseInt(data.valuesAlignment) * 0.4; // 0-2 points
+
+    // PLAN (20 points max)
+    planScore += data.missionWritten === 'yes' ? 5 : 0; // 0-5 points
+    planScore += parseInt(data.scheduleAlignment) * 2; // 0-10 points
+    planScore += data.exitStrategy === 'B' ? 3 : data.exitStrategy === 'C' ? 2 : data.exitStrategy === 'D' ? 1 : 0; // 0-3 points
+    planScore += data.futureBackThinking === 'yes' ? 2 : 0; // 0-2 points
+
+    // PEOPLE (20 points max)
+    peopleScore += data.businessWithout30Days === 'D' ? 5 : data.businessWithout30Days === 'C' ? 3 : data.businessWithout30Days === 'B' ? 1 : 0; // 0-5 points
+    peopleScore += data.delegationAccountability === 'yes' ? 3 : 0; // 0-3 points
+    peopleScore += parseInt(data.rightPeopleConfidence) * 2; // 0-10 points
+    peopleScore += parseInt(data.teamDevelopmentTime) * 0.4; // 0-2 points
+
+    // PROFITS (20 points max)
+    profitsScore += data.grossProfitMargin === 'yes' ? 5 : 0; // 0-5 points
+    profitsScore += data.cashFlowProcess === 'D' ? 5 : data.cashFlowProcess === 'C' ? 3 : data.cashFlowProcess === 'B' ? 1 : 0; // 0-5 points
+    profitsScore += parseInt(data.pricingValue) * 2; // 0-10 points
+
+    // PURPOSE & IMPACT (20 points max)
+    purposeScore += data.trackingItems.length > 1 ? 5 : data.trackingItems.length === 1 && !data.trackingItems.includes('none') ? 3 : 0; // 0-5 points
+    purposeScore += data.purposeInfluencesBuying === 'yes' ? 3 : 0; // 0-3 points
+    purposeScore += parseInt(data.purposeCommercialValue) * 2; // 0-10 points
+    purposeScore += data.netZeroCommitment === 'yes' ? 2 : 0; // 0-2 points
+
+    return {
+      stressLeadershipScore: Math.round(stressLeadershipScore),
+      planScore: Math.round(planScore),
+      peopleScore: Math.round(peopleScore),
+      profitsScore: Math.round(profitsScore),
+      purposeScore: Math.round(purposeScore),
+      totalScore: Math.round(stressLeadershipScore + planScore + peopleScore + profitsScore + purposeScore)
+    };
+  };
+
   const onSubmit = async (data: z.infer<typeof businessHealthScoreSchema>) => {
     setIsSubmitting(true);
-    console.log('Business Health Score data:', data);
     
     try {
-      // Here you would send the data to your webhook or backend
-      // For now, we'll just simulate success
+      const scores = calculateBusinessHealthScore(data);
       
+      // Create business health data structure
+      const businessHealthData = {
+        clientId: reportId,
+        reportId: reportId,
+        tabId: 'business-health-score',
+        Overview: 'Comprehensive business health assessment covering stress & leadership, planning, people management, financial performance, and purpose-driven impact.',
+        Purpose: 'To evaluate the overall health and sustainability of the business across five key pillars.',
+        Sub_Pillars: [
+          {
+            Name: 'Stress & Leadership',
+            Key_Question: 'How well does leadership manage stress and maintain work-life balance?',
+            Signals_to_Look_For: ['Delegation systems', 'Time management', 'Values alignment'],
+            Red_Flags: ['Burnout signs', 'Over-dependence on founder', 'Values misalignment'],
+            Scoring_Guidance: {
+              '1-5': 'High stress, poor delegation',
+              '6-10': 'Some stress management',
+              '11-15': 'Good work-life balance',
+              '16-20': 'Excellent leadership sustainability'
+            },
+            Score: scores.stressLeadershipScore
+          },
+          {
+            Name: 'Strategic Planning',
+            Key_Question: 'How clear and actionable is the business strategy?',
+            Signals_to_Look_For: ['Written mission', 'Schedule alignment', 'Exit planning'],
+            Red_Flags: ['No clear mission', 'Reactive planning', 'No exit strategy'],
+            Scoring_Guidance: {
+              '1-5': 'Poor planning discipline',
+              '6-10': 'Basic planning in place',
+              '11-15': 'Good strategic clarity',
+              '16-20': 'Excellent strategic execution'
+            },
+            Score: scores.planScore
+          },
+          {
+            Name: 'People Management',
+            Key_Question: 'How well does the business develop and retain talent?',
+            Signals_to_Look_For: ['Team independence', 'Accountability systems', 'Development programs'],
+            Red_Flags: ['High dependence on owner', 'Poor delegation', 'High turnover'],
+            Scoring_Guidance: {
+              '1-5': 'Heavy owner dependence',
+              '6-10': 'Some team development',
+              '11-15': 'Good people systems',
+              '16-20': 'Excellent talent management'
+            },
+            Score: scores.peopleScore
+          },
+          {
+            Name: 'Financial Performance',
+            Key_Question: 'How strong and predictable are the business finances?',
+            Signals_to_Look_For: ['Profit margin knowledge', 'Cash flow forecasting', 'Pricing strategy'],
+            Red_Flags: ['Unknown margins', 'Poor cash flow', 'Pricing struggles'],
+            Scoring_Guidance: {
+              '1-5': 'Poor financial control',
+              '6-10': 'Basic financial management',
+              '11-15': 'Good financial discipline',
+              '16-20': 'Excellent financial performance'
+            },
+            Score: scores.profitsScore
+          },
+          {
+            Name: 'Purpose & Impact',
+            Key_Question: 'How well does the business create meaningful impact?',
+            Signals_to_Look_For: ['Impact tracking', 'Purpose-driven sales', 'Sustainability commitments'],
+            Red_Flags: ['No impact measurement', 'Purpose disconnect', 'No sustainability focus'],
+            Scoring_Guidance: {
+              '1-5': 'No clear purpose',
+              '6-10': 'Some impact awareness',
+              '11-15': 'Good purpose integration',
+              '16-20': 'Excellent impact creation'
+            },
+            Score: scores.purposeScore
+          }
+        ],
+        Total_Score: scores.totalScore,
+        Recommended_CIKs: scores.totalScore < 50 ? ['Business Health Improvement Plan', 'Leadership Development Program'] : ['Growth Acceleration Package', 'Exit Readiness Assessment']
+      };
+
+      console.log('Submitting business health data:', businessHealthData);
+
+      // Save to business health function
+      const { data: healthResponse, error: healthError } = await supabase.functions.invoke('business-health', {
+        method: 'POST',
+        body: businessHealthData
+      });
+
+      if (healthError) {
+        throw healthError;
+      }
+
+      console.log('Business health data saved:', healthResponse);
+
+      // Update the reports table with the calculated scores
+      if (reportId) {
+        const { data: reportResponse, error: reportError } = await supabase.functions.invoke('client-report', {
+          method: 'POST',
+          body: {
+            reportId: reportId,
+            scores: {
+              Score_Leadership: scores.stressLeadershipScore,
+              Score_Plan: scores.planScore,
+              Score_People: scores.peopleScore,
+              Score_Profits: scores.profitsScore,
+              Score_Purpose: scores.purposeScore,
+              Business_Health_Score: scores.totalScore
+            },
+            status: 'completed'
+          }
+        });
+
+        if (reportError) {
+          console.error('Error updating report scores:', reportError);
+          // Don't throw here, as the health data was already saved successfully
+        } else {
+          console.log('Report scores updated:', reportResponse);
+        }
+      }
+
       onComplete();
       toast({
-        title: "Business Health Score submitted successfully",
-        description: "Your business health assessment has been completed.",
+        title: "Business Health Assessment completed successfully",
+        description: `Total score: ${scores.totalScore}/100. Your detailed analysis has been saved.`,
       });
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting assessment:", error);
       toast({
         title: "Submission error",
-        description: "There was an error submitting your assessment.",
+        description: "There was an error submitting your assessment. Please try again.",
         variant: "destructive",
       });
     } finally {
