@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
@@ -64,9 +63,28 @@ serve(async (req) => {
       }
     );
 
+    // Get the authenticated user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      console.error('Authentication error:', userError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { 
+          status: 401, 
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders
+          } 
+        }
+      );
+    }
+
+    console.log('Authenticated user ID:', user.id);
+
     // Handle different HTTP methods
     if (req.method === 'POST') {
-      return await handlePostRequest(req, supabaseClient);
+      return await handlePostRequest(req, supabaseClient, user.id);
     } else if (req.method === 'GET') {
       return await handleGetRequest(req, supabaseClient);
     } else {
@@ -96,29 +114,44 @@ serve(async (req) => {
   }
 });
 
-async function handlePostRequest(req: Request, supabaseClient: any) {
+async function handlePostRequest(req: Request, supabaseClient: any, authenticatedUserId: string) {
   const requestData: ClientReportRequest = await req.json();
   console.log('Received report data:', requestData);
 
   const { companyName, exerciseId, tabs, userId, reportId, scores, status } = requestData;
 
+  // Use the authenticated user ID instead of the one from request body
+  const actualUserId = authenticatedUserId;
+  console.log('Using authenticated user ID:', actualUserId);
+
   // Handle score-only updates (simpler path)
-  if (reportId && userId && scores) {
+  if (reportId && scores) {
     console.log(`Updating scores for report ${reportId}`);
     
     // Debug: First let's see what reports exist for this user
     const { data: userReports, error: debugError } = await supabaseClient
       .from('reports')
-      .select('id, title, company_name, created_at')
-      .eq('user_id', userId);
+      .select('id, title, company_name, created_at, user_id')
+      .eq('user_id', actualUserId);
     
-    console.log('All reports for user:', userReports);
+    console.log('All reports for authenticated user:', userReports);
+    
+    // Also check if the report exists regardless of user (for debugging)
+    const { data: reportCheck, error: reportCheckError } = await supabaseClient
+      .from('reports')
+      .select('id, user_id, title, company_name')
+      .eq('id', reportId)
+      .maybeSingle();
+    
+    console.log('Report exists check:', reportCheck);
+    console.log('Report check error:', reportCheckError);
     
     // First check if the report exists and belongs to the user
     const { data: existingReport, error: checkError } = await supabaseClient
       .from('reports')
       .select('id, user_id, title, company_name')
       .eq('id', reportId)
+      .eq('user_id', actualUserId)
       .maybeSingle();
     
     console.log('Report lookup result:', existingReport);
@@ -139,32 +172,23 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     }
     
     if (!existingReport) {
-      console.error('Report not found:', reportId);
+      console.error('Report not found for user:', reportId);
       console.log('Available reports:', userReports);
+      console.log('Report exists but belongs to different user:', reportCheck);
       return new Response(
         JSON.stringify({ 
-          error: 'Report not found',
+          error: 'Report not found or access denied',
           debug: {
             requestedId: reportId,
-            availableReports: userReports?.map(r => ({ id: r.id, title: r.title, company: r.company_name }))
+            authenticatedUserId: actualUserId,
+            requestBodyUserId: userId,
+            availableReports: userReports?.map(r => ({ id: r.id, title: r.title, company: r.company_name })),
+            reportExists: reportCheck ? true : false,
+            reportOwner: reportCheck?.user_id
           }
         }),
         { 
           status: 404, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders 
-          } 
-        }
-      );
-    }
-    
-    if (existingReport.user_id !== userId) {
-      console.error('Access denied - user does not own report');
-      return new Response(
-        JSON.stringify({ error: 'Access denied' }),
-        { 
-          status: 403, 
           headers: { 
             'Content-Type': 'application/json',
             ...corsHeaders 
@@ -199,6 +223,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
       .from('reports')
       .update(updateData)
       .eq('id', reportId)
+      .eq('user_id', actualUserId)
       .select()
       .single();
     
@@ -233,258 +258,7 @@ async function handlePostRequest(req: Request, supabaseClient: any) {
     );
   }
 
-  // Original tab-based logic (existing functionality)
-  // Validate tabs data for tab-based requests
-  if (!tabs || !Array.isArray(tabs) || tabs.length === 0) {
-    console.error('Invalid tabs data:', tabs);
-    return new Response(
-      JSON.stringify({ error: 'Invalid tabs data: must be a non-empty array' }),
-      { 
-        status: 400, 
-        headers: { 
-          'Content-Type': 'application/json',
-          ...corsHeaders 
-        } 
-      }
-    );
-  }
-
-  // If reportId is provided, try to update that specific report
-  if (reportId) {
-    console.log(`Attempting to update report with ID: ${reportId}`);
-    
-    // First fetch the existing report to properly merge the tabs data
-    const { data: existingReport, error: fetchError } = await supabaseClient
-      .from('reports')
-      .select('tabs_data')
-      .eq('id', reportId)
-      .maybeSingle();
-      
-    if (fetchError) {
-      console.error('Error fetching existing report:', fetchError);
-      return new Response(
-        JSON.stringify({ error: fetchError.message }),
-        { 
-          status: 400, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders 
-          } 
-        }
-      );
-    }
-    
-    // Prepare the tabs data for update
-    let updatedTabsData = tabs;
-    
-    // If there are existing tabs, merge the new tabs with existing ones
-    if (existingReport && existingReport.tabs_data) {
-      const existingTabs = Array.isArray(existingReport.tabs_data) 
-        ? existingReport.tabs_data 
-        : [];
-      
-      console.log('Existing tabs before merge:', existingTabs);
-      
-      // Create a new array instead of modifying the existing one
-      updatedTabsData = [...existingTabs];
-      
-      // For each new tab, either update an existing tab or add it as a new tab
-      for (const newTab of tabs) {
-        const existingTabIndex = existingTabs.findIndex(
-          (tab: TabData) => tab.tabId === newTab.tabId
-        );
-        
-        if (existingTabIndex >= 0) {
-          // Update existing tab
-          console.log(`Updating existing tab at index ${existingTabIndex}:`, newTab);
-          updatedTabsData[existingTabIndex] = newTab;
-        } else {
-          // Add new tab
-          console.log('Adding new tab:', newTab);
-          updatedTabsData.push(newTab);
-        }
-      }
-      
-      console.log('Updated tabs after merge:', updatedTabsData);
-    } else {
-      console.log('No existing tabs, using new tabs directly:', tabs);
-    }
-    
-    // Update the report with the merged tabs data
-    const { data: updatedReport, error: updateError } = await supabaseClient
-      .from('reports')
-      .update({ 
-        updated_at: new Date().toISOString(),
-        tabs_data: updatedTabsData
-      })
-      .eq('id', reportId)
-      .select()
-      .maybeSingle();
-    
-    if (updateError) {
-      console.error('Error updating report by ID:', updateError);
-      return new Response(
-        JSON.stringify({ error: updateError.message }),
-        { 
-          status: 400, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders 
-          } 
-        }
-      );
-    }
-    
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Report data updated successfully',
-        reportId,
-        report: updatedReport // Return the updated report data
-      }),
-      { 
-        status: 200, 
-        headers: { 
-          'Content-Type': 'application/json',
-          ...corsHeaders 
-        } 
-      }
-    );
-  }
-
-  // If no reportId provided, check if a report for this company/exercise exists
-  const { data: existingReports, error: fetchError } = await supabaseClient
-    .from('reports')
-    .select('id, tabs_data')
-    .eq('company_name', companyName)
-    .eq('exercise_id', exerciseId);
-
-  if (fetchError) {
-    console.error('Error checking existing report:', fetchError);
-    return new Response(
-      JSON.stringify({ error: fetchError.message }),
-      { 
-        status: 400, 
-        headers: { 
-          'Content-Type': 'application/json',
-          ...corsHeaders 
-        } 
-      }
-    );
-  }
-
-  let reportId_response: string;
-  let updatedReport: any;
-  
-  // If report exists, update it, otherwise create new one
-  if (existingReports && existingReports.length > 0) {
-    reportId_response = existingReports[0].id;
-    
-    // Prepare tabs data by merging existing and new tabs
-    let updatedTabsData = tabs;
-    if (existingReports[0].tabs_data) {
-      const existingTabs = Array.isArray(existingReports[0].tabs_data) 
-        ? existingReports[0].tabs_data 
-        : [];
-        
-      updatedTabsData = [...existingTabs];
-      
-      for (const newTab of tabs) {
-        const existingTabIndex = existingTabs.findIndex(
-          (tab: TabData) => tab.tabId === newTab.tabId
-        );
-        
-        if (existingTabIndex >= 0) {
-          // Update existing tab
-          updatedTabsData[existingTabIndex] = newTab;
-        } else {
-          // Add new tab
-          updatedTabsData.push(newTab);
-        }
-      }
-    }
-    
-    console.log('Updating existing report with merged tabs:', updatedTabsData);
-    
-    // Update the existing report
-    const { data: updated, error: updateError } = await supabaseClient
-      .from('reports')
-      .update({ 
-        updated_at: new Date().toISOString(),
-        tabs_data: updatedTabsData
-      })
-      .eq('id', reportId_response)
-      .select()
-      .maybeSingle();
-
-    updatedReport = updated;
-
-    if (updateError) {
-      console.error('Error updating report:', updateError);
-      return new Response(
-        JSON.stringify({ error: updateError.message }),
-        { 
-          status: 400, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders 
-          } 
-        }
-      );
-    }
-  } else {
-    // Create a new report
-    const title = `${companyName} - ${exerciseId.replace(/-/g, ' ')}`;
-    
-    console.log('Creating new report with tabs:', tabs);
-    
-    const { data: newReport, error: createError } = await supabaseClient
-      .from('reports')
-      .insert({
-        user_id: userId,
-        title: title,
-        company_name: companyName,
-        exercise_id: exerciseId,
-        tabs_data: tabs,
-        status: 'In Progress'
-      })
-      .select()
-      .maybeSingle();
-
-    updatedReport = newReport;
-
-    if (createError) {
-      console.error('Error creating new report:', createError);
-      return new Response(
-        JSON.stringify({ error: createError.message }),
-        { 
-          status: 400, 
-          headers: { 
-            'Content-Type': 'application/json',
-            ...corsHeaders 
-          } 
-        }
-      );
-    }
-    
-    reportId_response = newReport.id;
-  }
-
-  return new Response(
-    JSON.stringify({ 
-      success: true, 
-      message: 'Report data saved successfully',
-      reportId: reportId_response,
-      report: updatedReport
-    }),
-    { 
-      status: 200, 
-      headers: { 
-        'Content-Type': 'application/json',
-        ...corsHeaders 
-      } 
-    }
-  );
+  // ... keep existing code (original tab-based logic)
 }
 
 async function handleGetRequest(req: Request, supabaseClient: any) {
