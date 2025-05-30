@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { z } from 'zod';
@@ -75,10 +74,18 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const { reportId } = useParams();
+  const params = useParams();
+
+  // Extract reportId properly - handle both string and object cases
+  const reportId = typeof params.reportId === 'string' ? params.reportId : 
+                   (params.reportId && typeof params.reportId === 'object' && 'value' in params.reportId) ? 
+                   params.reportId.value : 
+                   String(params.reportId || '');
 
   console.log('BusinessHealthScoreForm - User from context:', user);
-  console.log('BusinessHealthScoreForm - Report ID from params:', reportId);
+  console.log('BusinessHealthScoreForm - Raw params object:', params);
+  console.log('BusinessHealthScoreForm - Extracted reportId:', reportId);
+  console.log('BusinessHealthScoreForm - ReportId type:', typeof reportId);
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
     resolver: zodResolver(businessHealthScoreSchema),
@@ -201,7 +208,9 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     console.log('=== FORM SUBMISSION START ===');
     console.log('User object:', user);
     console.log('User ID:', user?.id);
-    console.log('Report ID from params:', reportId);
+    console.log('Raw params from useParams:', params);
+    console.log('Extracted Report ID:', reportId);
+    console.log('Report ID type:', typeof reportId);
     console.log('Form data received:', data);
 
     if (!user?.id) {
@@ -214,11 +223,11 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       return;
     }
 
-    if (!reportId) {
-      console.error('Report ID is missing from URL params');
+    if (!reportId || reportId === 'undefined' || reportId === '') {
+      console.error('Report ID is missing or invalid:', reportId);
       toast({
         title: "Missing report ID",
-        description: "Report ID is missing. Please try accessing this form from a valid report.",
+        description: "Report ID is missing or invalid. Please try accessing this form from a valid report.",
         variant: "destructive",
       });
       return;
@@ -379,6 +388,13 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
           >
             Auto-Fill (Dev)
           </Button>
+        </div>
+
+        {/* Debug info for development */}
+        <div className="bg-gray-100 p-4 rounded text-xs">
+          <div>User ID: {user?.id}</div>
+          <div>Report ID: {reportId}</div>
+          <div>Report ID Type: {typeof reportId}</div>
         </div>
 
         {/* STRESS & LEADERSHIP */}
