@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -35,7 +34,8 @@ import {
   Share2, 
   Plus,
   MoreHorizontal,
-  Trash2
+  Trash2,
+  Package
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
@@ -416,6 +416,10 @@ This report was generated on ${new Date().toLocaleDateString()}.
     );
   };
 
+  const handleCreatePackage = () => {
+    toast.success('Create Package feature coming soon!');
+  };
+
   return (
     <DashboardLayout title="My Reports">
       <div className="space-y-6">
@@ -439,6 +443,10 @@ This report was generated on ${new Date().toLocaleDateString()}.
                 )}
               </div>
             )}
+            <Button variant="outline" onClick={handleCreatePackage}>
+              <Package className="mr-2 h-4 w-4" />
+              Create Package
+            </Button>
             <Button onClick={openModal}>
               <Plus className="mr-2 h-4 w-4" />
               Run New Analysis
