@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -31,6 +30,7 @@ interface BusinessHealthData {
   total_score: number | null;
   created_at: string;
   updated_at: string;
+  recommended_ciks?: string[];
 }
 
 const ReportDetail = () => {
