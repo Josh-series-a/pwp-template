@@ -9,6 +9,7 @@ import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package, RefreshCw 
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
 import PackagesCarousel from '@/components/PackagesCarousel';
+import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
 
 interface SubPillar {
   Name: string;
@@ -41,6 +42,7 @@ const ReportDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('plan');
   const [packagesCIKs, setPackagesCIKs] = useState<string[]>([]);
+  const [isCreatePackageDialogOpen, setIsCreatePackageDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchReportData = async () => {
@@ -253,13 +255,21 @@ const ReportDetail = () => {
   return (
     <DashboardLayout title={reportTitle}>
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={() => navigate('/dashboard/reports')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Reports
+          </Button>
+          
+          <Button 
+            onClick={() => setIsCreatePackageDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Package className="h-4 w-4" />
+            Create Package
           </Button>
         </div>
 
@@ -360,6 +370,11 @@ const ReportDetail = () => {
           </CardContent>
         </Card>
       </div>
+
+      <CreatePackageDialog 
+        isOpen={isCreatePackageDialogOpen}
+        onClose={() => setIsCreatePackageDialogOpen(false)}
+      />
     </DashboardLayout>
   );
 };
