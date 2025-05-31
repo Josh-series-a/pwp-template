@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
+import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
 import LoadingRayMeter from '@/components/LoadingRayMeter';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -65,6 +66,7 @@ interface Report {
 const Reports = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [createPackageOpen, setCreatePackageOpen] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -417,7 +419,11 @@ This report was generated on ${new Date().toLocaleDateString()}.
   };
 
   const handleCreatePackage = () => {
-    toast.success('Create Package feature coming soon!');
+    setCreatePackageOpen(true);
+  };
+
+  const closeCreatePackageDialog = () => {
+    setCreatePackageOpen(false);
   };
 
   return (
@@ -634,6 +640,11 @@ This report was generated on ${new Date().toLocaleDateString()}.
         isOpen={viewModalOpen}
         onClose={closeViewModal}
         reportId={selectedReportId}
+      />
+
+      <CreatePackageDialog
+        isOpen={createPackageOpen}
+        onClose={closeCreatePackageDialog}
       />
     </DashboardLayout>
   );
