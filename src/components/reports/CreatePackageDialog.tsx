@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -174,36 +173,35 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClo
       const selectedCompanyData = companies.find(c => c.id === selectedCompany);
       const selectedPackageDetails = packages.filter(p => selectedPackages.includes(p.id));
 
-      // Prepare webhook data
-      const webhookData = {
-        user_id: user.id,
-        user_email: user.email,
-        user_name: user.user_metadata?.name || 'Unknown User',
-        company_name: selectedCompanyData?.company_name,
-        company_id: selectedCompany,
-        selected_packages: selectedPackageDetails.map(pkg => ({
-          id: pkg.id,
-          title: pkg.title,
-          description: pkg.description,
-          items: pkg.items
-        })),
-        package_count: selectedPackages.length,
-        timestamp: new Date().toISOString(),
-        submitted_from: 'Create Package Dialog'
-      };
+      // Prepare query parameters
+      const params = new URLSearchParams();
+      params.append('user_id', user.id);
+      params.append('user_email', user.email || '');
+      params.append('user_name', user.user_metadata?.name || 'Unknown User');
+      params.append('company_name', selectedCompanyData?.company_name || '');
+      params.append('company_id', selectedCompany);
+      params.append('package_count', selectedPackages.length.toString());
+      params.append('timestamp', new Date().toISOString());
+      params.append('submitted_from', 'Create Package Dialog');
+      
+      // Add selected packages as separate parameters
+      selectedPackageDetails.forEach((pkg, index) => {
+        params.append(`package_${index}_id`, pkg.id);
+        params.append(`package_${index}_title`, pkg.title);
+        params.append(`package_${index}_description`, pkg.description);
+        pkg.items.forEach((item, itemIndex) => {
+          params.append(`package_${index}_item_${itemIndex}`, item);
+        });
+      });
 
-      console.log('Sending data to webhook:', webhookData);
+      console.log('Sending data to webhook as query string:', params.toString());
 
-      // Send to webhook
+      // Send to webhook with query parameters
       const webhookUrl = 'https://hook.eu2.make.com/aha19x6d2fppxppp3kvuzws49rknm31p';
       
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await fetch(`${webhookUrl}?${params.toString()}`, {
+        method: 'GET',
         mode: 'no-cors',
-        body: JSON.stringify(webhookData),
       });
 
       console.log('Webhook data sent successfully');
