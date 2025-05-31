@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -228,14 +227,10 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
         params.append('new_company_id', companyId);
       }
       
-      // Add selected packages as separate parameters
+      // Add selected packages as separate parameters (only ID and title)
       selectedPackageDetails.forEach((pkg, index) => {
         params.append(`package_${index}_id`, pkg.id);
         params.append(`package_${index}_title`, pkg.title);
-        params.append(`package_${index}_description`, pkg.description);
-        pkg.items.forEach((item, itemIndex) => {
-          params.append(`package_${index}_item_${itemIndex}`, item);
-        });
       });
 
       console.log('Sending data to webhook as query string:', params.toString());
