@@ -5,7 +5,6 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
@@ -31,7 +30,6 @@ interface BusinessHealthData {
   total_score: number | null;
   created_at: string;
   updated_at: string;
-  recommended_ciks?: string[];
 }
 
 const ReportDetail = () => {
@@ -41,7 +39,6 @@ const ReportDetail = () => {
   const [businessHealthData, setBusinessHealthData] = useState<Record<string, BusinessHealthData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('plan');
-  const [packagesCIKs, setPackagesCIKs] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchReportData = async () => {
@@ -77,28 +74,12 @@ const ReportDetail = () => {
           if (healthData?.success && healthData?.data) {
             // Organize data by tab_id with mapping for stress leadership
             const organizedData: Record<string, BusinessHealthData> = {};
-            const allCIKs = new Set<string>();
-            
             healthData.data.forEach((item: BusinessHealthData) => {
               // Map stressLeadership to stress_leadership for frontend compatibility
               const tabKey = item.tab_id === 'stressLeadership' ? 'stress_leadership' : item.tab_id;
               organizedData[tabKey] = item;
-              
-              // Collect all CIKs for packages tab
-              if (item.recommended_ciks && Array.isArray(item.recommended_ciks)) {
-                item.recommended_ciks.forEach((cik: string) => allCIKs.add(cik));
-              }
-              
-              // Debug logging for each item
-              console.log(`Processing tab: ${tabKey}`, {
-                tab_id: item.tab_id,
-                recommended_ciks: item.recommended_ciks,
-                sub_pillars: item.sub_pillars,
-                full_item: item
-              });
             });
             setBusinessHealthData(organizedData);
-            setPackagesCIKs(Array.from(allCIKs));
             console.log('Fetched business health data:', organizedData);
           }
         }
@@ -195,13 +176,6 @@ const ReportDetail = () => {
   const renderTabContent = (tabId: string, defaultTitle: string, defaultDescription: string) => {
     const tabData = businessHealthData[tabId];
     
-    console.log(`Rendering tab ${tabId}:`, {
-      hasTabData: !!tabData,
-      tabData: tabData,
-      recommended_ciks: tabData?.recommended_ciks,
-      sub_pillars: tabData?.sub_pillars
-    });
-    
     if (!tabData) {
       return (
         <Card>
@@ -215,75 +189,17 @@ const ReportDetail = () => {
       );
     }
 
-    // Parse recommended CIKs from multiple possible locations
-    let recommendedCIKs: string[] = [];
-    
-    // First check if it's directly on the tabData
-    if (tabData.recommended_ciks && Array.isArray(tabData.recommended_ciks)) {
-      recommendedCIKs = tabData.recommended_ciks;
-      console.log(`Found CIKs directly on tabData for ${tabId}:`, recommendedCIKs);
-    }
-    // Then check in sub_pillars data
-    else if (tabData.sub_pillars) {
-      try {
-        const pillarsData = Array.isArray(tabData.sub_pillars) 
-          ? tabData.sub_pillars 
-          : JSON.parse(tabData.sub_pillars);
-        
-        console.log(`Checking sub_pillars for ${tabId}:`, pillarsData);
-        
-        // Look for Recommended_CIKs in the data structure
-        if (pillarsData && typeof pillarsData === 'object' && pillarsData.Recommended_CIKs) {
-          recommendedCIKs = pillarsData.Recommended_CIKs;
-          console.log(`Found CIKs in sub_pillars for ${tabId}:`, recommendedCIKs);
-        }
-        
-        // Also check if it's an array and each item has Recommended_CIKs
-        if (Array.isArray(pillarsData)) {
-          pillarsData.forEach((pillar, index) => {
-            if (pillar.Recommended_CIKs) {
-              console.log(`Found CIKs in pillar ${index} for ${tabId}:`, pillar.Recommended_CIKs);
-              recommendedCIKs = [...recommendedCIKs, ...pillar.Recommended_CIKs];
-            }
-          });
-        }
-      } catch (e) {
-        console.error('Error parsing recommended CIKs:', e);
-      }
-    }
-
-    console.log(`Final CIKs for tab ${tabId}:`, recommendedCIKs);
-
     return (
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex justify-between items-start">
-              <span>{defaultTitle}</span>
-              <div className="flex flex-col gap-2 items-end">
-                {tabData.total_score && (
-                  <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full">
-                    Overall Score: {tabData.total_score}/10
-                  </div>
-                )}
-                {recommendedCIKs.length > 0 && (
-                  <div className="flex flex-wrap gap-1 max-w-xs">
-                    <div className="text-xs font-medium text-muted-foreground mb-1 w-full text-right">
-                      Recommended CIKs:
-                    </div>
-                    {recommendedCIKs.map((cik, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {cik}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                {recommendedCIKs.length === 0 && (
-                  <div className="text-xs text-muted-foreground">
-                    No CIKs found for this tab
-                  </div>
-                )}
-              </div>
+            <CardTitle className="flex justify-between items-center">
+              {defaultTitle}
+              {tabData.total_score && (
+                <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full">
+                  Overall Score: {tabData.total_score}/10
+                </div>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -400,32 +316,15 @@ const ReportDetail = () => {
 
               <TabsContent value="packages" className="mt-6">
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-4">
-                      <Button className="flex items-center gap-2">
-                        <Package className="h-4 w-4" />
-                        Generate Package
-                      </Button>
-                      <Button variant="outline" className="flex items-center gap-2">
-                        <RefreshCw className="h-4 w-4" />
-                        Refresh
-                      </Button>
-                    </div>
-                    {packagesCIKs.length > 0 && (
-                      <div className="flex flex-wrap gap-1 items-center max-w-md">
-                        <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
-                        {packagesCIKs.slice(0, 5).map((cik, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {cik}
-                          </Badge>
-                        ))}
-                        {packagesCIKs.length > 5 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{packagesCIKs.length - 5} more
-                          </Badge>
-                        )}
-                      </div>
-                    )}
+                  <div className="flex gap-4">
+                    <Button className="flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      Generate Package
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <RefreshCw className="h-4 w-4" />
+                      Refresh
+                    </Button>
                   </div>
                   <PackagesCarousel reportId={reportId || ''} />
                 </div>
