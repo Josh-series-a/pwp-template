@@ -164,13 +164,51 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClo
   };
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error('User not authenticated');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Here you would typically create the package in your database
-      // For now, we'll just show a success message
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      const selectedCompanyData = companies.find(c => c.id === selectedCompany);
+      const selectedPackageDetails = packages.filter(p => selectedPackages.includes(p.id));
+
+      // Prepare webhook data
+      const webhookData = {
+        user_id: user.id,
+        user_email: user.email,
+        user_name: user.user_metadata?.name || 'Unknown User',
+        company_name: selectedCompanyData?.company_name,
+        company_id: selectedCompany,
+        selected_packages: selectedPackageDetails.map(pkg => ({
+          id: pkg.id,
+          title: pkg.title,
+          description: pkg.description,
+          items: pkg.items
+        })),
+        package_count: selectedPackages.length,
+        timestamp: new Date().toISOString(),
+        submitted_from: 'Create Package Dialog'
+      };
+
+      console.log('Sending data to webhook:', webhookData);
+
+      // Send to webhook
+      const webhookUrl = 'https://hook.eu2.make.com/aha19x6d2fppxppp3kvuzws49rknm31p';
       
-      toast.success(`Package created successfully for ${companies.find(c => c.id === selectedCompany)?.company_name}!`);
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(webhookData),
+      });
+
+      console.log('Webhook data sent successfully');
+      
+      toast.success(`Package request submitted successfully for ${selectedCompanyData?.company_name}!`);
       
       // Reset form
       setCurrentPage(1);
@@ -178,8 +216,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClo
       setSelectedPackages([]);
       onClose();
     } catch (error) {
-      console.error('Error creating package:', error);
-      toast.error('Failed to create package');
+      console.error('Error submitting package request:', error);
+      toast.error('Failed to submit package request');
     } finally {
       setIsLoading(false);
     }
@@ -348,7 +386,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClo
                 onClick={handleSubmit}
                 disabled={isLoading || selectedPackages.length === 0}
               >
-                {isLoading ? 'Creating...' : 'Submit Package'}
+                {isLoading ? 'Submitting...' : 'Submit Package Request'}
               </Button>
             )}
           </div>
