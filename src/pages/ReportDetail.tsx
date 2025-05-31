@@ -376,6 +376,9 @@ const ReportDetail = () => {
         isOpen={isCreatePackageDialogOpen}
         onClose={() => setIsCreatePackageDialogOpen(false)}
         preSelectedCompany={companyName}
+        reportId={reportId}
+        statusType={report?.status_type}
+        companyId={report?.company_id}
       />
     </DashboardLayout>
   );

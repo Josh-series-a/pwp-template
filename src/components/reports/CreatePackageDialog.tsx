@@ -18,6 +18,9 @@ interface CreatePackageDialogProps {
   isOpen: boolean;
   onClose: () => void;
   preSelectedCompany?: string;
+  reportId?: string;
+  statusType?: string;
+  companyId?: string;
 }
 
 interface Company {
@@ -100,7 +103,10 @@ const packages: Package[] = [
 const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ 
   isOpen, 
   onClose, 
-  preSelectedCompany 
+  preSelectedCompany,
+  reportId,
+  statusType,
+  companyId
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState<string>('');
@@ -209,6 +215,17 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
       params.append('package_count', selectedPackages.length.toString());
       params.append('timestamp', new Date().toISOString());
       params.append('submitted_from', 'Create Package Dialog');
+      
+      // Add new parameters for reportId, statusType, and companyId
+      if (reportId) {
+        params.append('report_id', reportId);
+      }
+      if (statusType) {
+        params.append('status_type', statusType);
+      }
+      if (companyId) {
+        params.append('new_company_id', companyId);
+      }
       
       // Add selected packages as separate parameters
       selectedPackageDetails.forEach((pkg, index) => {
