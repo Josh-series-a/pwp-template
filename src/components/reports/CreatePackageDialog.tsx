@@ -203,7 +203,6 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
     setIsLoading(true);
     try {
       const selectedCompanyData = companies.find(c => c.id === selectedCompany);
-      const selectedPackageDetails = packages.filter(p => selectedPackages.includes(p.id));
 
       // Prepare query parameters
       const params = new URLSearchParams();
@@ -227,11 +226,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
         params.append('new_company_id', companyId);
       }
       
-      // Add selected packages as separate parameters (only ID and title)
-      selectedPackageDetails.forEach((pkg, index) => {
-        params.append(`package_${index}_id`, pkg.id);
-        params.append(`package_${index}_title`, pkg.title);
-      });
+      // Add selected packages IDs as an array
+      params.append('selected_packages_ID', JSON.stringify(selectedPackages));
 
       console.log('Sending data to webhook as query string:', params.toString());
 
