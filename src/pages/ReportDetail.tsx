@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -42,6 +41,7 @@ const ReportDetail = () => {
   const [businessHealthData, setBusinessHealthData] = useState<Record<string, BusinessHealthData>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('plan');
+  const [packagesCIKs, setPackagesCIKs] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchReportData = async () => {
@@ -77,10 +77,17 @@ const ReportDetail = () => {
           if (healthData?.success && healthData?.data) {
             // Organize data by tab_id with mapping for stress leadership
             const organizedData: Record<string, BusinessHealthData> = {};
+            const allCIKs = new Set<string>();
+            
             healthData.data.forEach((item: BusinessHealthData) => {
               // Map stressLeadership to stress_leadership for frontend compatibility
               const tabKey = item.tab_id === 'stressLeadership' ? 'stress_leadership' : item.tab_id;
               organizedData[tabKey] = item;
+              
+              // Collect all CIKs for packages tab
+              if (item.recommended_ciks && Array.isArray(item.recommended_ciks)) {
+                item.recommended_ciks.forEach((cik: string) => allCIKs.add(cik));
+              }
               
               // Debug logging for each item
               console.log(`Processing tab: ${tabKey}`, {
@@ -91,6 +98,7 @@ const ReportDetail = () => {
               });
             });
             setBusinessHealthData(organizedData);
+            setPackagesCIKs(Array.from(allCIKs));
             console.log('Fetched business health data:', organizedData);
           }
         }
@@ -392,15 +400,32 @@ const ReportDetail = () => {
 
               <TabsContent value="packages" className="mt-6">
                 <div className="space-y-6">
-                  <div className="flex gap-4">
-                    <Button className="flex items-center gap-2">
-                      <Package className="h-4 w-4" />
-                      Generate Package
-                    </Button>
-                    <Button variant="outline" className="flex items-center gap-2">
-                      <RefreshCw className="h-4 w-4" />
-                      Refresh
-                    </Button>
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-4">
+                      <Button className="flex items-center gap-2">
+                        <Package className="h-4 w-4" />
+                        Generate Package
+                      </Button>
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <RefreshCw className="h-4 w-4" />
+                        Refresh
+                      </Button>
+                    </div>
+                    {packagesCIKs.length > 0 && (
+                      <div className="flex flex-wrap gap-1 items-center max-w-md">
+                        <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
+                        {packagesCIKs.slice(0, 5).map((cik, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {cik}
+                          </Badge>
+                        ))}
+                        {packagesCIKs.length > 5 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{packagesCIKs.length - 5} more
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <PackagesCarousel reportId={reportId || ''} />
                 </div>

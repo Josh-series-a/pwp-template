@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   Table, 
   TableBody, 
@@ -66,6 +68,7 @@ const Reports = () => {
   const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [allRecommendedCIKs, setAllRecommendedCIKs] = useState<string[]>([]);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -102,6 +105,33 @@ const Reports = () => {
             overall: report.overall_score,
           }));
           setReports(formattedReports);
+          
+          // Fetch all CIKs from all reports
+          const allCIKs = new Set<string>();
+          for (const report of data) {
+            try {
+              const healthUrl = `https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/business-health?reportId=${report.id}`;
+              const healthFetch = await fetch(healthUrl, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
+                  'Content-Type': 'application/json',
+                },
+              });
+              
+              const healthData = await healthFetch.json();
+              if (healthData?.success && healthData?.data) {
+                healthData.data.forEach((item: any) => {
+                  if (item.recommended_ciks && Array.isArray(item.recommended_ciks)) {
+                    item.recommended_ciks.forEach((cik: string) => allCIKs.add(cik));
+                  }
+                });
+              }
+            } catch (error) {
+              console.error('Error fetching CIKs for report:', report.id, error);
+            }
+          }
+          setAllRecommendedCIKs(Array.from(allCIKs));
         }
       } catch (error) {
         console.error('Error fetching reports:', error);
@@ -393,10 +423,27 @@ This report was generated on ${new Date().toLocaleDateString()}.
           <p className="text-muted-foreground">
             View all your business health checks and analyses
           </p>
-          <Button onClick={openModal}>
-            <Plus className="mr-2 h-4 w-4" />
-            Run New Analysis
-          </Button>
+          <div className="flex items-center gap-4">
+            {allRecommendedCIKs.length > 0 && (
+              <div className="flex flex-wrap gap-1 items-center">
+                <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
+                {allRecommendedCIKs.slice(0, 5).map((cik, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {cik}
+                  </Badge>
+                ))}
+                {allRecommendedCIKs.length > 5 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{allRecommendedCIKs.length - 5} more
+                  </Badge>
+                )}
+              </div>
+            )}
+            <Button onClick={openModal}>
+              <Plus className="mr-2 h-4 w-4" />
+              Run New Analysis
+            </Button>
+          </div>
         </div>
         
         <Card>
