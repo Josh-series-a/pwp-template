@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 interface CreatePackageDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  preSelectedCompany?: string;
 }
 
 interface Company {
@@ -96,7 +97,11 @@ const packages: Package[] = [
   }
 ];
 
-const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClose }) => {
+const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ 
+  isOpen, 
+  onClose, 
+  preSelectedCompany 
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
@@ -109,6 +114,27 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClo
       fetchCompanies();
     }
   }, [isOpen, user]);
+
+  useEffect(() => {
+    // Auto-select the pre-selected company when companies are loaded
+    if (preSelectedCompany && companies.length > 0) {
+      const matchingCompany = companies.find(c => c.company_name === preSelectedCompany);
+      if (matchingCompany) {
+        setSelectedCompany(matchingCompany.id);
+        // Auto-advance to page 2 since company is pre-selected
+        setCurrentPage(2);
+      }
+    }
+  }, [preSelectedCompany, companies]);
+
+  // Reset dialog state when it opens
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentPage(preSelectedCompany ? 2 : 1);
+      setSelectedCompany('');
+      setSelectedPackages([]);
+    }
+  }, [isOpen, preSelectedCompany]);
 
   const fetchCompanies = async () => {
     if (!user) return;
@@ -236,6 +262,11 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ isOpen, onClo
         <DialogHeader>
           <DialogTitle>
             Create Package - Page {currentPage} of 3
+            {preSelectedCompany && (
+              <span className="text-sm font-normal text-muted-foreground ml-2">
+                for {preSelectedCompany}
+              </span>
+            )}
           </DialogTitle>
         </DialogHeader>
 
