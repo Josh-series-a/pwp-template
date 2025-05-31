@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -39,7 +40,7 @@ interface Package {
 
 const packages: Package[] = [
   {
-    id: 'plan-legacy',
+    id: 'PYBLC1',
     title: 'Plan Your Business Legacy with Confidence',
     description: '🧭 For founders who want to build with the end in mind and reduce long-term stress.',
     icon: '🧭',
@@ -51,7 +52,7 @@ const packages: Package[] = [
     ]
   },
   {
-    id: 'customer-insight',
+    id: 'USICD2',
     title: 'Understand and Serve Your Ideal Customers Deeply',
     description: '🔍 For teams that want to sharpen their customer insight and increase resonance.',
     icon: '🔍',
@@ -63,7 +64,7 @@ const packages: Package[] = [
     ]
   },
   {
-    id: 'differentiation',
+    id: 'DIIP3',
     title: 'Differentiate Yourself with an Irresistible Proposition',
     description: '💡 For companies struggling to stand out in crowded markets.',
     icon: '💡',
@@ -75,7 +76,7 @@ const packages: Package[] = [
     ]
   },
   {
-    id: 'team-empowerment',
+    id: 'ETYSDD4',
     title: 'Empower Your Team and Step Back from the Day-to-Day',
     description: '🛠️ For founders stuck in the weeds and seeking more freedom.',
     icon: '🛠️',
@@ -87,7 +88,7 @@ const packages: Package[] = [
     ]
   },
   {
-    id: 'customer-relationships',
+    id: 'SGKCR5',
     title: 'Strengthen and Grow Your Key Customer Relationships',
     description: '🤝 For businesses ready to scale revenue through strategic client relationships.',
     icon: '🤝',
