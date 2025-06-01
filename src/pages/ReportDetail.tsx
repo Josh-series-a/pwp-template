@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { reportService } from '@/utils/reportService';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 import PackagesCarousel from '@/components/PackagesCarousel';
 import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
 
@@ -37,6 +39,7 @@ interface BusinessHealthData {
 const ReportDetail = () => {
   const { companySlug, exerciseId, reportId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [report, setReport] = useState<any>(null);
   const [businessHealthData, setBusinessHealthData] = useState<Record<string, BusinessHealthData>>({});
   const [isLoading, setIsLoading] = useState(true);
