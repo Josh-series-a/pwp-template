@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -113,18 +112,14 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
               className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
             >
               <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 h-full flex flex-col justify-between p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h2 className="text-xl font-bold text-gray-900 mb-3 leading-tight line-clamp-3">
-                      {pkg.package_name}
-                    </h2>
-                  </div>
-                  <div className="ml-2 flex-shrink-0">
-                    <ExternalLink className="h-5 w-5 text-gray-700" />
-                  </div>
+                <div className="flex justify-end">
+                  <ExternalLink className="h-5 w-5 text-gray-700" />
                 </div>
                 
                 <div className="space-y-3">
+                  <h2 className="text-xl font-bold text-gray-900 leading-tight line-clamp-3">
+                    {pkg.package_name}
+                  </h2>
                   <p className="text-base font-medium text-gray-800">
                     {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''}
                   </p>
