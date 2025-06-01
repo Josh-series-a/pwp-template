@@ -104,31 +104,32 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
         <h3 className="text-lg font-semibold">Generated Packages ({packages.length})</h3>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {packages.map((pkg) => (
-          <div key={pkg.id} className="space-y-3">
-            {/* Package Name Card with Gradient - Clickable */}
+          <div key={pkg.id}>
+            {/* Square Package Card - Clickable */}
             <div 
               onClick={() => handlePackageClick(pkg.id)}
-              className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+              className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
             >
-              <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 p-8">
+              <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 h-full flex flex-col justify-between p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">
+                    <h2 className="text-xl font-bold text-gray-900 mb-3 leading-tight line-clamp-3">
                       {pkg.package_name}
                     </h2>
-                    <p className="text-lg font-medium text-gray-800">
-                      {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''}
-                    </p>
                   </div>
-                  <div className="ml-4">
-                    <ExternalLink className="h-6 w-6 text-gray-700" />
+                  <div className="ml-2 flex-shrink-0">
+                    <ExternalLink className="h-5 w-5 text-gray-700" />
                   </div>
                 </div>
-                <div className="mt-4">
-                  <Badge variant="outline" className="text-sm bg-white/80">
-                    Created: {new Date(pkg.created_at).toLocaleDateString()}
+                
+                <div className="space-y-3">
+                  <p className="text-base font-medium text-gray-800">
+                    {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''}
+                  </p>
+                  <Badge variant="outline" className="text-xs bg-white/80 w-fit">
+                    {new Date(pkg.created_at).toLocaleDateString()}
                   </Badge>
                 </div>
               </div>
