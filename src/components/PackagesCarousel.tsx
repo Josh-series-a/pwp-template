@@ -114,69 +114,79 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
         {packages.map((pkg) => {
           const isExpanded = expandedPackages.has(pkg.id);
           return (
-            <Card key={pkg.id} className="cursor-pointer hover:shadow-md transition-shadow">
-              <CardHeader 
+            <div key={pkg.id} className="space-y-3">
+              {/* Package Name Card with Gradient */}
+              <div 
                 onClick={() => togglePackageExpansion(pkg.id)}
-                className="pb-3"
+                className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
               >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {pkg.package_name}
+                <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 p-8">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">
+                        {pkg.package_name}
+                      </h2>
+                      <p className="text-lg font-medium text-gray-800">
+                        {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                    <div className="ml-4">
                       {isExpanded ? (
-                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                        <ChevronUp className="h-6 w-6 text-gray-700" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="h-6 w-6 text-gray-700" />
                       )}
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Created: {new Date(pkg.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Badge variant="secondary">
-                    {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''}
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              {isExpanded && (
-                <CardContent>
-                  <div className="space-y-4">
-                    <h4 className="font-medium">Documents:</h4>
-                    <div className="grid gap-3">
-                      {pkg.documents.map((doc, index) => (
-                        <div key={index} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <h5 className="font-medium">{doc.name}</h5>
-                            <Badge variant="outline" className="text-xs">
-                              {doc.document.length} file{doc.document.length !== 1 ? 's' : ''}
-                            </Badge>
-                          </div>
-                          <div className="space-y-2">
-                            {doc.document.map((url, urlIndex) => (
-                              <div key={urlIndex} className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-muted-foreground" />
-                                <Button
-                                  variant="link"
-                                  size="sm"
-                                  className="h-auto p-0 text-sm"
-                                  onClick={() => openDocument(url)}
-                                >
-                                  <span className="truncate max-w-[300px]">
-                                    {url.includes('docs.google.com') ? 'Google Document' : url}
-                                  </span>
-                                  <ExternalLink className="h-3 w-3 ml-1" />
-                                </Button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
                     </div>
                   </div>
-                </CardContent>
+                </div>
+              </div>
+              
+              {/* Expanded Documents Section */}
+              {isExpanded && (
+                <Card className="border-l-4 border-l-yellow-400">
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold text-lg">Documents:</h4>
+                        <Badge variant="outline" className="text-sm">
+                          Created: {new Date(pkg.created_at).toLocaleDateString()}
+                        </Badge>
+                      </div>
+                      <div className="grid gap-4">
+                        {pkg.documents.map((doc, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-gray-50">
+                            <div className="flex justify-between items-start mb-3">
+                              <h5 className="font-medium text-lg">{doc.name}</h5>
+                              <Badge variant="secondary" className="text-xs">
+                                {doc.document.length} file{doc.document.length !== 1 ? 's' : ''}
+                              </Badge>
+                            </div>
+                            <div className="space-y-2">
+                              {doc.document.map((url, urlIndex) => (
+                                <div key={urlIndex} className="flex items-center gap-3 p-2 rounded hover:bg-white transition-colors">
+                                  <FileText className="h-5 w-5 text-primary flex-shrink-0" />
+                                  <Button
+                                    variant="link"
+                                    size="sm"
+                                    className="h-auto p-0 text-left font-medium"
+                                    onClick={() => openDocument(url)}
+                                  >
+                                    <span className="truncate max-w-[400px]">
+                                      {url.includes('docs.google.com') ? 'Google Document' : url}
+                                    </span>
+                                    <ExternalLink className="h-4 w-4 ml-2 flex-shrink-0" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
-            </Card>
+            </div>
           );
         })}
       </div>
