@@ -44,7 +44,7 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent 
         side="left" 
-        className="w-full sm:max-w-2xl overflow-y-auto m-4 h-[calc(100vh-2rem)] rounded-lg border-0 shadow-2xl bg-gradient-to-br from-background via-background to-muted/20"
+        className="w-full sm:max-w-2xl overflow-y-auto m-4 h-[calc(100vh-2rem)] rounded-2xl border-0 shadow-2xl bg-gradient-to-br from-background via-background to-muted/20"
       >
         <div className="relative">
           {/* Header Section */}
