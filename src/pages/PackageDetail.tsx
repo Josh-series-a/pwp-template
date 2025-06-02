@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -30,8 +29,6 @@ const PackageDetail = () => {
   const { companySlug, exerciseId, reportId, packageId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [selectedDoc, setSelectedDoc] = useState<any>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [packageData, setPackageData] = useState<Package | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,8 +63,11 @@ const PackageDetail = () => {
   };
 
   const handleDocumentClick = (doc: any) => {
-    setSelectedDoc(doc);
-    setIsPreviewOpen(true);
+    const params = new URLSearchParams({
+      url: encodeURIComponent(doc.url),
+      title: encodeURIComponent(doc.title)
+    });
+    navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportId}/${packageId}/preview?${params.toString()}`);
   };
 
   const openInNewTab = (url: string) => {
@@ -178,7 +178,7 @@ const PackageDetail = () => {
                             variant="outline"
                             onClick={() => handleDocumentClick({
                               title: doc.name,
-                              url: doc.document[0] // Use the first document URL
+                              url: doc.document[0]
                             })}
                           >
                             Preview
@@ -211,35 +211,6 @@ const PackageDetail = () => {
             </Card>
           )}
         </div>
-
-        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
-            <DialogHeader>
-              <DialogTitle className="flex items-center justify-between">
-                {selectedDoc?.title}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openInNewTab(selectedDoc?.url)}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open in Google Docs
-                </Button>
-              </DialogTitle>
-            </DialogHeader>
-            <div className="h-[70vh]">
-              {selectedDoc && (
-                <CustomDocumentViewer
-                  docUrl={selectedDoc.url}
-                  title={selectedDoc.title}
-                  height="100%"
-                  showUrlInput={false}
-                  className="w-full h-full"
-                />
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </DashboardLayout>
   );
