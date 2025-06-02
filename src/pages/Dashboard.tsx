@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, FileText, BookOpen, ArrowRight, BarChart3, TrendingUp, Users, AlertCircle, InfoIcon } from 'lucide-react';
+import { Calendar, FileText, BookOpen, ArrowRight, BarChart3, TrendingUp, Users, AlertCircle, InfoIcon, Book, Dumbbell, Package, Eye, PlusCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -33,6 +33,204 @@ const Dashboard = () => {
   return (
     <DashboardLayout title={`Welcome back, ${firstName}`}>
       <div className="grid gap-6">
+        {/* Dashboard Pages Overview */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Dashboard Overview</h2>
+            <Tooltip content="Quick access to all dashboard sections">
+              <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">
+                Quick Access
+              </Badge>
+            </Tooltip>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <FileText className="h-8 w-8 text-blue-600" />
+                  <SampleDataBadge />
+                </div>
+                <CardTitle className="text-lg">Reports</CardTitle>
+                <CardDescription className="text-blue-700">Business analysis reports</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Total Reports</span>
+                    <span className="font-semibold">7</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Recent</span>
+                    <span className="font-semibold">3 this month</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/dashboard/reports">
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Reports
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <Book className="h-8 w-8 text-green-600" />
+                  <SampleDataBadge />
+                </div>
+                <CardTitle className="text-lg">Read</CardTitle>
+                <CardDescription className="text-green-700">Digital book access</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Current Chapter</span>
+                    <span className="font-semibold">Chapter 4</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Progress</span>
+                    <span className="font-semibold">65%</span>
+                  </div>
+                  <Progress value={65} className="h-2" />
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/dashboard/read">
+                    <Book className="h-4 w-4 mr-2" />
+                    Continue Reading
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <BookOpen className="h-8 w-8 text-purple-600" />
+                  <SampleDataBadge />
+                </div>
+                <CardTitle className="text-lg">Book Insights</CardTitle>
+                <CardDescription className="text-purple-700">Key concepts & summaries</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Available Insights</span>
+                    <span className="font-semibold">12 chapters</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Last Viewed</span>
+                    <span className="font-semibold">Yesterday</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/dashboard/insights">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Explore Insights
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <Dumbbell className="h-8 w-8 text-orange-600" />
+                  <SampleDataBadge />
+                </div>
+                <CardTitle className="text-lg">Exercises</CardTitle>
+                <CardDescription className="text-orange-700">Business development tasks</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Completed</span>
+                    <span className="font-semibold">8/15</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>In Progress</span>
+                    <span className="font-semibold">2</span>
+                  </div>
+                  <Progress value={53} className="h-2" />
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/dashboard/exercises">
+                    <Dumbbell className="h-4 w-4 mr-2" />
+                    View Exercises
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 hover:shadow-md transition-shadow cursor-pointer opacity-75">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <Calendar className="h-8 w-8 text-teal-600" />
+                  <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 text-xs">
+                    Coming Soon
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">Book a Session</CardTitle>
+                <CardDescription className="text-teal-700">1-on-1 coaching sessions</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Next Available</span>
+                    <span className="font-semibold">TBD</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Session Length</span>
+                    <span className="font-semibold">60 min</span>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button disabled variant="outline" size="sm" className="w-full">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Schedule Session
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <PlusCircle className="h-8 w-8 text-amber-600" />
+                  <Badge variant="outline" className="bg-green-50 text-green-800 border-green-200 text-xs">
+                    New Feature
+                  </Badge>
+                </div>
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+                <CardDescription className="text-amber-700">Common tasks & shortcuts</CardDescription>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="space-y-2 text-sm">
+                  <div>• Generate new report</div>
+                  <div>• Create package</div>
+                  <div>• Start exercise</div>
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0">
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link to="/dashboard/reports">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Create Report
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+
         {/* Business Overview Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
