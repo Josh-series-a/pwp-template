@@ -31,6 +31,7 @@ import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningD
 import ExitStrategyDialog from '@/components/exercises/ExitStrategyDialog';
 import EnvironmentalSocialDialog from '@/components/exercises/EnvironmentalSocialDialog';
 import KnowYourCustomerDialog from '@/components/exercises/KnowYourCustomerDialog';
+import OneOnOnePropositionDialog from '@/components/exercises/OneOnOnePropositionDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -44,8 +45,9 @@ const Exercises = () => {
   const [isExitStrategyDialogOpen, setIsExitStrategyDialogOpen] = useState(false);
   const [isEnvironmentalSocialDialogOpen, setIsEnvironmentalSocialDialogOpen] = useState(false);
   const [isKnowYourCustomerDialogOpen, setIsKnowYourCustomerDialogOpen] = useState(false);
+  const [isOneOnOnePropositionDialogOpen, setIsOneOnOnePropositionDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new know your customer exercise
+  // Enhanced exercises data with the new 1+1 proposition exercise
   const exercises = [
     { 
       id: 1, 
@@ -127,6 +129,19 @@ const Exercises = () => {
     },
     { 
       id: 7, 
+      title: "Create Your '1+1' Proposition", 
+      progress: 0, 
+      status: "new",
+      intro: "A '1+1 Proposition' is what makes you stand out. It's the special combination of two things that makes your business uniquely valuable — and hard to copy.",
+      category: "planning",
+      sections: 4,
+      completedSections: 0,
+      tags: ["planning", "strategy"],
+      priority: "high",
+      estimatedTime: "15 min"
+    },
+    { 
+      id: 8, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -139,7 +154,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 8, 
+      id: 9, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -152,7 +167,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 9, 
+      id: 10, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -165,7 +180,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 10, 
+      id: 11, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -178,7 +193,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 11, 
+      id: 12, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -262,6 +277,8 @@ const Exercises = () => {
       setIsEnvironmentalSocialDialogOpen(true);
     } else if (exerciseId === 6) {
       setIsKnowYourCustomerDialogOpen(true);
+    } else if (exerciseId === 7) {
+      setIsOneOnOnePropositionDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -518,6 +535,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your customer analysis has been saved successfully.",
+          });
+        }}
+      />
+
+      <OneOnOnePropositionDialog
+        isOpen={isOneOnOnePropositionDialogOpen}
+        onClose={() => setIsOneOnOnePropositionDialogOpen(false)}
+        onComplete={() => {
+          setIsOneOnOnePropositionDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your 1+1 proposition has been saved successfully.",
           });
         }}
       />
