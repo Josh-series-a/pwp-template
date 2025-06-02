@@ -201,11 +201,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </Sidebar>
       
       <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen">
-        <div className="w-full px-6 sm:px-8 py-8 md:px-12">
-          <div className="flex items-center mb-8">
+        <div className="w-full h-full flex flex-col">
+          <div className="flex items-center px-6 sm:px-8 py-6 md:px-12 flex-shrink-0">
             <h1 className="text-3xl font-bold text-foreground">{title}</h1>
           </div>
-          {children}
+          <div className="flex-1 px-6 sm:px-8 pb-8 md:px-12 min-h-0">
+            {children}
+          </div>
         </div>
       </main>
     </div>
@@ -213,4 +215,3 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 };
 
 export default DashboardLayout;
-

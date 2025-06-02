@@ -45,8 +45,8 @@ const DocumentPreview = () => {
 
   return (
     <DashboardLayout title="Document Preview">
-      <div className="space-y-6 h-full flex flex-col">
-        <div className="flex items-center justify-between">
+      <div className="h-[calc(100vh-120px)] flex flex-col">
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <div className="flex items-center gap-4">
             <Button 
               variant="outline" 
@@ -73,7 +73,7 @@ const DocumentPreview = () => {
           <CustomDocumentViewer
             docUrl={decodeURIComponent(docUrl)}
             title={decodeURIComponent(docTitle)}
-            height="calc(100vh - 200px)"
+            height="100%"
             showUrlInput={false}
             className="h-full"
           />
