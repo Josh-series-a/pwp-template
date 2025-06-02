@@ -34,6 +34,7 @@ import KnowYourCustomerDialog from '@/components/exercises/KnowYourCustomerDialo
 import OneOnOnePropositionDialog from '@/components/exercises/OneOnOnePropositionDialog';
 import ReachCustomersDialog from '@/components/exercises/ReachCustomersDialog';
 import GeographicReachDialog from '@/components/exercises/GeographicReachDialog';
+import FutureBusinessModelDialog from '@/components/exercises/FutureBusinessModelDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -50,8 +51,9 @@ const Exercises = () => {
   const [isOneOnOnePropositionDialogOpen, setIsOneOnOnePropositionDialogOpen] = useState(false);
   const [isReachCustomersDialogOpen, setIsReachCustomersDialogOpen] = useState(false);
   const [isGeographicReachDialogOpen, setIsGeographicReachDialogOpen] = useState(false);
+  const [isFutureBusinessModelDialogOpen, setIsFutureBusinessModelDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new geographic reach exercise
+  // Enhanced exercises data with the new future business model canvas exercise
   const exercises = [
     { 
       id: 1, 
@@ -172,6 +174,19 @@ const Exercises = () => {
     },
     { 
       id: 10, 
+      title: "Complete Your Future-Fit Business Model Canvas", 
+      progress: 0, 
+      status: "new",
+      intro: "This adapted canvas helps you think holistically about your business — not just how it makes money, but also its impact on people and planet. It's a one-page strategy snapshot.",
+      category: "planning",
+      sections: 10,
+      completedSections: 0,
+      tags: ["planning", "strategy"],
+      priority: "high",
+      estimatedTime: "30 min"
+    },
+    { 
+      id: 11, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -184,7 +199,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 11, 
+      id: 12, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -197,7 +212,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 12, 
+      id: 13, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -210,7 +225,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 13, 
+      id: 14, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -223,7 +238,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 14, 
+      id: 15, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -313,6 +328,8 @@ const Exercises = () => {
       setIsReachCustomersDialogOpen(true);
     } else if (exerciseId === 9) {
       setIsGeographicReachDialogOpen(true);
+    } else if (exerciseId === 10) {
+      setIsFutureBusinessModelDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -606,6 +623,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your geographic reach analysis has been saved successfully.",
+          });
+        }}
+      />
+
+      <FutureBusinessModelDialog
+        isOpen={isFutureBusinessModelDialogOpen}
+        onClose={() => setIsFutureBusinessModelDialogOpen(false)}
+        onComplete={() => {
+          setIsFutureBusinessModelDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your business model canvas has been saved successfully.",
           });
         }}
       />
