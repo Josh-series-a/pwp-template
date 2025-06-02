@@ -20,6 +20,7 @@ import Chat from "./pages/Chat";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import PackageDetail from "./pages/PackageDetail";
+import DocumentPreview from "./pages/DocumentPreview";
 import Read from "./pages/Read";
 import BookSession from "./pages/BookSession";
 import BookInsights from "./pages/BookInsights";
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId" element={<ProtectedRoute><ReportDetail /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId" element={<ProtectedRoute><PackageDetail /></ProtectedRoute>} />
+              <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId/preview" element={<ProtectedRoute><DocumentPreview /></ProtectedRoute>} />
               <Route path="/dashboard/read" element={<ProtectedRoute><Read /></ProtectedRoute>} />
               <Route path="/dashboard/read/:chapterId" element={<ProtectedRoute><BookSession /></ProtectedRoute>} />
               <Route path="/dashboard/insights" element={<ProtectedRoute><BookInsights /></ProtectedRoute>} />
