@@ -10,6 +10,7 @@ import CustomDocumentViewer from '@/components/CustomDocumentViewer';
 import { packageService } from '@/utils/packageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { getDocumentPreviewUrl, isGoogleDocument } from '@/components/documents/utils/document-utils';
 
 interface Document {
   name: string;
@@ -132,43 +133,63 @@ const PackageDetail = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {packageData.documents.map((doc, index) => (
-              <div key={index}>
-                <Card className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-[1.02]">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg font-semibold line-clamp-2">
-                      {doc.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex justify-between items-center">
-                      <p className="text-sm text-muted-foreground">
-                        {doc.document.length} document{doc.document.length !== 1 ? 's' : ''}
-                      </p>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDocumentClick({
-                            title: doc.name,
-                            url: doc.document[0] // Use the first document URL
-                          })}
-                        >
-                          Preview
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="default"
-                          onClick={() => openInNewTab(doc.document[0])}
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </Button>
+            {packageData.documents.map((doc, index) => {
+              const docUrl = doc.document[0];
+              const isGoogleDoc = isGoogleDocument(docUrl);
+              const thumbnailUrl = isGoogleDoc ? getDocumentPreviewUrl(docUrl, 'w300') : null;
+              
+              return (
+                <div key={index}>
+                  <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] overflow-hidden">
+                    {thumbnailUrl && (
+                      <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+                        <img 
+                          src={thumbnailUrl}
+                          alt={`${doc.name} preview`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Hide thumbnail if it fails to load
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-200" />
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
+                    )}
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold line-clamp-2">
+                        {doc.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm text-muted-foreground">
+                          {doc.document.length} document{doc.document.length !== 1 ? 's' : ''}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDocumentClick({
+                              title: doc.name,
+                              url: doc.document[0] // Use the first document URL
+                            })}
+                          >
+                            Preview
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => openInNewTab(doc.document[0])}
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              );
+            })}
           </div>
 
           {packageData.documents.length === 0 && (
