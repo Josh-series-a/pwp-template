@@ -40,6 +40,7 @@ import NetworkingOpportunitiesDialog from '@/components/exercises/NetworkingOppo
 import AssessNetworkingDialog from '@/components/exercises/AssessNetworkingDialog';
 import ValuesDialog from '@/components/exercises/ValuesDialog';
 import RightPeopleDialog from '@/components/exercises/RightPeopleDialog';
+import RecruitRetainDialog from '@/components/exercises/RecruitRetainDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -62,8 +63,9 @@ const Exercises = () => {
   const [isAssessNetworkingDialogOpen, setIsAssessNetworkingDialogOpen] = useState(false);
   const [isValuesDialogOpen, setIsValuesDialogOpen] = useState(false);
   const [isRightPeopleDialogOpen, setIsRightPeopleDialogOpen] = useState(false);
+  const [isRecruitRetainDialogOpen, setIsRecruitRetainDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new values exercise
+  // Enhanced exercises data with the new recruit and retain exercise
   const exercises = [
     { 
       id: 1, 
@@ -262,6 +264,19 @@ const Exercises = () => {
     },
     { 
       id: 16, 
+      title: "How Do You Recruit and Retain Staff?", 
+      progress: 0, 
+      status: "new",
+      intro: "The right people make or break your business. This exercise helps you review how you find, choose, and keep great team members — especially those aligned with your values.",
+      category: "people",
+      sections: 5,
+      completedSections: 0,
+      tags: ["people", "recruitment"],
+      priority: "high",
+      estimatedTime: "20 min"
+    },
+    { 
+      id: 17, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -274,7 +289,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 17, 
+      id: 18, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -287,7 +302,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 18, 
+      id: 19, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -300,7 +315,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 19, 
+      id: 20, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -402,6 +417,8 @@ const Exercises = () => {
       setIsValuesDialogOpen(true);
     } else if (exerciseId === 15) {
       setIsRightPeopleDialogOpen(true);
+    } else if (exerciseId === 16) {
+      setIsRecruitRetainDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -767,6 +784,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your team assessment has been saved successfully.",
+          });
+        }}
+      />
+
+      <RecruitRetainDialog
+        isOpen={isRecruitRetainDialogOpen}
+        onClose={() => setIsRecruitRetainDialogOpen(false)}
+        onComplete={() => {
+          setIsRecruitRetainDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your recruitment and retention assessment has been saved successfully.",
           });
         }}
       />
