@@ -36,6 +36,7 @@ import ReachCustomersDialog from '@/components/exercises/ReachCustomersDialog';
 import GeographicReachDialog from '@/components/exercises/GeographicReachDialog';
 import FutureBusinessModelDialog from '@/components/exercises/FutureBusinessModelDialog';
 import SWOTAnalysisDialog from '@/components/exercises/SWOTAnalysisDialog';
+import NetworkingOpportunitiesDialog from '@/components/exercises/NetworkingOpportunitiesDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -54,8 +55,9 @@ const Exercises = () => {
   const [isGeographicReachDialogOpen, setIsGeographicReachDialogOpen] = useState(false);
   const [isFutureBusinessModelDialogOpen, setIsFutureBusinessModelDialogOpen] = useState(false);
   const [isSWOTAnalysisDialogOpen, setIsSWOTAnalysisDialogOpen] = useState(false);
+  const [isNetworkingOpportunitiesDialogOpen, setIsNetworkingOpportunitiesDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new SWOT analysis exercise
+  // Enhanced exercises data with the new networking exercise
   const exercises = [
     { 
       id: 1, 
@@ -202,6 +204,19 @@ const Exercises = () => {
     },
     { 
       id: 12, 
+      title: "List Your Networking Opportunities", 
+      progress: 0, 
+      status: "new",
+      intro: "Business growth is often about who you know. This exercise helps you map out where you can meet valuable contacts — partners, customers, suppliers, or mentors.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "networking"],
+      priority: "high",
+      estimatedTime: "15 min"
+    },
+    { 
+      id: 13, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -214,7 +229,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 13, 
+      id: 14, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -227,7 +242,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 14, 
+      id: 15, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -240,7 +255,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 15, 
+      id: 16, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -253,7 +268,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 16, 
+      id: 17, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -347,6 +362,8 @@ const Exercises = () => {
       setIsFutureBusinessModelDialogOpen(true);
     } else if (exerciseId === 11) {
       setIsSWOTAnalysisDialogOpen(true);
+    } else if (exerciseId === 12) {
+      setIsNetworkingOpportunitiesDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -664,6 +681,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your SWOT analysis has been saved successfully.",
+          });
+        }}
+      />
+
+      <NetworkingOpportunitiesDialog
+        isOpen={isNetworkingOpportunitiesDialogOpen}
+        onClose={() => setIsNetworkingOpportunitiesDialogOpen(false)}
+        onComplete={() => {
+          setIsNetworkingOpportunitiesDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your networking opportunities plan has been saved successfully.",
           });
         }}
       />
