@@ -26,6 +26,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
 import MissionStatementDialog from '@/components/exercises/MissionStatementDialog';
 import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningDialog';
@@ -67,6 +68,7 @@ const Exercises = () => {
   const [isValuesDialogOpen, setIsValuesDialogOpen] = useState(false);
   const [isRightPeopleDialogOpen, setIsRightPeopleDialogOpen] = useState(false);
   const [isRecruitRetainDialogOpen, setIsRecruitRetainDialogOpen] = useState(false);
+  const [isRunAnalysisModalOpen, setIsRunAnalysisModalOpen] = useState(false);
 
   // Enhanced exercises data with the new recruit and retain exercise
   const exercises = [
@@ -469,6 +471,14 @@ const Exercises = () => {
     }
   }, [companies, selectedCompany]);
 
+  const handleRunAnalysisComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string) => {
+    setIsRunAnalysisModalOpen(false);
+    toast({
+      title: "Analysis Started",
+      description: `Business health check for ${companyName} is now in progress.`,
+    });
+  };
+
   return (
     <DashboardLayout title={selectedCompany ? `${selectedCompany} Exercises` : "Exercises"}>
       {/* Hero Section */}
@@ -533,7 +543,7 @@ const Exercises = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={() => navigate('/dashboard/reports/new')}>
+            <Button onClick={() => setIsRunAnalysisModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               New Company
             </Button>
@@ -852,6 +862,12 @@ const Exercises = () => {
             description: "Your recruitment and retention assessment has been saved successfully.",
           });
         }}
+      />
+
+      <RunAnalysisModal 
+        isOpen={isRunAnalysisModalOpen} 
+        onClose={() => setIsRunAnalysisModalOpen(false)} 
+        onSubmitComplete={handleRunAnalysisComplete} 
       />
     </DashboardLayout>
   );
