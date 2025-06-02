@@ -1,11 +1,14 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brain, CheckCircle } from 'lucide-react';
+import { Brain, CheckCircle, Save } from 'lucide-react';
+import { exerciseService } from '@/utils/exerciseService';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface StressAssessmentDialogProps {
   isOpen: boolean;
@@ -19,6 +22,9 @@ const StressAssessmentDialog: React.FC<StressAssessmentDialogProps> = ({
   onComplete
 }) => {
   const [selectedResponses, setSelectedResponses] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
 
   const stressResponses = [
     "Look for thrills or over-indulge",
@@ -36,6 +42,24 @@ const StressAssessmentDialog: React.FC<StressAssessmentDialogProps> = ({
     "Ignore facts that do not fit your viewpoint"
   ];
 
+  // Load existing answers when dialog opens
+  useEffect(() => {
+    if (isOpen && user) {
+      loadExistingAnswers();
+    }
+  }, [isOpen, user]);
+
+  const loadExistingAnswers = async () => {
+    try {
+      const existingAnswer = await exerciseService.getExerciseAnswer(1);
+      if (existingAnswer && existingAnswer.answers.selectedResponses) {
+        setSelectedResponses(existingAnswer.answers.selectedResponses);
+      }
+    } catch (error) {
+      console.error('Error loading existing answers:', error);
+    }
+  };
+
   const handleResponseToggle = (response: string) => {
     setSelectedResponses(prev => 
       prev.includes(response)
@@ -44,9 +68,74 @@ const StressAssessmentDialog: React.FC<StressAssessmentDialogProps> = ({
     );
   };
 
-  const handleSubmit = () => {
-    console.log('Stress assessment responses:', selectedResponses);
-    onComplete();
+  const handleSave = async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save your progress.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await exerciseService.saveExerciseAnswer({
+        exercise_id: 1,
+        exercise_title: "How Does Stress Affect You?",
+        answers: { selectedResponses },
+        progress: selectedResponses.length > 0 ? 50 : 0,
+        status: 'in-progress'
+      });
+
+      toast({
+        title: "Progress saved",
+        description: "Your stress assessment progress has been saved.",
+      });
+    } catch (error) {
+      console.error('Error saving exercise:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save your progress. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to complete this exercise.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await exerciseService.saveExerciseAnswer({
+        exercise_id: 1,
+        exercise_title: "How Does Stress Affect You?",
+        answers: { selectedResponses },
+        progress: 100,
+        status: 'completed'
+      });
+
+      console.log('Stress assessment responses:', selectedResponses);
+      onComplete();
+    } catch (error) {
+      console.error('Error completing exercise:', error);
+      toast({
+        title: "Error",
+        description: "Failed to complete the exercise. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleReset = () => {
@@ -128,13 +217,26 @@ const StressAssessmentDialog: React.FC<StressAssessmentDialogProps> = ({
               </Button>
             )}
           </div>
-          <Button 
-            onClick={handleSubmit}
-            disabled={selectedResponses.length === 0}
-            className="min-w-[120px]"
-          >
-            Complete Exercise
-          </Button>
+          <div className="flex gap-2">
+            {selectedResponses.length > 0 && (
+              <Button 
+                variant="outline"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="min-w-[100px]"
+              >
+                <Save className="mr-2 h-4 w-4" />
+                {isSaving ? 'Saving...' : 'Save Progress'}
+              </Button>
+            )}
+            <Button 
+              onClick={handleSubmit}
+              disabled={selectedResponses.length === 0 || isSaving}
+              className="min-w-[120px]"
+            >
+              {isSaving ? 'Saving...' : 'Complete Exercise'}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
