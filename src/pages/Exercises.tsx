@@ -37,6 +37,7 @@ import GeographicReachDialog from '@/components/exercises/GeographicReachDialog'
 import FutureBusinessModelDialog from '@/components/exercises/FutureBusinessModelDialog';
 import SWOTAnalysisDialog from '@/components/exercises/SWOTAnalysisDialog';
 import NetworkingOpportunitiesDialog from '@/components/exercises/NetworkingOpportunitiesDialog';
+import AssessNetworkingDialog from '@/components/exercises/AssessNetworkingDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -56,8 +57,9 @@ const Exercises = () => {
   const [isFutureBusinessModelDialogOpen, setIsFutureBusinessModelDialogOpen] = useState(false);
   const [isSWOTAnalysisDialogOpen, setIsSWOTAnalysisDialogOpen] = useState(false);
   const [isNetworkingOpportunitiesDialogOpen, setIsNetworkingOpportunitiesDialogOpen] = useState(false);
+  const [isAssessNetworkingDialogOpen, setIsAssessNetworkingDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new networking exercise
+  // Enhanced exercises data with the new networking assessment exercise
   const exercises = [
     { 
       id: 1, 
@@ -217,6 +219,19 @@ const Exercises = () => {
     },
     { 
       id: 13, 
+      title: "Assess Your Networking", 
+      progress: 0, 
+      status: "new",
+      intro: "Now that you've mapped out your networking opportunities, this exercise helps you evaluate how effective your current efforts are — and where to improve.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "networking"],
+      priority: "high",
+      estimatedTime: "10 min"
+    },
+    { 
+      id: 14, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -229,7 +244,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 14, 
+      id: 15, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -242,7 +257,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 15, 
+      id: 16, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -255,7 +270,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 16, 
+      id: 17, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -268,7 +283,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 17, 
+      id: 18, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -364,6 +379,8 @@ const Exercises = () => {
       setIsSWOTAnalysisDialogOpen(true);
     } else if (exerciseId === 12) {
       setIsNetworkingOpportunitiesDialogOpen(true);
+    } else if (exerciseId === 13) {
+      setIsAssessNetworkingDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -693,6 +710,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your networking opportunities plan has been saved successfully.",
+          });
+        }}
+      />
+
+      <AssessNetworkingDialog
+        isOpen={isAssessNetworkingDialogOpen}
+        onClose={() => setIsAssessNetworkingDialogOpen(false)}
+        onComplete={() => {
+          setIsAssessNetworkingDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your networking assessment has been saved successfully.",
           });
         }}
       />
