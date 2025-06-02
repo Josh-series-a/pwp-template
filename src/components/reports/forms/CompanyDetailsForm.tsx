@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -177,6 +178,17 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => 
                     File uploaded successfully! ✓
                   </div>
                 )}
+                <div className="mt-2 text-sm text-muted-foreground">
+                  Don't have pitch deck yet?{' '}
+                  <a 
+                    href="/contact" 
+                    className="text-blue-600 hover:text-blue-800 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Book Discovery Meeting
+                  </a>
+                </div>
               </FormItem>
             )}
           />
