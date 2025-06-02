@@ -40,7 +40,7 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent side="left" className="w-full sm:max-w-2xl overflow-y-auto m-4 h-[calc(100vh-2rem)] rounded-lg">
         <SheetHeader className="space-y-3 pb-6">
           <SheetTitle className="text-2xl font-semibold">Run Business Health Score</SheetTitle>
           <SheetDescription className="text-base">
