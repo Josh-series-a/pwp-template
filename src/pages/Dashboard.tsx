@@ -111,6 +111,83 @@ const Dashboard = () => {
   return (
     <DashboardLayout title={`Welcome back, ${firstName}`}>
       <div className="grid gap-6">
+        {/* Latest Report Summary - Moved to top */}
+        {latestReport ? (
+          <Card className="shadow-md">
+            <CardHeader className="border-b">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Latest Business Analysis</CardTitle>
+                  <CardDescription>
+                    {latestReport.company_name} - {latestReport.title}
+                  </CardDescription>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/reports">View All Reports</Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-muted-foreground mb-2">Business Health Score</span>
+                    <div className="flex items-center">
+                      <span className="text-3xl font-bold mr-2">{Math.round(businessHealthScore)}</span>
+                      <span className="text-sm text-green-600 font-medium">/100</span>
+                    </div>
+                    <Progress value={businessHealthScore} className="h-2 mt-2" />
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-muted-foreground mb-2">Report Status</span>
+                    <div className="flex items-center">
+                      <Badge variant={latestReport.status === 'Completed' ? 'default' : 'secondary'}>
+                        {latestReport.status}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-muted-foreground mb-2">Created</span>
+                    <div className="flex items-center">
+                      <Calendar className="h-5 w-5 mr-2 text-primary" />
+                      <span className="text-base font-medium">{lastReportDate}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="border-t bg-muted/30 flex justify-between">
+              <div className="text-sm text-muted-foreground">
+                Exercise: {latestReport.exercise_id}
+              </div>
+              <Button size="sm" asChild>
+                <Link to={`/dashboard/reports`}>
+                  View Full Report <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        ) : (
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle>Get Started</CardTitle>
+              <CardDescription>Create your first business analysis report</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Upload your business documents and start analyzing your company's performance.
+              </p>
+              <Button asChild>
+                <Link to="/dashboard/reports">
+                  Create Your First Report <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Dashboard Pages Overview */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -364,83 +441,6 @@ const Dashboard = () => {
             </Card>
           </div>
         </div>
-        
-        {/* Latest Report Summary */}
-        {latestReport ? (
-          <Card className="shadow-md">
-            <CardHeader className="border-b">
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Latest Business Analysis</CardTitle>
-                  <CardDescription>
-                    {latestReport.company_name} - {latestReport.title}
-                  </CardDescription>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/dashboard/reports">View All Reports</Link>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-muted-foreground mb-2">Business Health Score</span>
-                    <div className="flex items-center">
-                      <span className="text-3xl font-bold mr-2">{Math.round(businessHealthScore)}</span>
-                      <span className="text-sm text-green-600 font-medium">/100</span>
-                    </div>
-                    <Progress value={businessHealthScore} className="h-2 mt-2" />
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-muted-foreground mb-2">Report Status</span>
-                    <div className="flex items-center">
-                      <Badge variant={latestReport.status === 'Completed' ? 'default' : 'secondary'}>
-                        {latestReport.status}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-muted-foreground mb-2">Created</span>
-                    <div className="flex items-center">
-                      <Calendar className="h-5 w-5 mr-2 text-primary" />
-                      <span className="text-base font-medium">{lastReportDate}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="border-t bg-muted/30 flex justify-between">
-              <div className="text-sm text-muted-foreground">
-                Exercise: {latestReport.exercise_id}
-              </div>
-              <Button size="sm" asChild>
-                <Link to={`/dashboard/reports`}>
-                  View Full Report <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        ) : (
-          <Card className="shadow-md">
-            <CardHeader>
-              <CardTitle>Get Started</CardTitle>
-              <CardDescription>Create your first business analysis report</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Upload your business documents and start analyzing your company's performance.
-              </p>
-              <Button asChild>
-                <Link to="/dashboard/reports">
-                  Create Your First Report <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        )}
         
         {/* Call to Action */}
         <Card className="bg-primary text-primary-foreground">
