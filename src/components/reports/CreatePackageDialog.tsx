@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -277,21 +276,21 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
   const selectedPackageDetails = packages.filter(p => selectedPackages.includes(p.id));
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="w-[146vw] max-w-[146vw] overflow-y-auto ml-8 mt-8 mb-8 mr-0 rounded-l-2xl border-l flex flex-col">
-        <SheetHeader className="mt-4">
-          <SheetTitle>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-[146vw] max-w-[146vw] h-[90vh] max-h-[90vh] overflow-y-auto p-0 flex flex-col">
+        <DialogHeader className="p-6 pb-0">
+          <DialogTitle>
             Create Package - Page {currentPage} of 3
             {preSelectedCompany && (
               <span className="text-sm font-normal text-muted-foreground ml-2">
                 for {preSelectedCompany}
               </span>
             )}
-          </SheetTitle>
-        </SheetHeader>
+          </DialogTitle>
+        </DialogHeader>
 
         {/* Progress Bar */}
-        <div className="mt-6 mb-6">
+        <div className="px-6 pb-4">
           <Progress value={(currentPage / 3) * 100} className="w-full" />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
             <span>Select Company</span>
@@ -300,7 +299,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           </div>
         </div>
 
-        <div className="flex-1 space-y-6 mt-6 mb-4">
+        <div className="flex-1 space-y-6 px-6 overflow-y-auto">
           {/* Page 1: Select Company */}
           {currentPage === 1 && (
             <div className="space-y-4">
@@ -448,8 +447,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           )}
         </div>
 
-        {/* Navigation - Moved to bottom */}
-        <div className="flex justify-between pt-4 border-t bg-background mt-auto mb-6">
+        {/* Navigation - Fixed at bottom */}
+        <div className="flex justify-between p-6 pt-4 border-t bg-background">
           <Button 
             variant="outline" 
             onClick={handleBack}
@@ -479,8 +478,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
             </Button>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 };
 
