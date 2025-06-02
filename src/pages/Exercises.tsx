@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
 import MissionStatementDialog from '@/components/exercises/MissionStatementDialog';
+import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -36,8 +37,9 @@ const Exercises = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [isStressDialogOpen, setIsStressDialogOpen] = useState(false);
   const [isMissionDialogOpen, setIsMissionDialogOpen] = useState(false);
+  const [isFutureBackDialogOpen, setIsFutureBackDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the stress assessment
+  // Enhanced exercises data with the new future-back planning exercise
   const exercises = [
     { 
       id: 1, 
@@ -67,6 +69,19 @@ const Exercises = () => {
     },
     { 
       id: 3, 
+      title: "Use Future-Back Planning", 
+      progress: 0, 
+      status: "new",
+      intro: "Envision your ideal future and work backwards step by step to figure out how to get there. Powerful for setting strategy and avoiding reactive thinking.",
+      category: "planning",
+      sections: 6,
+      completedSections: 0,
+      tags: ["planning", "strategy"],
+      priority: "high",
+      estimatedTime: "25 min"
+    },
+    { 
+      id: 4, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -79,7 +94,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 4, 
+      id: 5, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -92,7 +107,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 5, 
+      id: 6, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -105,7 +120,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 6, 
+      id: 7, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -118,7 +133,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 7, 
+      id: 8, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -194,6 +209,8 @@ const Exercises = () => {
       setIsStressDialogOpen(true);
     } else if (exerciseId === 2) {
       setIsMissionDialogOpen(true);
+    } else if (exerciseId === 3) {
+      setIsFutureBackDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -402,6 +419,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your mission statement has been saved successfully.",
+          });
+        }}
+      />
+
+      <FutureBackPlanningDialog
+        isOpen={isFutureBackDialogOpen}
+        onClose={() => setIsFutureBackDialogOpen(false)}
+        onComplete={() => {
+          setIsFutureBackDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your future-back planning roadmap has been saved successfully.",
           });
         }}
       />
