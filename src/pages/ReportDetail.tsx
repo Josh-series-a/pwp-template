@@ -53,6 +53,8 @@ const ReportDetail = () => {
       
       setIsLoading(true);
       try {
+        console.log('Fetching data for reportId:', reportId);
+        
         // First get basic report info from Supabase
         const { data: reportData, error } = await supabase
           .from('reports')
@@ -60,30 +62,33 @@ const ReportDetail = () => {
           .eq('id', reportId)
           .single();
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching report:', error);
+          throw error;
+        }
         
         if (reportData) {
+          console.log('Report data found:', reportData);
           setReport(reportData);
           
-          // Construct the URL with query parameters manually for GET requests
-          const healthUrl = `https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/business-health?reportId=${reportId}`;
+          // Try to get business health data from our database first
+          const { data: businessHealthRows, error: businessHealthError } = await supabase
+            .from('business_health')
+            .select('*')
+            .eq('report_id', reportId);
           
-          const healthFetch = await fetch(healthUrl, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
-              'Content-Type': 'application/json',
-            },
-          });
+          if (businessHealthError) {
+            console.error('Error fetching business health from database:', businessHealthError);
+          }
           
-          const healthData = await healthFetch.json();
-          
-          if (healthData?.success && healthData?.data) {
+          if (businessHealthRows && businessHealthRows.length > 0) {
+            console.log('Found business health data in database:', businessHealthRows);
+            
             // Organize data by tab_id with mapping for stress leadership
             const organizedData: Record<string, BusinessHealthData> = {};
             const allCIKs = new Set<string>();
             
-            healthData.data.forEach((item: BusinessHealthData) => {
+            businessHealthRows.forEach((item: any) => {
               // Map stressLeadership to stress_leadership for frontend compatibility
               const tabKey = item.tab_id === 'stressLeadership' ? 'stress_leadership' : item.tab_id;
               organizedData[tabKey] = item;
@@ -93,13 +98,54 @@ const ReportDetail = () => {
                 item.recommended_ciks.forEach((cik: string) => allCIKs.add(cik));
               }
             });
+            
             setBusinessHealthData(organizedData);
             setPackagesCIKs(Array.from(allCIKs));
-            console.log('Fetched business health data:', organizedData);
+            console.log('Organized business health data:', organizedData);
+          } else {
+            console.log('No business health data found in database, trying edge function...');
+            
+            // Fallback to edge function
+            const healthUrl = `https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/business-health?reportId=${reportId}`;
+            
+            const healthFetch = await fetch(healthUrl, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
+                'Content-Type': 'application/json',
+              },
+            });
+            
+            const healthData = await healthFetch.json();
+            console.log('Edge function response:', healthData);
+            
+            if (healthData?.success && healthData?.data && healthData.data.length > 0) {
+              // Organize data by tab_id with mapping for stress leadership
+              const organizedData: Record<string, BusinessHealthData> = {};
+              const allCIKs = new Set<string>();
+              
+              healthData.data.forEach((item: BusinessHealthData) => {
+                // Map stressLeadership to stress_leadership for frontend compatibility
+                const tabKey = item.tab_id === 'stressLeadership' ? 'stress_leadership' : item.tab_id;
+                organizedData[tabKey] = item;
+                
+                // Collect all CIKs for packages tab
+                if (item.recommended_ciks && Array.isArray(item.recommended_ciks)) {
+                  item.recommended_ciks.forEach((cik: string) => allCIKs.add(cik));
+                }
+              });
+              setBusinessHealthData(organizedData);
+              setPackagesCIKs(Array.from(allCIKs));
+              console.log('Fetched business health data from edge function:', organizedData);
+            } else {
+              console.log('No business health data found in edge function response');
+              toast.error('No business health analysis data found for this report. The analysis may still be in progress.');
+            }
           }
         }
       } catch (error) {
         console.error('Error fetching report:', error);
+        toast.error('Failed to load report details. Please try again.');
       } finally {
         setIsLoading(false);
       }
@@ -247,6 +293,7 @@ const ReportDetail = () => {
   };
 
   const renderTabContent = (tabId: string, defaultTitle: string, defaultDescription: string) => {
+    console.log(`Rendering tab ${tabId}, available data:`, Object.keys(businessHealthData));
     const tabData = businessHealthData[tabId];
     
     if (!tabData) {
@@ -256,7 +303,15 @@ const ReportDetail = () => {
             <CardTitle>{defaultTitle}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">{defaultDescription}</p>
+            <div className="space-y-4">
+              <p className="text-muted-foreground">{defaultDescription}</p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>No data available:</strong> The business health analysis for this section may still be processing, 
+                  or the data hasn't been generated yet. Please check back later or contact support if this persists.
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       );
@@ -347,94 +402,103 @@ const ReportDetail = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
-                <TabsTrigger value="plan" className="flex items-center gap-2">
-                  <Target className="h-4 w-4" />
-                  Plan
-                </TabsTrigger>
-                <TabsTrigger value="people" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  People
-                </TabsTrigger>
-                <TabsTrigger value="profits" className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
-                  Profits
-                </TabsTrigger>
-                <TabsTrigger value="purposeImpact" className="flex items-center gap-2">
-                  <Heart className="h-4 w-4" />
-                  Purpose & Impact
-                </TabsTrigger>
-                <TabsTrigger value="stress_leadership" className="flex items-center gap-2">
-                  <Brain className="h-4 w-4" />
-                  Stress & Leadership
-                </TabsTrigger>
-                <TabsTrigger value="packages" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  Packages
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="plan" className="mt-6">
-                {renderTabContent('plan', 'Strategic Planning & Goals', 'Strategic planning insights and recommendations based on your business health analysis.')}
-              </TabsContent>
-
-              <TabsContent value="people" className="mt-6">
-                {renderTabContent('people', 'People & Team Management', 'Analysis of your current team structure and organizational effectiveness.')}
-              </TabsContent>
-
-              <TabsContent value="profits" className="mt-6">
-                {renderTabContent('profits', 'Financial Performance & Profitability', 'Revenue streams analysis and optimization opportunities.')}
-              </TabsContent>
-
-              <TabsContent value="purposeImpact" className="mt-6">
-                {renderTabContent('purposeImpact', 'Purpose, Values & Impact', 'Assessment of your company mission, vision, and core values alignment.')}
-              </TabsContent>
-
-              <TabsContent value="stress_leadership" className="mt-6">
-                {renderTabContent('stress_leadership', 'Stress Management & Leadership', 'Analysis of leadership effectiveness and stress management strategies.')}
-              </TabsContent>
-
-              <TabsContent value="packages" className="mt-6">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-4">
-                      <Button 
-                        onClick={handleGeneratePackage}
-                        className="flex items-center gap-2"
-                      >
-                        <Package className="h-4 w-4" />
-                        Generate Package
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="flex items-center gap-2"
-                        onClick={() => window.location.reload()}
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                        Refresh
-                      </Button>
-                    </div>
-                    {packagesCIKs.length > 0 && (
-                      <div className="flex flex-wrap gap-1 items-center">
-                        <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
-                        {packagesCIKs.slice(0, 5).map((cik, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {cik}
-                          </Badge>
-                        ))}
-                        {packagesCIKs.length > 5 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{packagesCIKs.length - 5} more
-                          </Badge>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <PackagesCarousel reportId={reportId || ''} />
+            {isLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading report details...</p>
                 </div>
-              </TabsContent>
-            </Tabs>
+              </div>
+            ) : (
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-6">
+                  <TabsTrigger value="plan" className="flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Plan
+                  </TabsTrigger>
+                  <TabsTrigger value="people" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    People
+                  </TabsTrigger>
+                  <TabsTrigger value="profits" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Profits
+                  </TabsTrigger>
+                  <TabsTrigger value="purposeImpact" className="flex items-center gap-2">
+                    <Heart className="h-4 w-4" />
+                    Purpose & Impact
+                  </TabsTrigger>
+                  <TabsTrigger value="stress_leadership" className="flex items-center gap-2">
+                    <Brain className="h-4 w-4" />
+                    Stress & Leadership
+                  </TabsTrigger>
+                  <TabsTrigger value="packages" className="flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    Packages
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="plan" className="mt-6">
+                  {renderTabContent('plan', 'Strategic Planning & Goals', 'Strategic planning insights and recommendations based on your business health analysis.')}
+                </TabsContent>
+
+                <TabsContent value="people" className="mt-6">
+                  {renderTabContent('people', 'People & Team Management', 'Analysis of your current team structure and organizational effectiveness.')}
+                </TabsContent>
+
+                <TabsContent value="profits" className="mt-6">
+                  {renderTabContent('profits', 'Financial Performance & Profitability', 'Revenue streams analysis and optimization opportunities.')}
+                </TabsContent>
+
+                <TabsContent value="purposeImpact" className="mt-6">
+                  {renderTabContent('purposeImpact', 'Purpose, Values & Impact', 'Assessment of your company mission, vision, and core values alignment.')}
+                </TabsContent>
+
+                <TabsContent value="stress_leadership" className="mt-6">
+                  {renderTabContent('stress_leadership', 'Stress Management & Leadership', 'Analysis of leadership effectiveness and stress management strategies.')}
+                </TabsContent>
+
+                <TabsContent value="packages" className="mt-6">
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-4">
+                        <Button 
+                          onClick={handleGeneratePackage}
+                          className="flex items-center gap-2"
+                        >
+                          <Package className="h-4 w-4" />
+                          Generate Package
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="flex items-center gap-2"
+                          onClick={() => window.location.reload()}
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                          Refresh
+                        </Button>
+                      </div>
+                      {packagesCIKs.length > 0 && (
+                        <div className="flex flex-wrap gap-1 items-center">
+                          <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
+                          {packagesCIKs.slice(0, 5).map((cik, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {cik}
+                            </Badge>
+                          ))}
+                          {packagesCIKs.length > 5 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{packagesCIKs.length - 5} more
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <PackagesCarousel reportId={reportId || ''} />
+                  </div>
+                </TabsContent>
+              </Tabs>
+            )}
           </CardContent>
         </Card>
       </div>
