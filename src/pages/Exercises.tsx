@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +26,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
+import MissionStatementDialog from '@/components/exercises/MissionStatementDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -35,6 +35,7 @@ const Exercises = () => {
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [activeTab, setActiveTab] = useState("all");
   const [isStressDialogOpen, setIsStressDialogOpen] = useState(false);
+  const [isMissionDialogOpen, setIsMissionDialogOpen] = useState(false);
 
   // Enhanced exercises data with the stress assessment
   const exercises = [
@@ -53,16 +54,16 @@ const Exercises = () => {
     },
     { 
       id: 2, 
-      title: "Define Your Mission Statement", 
+      title: "Create a Mission Statement", 
       progress: 60, 
       status: "in-progress",
-      intro: "Clarify your company's purpose and direction to guide all strategic decisions.",
+      intro: "This exercise helps align your business with a clear, motivating direction — essential for making sound decisions, attracting the right customers and staff, and staying focused.",
       category: "planning",
-      sections: 5,
-      completedSections: 3,
+      sections: 3,
+      completedSections: 2,
       tags: ["planning"],
       priority: "high",
-      estimatedTime: "20 min"
+      estimatedTime: "15 min"
     },
     { 
       id: 3, 
@@ -191,6 +192,8 @@ const Exercises = () => {
   const handleExerciseClick = (exerciseId: number) => {
     if (exerciseId === 1) {
       setIsStressDialogOpen(true);
+    } else if (exerciseId === 2) {
+      setIsMissionDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -387,6 +390,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your stress assessment has been saved successfully.",
+          });
+        }}
+      />
+
+      <MissionStatementDialog
+        isOpen={isMissionDialogOpen}
+        onClose={() => setIsMissionDialogOpen(false)}
+        onComplete={() => {
+          setIsMissionDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your mission statement has been saved successfully.",
           });
         }}
       />
