@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ interface CustomDocumentViewerProps {
   height?: string;
   className?: string;
   showUrlInput?: boolean;
+  customHeaderButtons?: React.ReactNode;
 }
 
 const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
@@ -18,7 +20,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   title = 'Document Preview',
   height = '600px',
   className,
-  showUrlInput = true
+  showUrlInput = true,
+  customHeaderButtons
 }) => {
   const [docUrl, setDocUrl] = useState(initialUrl);
   const [currentUrl, setCurrentUrl] = useState('');
@@ -147,6 +150,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
             {title}
           </CardTitle>
           <div className="flex gap-2">
+            {customHeaderButtons && customHeaderButtons}
             {hasError && fallbackUrls.length > 1 && currentFallbackIndex < fallbackUrls.length - 1 && (
               <Button
                 variant="outline"
@@ -157,7 +161,7 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                 Try Different View
               </Button>
             )}
-            {docUrl && (
+            {docUrl && !customHeaderButtons && (
               <Button
                 variant="outline"
                 size="sm"

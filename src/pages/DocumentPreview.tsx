@@ -46,24 +46,6 @@ const DocumentPreview = () => {
   return (
     <DashboardLayout title={decodeURIComponent(docTitle)} hideHeader={true}>
       <div className="h-[calc(100vh-24px)] flex flex-col">
-        <div className="flex items-center justify-between mb-4 flex-shrink-0">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleBackToPackage}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Package
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={openInNewTab}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Open in Google Docs
-          </Button>
-        </div>
-
         <div className="flex-1 min-h-0">
           <CustomDocumentViewer
             docUrl={decodeURIComponent(docUrl)}
@@ -71,6 +53,25 @@ const DocumentPreview = () => {
             height="100%"
             showUrlInput={false}
             className="h-full"
+            customHeaderButtons={
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleBackToPackage}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" /> Back to Package
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={openInNewTab}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open in Google Docs
+                </Button>
+              </div>
+            }
           />
         </div>
       </div>
