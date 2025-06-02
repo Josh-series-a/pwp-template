@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -31,13 +30,24 @@ interface BusinessHealthData {
 const ReportDetail = () => {
   const { companySlug, exerciseId, reportId } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const [report, setReport] = useState<any>(null);
   const [businessHealthData, setBusinessHealthData] = useState<Record<string, BusinessHealthData>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('plan');
+  
+  // Get active tab from URL params or default to 'plan'
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'plan');
   const [packagesCIKs, setPackagesCIKs] = useState<string[]>([]);
   const [isCreatePackageDialogOpen, setIsCreatePackageDialogOpen] = useState(false);
+
+  // Update URL when tab changes
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', newTab);
+    setSearchParams(newSearchParams);
+  };
 
   useEffect(() => {
     const fetchReportData = async () => {
@@ -173,7 +183,7 @@ const ReportDetail = () => {
               </div>
             </div>
           ) : (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="plan" className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
