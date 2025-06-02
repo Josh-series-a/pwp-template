@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import CompanyDetailsForm, { CompanyDetailsFormValues } from './forms/CompanyDetailsForm';
 import StepSelector from './StepSelector';
@@ -14,7 +13,8 @@ interface NewCompanyFormProps {
 const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData }) => {
   const [step, setStep] = useState<number>(1);
   const [companyDetails, setCompanyDetails] = useState<CompanyDetailsFormValues | null>(null);
-  const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  // Auto-select Business Health Score exercise
+  const selectedExercise = 'business-health-score';
   // Generate UUID once when component mounts for this new company
   const [companyId] = useState<string>(() => crypto.randomUUID());
   const { user } = useAuth();
@@ -23,11 +23,6 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
     console.log("Company details submitted for new company with companyId:", companyId);
     setCompanyDetails(data);
     setStep(2);
-  };
-
-  const handleSelectExercise = (exerciseId: string) => {
-    setSelectedExercise(exerciseId);
-    setStep(3);
   };
 
   const handleExerciseComplete = (exerciseTitle: string) => {
@@ -50,11 +45,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
           <CompanyDetailsForm onSubmit={onCompanyDetailsSubmit} />
         )}
 
-        {step === 2 && (
-          <ExerciseSelector onSelect={handleSelectExercise} isNewCompany={true} />
-        )}
-
-        {step === 3 && selectedExercise && companyDetails && (
+        {step === 2 && companyDetails && (
           <ExerciseForm 
             exerciseId={selectedExercise}
             onBack={handleBack}
