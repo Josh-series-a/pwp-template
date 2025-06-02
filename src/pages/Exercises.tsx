@@ -28,6 +28,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
 import MissionStatementDialog from '@/components/exercises/MissionStatementDialog';
 import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningDialog';
+import ExitStrategyDialog from '@/components/exercises/ExitStrategyDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -38,8 +39,9 @@ const Exercises = () => {
   const [isStressDialogOpen, setIsStressDialogOpen] = useState(false);
   const [isMissionDialogOpen, setIsMissionDialogOpen] = useState(false);
   const [isFutureBackDialogOpen, setIsFutureBackDialogOpen] = useState(false);
+  const [isExitStrategyDialogOpen, setIsExitStrategyDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new future-back planning exercise
+  // Enhanced exercises data with the new exit strategy exercise
   const exercises = [
     { 
       id: 1, 
@@ -82,6 +84,19 @@ const Exercises = () => {
     },
     { 
       id: 4, 
+      title: "Define Your Exit Strategy", 
+      progress: 0, 
+      status: "new",
+      intro: "Many business owners avoid thinking about the end — but knowing how you want to exit your business brings clarity, motivation, and better day-to-day decisions.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "strategy"],
+      priority: "high",
+      estimatedTime: "20 min"
+    },
+    { 
+      id: 5, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -94,7 +109,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 5, 
+      id: 6, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -107,7 +122,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 6, 
+      id: 7, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -120,7 +135,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 7, 
+      id: 8, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -133,7 +148,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 8, 
+      id: 9, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -211,6 +226,8 @@ const Exercises = () => {
       setIsMissionDialogOpen(true);
     } else if (exerciseId === 3) {
       setIsFutureBackDialogOpen(true);
+    } else if (exerciseId === 4) {
+      setIsExitStrategyDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -431,6 +448,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your future-back planning roadmap has been saved successfully.",
+          });
+        }}
+      />
+
+      <ExitStrategyDialog
+        isOpen={isExitStrategyDialogOpen}
+        onClose={() => setIsExitStrategyDialogOpen(false)}
+        onComplete={() => {
+          setIsExitStrategyDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your exit strategy has been saved successfully.",
           });
         }}
       />
