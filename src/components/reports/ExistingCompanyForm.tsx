@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import ExerciseSelector from './ExerciseSelector';
 import ExerciseForm from './ExerciseForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -24,7 +23,8 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
 }) => {
   const [step, setStep] = useState<number>(1);
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
+  // Auto-select Business Health Score exercise
+  const selectedExercise = 'business-health-score';
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -75,12 +75,6 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
   const handleSelectCompany = (companyId: string) => {
     setSelectedCompany(companyId);
     setStep(2);
-  };
-
-  // Handle exercise selection
-  const handleSelectExercise = (exerciseId: string) => {
-    setSelectedExercise(exerciseId);
-    setStep(3);
   };
 
   // Find company details based on ID
@@ -155,42 +149,19 @@ const ExistingCompanyForm: React.FC<ExistingCompanyFormProps> = ({
               onClick={() => selectedCompany && setStep(2)} 
               disabled={!selectedCompany}
             >
-              Continue to Discovery Questions Selection
+              Continue to Business Health Score
             </Button>
           </div>
         </>
       )}
 
-      {/* Step 2: Exercise Selection */}
-      {step === 2 && (
+      {/* Step 2: Exercise Form */}
+      {step === 2 && selectedExercise && (
         <>
           <div className="mb-6">
-            <h3 className="text-lg font-medium">Step 2: Choose Discovery Questions</h3>
+            <h3 className="text-lg font-medium">Step 2: Complete Business Health Score</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Select an exercise to complete for {getSelectedCompany()?.name}
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              This will help tailor the insights, language, and recommendations in each document so that the final output is more relevant, actionable, and aligned with your Business's real needs.
-            </p>
-          </div>
-
-          <ExerciseSelector onSelect={handleSelectExercise} />
-
-          <div className="flex items-center justify-between mt-6">
-            <Button variant="outline" onClick={handleBack}>
-              Back
-            </Button>
-          </div>
-        </>
-      )}
-
-      {/* Step 3: Exercise Form */}
-      {step === 3 && selectedExercise && (
-        <>
-          <div className="mb-6">
-            <h3 className="text-lg font-medium">Step 3: Complete Exercise</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Fill out the form for {getSelectedCompany()?.name}
+              Fill out the Business Health Score form for {getSelectedCompany()?.name}
             </p>
           </div>
 
