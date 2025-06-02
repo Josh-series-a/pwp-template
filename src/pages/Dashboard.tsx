@@ -1,34 +1,112 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, FileText, BookOpen, ArrowRight, BarChart3, TrendingUp, Users, AlertCircle, InfoIcon, Book, Dumbbell, Package, Eye, PlusCircle } from 'lucide-react';
+import { Calendar, FileText, BookOpen, ArrowRight, BarChart3, TrendingUp, Users, AlertCircle, Book, Dumbbell, Package, Eye, PlusCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip } from '@/components/ui/tooltip';
+import { supabase } from '@/integrations/supabase/client';
+import { apiService } from '@/utils/apiService';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const firstName = user?.user_metadata?.name?.split(' ')[0] || 'there';
+  
+  // Real data states
+  const [reports, setReports] = useState<any[]>([]);
+  const [packages, setPackages] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [latestReport, setLatestReport] = useState<any>(null);
 
-  // Mock data - in a real app, this would come from the database
-  const lastReportDate = new Date().toLocaleDateString();
-  const completedSteps = 3;
-  const totalSteps = 5;
-  const completionPercentage = (completedSteps / totalSteps) * 100;
+  // Fetch real data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user) return;
+      
+      try {
+        setIsLoading(true);
+        
+        // Fetch reports
+        const { data: reportsData } = await supabase
+          .from('reports')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (reportsData) {
+          setReports(reportsData);
+          setLatestReport(reportsData[0] || null);
+        }
 
-  // Sample data badge for cards
-  const SampleDataBadge = ({ className }: { className?: string }) => (
-    <Badge variant="outline" className={`bg-muted/50 text-xs ${className}`}>
-      <div className="flex items-center gap-1">
-        <InfoIcon className="h-3 w-3" />
-        <span>Sample Data</span>
-      </div>
-    </Badge>
-  );
+        // Fetch packages
+        const { data: packagesData } = await supabase
+          .from('packages')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (packagesData) {
+          setPackages(packagesData);
+        }
+
+        // Fetch documents
+        const documentsData = await apiService.getDocuments();
+        setDocuments(documentsData);
+        
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
+
+  // Calculate metrics from real data
+  const totalReports = reports.length;
+  const recentReports = reports.filter(report => {
+    const reportDate = new Date(report.created_at);
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    return reportDate >= oneMonthAgo;
+  }).length;
+
+  const lastReportDate = latestReport ? new Date(latestReport.created_at).toLocaleDateString() : 'No reports yet';
+  
+  // Calculate business health score from latest report
+  const businessHealthScore = latestReport?.overall_score || 0;
+  
+  // Calculate completion progress (example: based on report status)
+  const completedReports = reports.filter(r => r.status === 'Completed').length;
+  const totalReportsForProgress = Math.max(reports.length, 1);
+  const completionPercentage = (completedReports / totalReportsForProgress) * 100;
+
+  // Reading progress (placeholder - would need book reading data)
+  const readingProgress = 65; // This would come from actual reading data
+  
+  // Exercise completion (placeholder - would need exercise data)
+  const completedExercises = 8;
+  const totalExercises = 15;
+  const exerciseProgress = (completedExercises / totalExercises) * 100;
+
+  if (isLoading) {
+    return (
+      <DashboardLayout title={`Welcome back, ${firstName}`}>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Loading your dashboard...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout title={`Welcome back, ${firstName}`}>
@@ -37,18 +115,15 @@ const Dashboard = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Dashboard Overview</h2>
-            <Tooltip content="Quick access to all dashboard sections">
-              <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">
-                Quick Access
-              </Badge>
-            </Tooltip>
+            <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">
+              Quick Access
+            </Badge>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <FileText className="h-8 w-8 text-blue-600" />
-                  <SampleDataBadge />
                 </div>
                 <CardTitle className="text-lg">Reports</CardTitle>
                 <CardDescription className="text-blue-700">Business analysis reports</CardDescription>
@@ -57,11 +132,11 @@ const Dashboard = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Total Reports</span>
-                    <span className="font-semibold">7</span>
+                    <span className="font-semibold">{totalReports}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Recent</span>
-                    <span className="font-semibold">3 this month</span>
+                    <span className="font-semibold">{recentReports} this month</span>
                   </div>
                 </div>
               </CardContent>
@@ -79,7 +154,6 @@ const Dashboard = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <Book className="h-8 w-8 text-green-600" />
-                  <SampleDataBadge />
                 </div>
                 <CardTitle className="text-lg">Read</CardTitle>
                 <CardDescription className="text-green-700">Digital book access</CardDescription>
@@ -92,9 +166,9 @@ const Dashboard = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Progress</span>
-                    <span className="font-semibold">65%</span>
+                    <span className="font-semibold">{readingProgress}%</span>
                   </div>
-                  <Progress value={65} className="h-2" />
+                  <Progress value={readingProgress} className="h-2" />
                 </div>
               </CardContent>
               <CardFooter className="pt-0">
@@ -111,7 +185,6 @@ const Dashboard = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <BookOpen className="h-8 w-8 text-purple-600" />
-                  <SampleDataBadge />
                 </div>
                 <CardTitle className="text-lg">Book Insights</CardTitle>
                 <CardDescription className="text-purple-700">Key concepts & summaries</CardDescription>
@@ -123,8 +196,8 @@ const Dashboard = () => {
                     <span className="font-semibold">12 chapters</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Last Viewed</span>
-                    <span className="font-semibold">Yesterday</span>
+                    <span>Documents</span>
+                    <span className="font-semibold">{documents.length} uploaded</span>
                   </div>
                 </div>
               </CardContent>
@@ -142,7 +215,6 @@ const Dashboard = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <Dumbbell className="h-8 w-8 text-orange-600" />
-                  <SampleDataBadge />
                 </div>
                 <CardTitle className="text-lg">Exercises</CardTitle>
                 <CardDescription className="text-orange-700">Business development tasks</CardDescription>
@@ -151,13 +223,13 @@ const Dashboard = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Completed</span>
-                    <span className="font-semibold">8/15</span>
+                    <span className="font-semibold">{completedExercises}/{totalExercises}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>In Progress</span>
-                    <span className="font-semibold">2</span>
+                    <span>Progress</span>
+                    <span className="font-semibold">{Math.round(exerciseProgress)}%</span>
                   </div>
-                  <Progress value={53} className="h-2" />
+                  <Progress value={exerciseProgress} className="h-2" />
                 </div>
               </CardContent>
               <CardFooter className="pt-0">
@@ -206,7 +278,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <PlusCircle className="h-8 w-8 text-amber-600" />
                   <Badge variant="outline" className="bg-green-50 text-green-800 border-green-200 text-xs">
-                    New Feature
+                    Packages: {packages.length}
                   </Badge>
                 </div>
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
@@ -216,7 +288,7 @@ const Dashboard = () => {
                 <div className="space-y-2 text-sm">
                   <div>• Generate new report</div>
                   <div>• Create package</div>
-                  <div>• Start exercise</div>
+                  <div>• Upload documents</div>
                 </div>
               </CardContent>
               <CardFooter className="pt-0">
@@ -235,299 +307,167 @@ const Dashboard = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Business Overview</h2>
-            <Tooltip content="This is sample data. Real metrics will be available soon.">
-              <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200">
-                Sample Dashboard
-              </Badge>
-            </Tooltip>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 relative">
-              <div className="absolute top-2 right-2">
-                <SampleDataBadge />
-              </div>
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
               <CardHeader className="pb-2">
-                <CardDescription className="text-blue-700">Revenue</CardDescription>
+                <CardDescription className="text-blue-700">Total Reports</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-blue-900">
-                  <TrendingUp className="h-5 w-5 mr-2 text-blue-600" />
-                  $24,500
+                  <FileText className="h-5 w-5 mr-2 text-blue-600" />
+                  {totalReports}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-blue-700">+12% from last month</p>
+                <p className="text-sm text-blue-700">{recentReports} this month</p>
               </CardContent>
             </Card>
             
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 relative">
-              <div className="absolute top-2 right-2">
-                <SampleDataBadge />
-              </div>
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
               <CardHeader className="pb-2">
-                <CardDescription className="text-green-700">New Customers</CardDescription>
+                <CardDescription className="text-green-700">Documents Uploaded</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-green-900">
-                  <Users className="h-5 w-5 mr-2 text-green-600" />
-                  18
+                  <FileText className="h-5 w-5 mr-2 text-green-600" />
+                  {documents.length}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-green-700">+5 from last month</p>
+                <p className="text-sm text-green-700">Available for analysis</p>
               </CardContent>
             </Card>
             
-            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 relative">
-              <div className="absolute top-2 right-2">
-                <SampleDataBadge />
-              </div>
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
               <CardHeader className="pb-2">
-                <CardDescription className="text-purple-700">Reports Generated</CardDescription>
+                <CardDescription className="text-purple-700">Packages Created</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-purple-900">
-                  <FileText className="h-5 w-5 mr-2 text-purple-600" />
-                  7
+                  <Package className="h-5 w-5 mr-2 text-purple-600" />
+                  {packages.length}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-purple-700">Last: {lastReportDate}</p>
+                <p className="text-sm text-purple-700">Ready to share</p>
               </CardContent>
             </Card>
             
-            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 relative">
-              <div className="absolute top-2 right-2">
-                <SampleDataBadge />
-              </div>
+            <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
               <CardHeader className="pb-2">
-                <CardDescription className="text-amber-700">Action Items</CardDescription>
+                <CardDescription className="text-amber-700">Business Health</CardDescription>
                 <CardTitle className="text-2xl font-bold flex items-center text-amber-900">
-                  <AlertCircle className="h-5 w-5 mr-2 text-amber-600" />
-                  4
+                  <BarChart3 className="h-5 w-5 mr-2 text-amber-600" />
+                  {businessHealthScore || 'N/A'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-amber-700">2 high priority</p>
+                <p className="text-sm text-amber-700">
+                  {businessHealthScore ? 'From latest report' : 'No reports yet'}
+                </p>
               </CardContent>
             </Card>
           </div>
         </div>
         
         {/* Latest Report Summary */}
-        <Card className="shadow-md relative">
-          <div className="absolute top-2 right-2 z-10">
-            <SampleDataBadge className="border-primary/20" />
-          </div>
-          <CardHeader className="border-b">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>Latest Business Analysis</CardTitle>
-                <CardDescription>Summary from your most recent report</CardDescription>
+        {latestReport ? (
+          <Card className="shadow-md">
+            <CardHeader className="border-b">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Latest Business Analysis</CardTitle>
+                  <CardDescription>
+                    {latestReport.company_name} - {latestReport.title}
+                  </CardDescription>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/reports">View All Reports</Link>
+                </Button>
               </div>
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/dashboard/reports">View All Reports</Link>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-muted-foreground mb-2">Business Health Score</span>
-                  <div className="flex items-center">
-                    <span className="text-3xl font-bold mr-2">72</span>
-                    <span className="text-sm text-green-600 font-medium">/100</span>
-                  </div>
-                  <Progress value={72} className="h-2 mt-2" />
-                </div>
-                
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-muted-foreground mb-2">Implementation Progress</span>
-                  <div className="flex items-center">
-                    <span className="text-3xl font-bold mr-2">{completedSteps}</span>
-                    <span className="text-sm text-muted-foreground font-medium">/{totalSteps} Steps</span>
-                  </div>
-                  <Progress value={completionPercentage} className="h-2 mt-2" />
-                </div>
-                
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-muted-foreground mb-2">Next Review</span>
-                  <div className="flex items-center">
-                    <Calendar className="h-5 w-5 mr-2 text-primary" />
-                    <span className="text-base font-medium">May 15, 2025</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="pt-4 border-t">
-                <h4 className="text-sm font-medium mb-3">Key Insights</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Card className="bg-background/50 relative">
-                    <div className="absolute top-2 right-2">
-                      <SampleDataBadge className="scale-90" />
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-muted-foreground mb-2">Business Health Score</span>
+                    <div className="flex items-center">
+                      <span className="text-3xl font-bold mr-2">{Math.round(businessHealthScore)}</span>
+                      <span className="text-sm text-green-600 font-medium">/100</span>
                     </div>
-                    <CardHeader className="py-3">
-                      <CardTitle className="text-base">Strengths</CardTitle>
-                    </CardHeader>
-                    <CardContent className="py-1">
-                      <ul className="text-sm space-y-1.5">
-                        <li className="flex items-start">
-                          <span className="text-green-600 mr-2">•</span>
-                          Strong financial position with stable cash flow
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-green-600 mr-2">•</span>
-                          Excellent customer retention rate of 87%
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-green-600 mr-2">•</span>
-                          Unique product differentiation in the market
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
+                    <Progress value={businessHealthScore} className="h-2 mt-2" />
+                  </div>
                   
-                  <Card className="bg-background/50 relative">
-                    <div className="absolute top-2 right-2">
-                      <SampleDataBadge className="scale-90" />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-muted-foreground mb-2">Report Status</span>
+                    <div className="flex items-center">
+                      <Badge variant={latestReport.status === 'Completed' ? 'default' : 'secondary'}>
+                        {latestReport.status}
+                      </Badge>
                     </div>
-                    <CardHeader className="py-3">
-                      <CardTitle className="text-base">Areas for Improvement</CardTitle>
-                    </CardHeader>
-                    <CardContent className="py-1">
-                      <ul className="text-sm space-y-1.5">
-                        <li className="flex items-start">
-                          <span className="text-amber-600 mr-2">•</span>
-                          Team leadership development needed
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-amber-600 mr-2">•</span>
-                          Marketing strategy requires refinement
-                        </li>
-                        <li className="flex items-start">
-                          <span className="text-amber-600 mr-2">•</span>
-                          Operational efficiency could be optimized
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-muted-foreground mb-2">Created</span>
+                    <div className="flex items-center">
+                      <Calendar className="h-5 w-5 mr-2 text-primary" />
+                      <span className="text-base font-medium">{lastReportDate}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="border-t bg-muted/30 flex justify-between">
-            <div className="text-sm text-muted-foreground">
-              Last updated: {lastReportDate}
-            </div>
-            <Button size="sm">
-              View Full Report <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        {/* Current Focus & Recommendations */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-sm relative">
-            <div className="absolute top-2 right-2 z-10">
-              <SampleDataBadge />
-            </div>
-            <CardHeader>
-              <CardTitle>Current Focus</CardTitle>
-              <CardDescription>
-                Priority action items based on your business analysis
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { title: "Define team responsibilities", priority: "High", progress: 45 },
-                  { title: "Update marketing materials", priority: "Medium", progress: 70 },
-                  { title: "Review vendor contracts", priority: "High", progress: 20 },
-                  { title: "Update financial forecast", priority: "Medium", progress: 60 },
-                ].map((item, i) => (
-                  <div key={i} className="border rounded-md p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium">{item.title}</h3>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          item.priority === "High" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
-                        }`}>
-                          {item.priority}
-                        </span>
-                      </div>
-                      <span className="text-sm text-muted-foreground">{item.progress}%</span>
-                    </div>
-                    <Progress value={item.progress} className="h-2 mb-2" />
-                  </div>
-                ))}
-              </div>
             </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">Manage Action Items</Button>
+            <CardFooter className="border-t bg-muted/30 flex justify-between">
+              <div className="text-sm text-muted-foreground">
+                Exercise: {latestReport.exercise_id}
+              </div>
+              <Button size="sm" asChild>
+                <Link to={`/dashboard/reports`}>
+                  View Full Report <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
-          
-          <Card className="shadow-sm relative">
-            <div className="absolute top-2 right-2 z-10">
-              <SampleDataBadge />
-            </div>
+        ) : (
+          <Card className="shadow-md">
             <CardHeader>
-              <CardTitle>Expert Recommendations</CardTitle>
-              <CardDescription>
-                Based on the book "Prosper with Purpose"
-              </CardDescription>
+              <CardTitle>Get Started</CardTitle>
+              <CardDescription>Create your first business analysis report</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  { 
-                    title: "Leadership Development", 
-                    description: "Create a structured mentoring program to develop your management team.",
-                    chapter: "Ch. 4: Building Effective Teams"
-                  },
-                  { 
-                    title: "Financial Planning", 
-                    description: "Implement a rolling 12-month cash flow forecast to improve decision making.",
-                    chapter: "Ch. 7: Financial Mastery"
-                  },
-                  { 
-                    title: "Customer Experience", 
-                    description: "Map your customer journey to identify and eliminate pain points.",
-                    chapter: "Ch. 3: Customer-Centric Growth"
-                  },
-                ].map((item, i) => (
-                  <div key={i} className="border rounded-md p-4">
-                    <h3 className="font-medium mb-1">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
-                    <div className="flex items-center text-xs text-primary">
-                      <BookOpen className="h-3 w-3 mr-1" />
-                      {item.chapter}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <p className="text-muted-foreground mb-4">
+                Upload your business documents and start analyzing your company's performance.
+              </p>
+              <Button asChild>
+                <Link to="/dashboard/reports">
+                  Create Your First Report <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
             </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">View All Recommendations</Button>
-            </CardFooter>
           </Card>
-        </div>
+        )}
         
         {/* Call to Action */}
-        <Card className="bg-primary text-primary-foreground relative">
-          <div className="absolute top-2 right-2">
-            <Badge variant="outline" className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground text-xs">
-              Coming Soon
-            </Badge>
-          </div>
+        <Card className="bg-primary text-primary-foreground">
           <CardHeader>
             <CardTitle>Ready to take your business to the next level?</CardTitle>
             <CardDescription className="text-primary-foreground/90">
-              Schedule a personalized coaching session with our experts
+              {documents.length > 0 ? 'Continue analyzing your business with our AI tools' : 'Upload your first document to get started'}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm opacity-90">
-              Get targeted guidance on implementing your business recommendations and developing a strategic roadmap for growth.
+              {documents.length > 0 
+                ? 'Generate new reports, create packages, and get AI-powered insights for your business.'
+                : 'Get AI-powered business insights by uploading your company documents and creating your first analysis report.'
+              }
             </p>
           </CardContent>
           <CardFooter>
-            <Button variant="secondary" disabled>Book a Coaching Session</Button>
+            {documents.length > 0 ? (
+              <Button variant="secondary" asChild>
+                <Link to="/dashboard/reports">Generate New Report</Link>
+              </Button>
+            ) : (
+              <Button variant="secondary" asChild>
+                <Link to="/chat">Upload Documents</Link>
+              </Button>
+            )}
             <Button variant="outline" className="ml-2 bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
               Learn More
             </Button>
