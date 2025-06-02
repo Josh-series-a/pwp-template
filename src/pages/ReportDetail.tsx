@@ -1,26 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Target, Users, DollarSign, Heart, Brain, Package, RefreshCw } from 'lucide-react';
+import { Target, Users, DollarSign, Heart, Brain, Package } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { reportService } from '@/utils/reportService';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import PackagesCarousel from '@/components/PackagesCarousel';
 import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
-
-interface SubPillar {
-  Name: string;
-  Key_Question: string;
-  Signals_to_Look_For: string[];
-  Red_Flags: string[];
-  Scoring_Guidance: Record<string, string>;
-  Score: number;
-}
+import ReportHeader from '@/components/reports/ReportHeader';
+import ReportLoadingState from '@/components/reports/ReportLoadingState';
+import ReportTabContent from '@/components/reports/ReportTabContent';
+import PackagesTab from '@/components/reports/PackagesTab';
 
 interface BusinessHealthData {
   id: string;
@@ -154,215 +146,8 @@ const ReportDetail = () => {
     fetchReportData();
   }, [companySlug, exerciseId, reportId]);
 
-  const handleGeneratePackage = async () => {
-    if (!user || !reportId || !report) {
-      toast.error('Unable to generate package. Missing required information.');
-      return;
-    }
-
-    try {
-      // Sample package data - this would typically come from an AI analysis
-      const packageData = {
-        userId: user.id,
-        reportId: reportId,
-        package_name: "Plan Your Business Legacy with Confidence",
-        documents: [
-          {
-            name: "Gap Analysis & Discussion Points",
-            document: [
-              "https://docs.google.com/document/d/1D-MHsXuKA1EeZzARQA3XW8eF8d1j6U-rxKcFU_CR7As/edit?tab=t.0"
-            ]
-          },
-          {
-            name: "Exit Strategy Framework",
-            document: [
-              "https://docs.google.com/document/d/1D-MHsXuKA1EeZzARQA3XW8eF8d1j6U-rxKcFU_CR7As/edit?tab=t.0"
-            ]
-          },
-          {
-            name: "Legacy Planning Workbook",
-            document: [
-              "https://docs.google.com/document/d/1D-MHsXuKA1EeZzARQA3XW8eF8d1j6U-rxKcFU_CR7As/edit?tab=t.0"
-            ]
-          }
-        ]
-      };
-
-      const response = await fetch('https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/packages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
-        },
-        body: JSON.stringify(packageData),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        toast.success('Package generated successfully!');
-        // Refresh the packages carousel by triggering a re-render
-        window.location.reload();
-      } else {
-        toast.error('Failed to generate package: ' + result.error);
-      }
-    } catch (error) {
-      console.error('Error generating package:', error);
-      toast.error('Failed to generate package');
-    }
-  };
-
-  const renderSubPillars = (subPillars: any) => {
-    // Safely parse subPillars if it's a string or already an array
-    let pillarsArray: SubPillar[] = [];
-    
-    if (Array.isArray(subPillars)) {
-      pillarsArray = subPillars;
-    } else if (typeof subPillars === 'string') {
-      try {
-        pillarsArray = JSON.parse(subPillars);
-      } catch (e) {
-        console.error('Error parsing sub_pillars:', e);
-        return <p className="text-muted-foreground">Error loading assessment data.</p>;
-      }
-    } else if (subPillars && typeof subPillars === 'object') {
-      pillarsArray = subPillars;
-    }
-
-    if (!pillarsArray || pillarsArray.length === 0) {
-      return <p className="text-muted-foreground">No assessment data available for this pillar.</p>;
-    }
-
-    return (
-      <div className="space-y-6">
-        {pillarsArray.map((pillar, index) => (
-          <div key={index} className="border rounded-lg p-4">
-            <div className="flex justify-between items-start mb-3">
-              <h4 className="font-semibold text-lg">{pillar.Name}</h4>
-              <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
-                Score: {pillar.Score}/10
-              </div>
-            </div>
-            
-            <div className="mb-3">
-              <p className="font-medium text-blue-700 mb-1">Key Question:</p>
-              <p className="text-sm">{pillar.Key_Question}</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <p className="font-medium text-green-700 mb-2">Signals to Look For:</p>
-                <ul className="text-sm space-y-1">
-                  {pillar.Signals_to_Look_For?.map((signal, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <span className="text-green-600 mr-2">✓</span>
-                      {signal}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div>
-                <p className="font-medium text-red-700 mb-2">Red Flags:</p>
-                <ul className="text-sm space-y-1">
-                  {pillar.Red_Flags?.map((flag, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <span className="text-red-600 mr-2">⚠</span>
-                      {flag}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <p className="font-medium mb-2">Scoring Guidance:</p>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs">
-                {Object.entries(pillar.Scoring_Guidance || {}).map(([range, description]) => (
-                  <div key={range} className="bg-gray-50 p-2 rounded">
-                    <div className="font-medium">{range}</div>
-                    <div className="text-gray-600">{description}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderTabContent = (tabId: string, defaultTitle: string, defaultDescription: string) => {
-    console.log(`Rendering tab ${tabId}, available data:`, Object.keys(businessHealthData));
-    const tabData = businessHealthData[tabId];
-    
-    if (!tabData) {
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>{defaultTitle}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-muted-foreground">{defaultDescription}</p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <p className="text-sm text-yellow-800">
-                  <strong>No data available:</strong> The business health analysis for this section may still be processing, 
-                  or the data hasn't been generated yet. Please check back later or contact support if this persists.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    return (
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex justify-between items-center">
-              {defaultTitle}
-              {tabData.total_score && (
-                <div className="bg-primary text-primary-foreground px-4 py-2 rounded-full">
-                  Overall Score: {tabData.total_score}/10
-                </div>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {tabData.overview && (
-              <div className="mb-4">
-                <h4 className="font-medium mb-2">Overview</h4>
-                <p className="text-muted-foreground">{tabData.overview}</p>
-              </div>
-            )}
-            
-            {tabData.purpose && (
-              <div className="mb-4">
-                <h4 className="font-medium mb-2">Purpose</h4>
-                <p className="text-muted-foreground">{tabData.purpose}</p>
-              </div>
-            )}
-            
-            {renderSubPillars(tabData.sub_pillars)}
-          </CardContent>
-        </Card>
-      </div>
-    );
-  };
-
   if (isLoading) {
-    return (
-      <DashboardLayout title="Loading Report...">
-        <div className="flex items-center justify-center py-16">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading report details...</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
+    return <ReportLoadingState />;
   }
 
   const reportTitle = report?.title || 'Report Details';
@@ -371,136 +156,107 @@ const ReportDetail = () => {
   return (
     <DashboardLayout title={reportTitle}>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => navigate('/dashboard/reports')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Reports
-          </Button>
-          
-          <Button 
-            onClick={() => setIsCreatePackageDialogOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <Package className="h-4 w-4" />
-            Create Package
-          </Button>
-        </div>
+        <ReportHeader
+          reportTitle={reportTitle}
+          companyName={companyName}
+          createdAt={report?.created_at}
+          onBackClick={() => navigate('/dashboard/reports')}
+          onCreatePackageClick={() => setIsCreatePackageDialogOpen(true)}
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span>{reportTitle}</span>
-            </CardTitle>
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Company: {companyName}</span>
-              {report?.created_at && (
-                <span>Generated: {new Date(report.created_at).toLocaleDateString()}</span>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex items-center justify-center py-16">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Loading report details...</p>
-                </div>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading report details...</p>
               </div>
-            ) : (
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-6">
-                  <TabsTrigger value="plan" className="flex items-center gap-2">
-                    <Target className="h-4 w-4" />
-                    Plan
-                  </TabsTrigger>
-                  <TabsTrigger value="people" className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    People
-                  </TabsTrigger>
-                  <TabsTrigger value="profits" className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
-                    Profits
-                  </TabsTrigger>
-                  <TabsTrigger value="purposeImpact" className="flex items-center gap-2">
-                    <Heart className="h-4 w-4" />
-                    Purpose & Impact
-                  </TabsTrigger>
-                  <TabsTrigger value="stress_leadership" className="flex items-center gap-2">
-                    <Brain className="h-4 w-4" />
-                    Stress & Leadership
-                  </TabsTrigger>
-                  <TabsTrigger value="packages" className="flex items-center gap-2">
-                    <Package className="h-4 w-4" />
-                    Packages
-                  </TabsTrigger>
-                </TabsList>
+            </div>
+          ) : (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-6">
+                <TabsTrigger value="plan" className="flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Plan
+                </TabsTrigger>
+                <TabsTrigger value="people" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  People
+                </TabsTrigger>
+                <TabsTrigger value="profits" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Profits
+                </TabsTrigger>
+                <TabsTrigger value="purposeImpact" className="flex items-center gap-2">
+                  <Heart className="h-4 w-4" />
+                  Purpose & Impact
+                </TabsTrigger>
+                <TabsTrigger value="stress_leadership" className="flex items-center gap-2">
+                  <Brain className="h-4 w-4" />
+                  Stress & Leadership
+                </TabsTrigger>
+                <TabsTrigger value="packages" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Packages
+                </TabsTrigger>
+              </TabsList>
 
-                <TabsContent value="plan" className="mt-6">
-                  {renderTabContent('plan', 'Strategic Planning & Goals', 'Strategic planning insights and recommendations based on your business health analysis.')}
-                </TabsContent>
+              <TabsContent value="plan" className="mt-6">
+                <ReportTabContent
+                  tabId="plan"
+                  defaultTitle="Strategic Planning & Goals"
+                  defaultDescription="Strategic planning insights and recommendations based on your business health analysis."
+                  businessHealthData={businessHealthData}
+                />
+              </TabsContent>
 
-                <TabsContent value="people" className="mt-6">
-                  {renderTabContent('people', 'People & Team Management', 'Analysis of your current team structure and organizational effectiveness.')}
-                </TabsContent>
+              <TabsContent value="people" className="mt-6">
+                <ReportTabContent
+                  tabId="people"
+                  defaultTitle="People & Team Management"
+                  defaultDescription="Analysis of your current team structure and organizational effectiveness."
+                  businessHealthData={businessHealthData}
+                />
+              </TabsContent>
 
-                <TabsContent value="profits" className="mt-6">
-                  {renderTabContent('profits', 'Financial Performance & Profitability', 'Revenue streams analysis and optimization opportunities.')}
-                </TabsContent>
+              <TabsContent value="profits" className="mt-6">
+                <ReportTabContent
+                  tabId="profits"
+                  defaultTitle="Financial Performance & Profitability"
+                  defaultDescription="Revenue streams analysis and optimization opportunities."
+                  businessHealthData={businessHealthData}
+                />
+              </TabsContent>
 
-                <TabsContent value="purposeImpact" className="mt-6">
-                  {renderTabContent('purposeImpact', 'Purpose, Values & Impact', 'Assessment of your company mission, vision, and core values alignment.')}
-                </TabsContent>
+              <TabsContent value="purposeImpact" className="mt-6">
+                <ReportTabContent
+                  tabId="purposeImpact"
+                  defaultTitle="Purpose, Values & Impact"
+                  defaultDescription="Assessment of your company mission, vision, and core values alignment."
+                  businessHealthData={businessHealthData}
+                />
+              </TabsContent>
 
-                <TabsContent value="stress_leadership" className="mt-6">
-                  {renderTabContent('stress_leadership', 'Stress Management & Leadership', 'Analysis of leadership effectiveness and stress management strategies.')}
-                </TabsContent>
+              <TabsContent value="stress_leadership" className="mt-6">
+                <ReportTabContent
+                  tabId="stress_leadership"
+                  defaultTitle="Stress Management & Leadership"
+                  defaultDescription="Analysis of leadership effectiveness and stress management strategies."
+                  businessHealthData={businessHealthData}
+                />
+              </TabsContent>
 
-                <TabsContent value="packages" className="mt-6">
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-4">
-                        <Button 
-                          onClick={handleGeneratePackage}
-                          className="flex items-center gap-2"
-                        >
-                          <Package className="h-4 w-4" />
-                          Generate Package
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="flex items-center gap-2"
-                          onClick={() => window.location.reload()}
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                          Refresh
-                        </Button>
-                      </div>
-                      {packagesCIKs.length > 0 && (
-                        <div className="flex flex-wrap gap-1 items-center">
-                          <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
-                          {packagesCIKs.slice(0, 5).map((cik, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {cik}
-                            </Badge>
-                          ))}
-                          {packagesCIKs.length > 5 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{packagesCIKs.length - 5} more
-                            </Badge>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <PackagesCarousel reportId={reportId || ''} />
-                  </div>
-                </TabsContent>
-              </Tabs>
-            )}
-          </CardContent>
-        </Card>
+              <TabsContent value="packages" className="mt-6">
+                <PackagesTab
+                  reportId={reportId || ''}
+                  packagesCIKs={packagesCIKs}
+                  report={report}
+                  user={user}
+                />
+              </TabsContent>
+            </Tabs>
+          )}
+        </CardContent>
       </div>
 
       <CreatePackageDialog 
