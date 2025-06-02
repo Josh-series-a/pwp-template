@@ -1,59 +1,46 @@
 
-export interface AnalysisDocument {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  uploadedAt: string;
-  content?: string;
-}
+// Facade for API services that connects to all the specialized services
+
+import { ChatMessage, AnalysisDocument } from "@/types/api";
+import { documentService } from "./documentService";
+import { chatService } from "./chatService";
+import { authService } from "./authService";
 
 class ApiService {
-  private apiKey: string | null = null;
-
-  constructor() {
-    // Load API key from localStorage on initialization
-    this.apiKey = localStorage.getItem('openai_api_key');
-  }
-
-  setApiKey(key: string): void {
-    this.apiKey = key;
-    localStorage.setItem('openai_api_key', key);
+  // Auth methods
+  setApiKey(key: string) {
+    return authService.setApiKey(key);
   }
 
   getApiKey(): string | null {
-    return this.apiKey || localStorage.getItem('openai_api_key');
+    return authService.getApiKey();
   }
 
+  // Document methods
   async uploadDocument(file: File): Promise<AnalysisDocument> {
-    // Simulate document upload by storing in localStorage
-    const document: AnalysisDocument = {
-      id: crypto.randomUUID(),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      uploadedAt: new Date().toISOString(),
-    };
-
-    // Get existing documents from localStorage
-    const existingDocs = this.getDocuments();
-    const updatedDocs = [...existingDocs, document];
-    
-    localStorage.setItem('uploaded_documents', JSON.stringify(updatedDocs));
-    
-    return document;
+    return documentService.uploadDocument(file);
   }
 
   async getDocuments(): Promise<AnalysisDocument[]> {
-    const stored = localStorage.getItem('uploaded_documents');
-    return stored ? JSON.parse(stored) : [];
+    return documentService.getDocuments();
   }
 
-  async deleteDocument(id: string): Promise<void> {
-    const existingDocs = await this.getDocuments();
-    const filteredDocs = existingDocs.filter(doc => doc.id !== id);
-    localStorage.setItem('uploaded_documents', JSON.stringify(filteredDocs));
+  async deleteDocument(id: string): Promise<boolean> {
+    return documentService.deleteDocument(id);
   }
+
+  // Chat methods
+  async sendMessage(content: string): Promise<ChatMessage> {
+    return chatService.sendMessage(content);
+  }
+
+  getChatHistory(): ChatMessage[] {
+    return chatService.getChatHistory();
+  }
+
+  // Expose types for backwards compatibility
+  // These are now imported from @/types/api
 }
 
+export type { ChatMessage, AnalysisDocument } from "@/types/api";
 export const apiService = new ApiService();

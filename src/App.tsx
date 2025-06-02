@@ -16,6 +16,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
+import Chat from "./pages/Chat";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import PackageDetail from "./pages/PackageDetail";
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
               <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId" element={<ProtectedRoute><ReportDetail /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId" element={<ProtectedRoute><PackageDetail /></ProtectedRoute>} />
