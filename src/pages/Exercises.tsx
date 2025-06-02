@@ -29,6 +29,7 @@ import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialo
 import MissionStatementDialog from '@/components/exercises/MissionStatementDialog';
 import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningDialog';
 import ExitStrategyDialog from '@/components/exercises/ExitStrategyDialog';
+import EnvironmentalSocialDialog from '@/components/exercises/EnvironmentalSocialDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -40,8 +41,9 @@ const Exercises = () => {
   const [isMissionDialogOpen, setIsMissionDialogOpen] = useState(false);
   const [isFutureBackDialogOpen, setIsFutureBackDialogOpen] = useState(false);
   const [isExitStrategyDialogOpen, setIsExitStrategyDialogOpen] = useState(false);
+  const [isEnvironmentalSocialDialogOpen, setIsEnvironmentalSocialDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new exit strategy exercise
+  // Enhanced exercises data with the new environmental and social impact exercise
   const exercises = [
     { 
       id: 1, 
@@ -97,6 +99,19 @@ const Exercises = () => {
     },
     { 
       id: 5, 
+      title: "Environmental and Social Impact Self-Assessment", 
+      progress: 0, 
+      status: "new",
+      intro: "Evaluate how your business is currently engaging with environmental and social responsibility — a key part of being future-fit and resilient.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "sustainability"],
+      priority: "medium",
+      estimatedTime: "10 min"
+    },
+    { 
+      id: 6, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -109,7 +124,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 6, 
+      id: 7, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -122,7 +137,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 7, 
+      id: 8, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -135,7 +150,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 8, 
+      id: 9, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -148,7 +163,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 9, 
+      id: 10, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -228,6 +243,8 @@ const Exercises = () => {
       setIsFutureBackDialogOpen(true);
     } else if (exerciseId === 4) {
       setIsExitStrategyDialogOpen(true);
+    } else if (exerciseId === 5) {
+      setIsEnvironmentalSocialDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -460,6 +477,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your exit strategy has been saved successfully.",
+          });
+        }}
+      />
+
+      <EnvironmentalSocialDialog
+        isOpen={isEnvironmentalSocialDialogOpen}
+        onClose={() => setIsEnvironmentalSocialDialogOpen(false)}
+        onComplete={() => {
+          setIsEnvironmentalSocialDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your environmental and social impact assessment has been saved successfully.",
           });
         }}
       />
