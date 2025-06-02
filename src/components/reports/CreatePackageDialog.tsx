@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Sheet,
@@ -269,8 +270,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="max-w-4xl w-full overflow-y-auto">
-        <SheetHeader>
+      <SheetContent side="left" className="max-w-4xl w-full overflow-y-auto m-4 mr-0 rounded-l-lg border-l">
+        <SheetHeader className="mt-4">
           <SheetTitle>
             Create Package - Page {currentPage} of 3
             {preSelectedCompany && (
@@ -281,7 +282,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           </SheetTitle>
         </SheetHeader>
 
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6 mt-6 mb-4">
           {/* Page 1: Select Company */}
           {currentPage === 1 && (
             <div className="space-y-4">
