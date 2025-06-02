@@ -3,7 +3,6 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
 import CustomDocumentViewer from '@/components/CustomDocumentViewer';
 
 const DocumentPreview = () => {
@@ -17,12 +16,6 @@ const DocumentPreview = () => {
 
   const handleBackToPackage = () => {
     navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportId}/${packageId}`);
-  };
-
-  const openInNewTab = () => {
-    if (docUrl) {
-      window.open(docUrl, '_blank');
-    }
   };
 
   if (!docUrl || !docTitle) {
@@ -53,25 +46,7 @@ const DocumentPreview = () => {
             height="100%"
             showUrlInput={false}
             className="h-full"
-            customHeaderButtons={
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleBackToPackage}
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Back to Package
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={openInNewTab}
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open in Google Docs
-                </Button>
-              </div>
-            }
+            onBackClick={handleBackToPackage}
           />
         </div>
       </div>

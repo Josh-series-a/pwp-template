@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ExternalLink, FileText, AlertCircle, Loader2 } from 'lucide-react';
+import { ExternalLink, FileText, AlertCircle, Loader2, Share, Link, Download, ArrowLeft, Linkedin, Facebook, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface CustomDocumentViewerProps {
   docUrl?: string;
@@ -13,6 +14,7 @@ interface CustomDocumentViewerProps {
   className?: string;
   showUrlInput?: boolean;
   customHeaderButtons?: React.ReactNode;
+  onBackClick?: () => void;
 }
 
 const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
@@ -21,7 +23,8 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   height = '600px',
   className,
   showUrlInput = true,
-  customHeaderButtons
+  customHeaderButtons,
+  onBackClick
 }) => {
   const [docUrl, setDocUrl] = useState(initialUrl);
   const [currentUrl, setCurrentUrl] = useState('');
@@ -132,6 +135,44 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
     handleIframeError();
   };
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log('Link copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  const shareToLinkedIn = () => {
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(docUrl)}`;
+    window.open(shareUrl, '_blank');
+  };
+
+  const shareToFacebook = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(docUrl)}`;
+    window.open(shareUrl, '_blank');
+  };
+
+  const shareViaEmail = () => {
+    const subject = encodeURIComponent(`Check out this document: ${title}`);
+    const body = encodeURIComponent(`I wanted to share this document with you: ${docUrl}`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
+
+  const downloadDocument = () => {
+    if (docUrl) {
+      // Try to extract document ID and create download link
+      const docId = getDocumentIdFromUrl(docUrl);
+      if (docId) {
+        const downloadUrl = `https://docs.google.com/document/d/${docId}/export?format=pdf`;
+        window.open(downloadUrl, '_blank');
+      } else {
+        window.open(docUrl, '_blank');
+      }
+    }
+  };
+
   useEffect(() => {
     if (initialUrl) {
       const { processedUrl, fallbacks } = processDocumentUrl(initialUrl);
@@ -144,13 +185,78 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
   return (
     <Card className={cn("w-full flex flex-col", className)}>
       <CardHeader className="pb-4 flex-shrink-0">
+        {/* New comprehensive header */}
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            {title}
-          </CardTitle>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-4">
+            {onBackClick && (
+              <Button variant="ghost" size="sm" onClick={onBackClick}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-muted-foreground" />
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm">{title}</span>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span>Google Doc</span>
+                  <span>•</span>
+                  <span>Multiple pages</span>
+                  <span>•</span>
+                  <span>Unknown size</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Share dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Share className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={shareToLinkedIn} className="cursor-pointer">
+                  <Linkedin className="h-4 w-4 mr-2" />
+                  Share on LinkedIn
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={shareToFacebook} className="cursor-pointer">
+                  <Facebook className="h-4 w-4 mr-2" />
+                  Share on Facebook
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={shareViaEmail} className="cursor-pointer">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Share via Email
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Copy link button */}
+            <Tooltip content="Copy document link">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => copyToClipboard(docUrl)}
+              >
+                <Link className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+
+            {/* Download button */}
+            <Tooltip content="Download document">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={downloadDocument}
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            </Tooltip>
+
+            {/* Custom header buttons (legacy support) */}
             {customHeaderButtons && customHeaderButtons}
+            
             {hasError && fallbackUrls.length > 1 && currentFallbackIndex < fallbackUrls.length - 1 && (
               <Button
                 variant="outline"
@@ -159,17 +265,6 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
                 className="flex items-center gap-2"
               >
                 Try Different View
-              </Button>
-            )}
-            {docUrl && !customHeaderButtons && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={openInNewTab}
-                className="flex items-center gap-2"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Open Original
               </Button>
             )}
           </div>
