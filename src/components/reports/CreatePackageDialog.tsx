@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -277,7 +278,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[146vw] max-w-[146vw] h-[90vh] max-h-[90vh] overflow-y-auto p-0 flex flex-col">
+      <DialogContent className="w-[90vw] max-w-4xl h-[90vh] max-h-[90vh] overflow-y-auto p-0 flex flex-col">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle>
             Create Package - Page {currentPage} of 3
