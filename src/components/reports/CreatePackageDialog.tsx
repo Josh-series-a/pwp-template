@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Sheet,
@@ -10,6 +9,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -282,41 +289,59 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           </SheetTitle>
         </SheetHeader>
 
+        {/* Progress Bar */}
+        <div className="mt-6 mb-6">
+          <Progress value={(currentPage / 3) * 100} className="w-full" />
+          <div className="flex justify-between text-xs text-muted-foreground mt-2">
+            <span>Select Company</span>
+            <span>Choose Packages</span>
+            <span>Review & Submit</span>
+          </div>
+        </div>
+
         <div className="space-y-6 mt-6 mb-4">
           {/* Page 1: Select Company */}
           {currentPage === 1 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Select Company</h3>
-              <div className="grid gap-3">
-                {companies.length > 0 ? (
-                  companies.map((company) => (
-                    <Card 
-                      key={company.id} 
-                      className={`cursor-pointer transition-colors ${
-                        selectedCompany === company.id 
-                          ? 'ring-2 ring-primary bg-primary/5' 
-                          : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => setSelectedCompany(company.id)}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-medium">{company.company_name}</h4>
-                            <p className="text-sm text-muted-foreground">
+              <div className="text-center space-y-4">
+                <img 
+                  src="/lovable-uploads/select.png" 
+                  alt="Select Company" 
+                  className="mx-auto w-24 h-24 object-contain"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold">Select Company</h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Choose the company you'd like to create a package for. This will help us tailor the content to your specific business needs.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="text-sm font-medium">Company</label>
+                <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Choose a company..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {companies.length > 0 ? (
+                      companies.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{company.company_name}</span>
+                            <span className="text-xs text-muted-foreground">
                               Added {new Date(company.created_at).toLocaleDateString()}
-                            </p>
+                            </span>
                           </div>
-                          {selectedCompany === company.id && (
-                            <Check className="h-5 w-5 text-primary" />
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <p className="text-muted-foreground">No companies found. Create a report first.</p>
-                )}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-companies" disabled>
+                        No companies found. Create a report first.
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           )}
@@ -324,16 +349,18 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           {/* Page 2: Select Packages */}
           {currentPage === 2 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Select Package(s)</h3>
-              <p className="text-sm text-muted-foreground">Multiple selections allowed</p>
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-semibold">Select Package(s)</h3>
+                <p className="text-sm text-muted-foreground">Multiple selections allowed</p>
+              </div>
               <div className="grid gap-4">
                 {packages.map((pkg) => (
                   <Card 
                     key={pkg.id}
-                    className={`cursor-pointer transition-colors ${
+                    className={`cursor-pointer transition-all duration-200 ${
                       selectedPackages.includes(pkg.id)
-                        ? 'ring-2 ring-primary bg-primary/5'
-                        : 'hover:bg-muted/50'
+                        ? 'ring-2 ring-primary bg-primary/5 shadow-md'
+                        : 'hover:bg-muted/50 hover:shadow-sm'
                     }`}
                     onClick={() => handlePackageToggle(pkg.id)}
                   >
@@ -342,10 +369,11 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                         <Checkbox 
                           checked={selectedPackages.includes(pkg.id)}
                           onChange={() => handlePackageToggle(pkg.id)}
+                          className="mt-1"
                         />
                         <div className="flex-1">
-                          <CardTitle className="text-base">{pkg.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <CardTitle className="text-base leading-tight">{pkg.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground mt-2">
                             {pkg.description}
                           </p>
                         </div>
@@ -354,8 +382,9 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                     <CardContent className="pt-0">
                       <div className="space-y-1">
                         {pkg.items.map((item, index) => (
-                          <div key={index} className="text-sm text-muted-foreground">
-                            • {item}
+                          <div key={index} className="text-sm text-muted-foreground flex items-start">
+                            <span className="mr-2">•</span>
+                            <span>{item}</span>
                           </div>
                         ))}
                       </div>
@@ -369,21 +398,32 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           {/* Page 3: Review & Confirm */}
           {currentPage === 3 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold">Review & Confirm Selections</h3>
+              <div className="text-center">
+                <h3 className="text-lg font-semibold">Review & Confirm Selections</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Please review your selections before submitting
+                </p>
+              </div>
               
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Selected Company:</h4>
-                  <Badge variant="secondary" className="text-sm">
+              <div className="space-y-6">
+                <div className="bg-muted/30 rounded-lg p-4">
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Check className="h-4 w-4 text-primary" />
+                    Selected Company
+                  </h4>
+                  <Badge variant="secondary" className="text-sm font-medium">
                     {selectedCompanyName}
                   </Badge>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-3">Selected Packages ({selectedPackages.length}):</h4>
+                <div className="bg-muted/30 rounded-lg p-4">
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Check className="h-4 w-4 text-primary" />
+                    Selected Packages ({selectedPackages.length})
+                  </h4>
                   <div className="space-y-3">
                     {selectedPackageDetails.map((pkg) => (
-                      <Card key={pkg.id}>
+                      <Card key={pkg.id} className="bg-background">
                         <CardHeader className="pb-2">
                           <CardTitle className="text-sm">{pkg.title}</CardTitle>
                           <p className="text-xs text-muted-foreground">{pkg.description}</p>
@@ -391,7 +431,10 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                         <CardContent className="pt-0">
                           <div className="text-xs text-muted-foreground space-y-1">
                             {pkg.items.map((item, index) => (
-                              <div key={index}>• {item}</div>
+                              <div key={index} className="flex items-start">
+                                <span className="mr-2">•</span>
+                                <span>{item}</span>
+                              </div>
                             ))}
                           </div>
                         </CardContent>
@@ -404,11 +447,12 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           )}
 
           {/* Navigation */}
-          <div className="flex justify-between pt-4 border-t">
+          <div className="flex justify-between pt-6 border-t bg-background sticky bottom-0">
             <Button 
               variant="outline" 
               onClick={handleBack}
               disabled={currentPage === 1}
+              className="min-w-[100px]"
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back
@@ -418,6 +462,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
               <Button 
                 onClick={handleNext}
                 disabled={isNextDisabled()}
+                className="min-w-[100px]"
               >
                 Next
                 <ChevronRight className="ml-2 h-4 w-4" />
@@ -426,6 +471,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
               <Button 
                 onClick={handleSubmit}
                 disabled={isLoading || selectedPackages.length === 0}
+                className="min-w-[140px]"
               >
                 {isLoading ? 'Submitting...' : 'Submit Package Request'}
               </Button>
