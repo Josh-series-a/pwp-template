@@ -39,6 +39,7 @@ import SWOTAnalysisDialog from '@/components/exercises/SWOTAnalysisDialog';
 import NetworkingOpportunitiesDialog from '@/components/exercises/NetworkingOpportunitiesDialog';
 import AssessNetworkingDialog from '@/components/exercises/AssessNetworkingDialog';
 import ValuesDialog from '@/components/exercises/ValuesDialog';
+import RightPeopleDialog from '@/components/exercises/RightPeopleDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -60,6 +61,7 @@ const Exercises = () => {
   const [isNetworkingOpportunitiesDialogOpen, setIsNetworkingOpportunitiesDialogOpen] = useState(false);
   const [isAssessNetworkingDialogOpen, setIsAssessNetworkingDialogOpen] = useState(false);
   const [isValuesDialogOpen, setIsValuesDialogOpen] = useState(false);
+  const [isRightPeopleDialogOpen, setIsRightPeopleDialogOpen] = useState(false);
 
   // Enhanced exercises data with the new values exercise
   const exercises = [
@@ -247,6 +249,19 @@ const Exercises = () => {
     },
     { 
       id: 15, 
+      title: "Are the Right People in the Right Seats?", 
+      progress: 0, 
+      status: "new",
+      intro: "This exercise helps you assess whether your team members are playing to their strengths — a key part of reducing stress and building a high-performance business.",
+      category: "people",
+      sections: 6,
+      completedSections: 0,
+      tags: ["people", "leadership"],
+      priority: "high",
+      estimatedTime: "25 min"
+    },
+    { 
+      id: 16, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -259,7 +274,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 16, 
+      id: 17, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -272,7 +287,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 17, 
+      id: 18, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -285,7 +300,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 18, 
+      id: 19, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -385,6 +400,8 @@ const Exercises = () => {
       setIsAssessNetworkingDialogOpen(true);
     } else if (exerciseId === 14) {
       setIsValuesDialogOpen(true);
+    } else if (exerciseId === 15) {
+      setIsRightPeopleDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -738,6 +755,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your business values framework has been saved successfully.",
+          });
+        }}
+      />
+
+      <RightPeopleDialog
+        isOpen={isRightPeopleDialogOpen}
+        onClose={() => setIsRightPeopleDialogOpen(false)}
+        onComplete={() => {
+          setIsRightPeopleDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your team assessment has been saved successfully.",
           });
         }}
       />
