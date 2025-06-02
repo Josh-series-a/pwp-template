@@ -35,6 +35,7 @@ import OneOnOnePropositionDialog from '@/components/exercises/OneOnOnePropositio
 import ReachCustomersDialog from '@/components/exercises/ReachCustomersDialog';
 import GeographicReachDialog from '@/components/exercises/GeographicReachDialog';
 import FutureBusinessModelDialog from '@/components/exercises/FutureBusinessModelDialog';
+import SWOTAnalysisDialog from '@/components/exercises/SWOTAnalysisDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -52,8 +53,9 @@ const Exercises = () => {
   const [isReachCustomersDialogOpen, setIsReachCustomersDialogOpen] = useState(false);
   const [isGeographicReachDialogOpen, setIsGeographicReachDialogOpen] = useState(false);
   const [isFutureBusinessModelDialogOpen, setIsFutureBusinessModelDialogOpen] = useState(false);
+  const [isSWOTAnalysisDialogOpen, setIsSWOTAnalysisDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new future business model canvas exercise
+  // Enhanced exercises data with the new SWOT analysis exercise
   const exercises = [
     { 
       id: 1, 
@@ -187,6 +189,19 @@ const Exercises = () => {
     },
     { 
       id: 11, 
+      title: "Prepare Your SWOT Analysis", 
+      progress: 0, 
+      status: "new",
+      intro: "A well-done SWOT helps you face reality clearly — building on your strengths, addressing weaknesses, seizing opportunities, and preparing for threats.",
+      category: "planning",
+      sections: 4,
+      completedSections: 0,
+      tags: ["planning", "strategy"],
+      priority: "high",
+      estimatedTime: "20 min"
+    },
+    { 
+      id: 12, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -199,7 +214,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 12, 
+      id: 13, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -212,7 +227,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 13, 
+      id: 14, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -225,7 +240,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 14, 
+      id: 15, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -238,7 +253,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 15, 
+      id: 16, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -330,6 +345,8 @@ const Exercises = () => {
       setIsGeographicReachDialogOpen(true);
     } else if (exerciseId === 10) {
       setIsFutureBusinessModelDialogOpen(true);
+    } else if (exerciseId === 11) {
+      setIsSWOTAnalysisDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -635,6 +652,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your business model canvas has been saved successfully.",
+          });
+        }}
+      />
+
+      <SWOTAnalysisDialog
+        isOpen={isSWOTAnalysisDialogOpen}
+        onClose={() => setIsSWOTAnalysisDialogOpen(false)}
+        onComplete={() => {
+          setIsSWOTAnalysisDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your SWOT analysis has been saved successfully.",
           });
         }}
       />
