@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -21,17 +22,33 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import bookChapters from '@/data/bookChapters';
 
 const BookInsights = () => {
   const navigate = useNavigate();
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [isListenDialogOpen, setIsListenDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Only show chapters that have actual content (available for reading)
   const availableChapters = bookChapters.filter(chapter => 
     chapter.content && chapter.content.trim().length > 0
   );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(availableChapters.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentChapters = availableChapters.slice(startIndex, endIndex);
 
   // Map relevance based on chapter positions
   const getRelevanceForChapter = (chapterId: number) => {
@@ -71,6 +88,10 @@ const BookInsights = () => {
           icon: Brain
         };
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -160,13 +181,18 @@ const BookInsights = () => {
             <h3 className="text-xl font-semibold text-gray-900">
               Chapter Insights
             </h3>
-            <Badge variant="outline" className="text-sm">
-              {availableChapters.length} chapters available
-            </Badge>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-500">
+                Showing {startIndex + 1}-{Math.min(endIndex, availableChapters.length)} of {availableChapters.length} chapters
+              </span>
+              <Badge variant="outline" className="text-sm">
+                Page {currentPage} of {totalPages}
+              </Badge>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {availableChapters.map((chapter) => {
+            {currentChapters.map((chapter) => {
               const relevance = getRelevanceLabel(getRelevanceForChapter(chapter.id));
               const exercises = chapter.content
                 .split('\n\n')
@@ -283,6 +309,44 @@ const BookInsights = () => {
               );
             })}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {[...Array(totalPages)].map((_, i) => {
+                    const page = i + 1;
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => handlePageChange(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </div>
 
