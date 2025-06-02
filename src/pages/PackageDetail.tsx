@@ -135,7 +135,7 @@ const PackageDetail = () => {
             {packageData.documents.map((doc, index) => {
               const docUrl = doc.document[0];
               const isGoogleDoc = isGoogleDocument(docUrl);
-              const thumbnailUrl = isGoogleDoc ? getDocumentPreviewUrl(docUrl, 'w300') : null;
+              const thumbnailUrl = isGoogleDoc ? getDocumentPreviewUrl(docUrl, 'w800') : null;
               
               return (
                 <div key={index}>
