@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -17,6 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -357,37 +364,42 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                 {packages.map((pkg) => (
                   <Card 
                     key={pkg.id}
-                    className={`cursor-pointer transition-all duration-200 ${
+                    className={`transition-all duration-200 ${
                       selectedPackages.includes(pkg.id)
                         ? 'ring-2 ring-primary bg-primary/5 shadow-md'
                         : 'hover:bg-muted/50 hover:shadow-sm'
                     }`}
-                    onClick={() => handlePackageToggle(pkg.id)}
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-start gap-3">
                         <Checkbox 
                           checked={selectedPackages.includes(pkg.id)}
-                          onChange={() => handlePackageToggle(pkg.id)}
+                          onCheckedChange={() => handlePackageToggle(pkg.id)}
                           className="mt-1"
                         />
                         <div className="flex-1">
                           <CardTitle className="text-base leading-tight">{pkg.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground mt-2">
-                            {pkg.description}
-                          </p>
                         </div>
                       </div>
                     </CardHeader>
                     <CardContent className="pt-0">
-                      <div className="space-y-1">
-                        {pkg.items.map((item, index) => (
-                          <div key={index} className="text-sm text-muted-foreground flex items-start">
-                            <span className="mr-2">•</span>
-                            <span>{item}</span>
-                          </div>
-                        ))}
-                      </div>
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="details" className="border-none">
+                          <AccordionTrigger className="text-sm text-muted-foreground hover:no-underline py-2">
+                            {pkg.description}
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-0">
+                            <div className="space-y-1 pt-2">
+                              {pkg.items.map((item, index) => (
+                                <div key={index} className="text-sm text-muted-foreground flex items-start">
+                                  <span className="mr-2">•</span>
+                                  <span>{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
                     </CardContent>
                   </Card>
                 ))}
