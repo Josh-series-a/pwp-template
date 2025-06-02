@@ -38,6 +38,7 @@ import FutureBusinessModelDialog from '@/components/exercises/FutureBusinessMode
 import SWOTAnalysisDialog from '@/components/exercises/SWOTAnalysisDialog';
 import NetworkingOpportunitiesDialog from '@/components/exercises/NetworkingOpportunitiesDialog';
 import AssessNetworkingDialog from '@/components/exercises/AssessNetworkingDialog';
+import ValuesDialog from '@/components/exercises/ValuesDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -58,8 +59,9 @@ const Exercises = () => {
   const [isSWOTAnalysisDialogOpen, setIsSWOTAnalysisDialogOpen] = useState(false);
   const [isNetworkingOpportunitiesDialogOpen, setIsNetworkingOpportunitiesDialogOpen] = useState(false);
   const [isAssessNetworkingDialogOpen, setIsAssessNetworkingDialogOpen] = useState(false);
+  const [isValuesDialogOpen, setIsValuesDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new networking assessment exercise
+  // Enhanced exercises data with the new values exercise
   const exercises = [
     { 
       id: 1, 
@@ -232,16 +234,16 @@ const Exercises = () => {
     },
     { 
       id: 14, 
-      title: "Team Skills Assessment", 
-      progress: 30, 
-      status: "in-progress",
-      intro: "Evaluate your team's capabilities and identify gaps that need addressing.",
+      title: "Think About Your Values", 
+      progress: 0, 
+      status: "new",
+      intro: "Your business values shape culture, attract the right team, and guide decision-making — especially when things get tough. This exercise helps you clarify and articulate them.",
       category: "people",
-      sections: 4,
-      completedSections: 1,
-      tags: ["people"],
-      priority: "medium",
-      estimatedTime: "15 min"
+      sections: 5,
+      completedSections: 0,
+      tags: ["people", "culture"],
+      priority: "high",
+      estimatedTime: "20 min"
     },
     { 
       id: 15, 
@@ -381,6 +383,8 @@ const Exercises = () => {
       setIsNetworkingOpportunitiesDialogOpen(true);
     } else if (exerciseId === 13) {
       setIsAssessNetworkingDialogOpen(true);
+    } else if (exerciseId === 14) {
+      setIsValuesDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -722,6 +726,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your networking assessment has been saved successfully.",
+          });
+        }}
+      />
+
+      <ValuesDialog
+        isOpen={isValuesDialogOpen}
+        onClose={() => setIsValuesDialogOpen(false)}
+        onComplete={() => {
+          setIsValuesDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your business values framework has been saved successfully.",
           });
         }}
       />
