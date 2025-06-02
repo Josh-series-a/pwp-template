@@ -33,6 +33,7 @@ import EnvironmentalSocialDialog from '@/components/exercises/EnvironmentalSocia
 import KnowYourCustomerDialog from '@/components/exercises/KnowYourCustomerDialog';
 import OneOnOnePropositionDialog from '@/components/exercises/OneOnOnePropositionDialog';
 import ReachCustomersDialog from '@/components/exercises/ReachCustomersDialog';
+import GeographicReachDialog from '@/components/exercises/GeographicReachDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -48,8 +49,9 @@ const Exercises = () => {
   const [isKnowYourCustomerDialogOpen, setIsKnowYourCustomerDialogOpen] = useState(false);
   const [isOneOnOnePropositionDialogOpen, setIsOneOnOnePropositionDialogOpen] = useState(false);
   const [isReachCustomersDialogOpen, setIsReachCustomersDialogOpen] = useState(false);
+  const [isGeographicReachDialogOpen, setIsGeographicReachDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new reach customers exercise
+  // Enhanced exercises data with the new geographic reach exercise
   const exercises = [
     { 
       id: 1, 
@@ -157,6 +159,19 @@ const Exercises = () => {
     },
     { 
       id: 9, 
+      title: "Define Your Geographic Reach", 
+      progress: 0, 
+      status: "new",
+      intro: "This exercise sharpens your focus by identifying where you operate best. Knowing your true geographic market saves time, effort, and money — and helps you scale intentionally.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "expansion"],
+      priority: "high",
+      estimatedTime: "15 min"
+    },
+    { 
+      id: 10, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -169,7 +184,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 10, 
+      id: 11, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -182,7 +197,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 11, 
+      id: 12, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -195,7 +210,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 12, 
+      id: 13, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -208,7 +223,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 13, 
+      id: 14, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -296,6 +311,8 @@ const Exercises = () => {
       setIsOneOnOnePropositionDialogOpen(true);
     } else if (exerciseId === 8) {
       setIsReachCustomersDialogOpen(true);
+    } else if (exerciseId === 9) {
+      setIsGeographicReachDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -334,6 +351,7 @@ const Exercises = () => {
 
   return (
     <DashboardLayout title={selectedCompany ? `${selectedCompany} Exercises` : "Exercises"}>
+      {/* Hero Section */}
       <div className="space-y-8">
         {/* Hero Section */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 border border-purple-100/50">
@@ -576,6 +594,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your customer reach strategy has been saved successfully.",
+          });
+        }}
+      />
+      
+      <GeographicReachDialog
+        isOpen={isGeographicReachDialogOpen}
+        onClose={() => setIsGeographicReachDialogOpen(false)}
+        onComplete={() => {
+          setIsGeographicReachDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your geographic reach analysis has been saved successfully.",
           });
         }}
       />
