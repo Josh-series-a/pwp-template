@@ -278,7 +278,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] max-w-4xl h-[90vh] max-h-[90vh] overflow-y-auto p-0 flex flex-col">
+      <DialogContent className="fixed left-0 top-0 h-[100vh] w-[90vw] max-w-4xl overflow-y-auto p-0 flex flex-col translate-x-0 translate-y-0 rounded-none border-r shadow-2xl">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle>
             Create Package - Page {currentPage} of 3
