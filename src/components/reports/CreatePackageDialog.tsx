@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -269,20 +268,20 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
   const selectedPackageDetails = packages.filter(p => selectedPackages.includes(p.id));
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="left" className="max-w-4xl w-full overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>
             Create Package - Page {currentPage} of 3
             {preSelectedCompany && (
               <span className="text-sm font-normal text-muted-foreground ml-2">
                 for {preSelectedCompany}
               </span>
             )}
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 mt-6">
           {/* Page 1: Select Company */}
           {currentPage === 1 && (
             <div className="space-y-4">
@@ -432,8 +431,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
             )}
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
