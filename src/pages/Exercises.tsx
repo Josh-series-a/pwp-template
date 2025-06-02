@@ -32,6 +32,7 @@ import ExitStrategyDialog from '@/components/exercises/ExitStrategyDialog';
 import EnvironmentalSocialDialog from '@/components/exercises/EnvironmentalSocialDialog';
 import KnowYourCustomerDialog from '@/components/exercises/KnowYourCustomerDialog';
 import OneOnOnePropositionDialog from '@/components/exercises/OneOnOnePropositionDialog';
+import ReachCustomersDialog from '@/components/exercises/ReachCustomersDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -46,8 +47,9 @@ const Exercises = () => {
   const [isEnvironmentalSocialDialogOpen, setIsEnvironmentalSocialDialogOpen] = useState(false);
   const [isKnowYourCustomerDialogOpen, setIsKnowYourCustomerDialogOpen] = useState(false);
   const [isOneOnOnePropositionDialogOpen, setIsOneOnOnePropositionDialogOpen] = useState(false);
+  const [isReachCustomersDialogOpen, setIsReachCustomersDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new 1+1 proposition exercise
+  // Enhanced exercises data with the new reach customers exercise
   const exercises = [
     { 
       id: 1, 
@@ -142,6 +144,19 @@ const Exercises = () => {
     },
     { 
       id: 8, 
+      title: "How to Reach Your Customers", 
+      progress: 0, 
+      status: "new",
+      intro: "Knowing who your customer is isn't enough — you also need a strategy for how to reach them. This exercise helps you define your communication and sales channels.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "customers"],
+      priority: "high",
+      estimatedTime: "20 min"
+    },
+    { 
+      id: 9, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -154,7 +169,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 9, 
+      id: 10, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -167,7 +182,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 10, 
+      id: 11, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -180,7 +195,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 11, 
+      id: 12, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -193,7 +208,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 12, 
+      id: 13, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -279,6 +294,8 @@ const Exercises = () => {
       setIsKnowYourCustomerDialogOpen(true);
     } else if (exerciseId === 7) {
       setIsOneOnOnePropositionDialogOpen(true);
+    } else if (exerciseId === 8) {
+      setIsReachCustomersDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -547,6 +564,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your 1+1 proposition has been saved successfully.",
+          });
+        }}
+      />
+
+      <ReachCustomersDialog
+        isOpen={isReachCustomersDialogOpen}
+        onClose={() => setIsReachCustomersDialogOpen(false)}
+        onComplete={() => {
+          setIsReachCustomersDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your customer reach strategy has been saved successfully.",
           });
         }}
       />
