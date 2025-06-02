@@ -44,8 +44,8 @@ const DocumentPreview = () => {
   }
 
   return (
-    <DashboardLayout title={decodeURIComponent(docTitle)}>
-      <div className="h-[calc(100vh-120px)] flex flex-col">
+    <DashboardLayout title={decodeURIComponent(docTitle)} hideHeader={true}>
+      <div className="h-[calc(100vh-24px)] flex flex-col">
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <Button 
             variant="outline" 
