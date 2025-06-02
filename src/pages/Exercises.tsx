@@ -25,6 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
 import MissionStatementDialog from '@/components/exercises/MissionStatementDialog';
 import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningDialog';
@@ -48,6 +49,8 @@ const Exercises = () => {
   const { user } = useAuth();
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [activeTab, setActiveTab] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const exercisesPerPage = 9;
   const [isStressDialogOpen, setIsStressDialogOpen] = useState(false);
   const [isMissionDialogOpen, setIsMissionDialogOpen] = useState(false);
   const [isFutureBackDialogOpen, setIsFutureBackDialogOpen] = useState(false);
@@ -343,6 +346,17 @@ const Exercises = () => {
     return exercise.status === activeTab;
   });
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredExercises.length / exercisesPerPage);
+  const startIndex = (currentPage - 1) * exercisesPerPage;
+  const endIndex = startIndex + exercisesPerPage;
+  const currentExercises = filteredExercises.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "people":
@@ -542,7 +556,7 @@ const Exercises = () => {
 
         {/* Exercises Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredExercises.map((exercise) => (
+          {currentExercises.map((exercise) => (
             <Card key={exercise.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white">
               <CardHeader className="pb-4">
                 <div className="flex justify-between items-start mb-3">
@@ -605,6 +619,46 @@ const Exercises = () => {
               </CardFooter>
             </Card>
           ))}
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-8">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+
+        {/* Results info */}
+        <div className="text-center text-sm text-gray-500">
+          Showing {startIndex + 1}-{Math.min(endIndex, filteredExercises.length)} of {filteredExercises.length} exercises
         </div>
       </div>
 
