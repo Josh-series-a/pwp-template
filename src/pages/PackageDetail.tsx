@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -142,7 +141,7 @@ const PackageDetail = () => {
                 <div key={index}>
                   <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] overflow-hidden">
                     {thumbnailUrl && (
-                      <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+                      <div className="relative overflow-hidden bg-muted" style={{ aspectRatio: '1/1.414' }}>
                         <img 
                           src={thumbnailUrl}
                           alt={`${doc.name} preview`}
