@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Sheet,
@@ -278,7 +277,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="max-w-6xl w-full overflow-y-auto m-6 mb-16 mr-0 rounded-l-lg border-l flex flex-col">
+      <SheetContent side="left" className="max-w-7xl w-full overflow-y-auto m-8 mb-20 mr-0 rounded-l-lg border-l flex flex-col">
         <SheetHeader className="mt-4">
           <SheetTitle>
             Create Package - Page {currentPage} of 3
