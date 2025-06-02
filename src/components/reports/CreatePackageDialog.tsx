@@ -277,7 +277,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left" className="max-w-4xl w-full overflow-y-auto m-4 mr-0 rounded-l-lg border-l">
+      <SheetContent side="left" className="max-w-4xl w-full overflow-y-auto m-4 mr-0 rounded-l-lg border-l flex flex-col">
         <SheetHeader className="mt-4">
           <SheetTitle>
             Create Package - Page {currentPage} of 3
@@ -299,7 +299,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           </div>
         </div>
 
-        <div className="space-y-6 mt-6 mb-4">
+        <div className="flex-1 space-y-6 mt-6 mb-4">
           {/* Page 1: Select Company */}
           {currentPage === 1 && (
             <div className="space-y-4">
@@ -307,7 +307,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                 <img 
                   src="/lovable-uploads/select.png" 
                   alt="Select Company" 
-                  className="mx-auto w-24 h-24 object-contain"
+                  className="mx-auto w-32 h-32 object-contain"
                 />
                 <div>
                   <h3 className="text-lg font-semibold">Select Company</h3>
@@ -445,38 +445,38 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
               </div>
             </div>
           )}
+        </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between pt-6 border-t bg-background sticky bottom-0">
+        {/* Navigation - Moved to bottom */}
+        <div className="flex justify-between pt-4 border-t bg-background mt-auto">
+          <Button 
+            variant="outline" 
+            onClick={handleBack}
+            disabled={currentPage === 1}
+            className="min-w-[100px]"
+          >
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+
+          {currentPage < 3 ? (
             <Button 
-              variant="outline" 
-              onClick={handleBack}
-              disabled={currentPage === 1}
+              onClick={handleNext}
+              disabled={isNextDisabled()}
               className="min-w-[100px]"
             >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back
+              Next
+              <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
-
-            {currentPage < 3 ? (
-              <Button 
-                onClick={handleNext}
-                disabled={isNextDisabled()}
-                className="min-w-[100px]"
-              >
-                Next
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleSubmit}
-                disabled={isLoading || selectedPackages.length === 0}
-                className="min-w-[140px]"
-              >
-                {isLoading ? 'Submitting...' : 'Submit Package Request'}
-              </Button>
-            )}
-          </div>
+          ) : (
+            <Button 
+              onClick={handleSubmit}
+              disabled={isLoading || selectedPackages.length === 0}
+              className="min-w-[140px]"
+            >
+              {isLoading ? 'Submitting...' : 'Submit Package Request'}
+            </Button>
+          )}
         </div>
       </SheetContent>
     </Sheet>
