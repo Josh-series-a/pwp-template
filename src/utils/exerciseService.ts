@@ -48,7 +48,8 @@ class ExerciseService {
 
       return {
         ...data,
-        answers: data.answers as Record<string, any>
+        answers: data.answers as Record<string, any>,
+        status: data.status as 'new' | 'in-progress' | 'completed'
       };
     } catch (error) {
       console.error('Error in saveExerciseAnswer:', error);
@@ -89,7 +90,8 @@ class ExerciseService {
 
       return {
         ...data,
-        answers: data.answers as Record<string, any>
+        answers: data.answers as Record<string, any>,
+        status: data.status as 'new' | 'in-progress' | 'completed'
       };
     } catch (error) {
       console.error('Error in getExerciseAnswer:', error);
@@ -124,7 +126,8 @@ class ExerciseService {
 
       return (data || []).map(item => ({
         ...item,
-        answers: item.answers as Record<string, any>
+        answers: item.answers as Record<string, any>,
+        status: item.status as 'new' | 'in-progress' | 'completed'
       }));
     } catch (error) {
       console.error('Error in getUserExerciseAnswers:', error);
