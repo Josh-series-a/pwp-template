@@ -30,6 +30,7 @@ import MissionStatementDialog from '@/components/exercises/MissionStatementDialo
 import FutureBackPlanningDialog from '@/components/exercises/FutureBackPlanningDialog';
 import ExitStrategyDialog from '@/components/exercises/ExitStrategyDialog';
 import EnvironmentalSocialDialog from '@/components/exercises/EnvironmentalSocialDialog';
+import KnowYourCustomerDialog from '@/components/exercises/KnowYourCustomerDialog';
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -42,8 +43,9 @@ const Exercises = () => {
   const [isFutureBackDialogOpen, setIsFutureBackDialogOpen] = useState(false);
   const [isExitStrategyDialogOpen, setIsExitStrategyDialogOpen] = useState(false);
   const [isEnvironmentalSocialDialogOpen, setIsEnvironmentalSocialDialogOpen] = useState(false);
+  const [isKnowYourCustomerDialogOpen, setIsKnowYourCustomerDialogOpen] = useState(false);
 
-  // Enhanced exercises data with the new environmental and social impact exercise
+  // Enhanced exercises data with the new know your customer exercise
   const exercises = [
     { 
       id: 1, 
@@ -112,6 +114,19 @@ const Exercises = () => {
     },
     { 
       id: 6, 
+      title: "Know Your Customer", 
+      progress: 0, 
+      status: "new",
+      intro: "If you try to sell to everyone, you end up selling to no one. This exercise helps you identify who your ideal customer really is — so you can focus your time, energy, and money where it counts.",
+      category: "planning",
+      sections: 5,
+      completedSections: 0,
+      tags: ["planning", "customers"],
+      priority: "high",
+      estimatedTime: "20 min"
+    },
+    { 
+      id: 7, 
       title: "Team Skills Assessment", 
       progress: 30, 
       status: "in-progress",
@@ -124,7 +139,7 @@ const Exercises = () => {
       estimatedTime: "15 min"
     },
     { 
-      id: 7, 
+      id: 8, 
       title: "Future Growth Planning", 
       progress: 15, 
       status: "in-progress",
@@ -137,7 +152,7 @@ const Exercises = () => {
       estimatedTime: "30 min"
     },
     { 
-      id: 8, 
+      id: 9, 
       title: "Customer Persona Development", 
       progress: 0, 
       status: "suggested",
@@ -150,7 +165,7 @@ const Exercises = () => {
       estimatedTime: "25 min"
     },
     { 
-      id: 9, 
+      id: 10, 
       title: "Profit Margin Analysis", 
       progress: 0, 
       status: "suggested",
@@ -163,7 +178,7 @@ const Exercises = () => {
       estimatedTime: "20 min"
     },
     { 
-      id: 10, 
+      id: 11, 
       title: "Leadership Development Plan", 
       progress: 100, 
       status: "completed",
@@ -245,6 +260,8 @@ const Exercises = () => {
       setIsExitStrategyDialogOpen(true);
     } else if (exerciseId === 5) {
       setIsEnvironmentalSocialDialogOpen(true);
+    } else if (exerciseId === 6) {
+      setIsKnowYourCustomerDialogOpen(true);
     } else {
       // Handle other exercises
       console.log(`Starting exercise ${exerciseId}`);
@@ -489,6 +506,18 @@ const Exercises = () => {
           toast({
             title: "Exercise completed!",
             description: "Your environmental and social impact assessment has been saved successfully.",
+          });
+        }}
+      />
+
+      <KnowYourCustomerDialog
+        isOpen={isKnowYourCustomerDialogOpen}
+        onClose={() => setIsKnowYourCustomerDialogOpen(false)}
+        onComplete={() => {
+          setIsKnowYourCustomerDialogOpen(false);
+          toast({
+            title: "Exercise completed!",
+            description: "Your customer analysis has been saved successfully.",
           });
         }}
       />
