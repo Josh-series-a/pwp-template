@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
 import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
 import { 
   Tabs, 
   TabsList, 
@@ -40,31 +39,31 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl">Run Business Health Score</DialogTitle>
-          <DialogDescription>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="left" className="w-full sm:max-w-2xl overflow-y-auto">
+        <SheetHeader className="space-y-3 pb-6">
+          <SheetTitle className="text-2xl font-semibold">Run Business Health Score</SheetTitle>
+          <SheetDescription className="text-base">
             Complete the following steps to run a new business health analysis
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
 
-        <Tabs defaultValue="new-company" value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="new-company">New Company</TabsTrigger>
-            <TabsTrigger value="existing-company">Existing Company</TabsTrigger>
+        <Tabs defaultValue="new-company" value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="new-company" className="text-sm font-medium">New Company</TabsTrigger>
+            <TabsTrigger value="existing-company" className="text-sm font-medium">Existing Company</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="new-company" className="mt-4">
+          <TabsContent value="new-company" className="mt-0">
             <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
           </TabsContent>
           
-          <TabsContent value="existing-company" className="mt-4">
+          <TabsContent value="existing-company" className="mt-0">
             <ExistingCompanyForm onComplete={handleSubmitComplete} userData={user} />
           </TabsContent>
         </Tabs>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
