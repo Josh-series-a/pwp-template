@@ -455,7 +455,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
             </Button>
             <Button onClick={openModal}>
               <Plus className="mr-2 h-4 w-4" />
-              Run New Analysis
+              Run Business Health Score
             </Button>
           </div>
         </div>
@@ -578,7 +578,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
                 <LoadingRayMeter size="lg" progress={0} autoAnimate={false} />
                 <div className="text-center space-y-2">
                   <p className="text-lg font-medium">No reports found</p>
-                  <p className="text-muted-foreground">Click "Run New Analysis" to create your first report.</p>
+                  <p className="text-muted-foreground">Click "Run Business Health Score" to create your first report.</p>
                 </div>
               </div>
             )}
@@ -610,7 +610,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
         <Card>
           <CardHeader>
-            <CardTitle>Run a New Analysis</CardTitle>
+            <CardTitle>Run Business Health Score</CardTitle>
             <CardDescription>
               Generate a fresh business health check based on your current status
             </CardDescription>

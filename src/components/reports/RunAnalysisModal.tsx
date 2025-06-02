@@ -43,7 +43,7 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">Run New Analysis</DialogTitle>
+          <DialogTitle className="text-xl">Run Business Health Score</DialogTitle>
           <DialogDescription>
             Complete the following steps to run a new business health analysis
           </DialogDescription>
