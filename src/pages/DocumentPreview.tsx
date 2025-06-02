@@ -44,21 +44,16 @@ const DocumentPreview = () => {
   }
 
   return (
-    <DashboardLayout title="Document Preview">
+    <DashboardLayout title={decodeURIComponent(docTitle)}>
       <div className="h-[calc(100vh-120px)] flex flex-col">
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleBackToPackage}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Package
-            </Button>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {decodeURIComponent(docTitle)}
-            </h1>
-          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleBackToPackage}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Package
+          </Button>
           <Button
             variant="outline"
             size="sm"
