@@ -46,7 +46,10 @@ class ExerciseService {
         throw error;
       }
 
-      return data;
+      return {
+        ...data,
+        answers: data.answers as Record<string, any>
+      };
     } catch (error) {
       console.error('Error in saveExerciseAnswer:', error);
       return null;
@@ -80,7 +83,14 @@ class ExerciseService {
         throw error;
       }
 
-      return data;
+      if (!data) {
+        return null;
+      }
+
+      return {
+        ...data,
+        answers: data.answers as Record<string, any>
+      };
     } catch (error) {
       console.error('Error in getExerciseAnswer:', error);
       return null;
@@ -112,7 +122,10 @@ class ExerciseService {
         throw error;
       }
 
-      return data || [];
+      return (data || []).map(item => ({
+        ...item,
+        answers: item.answers as Record<string, any>
+      }));
     } catch (error) {
       console.error('Error in getUserExerciseAnswers:', error);
       return [];
