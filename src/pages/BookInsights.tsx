@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 import ListenDialog from '@/components/ListenDialog';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +24,7 @@ import {
 import bookChapters from '@/data/bookChapters';
 
 const BookInsights = () => {
+  const navigate = useNavigate();
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [isListenDialogOpen, setIsListenDialogOpen] = useState(false);
 
@@ -270,7 +270,10 @@ const BookInsights = () => {
                         <Headphones className="mr-2 h-4 w-4" />
                         Listen
                       </Button>
-                      <Button className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm">
+                      <Button 
+                        className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm"
+                        onClick={() => navigate('/dashboard/exercises')}
+                      >
                         Start Exercise
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
