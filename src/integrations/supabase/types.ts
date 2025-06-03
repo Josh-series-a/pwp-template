@@ -48,6 +48,36 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          feature_type: string
+          id: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          feature_type: string
+          id?: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          feature_type?: string
+          id?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       exercise_answers: {
         Row: {
           answers: Json
@@ -213,6 +243,30 @@ export type Database = {
           stress_leadership_score?: number | null
           tabs_data?: Json | null
           title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_credits: {
+        Row: {
+          created_at: string
+          credits: number
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: number
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number
+          id?: string
           updated_at?: string
           user_id?: string
         }

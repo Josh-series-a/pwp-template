@@ -6,12 +6,15 @@ import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCredits } from '@/hooks/useCredits';
 import { Badge } from '@/components/ui/badge';
+import CreditsDisplay from '@/components/CreditsDisplay';
 import { 
   CheckCircle2,
   Star,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Coins
 } from 'lucide-react';
 import StressLeadershipPage from './business-health-pages/StressLeadershipPage';
 import PlanPage from './business-health-pages/PlanPage';
@@ -77,6 +80,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const { toast } = useToast();
   const { user } = useAuth();
+  const { credits, checkCredits, deductCredits, getCreditCost } = useCredits();
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
     resolver: zodResolver(businessHealthScoreSchema),
@@ -108,6 +112,9 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       netZeroCommitment: undefined
     }
   });
+
+  const requiredCredits = getCreditCost('BUSINESS_HEALTH_SCORE');
+  const hasEnoughCredits = checkCredits(requiredCredits);
 
   const autoFillForm = () => {
     const sampleData = {
@@ -181,17 +188,47 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   };
 
   const onSubmit = async (data: z.infer<typeof businessHealthScoreSchema>) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "You must be logged in to submit this assessment.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!hasEnoughCredits) {
+      toast({
+        title: "Insufficient credits",
+        description: `You need ${requiredCredits} credits to run a Business Health Score analysis. You currently have ${credits?.credits || 0} credits.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     console.log('Business Health Score data:', data);
     
     try {
+      // Deduct credits first
+      const creditDeducted = await deductCredits(
+        requiredCredits, 
+        'Business Health Score Analysis', 
+        'BUSINESS_HEALTH_SCORE'
+      );
+
+      if (!creditDeducted) {
+        setIsSubmitting(false);
+        return;
+      }
+
       // Here you would send the data to your webhook or backend
       // For now, we'll just simulate success
       
       onComplete();
       toast({
         title: "Business Health Score submitted successfully",
-        description: "Your business health assessment has been completed.",
+        description: `Your business health assessment has been completed. ${requiredCredits} credits have been deducted.`,
       });
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -225,6 +262,11 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <CreditsDisplay />
+              <Badge variant="secondary" className="gap-2">
+                <Coins className="h-3 w-3" />
+                Cost: {requiredCredits} credits
+              </Badge>
               <Badge variant="secondary" className="gap-2">
                 <Star className="h-3 w-3" />
                 AI-Powered Analysis
@@ -254,6 +296,18 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
               />
             </div>
           </div>
+
+          {/* Credit Warning */}
+          {!hasEnoughCredits && (
+            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <div className="flex items-center gap-2 text-destructive">
+                <Coins className="h-4 w-4" />
+                <span className="text-sm font-medium">
+                  Insufficient credits: You need {requiredCredits} credits but only have {credits?.credits || 0}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -305,7 +359,11 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button type="submit" disabled={isSubmitting} className="gap-2 px-8">
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting || !hasEnoughCredits} 
+                    className="gap-2 px-8"
+                  >
                     {isSubmitting ? (
                       <>
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -314,7 +372,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
                     ) : (
                       <>
                         <CheckCircle2 className="h-4 w-4" />
-                        Submit Assessment
+                        Submit Assessment ({requiredCredits} credits)
                       </>
                     )}
                   </Button>

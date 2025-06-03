@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -24,9 +23,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Coins } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCredits } from '@/hooks/useCredits';
+import CreditsDisplay from '@/components/CreditsDisplay';
 import { toast } from 'sonner';
 
 interface CreatePackageDialogProps {
@@ -129,6 +130,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
+  const { credits, checkCredits, deductCredits, getCreditCost } = useCredits();
 
   useEffect(() => {
     if (isOpen) {
@@ -197,6 +199,14 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
     );
   };
 
+  const getTotalCost = () => {
+    return selectedPackages.reduce((total, packageId) => {
+      return total + getCreditCost(packageId as keyof typeof getCreditCost);
+    }, 0);
+  };
+
+  const hasEnoughCredits = checkCredits(getTotalCost());
+
   const handleNext = () => {
     if (currentPage < 3) {
       setCurrentPage(currentPage + 1);
@@ -215,8 +225,27 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
       return;
     }
 
+    const totalCost = getTotalCost();
+    
+    if (!hasEnoughCredits) {
+      toast.error(`Insufficient credits. You need ${totalCost} credits but only have ${credits?.credits || 0}.`);
+      return;
+    }
+
     setIsLoading(true);
     try {
+      // Deduct credits first
+      const creditDeducted = await deductCredits(
+        totalCost,
+        `Package creation: ${selectedPackages.length} package(s)`,
+        'PACKAGE_CREATION'
+      );
+
+      if (!creditDeducted) {
+        setIsLoading(false);
+        return;
+      }
+
       const selectedCompanyData = companies.find(c => c.id === selectedCompany);
 
       // Prepare query parameters
@@ -227,6 +256,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
       params.append('company_name', selectedCompanyData?.company_name || '');
       params.append('company_id', selectedCompany);
       params.append('package_count', selectedPackages.length.toString());
+      params.append('total_credits_deducted', totalCost.toString());
       params.append('timestamp', new Date().toISOString());
       params.append('submitted_from', 'Create Package Dialog');
       
@@ -258,7 +288,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
       console.log('Webhook data sent successfully');
       
-      toast.success(`Package request submitted successfully for ${selectedCompanyData?.company_name}!`);
+      toast.success(`Package request submitted successfully! ${totalCost} credits deducted.`);
       
       // Reset form
       setCurrentPage(1);
@@ -286,14 +316,17 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="fixed left-4 top-4 bottom-4 h-[calc(100vh-2rem)] w-[65vw] max-w-2xl overflow-y-auto p-0 flex flex-col translate-x-0 translate-y-0 rounded-lg border shadow-2xl">
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle>
-            Create Package - Page {currentPage} of 3
-            {preSelectedCompany && (
-              <span className="text-sm font-normal text-muted-foreground ml-2">
-                for {preSelectedCompany}
-              </span>
-            )}
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>
+              Create Package - Page {currentPage} of 3
+              {preSelectedCompany && (
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  for {preSelectedCompany}
+                </span>
+              )}
+            </DialogTitle>
+            <CreditsDisplay />
+          </div>
         </DialogHeader>
 
         {/* Progress Bar */}
@@ -359,50 +392,72 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
               <div className="text-center space-y-2">
                 <h3 className="text-lg font-semibold">Select Package(s)</h3>
                 <p className="text-sm text-muted-foreground">Multiple selections allowed</p>
+                {selectedPackages.length > 0 && (
+                  <div className="flex items-center justify-center gap-2">
+                    <Badge variant="outline" className="gap-1">
+                      <Coins className="h-3 w-3" />
+                      Total cost: {getTotalCost()} credits
+                    </Badge>
+                    {!hasEnoughCredits && (
+                      <Badge variant="destructive" className="gap-1">
+                        Insufficient credits ({credits?.credits || 0} available)
+                      </Badge>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="grid gap-4">
-                {packages.map((pkg) => (
-                  <Card 
-                    key={pkg.id}
-                    className={`transition-all duration-200 ${
-                      selectedPackages.includes(pkg.id)
-                        ? 'ring-2 ring-primary bg-primary/5 shadow-md'
-                        : 'hover:bg-muted/50 hover:shadow-sm'
-                    }`}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start gap-3">
-                        <Checkbox 
-                          checked={selectedPackages.includes(pkg.id)}
-                          onCheckedChange={() => handlePackageToggle(pkg.id)}
-                          className="mt-1"
-                        />
-                        <div className="flex-1">
-                          <CardTitle className="text-base leading-tight">{pkg.title}</CardTitle>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <Accordion type="single" collapsible className="w-full">
-                        <AccordionItem value="details" className="border-none">
-                          <AccordionTrigger className="text-sm text-muted-foreground hover:no-underline py-2">
-                            {pkg.description}
-                          </AccordionTrigger>
-                          <AccordionContent className="pb-0">
-                            <div className="space-y-1 pt-2">
-                              {pkg.items.map((item, index) => (
-                                <div key={index} className="text-sm text-muted-foreground flex items-start">
-                                  <span className="mr-2">•</span>
-                                  <span>{item}</span>
-                                </div>
-                              ))}
+                {packages.map((pkg) => {
+                  const packageCost = getCreditCost(pkg.id as keyof typeof getCreditCost);
+                  return (
+                    <Card 
+                      key={pkg.id}
+                      className={`transition-all duration-200 ${
+                        selectedPackages.includes(pkg.id)
+                          ? 'ring-2 ring-primary bg-primary/5 shadow-md'
+                          : 'hover:bg-muted/50 hover:shadow-sm'
+                      }`}
+                    >
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start gap-3">
+                          <Checkbox 
+                            checked={selectedPackages.includes(pkg.id)}
+                            onCheckedChange={() => handlePackageToggle(pkg.id)}
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <CardTitle className="text-base leading-tight">{pkg.title}</CardTitle>
+                              <Badge variant="outline" className="gap-1 ml-2">
+                                <Coins className="h-3 w-3" />
+                                {packageCost}
+                              </Badge>
                             </div>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                    </CardContent>
-                  </Card>
-                ))}
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <Accordion type="single" collapsible className="w-full">
+                          <AccordionItem value="details" className="border-none">
+                            <AccordionTrigger className="text-sm text-muted-foreground hover:no-underline py-2">
+                              {pkg.description}
+                            </AccordionTrigger>
+                            <AccordionContent className="pb-0">
+                              <div className="space-y-1 pt-2">
+                                {pkg.items.map((item, index) => (
+                                  <div key={index} className="text-sm text-muted-foreground flex items-start">
+                                    <span className="mr-2">•</span>
+                                    <span>{item}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -418,6 +473,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
               </div>
               
               <div className="space-y-6">
+                {/* Selected Company section */}
                 <div className="bg-muted/30 rounded-lg p-4">
                   <h4 className="font-medium mb-3 flex items-center gap-2">
                     <Check className="h-4 w-4 text-primary" />
@@ -433,25 +489,51 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                     <Check className="h-4 w-4 text-primary" />
                     Selected Packages ({selectedPackages.length})
                   </h4>
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="font-medium">Total Cost:</span>
+                    <Badge variant="outline" className="gap-1">
+                      <Coins className="h-3 w-3" />
+                      {getTotalCost()} credits
+                    </Badge>
+                  </div>
+                  {!hasEnoughCredits && (
+                    <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                      <div className="flex items-center gap-2 text-destructive text-sm">
+                        <Coins className="h-4 w-4" />
+                        <span>
+                          Insufficient credits: You need {getTotalCost()} but only have {credits?.credits || 0}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   <div className="space-y-3">
-                    {selectedPackageDetails.map((pkg) => (
-                      <Card key={pkg.id} className="bg-background">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm">{pkg.title}</CardTitle>
-                          <p className="text-xs text-muted-foreground">{pkg.description}</p>
-                        </CardHeader>
-                        <CardContent className="pt-0">
-                          <div className="text-xs text-muted-foreground space-y-1">
-                            {pkg.items.map((item, index) => (
-                              <div key={index} className="flex items-start">
-                                <span className="mr-2">•</span>
-                                <span>{item}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                    {selectedPackageDetails.map((pkg) => {
+                      const packageCost = getCreditCost(pkg.id as keyof typeof getCreditCost);
+                      return (
+                        <Card key={pkg.id} className="bg-background">
+                          <CardHeader className="pb-2">
+                            <div className="flex items-center justify-between">
+                              <CardTitle className="text-sm">{pkg.title}</CardTitle>
+                              <Badge variant="outline" className="gap-1">
+                                <Coins className="h-3 w-3" />
+                                {packageCost}
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">{pkg.description}</p>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <div className="text-xs text-muted-foreground space-y-1">
+                              {pkg.items.map((item, index) => (
+                                <div key={index} className="flex items-start">
+                                  <span className="mr-2">•</span>
+                                  <span>{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -483,10 +565,10 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
           ) : (
             <Button 
               onClick={handleSubmit}
-              disabled={isLoading || selectedPackages.length === 0}
+              disabled={isLoading || selectedPackages.length === 0 || !hasEnoughCredits}
               className="min-w-[140px]"
             >
-              {isLoading ? 'Submitting...' : 'Submit Package Request'}
+              {isLoading ? 'Submitting...' : `Submit Request (${getTotalCost()} credits)`}
             </Button>
           )}
         </div>
