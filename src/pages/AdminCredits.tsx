@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,57 +39,76 @@ const AdminCredits = () => {
   }, []);
 
   const fetchAllUsersWithCredits = async () => {
-    setIsLoading(true);
     try {
-      // Fetch all users from the admin users endpoint
-      const { data: authUsers, error: authError } = await supabase.functions.invoke('admin-users');
+      setIsLoading(true);
       
-      if (authError) {
-        console.error('Error fetching auth users:', authError);
-        toast.error('Failed to load users');
+      // Get the current session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error('Not authenticated');
         return;
       }
 
-      console.log('Auth users:', authUsers);
-
-      // Get credits for all users
-      const { data: credits, error: creditsError } = await supabase
-        .from('user_credits')
-        .select('*');
-
-      if (creditsError) {
-        console.error('Error fetching credits:', creditsError);
-        // Don't fail completely, just continue without credits data
-      }
-
-      // Get profiles for additional user info
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, name, email');
-
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-        // Don't fail completely, just continue without profile data
-      }
-
-      // Combine the data - show ALL users from auth
-      const usersWithCredits = (authUsers?.users || []).map((authUser: any) => {
-        const userCredits = credits?.find(c => c.user_id === authUser.id);
-        const userProfile = profiles?.find(p => p.id === authUser.id);
-        
-        return {
-          id: authUser.id,
-          name: userProfile?.name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || 'Unknown',
-          email: authUser.email || 'No email',
-          credits: userCredits?.credits || 0,
-          created_at: userCredits?.created_at || authUser.created_at,
-          updated_at: userCredits?.updated_at || authUser.updated_at || authUser.created_at,
-          email_verified: authUser.email_confirmed_at ? true : false,
-          role: authUser.user_metadata?.role || 'User'
-        };
+      // Call the edge function to get users using GET method - same as AdminUsers
+      const response = await fetch(`https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/admin-users`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY',
+          'Content-Type': 'application/json',
+        },
       });
 
-      setUsers(usersWithCredits);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data?.users) {
+        // Get credits for all users
+        const { data: credits, error: creditsError } = await supabase
+          .from('user_credits')
+          .select('*');
+
+        if (creditsError) {
+          console.error('Error fetching credits:', creditsError);
+          // Don't fail completely, just continue without credits data
+        }
+
+        // Get profiles for additional user info
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, name, email');
+
+        if (profilesError) {
+          console.error('Error fetching profiles:', profilesError);
+          // Don't fail completely, just continue without profile data
+        }
+
+        // Combine the data - show ALL users from auth
+        const usersWithCredits = data.users.map((authUser: any) => {
+          const userCredits = credits?.find(c => c.user_id === authUser.id);
+          const userProfile = profiles?.find(p => p.id === authUser.id);
+          
+          return {
+            id: authUser.id,
+            name: userProfile?.name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || 'Unknown',
+            email: authUser.email || 'No email',
+            credits: userCredits?.credits || 0,
+            created_at: userCredits?.created_at || authUser.created_at,
+            updated_at: userCredits?.updated_at || authUser.updated_at || authUser.created_at,
+            email_verified: authUser.email_confirmed_at ? true : false,
+            role: authUser.user_metadata?.role || 'User'
+          };
+        });
+
+        setUsers(usersWithCredits);
+      } else {
+        console.error('No users data returned');
+        toast.error('No users data returned');
+      }
     } catch (error) {
       console.error('Error fetching users with credits:', error);
       toast.error('Failed to load users and credits');
