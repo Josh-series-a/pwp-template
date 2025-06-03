@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -5,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface AuthContextProps {
   user: User | null;
   isLoading: boolean;
+  isAuthenticated: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -67,7 +69,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const value: AuthContextProps = { user, isLoading, signOut };
+  const value: AuthContextProps = { 
+    user, 
+    isLoading, 
+    isAuthenticated: !!user,
+    signOut 
+  };
 
   return (
     <AuthContext.Provider value={value}>

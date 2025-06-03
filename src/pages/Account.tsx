@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Check } from 'lucide-react';
+import SubscriptionPlans from '@/components/SubscriptionPlans';
 
 const Account = () => {
   const { user } = useAuth();
