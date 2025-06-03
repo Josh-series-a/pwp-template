@@ -175,7 +175,7 @@ const AdminAnalytics = () => {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Analytics">
+      <AdminLayout title="Dashboard Analytics">
         <div className="flex justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
@@ -184,7 +184,7 @@ const AdminAnalytics = () => {
   }
 
   return (
-    <AdminLayout title="Analytics">
+    <AdminLayout title="Dashboard Analytics">
       <div className="space-y-6">
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
