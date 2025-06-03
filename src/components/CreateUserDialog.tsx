@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
-import { authService } from '@/utils/authService';
+import { supabase } from '@/integrations/supabase/client';
 
 type CreateUserDialogProps = {
   onUserCreated: (user: any) => void;
@@ -34,18 +33,27 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
         role: formData.role 
       });
 
-      // Create user in Supabase Auth
-      const result = await authService.signUp(formData.email, formData.password, formData.name);
+      // Create user in Supabase Auth with role in metadata
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            name: formData.name,
+            role: formData.role
+          }
+        }
+      });
       
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create user');
+      if (error) {
+        throw new Error(error.message || 'Failed to create user');
       }
 
-      console.log('User created successfully:', result.data);
+      console.log('User created successfully:', data);
 
       // Create the user object for the UI
       const newUser = {
-        id: result.data?.user?.id || Math.random().toString(36).substr(2, 9),
+        id: data?.user?.id || Math.random().toString(36).substr(2, 9),
         name: formData.name,
         email: formData.email,
         status: 'Active',
