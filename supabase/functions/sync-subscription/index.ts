@@ -103,30 +103,42 @@ serve(async (req) => {
             .select('id')
             .eq('user_id', user.id)
             .eq('description', `Initial subscription credits - Session ${session.id}`)
-            .single();
+            .maybeSingle();
 
           if (!existingTransaction && planCredits > 0) {
-            // Add credits for this subscription
+            // Get current credits
             const { data: currentCredits } = await supabaseService
               .from('user_credits')
               .select('credits')
               .eq('user_id', user.id)
-              .single();
+              .maybeSingle();
 
             const currentAmount = currentCredits?.credits || 0;
             const newAmount = currentAmount + planCredits;
 
-            // Update credits
-            await supabaseService
+            logStep("Current credits", { currentAmount, adding: planCredits, newTotal: newAmount });
+
+            // Update credits using upsert to handle both insert and update
+            const { data: upsertResult, error: upsertError } = await supabaseService
               .from('user_credits')
               .upsert({
                 user_id: user.id,
                 credits: newAmount,
                 updated_at: new Date().toISOString()
-              });
+              }, {
+                onConflict: 'user_id'
+              })
+              .select();
+
+            if (upsertError) {
+              logStep("Error upserting credits", { error: upsertError });
+              throw new Error(`Failed to update credits: ${upsertError.message}`);
+            }
+
+            logStep("Credits upserted successfully", { result: upsertResult });
 
             // Record transaction
-            await supabaseService
+            const { error: transactionError } = await supabaseService
               .from('credit_transactions')
               .insert({
                 user_id: user.id,
@@ -136,8 +148,15 @@ serve(async (req) => {
                 feature_type: 'subscription_purchase'
               });
 
+            if (transactionError) {
+              logStep("Error recording transaction", { error: transactionError });
+              // Don't fail the whole operation for transaction logging issues
+            }
+
             subscriptionCreditsAdded += planCredits;
             logStep("Subscription credits added", { planCredits, newTotal: newAmount });
+          } else {
+            logStep("Credits already processed for this session", { sessionId: session.id });
           }
         }
       } else if (session.mode === "payment") {
@@ -159,7 +178,7 @@ serve(async (req) => {
           .select('id')
           .eq('user_id', user.id)
           .eq('description', `Credits purchased - Session ${session.id}`)
-          .single();
+          .maybeSingle();
 
         if (!existingTransaction && purchaseCredits > 0) {
           // Add credits for this purchase
@@ -167,22 +186,29 @@ serve(async (req) => {
             .from('user_credits')
             .select('credits')
             .eq('user_id', user.id)
-            .single();
+            .maybeSingle();
 
           const currentAmount = currentCredits?.credits || 0;
           const newAmount = currentAmount + purchaseCredits;
 
           // Update credits
-          await supabaseService
+          const { error: upsertError } = await supabaseService
             .from('user_credits')
             .upsert({
               user_id: user.id,
               credits: newAmount,
               updated_at: new Date().toISOString()
+            }, {
+              onConflict: 'user_id'
             });
 
+          if (upsertError) {
+            logStep("Error upserting purchase credits", { error: upsertError });
+            throw new Error(`Failed to update credits: ${upsertError.message}`);
+          }
+
           // Record transaction
-          await supabaseService
+          const { error: transactionError } = await supabaseService
             .from('credit_transactions')
             .insert({
               user_id: user.id,
@@ -191,6 +217,10 @@ serve(async (req) => {
               description: `Credits purchased - Session ${session.id}`,
               feature_type: 'credit_purchase'
             });
+
+          if (transactionError) {
+            logStep("Error recording purchase transaction", { error: transactionError });
+          }
 
           creditsAdded += purchaseCredits;
           logStep("Purchase credits added", { purchaseCredits, newTotal: newAmount });
@@ -205,11 +235,21 @@ serve(async (req) => {
       oneTimeCreditsAdded: creditsAdded 
     });
 
+    // Verify final credits state
+    const { data: finalCredits } = await supabaseService
+      .from('user_credits')
+      .select('credits')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    logStep("Final credits state", { credits: finalCredits?.credits || 0 });
+
     return new Response(JSON.stringify({ 
       success: true,
       creditsAdded: totalCreditsAdded,
       subscriptionCreditsAdded,
       oneTimeCreditsAdded: creditsAdded,
+      currentCredits: finalCredits?.credits || 0,
       message: totalCreditsAdded > 0 ? `${totalCreditsAdded} credits added to your account` : "No new credits to add"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

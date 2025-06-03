@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,12 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Coins, Star, Zap, Rocket, RefreshCw } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCredits } from '@/hooks/useCredits';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const SubscriptionPlans = () => {
   const { subscriptionInfo, createCheckoutSession, openCustomerPortal } = useSubscription();
   const { user } = useAuth();
+  const { refreshCredits } = useCredits();
   const [isSyncing, setIsSyncing] = useState(false);
 
   const syncSubscription = async () => {
@@ -21,7 +24,10 @@ const SubscriptionPlans = () => {
 
     setIsSyncing(true);
     try {
+      console.log('Starting sync subscription...');
       const { data, error } = await supabase.functions.invoke('sync-subscription');
+
+      console.log('Sync response:', { data, error });
 
       if (error) {
         console.error('Error syncing subscription:', error);
@@ -29,12 +35,19 @@ const SubscriptionPlans = () => {
         return;
       }
 
-      if (data.success) {
+      if (data?.success) {
         toast.success(data.message || 'Subscription synced successfully');
-        // Refresh the page to update credits display
-        window.location.reload();
+        
+        // Refresh credits display
+        console.log('Refreshing credits...');
+        await refreshCredits();
+        
+        // Small delay to ensure state updates
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
-        toast.error(data.error || 'Failed to sync subscription');
+        toast.error(data?.error || 'Failed to sync subscription');
       }
     } catch (error) {
       console.error('Error syncing subscription:', error);
