@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,10 +15,10 @@ const SubscriptionPlans = () => {
       subtitle: 'Plant the Seed',
       price: '$9.99',
       period: '/month',
-      credits: 5,
+      credits: 18,
       description: 'For early-stage founders laying strong roots for a sustainable business.',
       features: [
-        '5 credits per month',
+        '18 credits per month',
         'Access to selected exercises (approximately 1 pack every 2 months)',
         'Digital access to Prosper With Purpose',
         '1 Discovery Meeting (15 minutes, after 3 months)',
@@ -38,10 +37,10 @@ const SubscriptionPlans = () => {
       subtitle: 'Shape the Strategy',
       price: '$19.99',
       period: '/month',
-      credits: 10,
+      credits: 25,
       description: 'For purpose-driven businesses building momentum and clarity.',
       features: [
-        '10 credits per month',
+        '25 credits per month',
         'Full access to exercises and workbooks (approximately 1 pack per month)',
         'Digital access to Prosper With Purpose',
         'Free physical copy of Prosper With Purpose',
@@ -63,10 +62,10 @@ const SubscriptionPlans = () => {
       subtitle: 'Lead with Purpose',
       price: '$49.99',
       period: '/month',
-      credits: 35,
+      credits: 55,
       description: 'For founders and teams ready to transform their business and legacy.',
       features: [
-        '35 credits per month',
+        '55 credits per month',
         'Full access to all 5 packs immediately',
         'Digital and signed physical copy of Prosper With Purpose',
         '4 Discovery Meetings (45 minutes each)',
