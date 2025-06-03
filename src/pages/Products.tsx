@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import TransitionWrapper from '@/components/TransitionWrapper';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import TalkToAuthorDialog from '@/components/TalkToAuthorDialog';
+import SubscriptionPlans from '@/components/SubscriptionPlans';
 
 const Products = () => {
   const [isTalkToAuthorOpen, setIsTalkToAuthorOpen] = useState(false);
@@ -33,6 +34,13 @@ const Products = () => {
               Whether you're just starting your journey or already running a business, Prosper With Purpose offers the tools to help you reduce stress, gain clarity, and take control—with purpose.
             </p>
           </TransitionWrapper>
+        </div>
+      </section>
+
+      {/* Subscription Plans Section */}
+      <section className="py-16 px-6 md:px-8 bg-slate-900">
+        <div className="max-w-6xl mx-auto">
+          <SubscriptionPlans />
         </div>
       </section>
       
