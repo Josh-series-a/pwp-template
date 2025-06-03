@@ -63,7 +63,7 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
     return (
       <Badge variant="destructive" className={className}>
         <Coins className="h-3 w-3 mr-1" />
-        No credits
+        0 credits
       </Badge>
     );
   }
@@ -83,12 +83,15 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Coins className="h-5 w-5 text-yellow-600" />
-            Credit Balance
+            Available Credits
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold">{credits.credits}</span>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary">{credits.credits}</div>
+              <div className="text-sm text-muted-foreground">Credits Available</div>
+            </div>
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -130,7 +133,7 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
             </Dialog>
           </div>
           <div className="text-sm text-muted-foreground">
-            Updated {formatDate(credits.updated_at)}
+            Last updated {formatDate(credits.updated_at)}
           </div>
         </CardContent>
       </Card>
@@ -138,9 +141,10 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
   }
 
   return (
-    <Badge variant="outline" className={`${className} gap-1`}>
+    <Badge variant="outline" className={`${className} gap-1 px-3 py-1`}>
       <Coins className="h-3 w-3 text-yellow-600" />
-      {credits.credits} credits
+      <span className="font-semibold">{credits.credits}</span>
+      <span className="text-muted-foreground">credits</span>
     </Badge>
   );
 };
