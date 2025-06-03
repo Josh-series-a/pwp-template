@@ -34,36 +34,40 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
         role: formData.role 
       });
 
-      // Create user in Supabase Auth with role in metadata
-      const { data, error } = await supabase.auth.admin.createUser({
-        email: formData.email,
-        password: formData.password,
-        user_metadata: {
+      // Get the current session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error('Not authenticated');
+        return;
+      }
+
+      // Call the edge function to create user
+      const { data, error } = await supabase.functions.invoke('admin-users', {
+        body: {
+          action: 'create',
+          email: formData.email,
+          password: formData.password,
           name: formData.name,
           role: formData.role
         },
-        email_confirm: true // Auto-confirm email to avoid confirmation flow
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
       
       if (error) {
-        console.error('Supabase auth error:', error);
+        console.error('Edge function error:', error);
         throw new Error(error.message || 'Failed to create user');
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
       }
 
       console.log('User created successfully:', data);
 
-      // Create the user object for the UI
-      const newUser = {
-        id: data?.user?.id || Math.random().toString(36).substr(2, 9),
-        name: formData.name,
-        email: formData.email,
-        status: 'Active',
-        role: formData.role,
-        joinDate: new Date().toISOString().split('T')[0],
-        lastLogin: 'Never'
-      };
-
-      onUserCreated(newUser);
+      onUserCreated(data.user);
       toast.success(`${formData.role} user ${formData.name} created successfully!`);
       
       // Reset form and close dialog

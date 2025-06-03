@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import CreateUserDialog from '@/components/CreateUserDialog';
@@ -20,15 +19,34 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.admin.listUsers();
       
+      // Get the current session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error('Not authenticated');
+        return;
+      }
+
+      // Call the edge function to get users
+      const { data, error } = await supabase.functions.invoke('admin-users', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
       if (error) {
         console.error('Error fetching users:', error);
         toast.error('Failed to fetch users');
         return;
       }
 
-      setUsers(data.users || []);
+      if (data?.users) {
+        setUsers(data.users);
+      } else {
+        console.error('No users data returned');
+        toast.error('No users data returned');
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Failed to fetch users');

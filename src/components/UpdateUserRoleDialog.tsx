@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -21,29 +22,49 @@ const UpdateUserRoleDialog = () => {
     try {
       console.log('Updating user role:', { email, newRole });
 
-      // Get the user by email
-      const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
+      // Get the current session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (listError) {
-        throw new Error(listError.message);
+      if (!session) {
+        toast.error('Not authenticated');
+        return;
       }
 
-      const user = usersData.users.find((u: any) => u.email === email);
+      // First, get all users to find the one with the matching email
+      const { data: usersData, error: fetchError } = await supabase.functions.invoke('admin-users', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (fetchError) {
+        throw new Error(fetchError.message);
+      }
+
+      const user = usersData.users?.find((u: any) => u.email === email);
       
       if (!user) {
         throw new Error('User not found');
       }
 
-      // Update the user's metadata
-      const { data, error } = await supabase.auth.admin.updateUserById(user.id, {
-        user_metadata: {
-          ...user.user_metadata,
+      // Update the user's role
+      const { data, error } = await supabase.functions.invoke('admin-users', {
+        body: {
+          action: 'updateRole',
+          userId: user.id,
           role: newRole
-        }
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
       if (error) {
         throw new Error(error.message);
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
       }
 
       console.log('User role updated successfully:', data);
