@@ -11,18 +11,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-interface User {
-  id: string;
-  email: string;
-  user_metadata: {
-    name?: string;
-    role?: string;
-  };
-  created_at: string;
-  last_sign_in_at?: string;
-  email_confirmed_at?: string;
-}
+import type { User } from '@supabase/supabase-js';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -186,7 +175,7 @@ const AdminUsers = () => {
                     <TableCell className="font-medium">
                       {user.user_metadata?.name || 'No name set'}
                     </TableCell>
-                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.email || 'No email'}</TableCell>
                     <TableCell>{getStatusBadge(user)}</TableCell>
                     <TableCell>{getRoleBadge(user.user_metadata?.role)}</TableCell>
                     <TableCell>{formatDate(user.created_at)}</TableCell>
