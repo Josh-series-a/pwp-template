@@ -27,6 +27,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useCredits } from '@/hooks/useCredits';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
@@ -51,6 +52,7 @@ const Exercises = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { subscriptionInfo, isLoading: subscriptionLoading } = useSubscription();
+  const { credits, isLoading: creditsLoading, checkCredits } = useCredits();
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -74,6 +76,7 @@ const Exercises = () => {
   const [isRunAnalysisModalOpen, setIsRunAnalysisModalOpen] = useState(false);
 
   const isSubscribed = subscriptionInfo.subscribed;
+  const hasEnoughCreditsForNewCompany = checkCredits(10);
 
   // Enhanced exercises data with the new recruit and retain exercise
   const exercises = [
@@ -498,6 +501,18 @@ const Exercises = () => {
     });
   };
 
+  const handleNewCompanyClick = () => {
+    if (!hasEnoughCreditsForNewCompany) {
+      toast({
+        title: "Insufficient Credits",
+        description: `You need 10 credits to run a Business Health Score analysis. You currently have ${credits?.credits || 0} credits.`,
+        variant: "destructive"
+      });
+      return;
+    }
+    setIsRunAnalysisModalOpen(true);
+  };
+
   return (
     <DashboardLayout title={selectedCompany ? `${selectedCompany} Exercises` : "Exercises"}>
       {/* Hero Section */}
@@ -569,9 +584,17 @@ const Exercises = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={() => setIsRunAnalysisModalOpen(true)}>
+            <Button 
+              onClick={handleNewCompanyClick}
+              disabled={!hasEnoughCreditsForNewCompany || creditsLoading}
+              className={!hasEnoughCreditsForNewCompany ? "opacity-50 cursor-not-allowed" : ""}
+            >
+              {!hasEnoughCreditsForNewCompany && <Lock className="mr-2 h-4 w-4" />}
               <Plus className="mr-2 h-4 w-4" />
               New Company
+              {!hasEnoughCreditsForNewCompany && (
+                <span className="ml-2 text-xs">(10 credits required)</span>
+              )}
             </Button>
           </div>
         </div>
