@@ -1,16 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
+import CreateUserDialog from '@/components/CreateUserDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, UserPlus } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const AdminUsers = () => {
   // Mock user data - in a real app, this would come from your database
-  const users = [
+  const [users, setUsers] = useState([
     {
       id: '1',
       name: 'John Doe',
@@ -47,7 +48,11 @@ const AdminUsers = () => {
       joinDate: '2024-04-22',
       lastLogin: '2024-06-01'
     }
-  ];
+  ]);
+
+  const handleUserCreated = (newUser: any) => {
+    setUsers(prev => [...prev, newUser]);
+  };
 
   const getStatusBadge = (status: string) => {
     return status === 'Active' ? (
@@ -73,10 +78,7 @@ const AdminUsers = () => {
             <h2 className="text-2xl font-bold text-foreground">Users</h2>
             <p className="text-muted-foreground">Manage user accounts and permissions</p>
           </div>
-          <Button className="flex items-center space-x-2">
-            <UserPlus className="h-4 w-4" />
-            <span>Add User</span>
-          </Button>
+          <CreateUserDialog onUserCreated={handleUserCreated} />
         </div>
 
         <div className="grid gap-6 md:grid-cols-4">
