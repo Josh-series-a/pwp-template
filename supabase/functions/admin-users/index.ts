@@ -64,7 +64,6 @@ Deno.serve(async (req) => {
       )
     }
 
-    const url = new URL(req.url)
     const method = req.method
 
     if (method === 'GET') {
@@ -92,7 +91,20 @@ Deno.serve(async (req) => {
     }
 
     if (method === 'POST') {
-      const body = await req.json()
+      // Only parse body for POST requests
+      let body
+      try {
+        body = await req.json()
+      } catch (error) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid JSON in request body' }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+
       const { action } = body
 
       if (action === 'create') {
