@@ -32,13 +32,17 @@ const RoleProtectedRoute: React.FC<RoleProtectedRouteProps> = ({
   // Get user role from metadata (defaulting to 'User' if not set)
   const userRole = user?.user_metadata?.role || 'User';
   
+  // Temporary admin access for colinfc@btinternet.com to set up roles
+  const isTemporaryAdmin = user?.email === 'colinfc@btinternet.com';
+  
   console.log('RoleProtectedRoute - User:', user?.email);
   console.log('RoleProtectedRoute - User metadata:', user?.user_metadata);
   console.log('RoleProtectedRoute - Detected role:', userRole);
   console.log('RoleProtectedRoute - Allowed roles:', allowedRoles);
+  console.log('RoleProtectedRoute - Is temporary admin:', isTemporaryAdmin);
   
-  // Check if user has required role
-  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
+  // Check if user has required role or is temporary admin
+  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole) && !isTemporaryAdmin) {
     console.log('RoleProtectedRoute - Access denied, redirecting to:', redirectTo);
     return <Navigate to={redirectTo} replace />;
   }
