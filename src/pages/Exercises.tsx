@@ -17,7 +17,8 @@ import {
   Brain,
   TrendingUp,
   Target,
-  Star
+  Star,
+  Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -25,6 +26,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import StressAssessmentDialog from '@/components/exercises/StressAssessmentDialog';
@@ -48,6 +50,7 @@ const Exercises = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { subscriptionInfo, isLoading: subscriptionLoading } = useSubscription();
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,6 +72,8 @@ const Exercises = () => {
   const [isRightPeopleDialogOpen, setIsRightPeopleDialogOpen] = useState(false);
   const [isRecruitRetainDialogOpen, setIsRecruitRetainDialogOpen] = useState(false);
   const [isRunAnalysisModalOpen, setIsRunAnalysisModalOpen] = useState(false);
+
+  const isSubscribed = subscriptionInfo.subscribed;
 
   // Enhanced exercises data with the new recruit and retain exercise
   const exercises = [
@@ -334,6 +339,11 @@ const Exercises = () => {
     },
   ];
 
+  // Check if exercise is accessible
+  const isExerciseAccessible = (exerciseId: number) => {
+    return exerciseId === 1 || isSubscribed;
+  };
+
   // Filter buttons configuration
   const filterOptions = [
     { value: "all", label: "All" },
@@ -403,6 +413,15 @@ const Exercises = () => {
   };
 
   const handleExerciseClick = (exerciseId: number) => {
+    if (!isExerciseAccessible(exerciseId)) {
+      toast({
+        title: "Exercise Locked",
+        description: "Subscribe to access this exercise. Exercise 1 is available for free!",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (exerciseId === 1) {
       setIsStressDialogOpen(true);
     } else if (exerciseId === 2) {
@@ -495,12 +514,19 @@ const Exercises = () => {
                 <Badge variant="secondary" className="px-3 py-1 text-sm font-medium">
                   Interactive Worksheets
                 </Badge>
+                {!isSubscribed && (
+                  <div className="flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm">
+                    <Lock className="h-4 w-4" />
+                    <span>Exercise 1 Free - Subscribe for All</span>
+                  </div>
+                )}
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 Business Development Exercises
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed">
                 Interactive worksheets pulled from the book, powered by AI. Complete these exercises to gain valuable insights into your business and leadership approach.
+                {!isSubscribed && " Exercise 1 is free - subscribe to unlock all exercises."}
               </p>
             </div>
           </div>
@@ -566,69 +592,97 @@ const Exercises = () => {
 
         {/* Exercises Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {currentExercises.map((exercise) => (
-            <Card key={exercise.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white">
-              <CardHeader className="pb-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-center gap-2">
-                    {getCategoryIcon(exercise.category)}
-                    {getPriorityBadge(exercise.priority)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(exercise.status)}
-                    <span className="text-xs text-gray-500">{exercise.estimatedTime}</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <CardTitle className="text-lg mb-2 group-hover:text-primary transition-colors leading-tight">
-                    {exercise.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    <span className="font-medium">Exercise {exercise.id}</span> • {exercise.category}
-                  </CardDescription>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <p className="text-sm text-gray-600 leading-relaxed">{exercise.intro}</p>
-                
-                {exercise.progress > 0 && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Progress</span>
-                      <span>{exercise.progress}%</span>
+          {currentExercises.map((exercise) => {
+            const isAccessible = isExerciseAccessible(exercise.id);
+            
+            return (
+              <Card key={exercise.id} className={`group overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${isAccessible ? 'bg-white' : 'bg-gray-50'}`}>
+                <CardHeader className="pb-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-2">
+                      {getCategoryIcon(exercise.category)}
+                      {getPriorityBadge(exercise.priority)}
+                      {!isAccessible && <Lock className="h-4 w-4 text-gray-400" />}
                     </div>
-                    <Progress value={exercise.progress} className="h-2" />
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(exercise.status)}
+                      <span className={`text-xs ${isAccessible ? 'text-gray-500' : 'text-gray-400'}`}>
+                        {exercise.estimatedTime}
+                      </span>
+                    </div>
                   </div>
-                )}
-                
-                <div className="flex gap-2 flex-wrap">
-                  {exercise.tags.map((tag) => (
-                    <span 
-                      key={tag} 
-                      className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
+                  
+                  <div>
+                    <CardTitle className={`text-lg mb-2 transition-colors leading-tight ${
+                      isAccessible ? 'group-hover:text-primary' : 'text-gray-500'
+                    }`}>
+                      {exercise.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      <span className="font-medium">Exercise {exercise.id}</span> • {exercise.category}
+                      {!isAccessible && " • Subscription Required"}
+                    </CardDescription>
+                  </div>
+                </CardHeader>
 
-              <CardFooter>
-                <Button 
-                  variant={exercise.status === "completed" ? "outline" : "default"} 
-                  className="w-full group-hover:bg-primary group-hover:text-white transition-colors"
-                  onClick={() => handleExerciseClick(exercise.id)}
-                >
-                  {exercise.status === "completed" ? "Review" : 
-                   exercise.status === "in-progress" ? "Continue" : 
-                   exercise.status === "new" ? "Start" : "Begin"} 
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+                <CardContent className="space-y-4">
+                  <p className={`text-sm leading-relaxed ${isAccessible ? 'text-gray-600' : 'text-gray-500'}`}>
+                    {isAccessible ? exercise.intro : "This exercise is only available to subscribers. Subscribe to unlock all exercises and get full access to the content."}
+                  </p>
+                  
+                  {exercise.progress > 0 && isAccessible && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>Progress</span>
+                        <span>{exercise.progress}%</span>
+                      </div>
+                      <Progress value={exercise.progress} className="h-2" />
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-2 flex-wrap">
+                    {exercise.tags.map((tag) => (
+                      <span 
+                        key={tag} 
+                        className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          isAccessible ? 'bg-gray-100 text-gray-700' : 'bg-gray-200 text-gray-500'
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+
+                <CardFooter>
+                  <Button 
+                    variant={exercise.status === "completed" ? "outline" : "default"} 
+                    className={`w-full transition-colors ${
+                      isAccessible 
+                        ? 'group-hover:bg-primary group-hover:text-white' 
+                        : 'bg-gray-300 text-gray-500 hover:bg-gray-300 hover:text-gray-500'
+                    }`}
+                    onClick={() => handleExerciseClick(exercise.id)}
+                    disabled={!isAccessible}
+                  >
+                    {!isAccessible ? (
+                      <>
+                        <Lock className="mr-2 h-4 w-4" />
+                        Subscribe to Access
+                      </>
+                    ) : (
+                      <>
+                        {exercise.status === "completed" ? "Review" : 
+                         exercise.status === "in-progress" ? "Continue" : 
+                         exercise.status === "new" ? "Start" : "Begin"} 
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Pagination */}
@@ -669,6 +723,7 @@ const Exercises = () => {
         {/* Results info */}
         <div className="text-center text-sm text-gray-500">
           Showing {startIndex + 1}-{Math.min(endIndex, filteredExercises.length)} of {filteredExercises.length} exercises
+          {!isSubscribed && " • Only Exercise 1 is accessible without subscription"}
         </div>
       </div>
 
