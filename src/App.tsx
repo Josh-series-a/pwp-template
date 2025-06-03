@@ -14,6 +14,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AdminSignup from "./pages/AdminSignup";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/admin/signup" element={<AdminSignup />} />
               <Route path="/products" element={<Products />} />
               <Route path="/preloader-demo" element={<PreloaderDemo />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
