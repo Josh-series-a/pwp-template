@@ -13,7 +13,7 @@ export interface CreditTransaction {
   id: string;
   user_id: string;
   amount: number;
-  transaction_type: 'deduct' | 'add';
+  transaction_type: string; // Changed from 'deduct' | 'add' to string to match database
   description: string;
   feature_type: string;
   created_at: string;
