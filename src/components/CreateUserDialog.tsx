@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import { authService } from '@/utils/authService';
 
 type CreateUserDialogProps = {
   onUserCreated: (user: any) => void;
@@ -27,10 +28,24 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
     setIsLoading(true);
 
     try {
-      // In a real app, this would call your backend API to create the user
-      // For now, we'll simulate the creation and add to the mock data
+      console.log('Creating user with data:', { 
+        email: formData.email, 
+        name: formData.name, 
+        role: formData.role 
+      });
+
+      // Create user in Supabase Auth
+      const result = await authService.signUp(formData.email, formData.password, formData.name);
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create user');
+      }
+
+      console.log('User created successfully:', result.data);
+
+      // Create the user object for the UI
       const newUser = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: result.data?.user?.id || Math.random().toString(36).substr(2, 9),
         name: formData.name,
         email: formData.email,
         status: 'Active',
@@ -39,17 +54,15 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
         lastLogin: 'Never'
       };
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       onUserCreated(newUser);
-      toast.success(`User ${formData.name} created successfully!`);
+      toast.success(`User ${formData.name} created successfully! They will receive a confirmation email.`);
       
       // Reset form and close dialog
       setFormData({ name: '', email: '', password: '', role: 'User' });
       setOpen(false);
-    } catch (error) {
-      toast.error('Failed to create user. Please try again.');
+    } catch (error: any) {
+      console.error('Failed to create user:', error);
+      toast.error(error.message || 'Failed to create user. Please try again.');
     } finally {
       setIsLoading(false);
     }
