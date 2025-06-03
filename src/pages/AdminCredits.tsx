@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +42,7 @@ const AdminCredits = () => {
       // Get all users with their credits
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, name, email');
+        .select('id, name, email, created_at');
 
       if (profilesError) throw profilesError;
 
@@ -54,7 +53,7 @@ const AdminCredits = () => {
 
       if (creditsError) throw creditsError;
 
-      // Combine the data
+      // Combine the data - show ALL users, even those without credits
       const usersWithCredits = profiles.map(profile => {
         const userCredits = credits.find(c => c.user_id === profile.id);
         return {
@@ -62,8 +61,8 @@ const AdminCredits = () => {
           name: profile.name || 'Unknown',
           email: profile.email || 'No email',
           credits: userCredits?.credits || 0,
-          created_at: userCredits?.created_at || '',
-          updated_at: userCredits?.updated_at || ''
+          created_at: userCredits?.created_at || profile.created_at,
+          updated_at: userCredits?.updated_at || profile.created_at
         };
       });
 
@@ -97,11 +96,14 @@ const AdminCredits = () => {
     try {
       if (actionType === 'add') {
         // Add credits
+        const currentUser = users.find(u => u.id === selectedUserId);
+        const newCredits = (currentUser?.credits || 0) + amount;
+
         const { error: updateError } = await supabase
           .from('user_credits')
           .upsert({
             user_id: selectedUserId,
-            credits: users.find(u => u.id === selectedUserId)?.credits + amount || amount
+            credits: newCredits
           }, { onConflict: 'user_id' });
 
         if (updateError) throw updateError;
@@ -125,8 +127,10 @@ const AdminCredits = () => {
 
         const { error: updateError } = await supabase
           .from('user_credits')
-          .update({ credits: newCredits })
-          .eq('user_id', selectedUserId);
+          .upsert({
+            user_id: selectedUserId,
+            credits: newCredits
+          }, { onConflict: 'user_id' });
 
         if (updateError) throw updateError;
 
