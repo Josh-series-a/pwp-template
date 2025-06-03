@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -34,18 +35,18 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
       });
 
       // Create user in Supabase Auth with role in metadata
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.admin.createUser({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            name: formData.name,
-            role: formData.role
-          }
-        }
+        user_metadata: {
+          name: formData.name,
+          role: formData.role
+        },
+        email_confirm: true // Auto-confirm email to avoid confirmation flow
       });
       
       if (error) {
+        console.error('Supabase auth error:', error);
         throw new Error(error.message || 'Failed to create user');
       }
 
@@ -63,7 +64,7 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
       };
 
       onUserCreated(newUser);
-      toast.success(`User ${formData.name} created successfully! They will receive a confirmation email.`);
+      toast.success(`${formData.role} user ${formData.name} created successfully!`);
       
       // Reset form and close dialog
       setFormData({ name: '', email: '', password: '', role: 'User' });
