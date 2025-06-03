@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Shield, Users, Settings, BarChart3, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Shield, Users, Settings, BarChart3, FileText, ChevronLeft, ChevronRight, Coins } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -118,6 +117,12 @@ const SidebarNavigation = () => {
       name: 'User Management',
       href: '/admin/users',
       icon: Users,
+      disabled: false
+    },
+    {
+      name: 'Credits Management',
+      href: '/admin/credits',
+      icon: Coins,
       disabled: false
     },
     {
