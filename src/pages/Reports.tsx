@@ -43,6 +43,7 @@ import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
 import LoadingRayMeter from '@/components/LoadingRayMeter';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCredits } from '@/hooks/useCredits';
 import { toast } from 'sonner';
 
 interface Report {
@@ -72,7 +73,11 @@ const Reports = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allRecommendedCIKs, setAllRecommendedCIKs] = useState<string[]>([]);
   const { user } = useAuth();
+  const { credits, checkCredits } = useCredits();
   const navigate = useNavigate();
+
+  // Check if user has enough credits for Business Health Score (requires 10 credits)
+  const hasEnoughCredits = checkCredits(10);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -166,6 +171,10 @@ const Reports = () => {
   };
 
   const openModal = () => {
+    if (!hasEnoughCredits) {
+      toast.error(`You need 10 credits to run a Business Health Score. You currently have ${credits?.credits || 0} credits.`);
+      return;
+    }
     setIsModalOpen(true);
   };
 
@@ -453,7 +462,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
               <Package className="mr-2 h-4 w-4" />
               Create Package
             </Button>
-            <Button onClick={openModal}>
+            <Button onClick={openModal} disabled={!hasEnoughCredits}>
               <Plus className="mr-2 h-4 w-4" />
               Run Business Health Score
             </Button>
@@ -620,9 +629,16 @@ This report was generated on ${new Date().toLocaleDateString()}.
               Running a new analysis will assess your business's current health across finance, operations, 
               marketing, and leadership domains. The AI will generate personalized recommendations based on the book's principles.
             </p>
+            {!hasEnoughCredits && (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg mb-4">
+                <p className="text-sm text-destructive font-medium">
+                  Insufficient credits: You need 10 credits but only have {credits?.credits || 0}
+                </p>
+              </div>
+            )}
           </CardContent>
           <CardFooter>
-            <Button className="w-full" onClick={openModal}>
+            <Button className="w-full" onClick={openModal} disabled={!hasEnoughCredits}>
               <Plus className="mr-2 h-4 w-4" />
               Start New Business Health Check
             </Button>
