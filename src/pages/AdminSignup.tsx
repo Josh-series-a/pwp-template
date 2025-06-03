@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { authService } from "@/utils/authService";
 import TransitionWrapper from "@/components/TransitionWrapper";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -68,23 +67,26 @@ const AdminSignup = () => {
         name: values.name 
       });
 
-      // Create admin user with role in metadata
-      const { data, error } = await supabase.auth.admin.createUser({
-        email: values.email,
-        password: values.password,
-        user_metadata: {
-          name: values.name,
-          role: 'Admin'
+      // Call the edge function to create admin user
+      const response = await fetch('/api/create-admin-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        email_confirm: true
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+          name: values.name
+        }),
       });
-      
-      if (error) {
-        console.error('Supabase auth error:', error);
-        throw new Error(error.message || 'Failed to create admin user');
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create admin user');
       }
 
-      console.log('Admin user created successfully:', data);
+      console.log('Admin user created successfully:', result);
       toast.success("Admin account created successfully! You can now log in.");
       navigate("/login");
     } catch (error: any) {
