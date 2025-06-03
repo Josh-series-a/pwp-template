@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -118,7 +117,7 @@ const SidebarNavigation = () => {
       name: 'User Management',
       href: '/admin/users',
       icon: Users,
-      disabled: true
+      disabled: false
     },
     {
       name: 'Analytics',
