@@ -192,6 +192,15 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
   };
 
   const handlePackageToggle = (packageId: string) => {
+    const packageCost = getCreditCost(packageId as keyof typeof getCreditCost);
+    const hasEnoughCreditsForPackage = checkCredits(packageCost);
+    
+    // If user doesn't have enough credits and is trying to select, show error and return
+    if (!hasEnoughCreditsForPackage && !selectedPackages.includes(packageId)) {
+      toast.error(`You need ${packageCost} credits for this package but only have ${credits?.credits || 0} credits.`);
+      return;
+    }
+
     setSelectedPackages(prev => 
       prev.includes(packageId) 
         ? prev.filter(id => id !== packageId)
@@ -409,29 +418,46 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
               <div className="grid gap-4">
                 {packages.map((pkg) => {
                   const packageCost = getCreditCost(pkg.id as keyof typeof getCreditCost);
+                  const hasEnoughCreditsForPackage = checkCredits(packageCost);
+                  const isSelected = selectedPackages.includes(pkg.id);
+                  const isDisabled = !hasEnoughCreditsForPackage && !isSelected;
+                  
                   return (
                     <Card 
                       key={pkg.id}
                       className={`transition-all duration-200 ${
-                        selectedPackages.includes(pkg.id)
+                        isSelected
                           ? 'ring-2 ring-primary bg-primary/5 shadow-md'
-                          : 'hover:bg-muted/50 hover:shadow-sm'
+                          : isDisabled
+                          ? 'opacity-50 cursor-not-allowed bg-muted/30'
+                          : 'hover:bg-muted/50 hover:shadow-sm cursor-pointer'
                       }`}
+                      onClick={() => !isDisabled && handlePackageToggle(pkg.id)}
                     >
                       <CardHeader className="pb-3">
                         <div className="flex items-start gap-3">
                           <Checkbox 
-                            checked={selectedPackages.includes(pkg.id)}
-                            onCheckedChange={() => handlePackageToggle(pkg.id)}
+                            checked={isSelected}
+                            disabled={isDisabled}
+                            onCheckedChange={() => !isDisabled && handlePackageToggle(pkg.id)}
                             className="mt-1"
                           />
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <CardTitle className="text-base leading-tight">{pkg.title}</CardTitle>
-                              <Badge variant="outline" className="gap-1 ml-2">
-                                <Coins className="h-3 w-3" />
-                                {packageCost}
-                              </Badge>
+                              <CardTitle className={`text-base leading-tight ${isDisabled ? 'text-muted-foreground' : ''}`}>
+                                {pkg.title}
+                              </CardTitle>
+                              <div className="flex items-center gap-2 ml-2">
+                                <Badge variant="outline" className="gap-1">
+                                  <Coins className="h-3 w-3" />
+                                  {packageCost}
+                                </Badge>
+                                {isDisabled && (
+                                  <Badge variant="destructive" className="text-xs">
+                                    Insufficient credits
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -439,13 +465,13 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                       <CardContent className="pt-0">
                         <Accordion type="single" collapsible className="w-full">
                           <AccordionItem value="details" className="border-none">
-                            <AccordionTrigger className="text-sm text-muted-foreground hover:no-underline py-2">
+                            <AccordionTrigger className={`text-sm hover:no-underline py-2 ${isDisabled ? 'text-muted-foreground' : 'text-muted-foreground'}`}>
                               {pkg.description}
                             </AccordionTrigger>
                             <AccordionContent className="pb-0">
                               <div className="space-y-1 pt-2">
                                 {pkg.items.map((item, index) => (
-                                  <div key={index} className="text-sm text-muted-foreground flex items-start">
+                                  <div key={index} className={`text-sm flex items-start ${isDisabled ? 'text-muted-foreground/70' : 'text-muted-foreground'}`}>
                                     <span className="mr-2">•</span>
                                     <span>{item}</span>
                                   </div>
