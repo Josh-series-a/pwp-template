@@ -36,8 +36,21 @@ serve(async (req) => {
     logStep("Authorization header found");
 
     const token = authHeader.replace("Bearer ", "");
+    
+    // Try to get user from the token using the service role client
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    if (userError || !userData.user) {
+      logStep("Authentication failed, returning unsubscribed state", { error: userError?.message });
+      return new Response(JSON.stringify({ 
+        subscribed: false, 
+        subscription_tier: null,
+        subscription_end: null 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+    
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
@@ -68,7 +81,6 @@ serve(async (req) => {
     const hasActiveSub = subscriptions.data.length > 0;
     let subscriptionTier = null;
     let subscriptionEnd = null;
-    let monthlyCredits = 0;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
@@ -81,55 +93,13 @@ serve(async (req) => {
       const amount = price.unit_amount || 0;
       
       if (amount <= 1199) {
-        subscriptionTier = "Basic";
-        monthlyCredits = 100;
+        subscriptionTier = "Starter";
       } else if (amount <= 2999) {
-        subscriptionTier = "Premium";
-        monthlyCredits = 250;
+        subscriptionTier = "Growth";
       } else {
-        subscriptionTier = "Enterprise";
-        monthlyCredits = 1000;
+        subscriptionTier = "Impact";
       }
-      logStep("Determined subscription tier", { priceId, amount, subscriptionTier, monthlyCredits });
-
-      // Add monthly credits to user's account
-      const currentDate = new Date();
-      const lastCreditDate = new Date(subscription.current_period_start * 1000);
-      const shouldAddCredits = currentDate.getMonth() !== lastCreditDate.getMonth() || 
-                               currentDate.getFullYear() !== lastCreditDate.getFullYear();
-
-      if (shouldAddCredits) {
-        logStep("Adding monthly credits", { monthlyCredits });
-        
-        // Get current credits
-        const { data: currentCredits } = await supabaseClient
-          .from('user_credits')
-          .select('credits')
-          .eq('user_id', user.id)
-          .single();
-
-        const newCredits = (currentCredits?.credits || 0) + monthlyCredits;
-
-        // Update credits
-        await supabaseClient
-          .from('user_credits')
-          .upsert({
-            user_id: user.id,
-            credits: newCredits,
-            updated_at: new Date().toISOString()
-          });
-
-        // Record transaction
-        await supabaseClient
-          .from('credit_transactions')
-          .insert({
-            user_id: user.id,
-            amount: monthlyCredits,
-            transaction_type: 'add',
-            description: `Monthly ${subscriptionTier} subscription credits`,
-            feature_type: 'subscription'
-          });
-      }
+      logStep("Determined subscription tier", { priceId, amount, subscriptionTier });
     } else {
       logStep("No active subscription found");
     }
@@ -146,9 +116,14 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in check-subscription", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    return new Response(JSON.stringify({ 
+      subscribed: false, 
+      subscription_tier: null,
+      subscription_end: null,
+      error: errorMessage 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: 200, // Changed from 500 to 200 to prevent errors in the frontend
     });
   }
 });

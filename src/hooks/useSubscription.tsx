@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,11 +22,22 @@ export const useSubscription = () => {
   useEffect(() => {
     if (user) {
       checkSubscription();
+    } else {
+      // If no user, set to unsubscribed and not loading
+      setSubscriptionInfo({
+        subscribed: false,
+        subscription_tier: null,
+        subscription_end: null
+      });
+      setIsLoading(false);
     }
   }, [user]);
 
   const checkSubscription = async () => {
-    if (!user) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     
     setIsLoading(true);
     try {
@@ -33,14 +45,29 @@ export const useSubscription = () => {
       
       if (error) {
         console.error('Error checking subscription:', error);
-        toast.error('Failed to check subscription status');
+        // Don't show error toast for failed subscription checks
+        // Set to unsubscribed state instead
+        setSubscriptionInfo({
+          subscribed: false,
+          subscription_tier: null,
+          subscription_end: null
+        });
         return;
       }
 
-      setSubscriptionInfo(data);
+      setSubscriptionInfo(data || {
+        subscribed: false,
+        subscription_tier: null,
+        subscription_end: null
+      });
     } catch (error) {
       console.error('Error checking subscription:', error);
-      toast.error('Failed to check subscription status');
+      // Set to unsubscribed state on error
+      setSubscriptionInfo({
+        subscribed: false,
+        subscription_tier: null,
+        subscription_end: null
+      });
     } finally {
       setIsLoading(false);
     }
