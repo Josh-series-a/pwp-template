@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +20,8 @@ interface UserWithCredits {
   credits: number;
   created_at: string;
   updated_at: string;
+  email_verified: boolean;
+  role?: string;
 }
 
 const AdminCredits = () => {
@@ -33,36 +36,57 @@ const AdminCredits = () => {
   const [actionType, setActionType] = useState<'add' | 'remove'>('add');
 
   useEffect(() => {
-    fetchUsersWithCredits();
+    fetchAllUsersWithCredits();
   }, []);
 
-  const fetchUsersWithCredits = async () => {
+  const fetchAllUsersWithCredits = async () => {
     setIsLoading(true);
     try {
-      // Get all users with their credits
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, name, email, created_at');
+      // Fetch all users from the admin users endpoint
+      const { data: authUsers, error: authError } = await supabase.functions.invoke('admin-users');
+      
+      if (authError) {
+        console.error('Error fetching auth users:', authError);
+        toast.error('Failed to load users');
+        return;
+      }
 
-      if (profilesError) throw profilesError;
+      console.log('Auth users:', authUsers);
 
       // Get credits for all users
       const { data: credits, error: creditsError } = await supabase
         .from('user_credits')
         .select('*');
 
-      if (creditsError) throw creditsError;
+      if (creditsError) {
+        console.error('Error fetching credits:', creditsError);
+        // Don't fail completely, just continue without credits data
+      }
 
-      // Combine the data - show ALL users, even those without credits
-      const usersWithCredits = profiles.map(profile => {
-        const userCredits = credits.find(c => c.user_id === profile.id);
+      // Get profiles for additional user info
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, name, email');
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        // Don't fail completely, just continue without profile data
+      }
+
+      // Combine the data - show ALL users from auth
+      const usersWithCredits = (authUsers?.users || []).map((authUser: any) => {
+        const userCredits = credits?.find(c => c.user_id === authUser.id);
+        const userProfile = profiles?.find(p => p.id === authUser.id);
+        
         return {
-          id: profile.id,
-          name: profile.name || 'Unknown',
-          email: profile.email || 'No email',
+          id: authUser.id,
+          name: userProfile?.name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || 'Unknown',
+          email: authUser.email || 'No email',
           credits: userCredits?.credits || 0,
-          created_at: userCredits?.created_at || profile.created_at,
-          updated_at: userCredits?.updated_at || profile.created_at
+          created_at: userCredits?.created_at || authUser.created_at,
+          updated_at: userCredits?.updated_at || authUser.updated_at || authUser.created_at,
+          email_verified: authUser.email_confirmed_at ? true : false,
+          role: authUser.user_metadata?.role || 'User'
         };
       });
 
@@ -149,7 +173,7 @@ const AdminCredits = () => {
       }
 
       // Refresh data
-      await fetchUsersWithCredits();
+      await fetchAllUsersWithCredits();
       if (selectedUserId) {
         await fetchUserTransactions(selectedUserId);
       }
@@ -203,6 +227,9 @@ const AdminCredits = () => {
               className="pl-10"
             />
           </div>
+          <div className="text-sm text-muted-foreground">
+            Total users: {users.length}
+          </div>
         </div>
 
         {/* Users Credits Table */}
@@ -210,10 +237,10 @@ const AdminCredits = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Coins className="h-5 w-5 text-yellow-600" />
-              User Credits Overview
+              All System Users - Credits Management
             </CardTitle>
             <CardDescription>
-              View and manage credits for all users
+              View and manage credits for all users in the system
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -223,6 +250,8 @@ const AdminCredits = () => {
                   <TableRow>
                     <TableHead>User</TableHead>
                     <TableHead>Email</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Role</TableHead>
                     <TableHead>Credits</TableHead>
                     <TableHead>Last Updated</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -233,6 +262,16 @@ const AdminCredits = () => {
                     <TableRow key={user.id}>
                       <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <Badge variant={user.email_verified ? "default" : "secondary"}>
+                          {user.email_verified ? "Verified" : "Unverified"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {user.role}
+                        </Badge>
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="gap-1">
                           <Coins className="h-3 w-3 text-yellow-600" />
@@ -316,6 +355,11 @@ const AdminCredits = () => {
                 </TableBody>
               </Table>
             </div>
+            {filteredUsers.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                No users found matching your search.
+              </div>
+            )}
           </CardContent>
         </Card>
 
