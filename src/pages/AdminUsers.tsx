@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import CreateUserDialog from '@/components/CreateUserDialog';
+import UpdateUserRoleDialog from '@/components/UpdateUserRoleDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -78,7 +78,10 @@ const AdminUsers = () => {
             <h2 className="text-2xl font-bold text-foreground">Users</h2>
             <p className="text-muted-foreground">Manage user accounts and permissions</p>
           </div>
-          <CreateUserDialog onUserCreated={handleUserCreated} />
+          <div className="flex space-x-2">
+            <UpdateUserRoleDialog />
+            <CreateUserDialog onUserCreated={handleUserCreated} />
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-4">
