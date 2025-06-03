@@ -54,6 +54,44 @@ const AdminCredits = () => {
     }
   };
 
+  const resetAllCreditsToZero = async () => {
+    try {
+      console.log('Resetting all user credits to 0...');
+      
+      // Update all existing credit records to 0
+      const { error: updateError } = await supabase
+        .from('user_credits')
+        .update({ credits: 0 });
+
+      if (updateError) {
+        console.error('Error updating credits:', updateError);
+        toast.error('Failed to reset credits');
+        return;
+      }
+
+      // Record transactions for all users
+      const usersWithCredits = users.filter(user => user.hasCreditsRecord && user.credits > 0);
+      
+      for (const user of usersWithCredits) {
+        await supabase
+          .from('credit_transactions')
+          .insert({
+            user_id: user.id,
+            amount: -user.credits,
+            transaction_type: 'deduct',
+            description: 'Admin reset all credits to 0',
+            feature_type: 'admin_reset'
+          });
+      }
+
+      toast.success('All user credits have been reset to 0');
+      fetchAllUsersWithCredits(); // Refresh the data
+    } catch (error) {
+      console.error('Error resetting credits:', error);
+      toast.error('Failed to reset credits');
+    }
+  };
+
   const fetchAllUsersWithCredits = async () => {
     try {
       setIsLoading(true);
@@ -285,6 +323,13 @@ const AdminCredits = () => {
                 Initialize {usersWithoutCredits.length} Missing Credits
               </Button>
             )}
+            <Button 
+              onClick={resetAllCreditsToZero}
+              variant="destructive"
+              size="sm"
+            >
+              Reset All Credits to 0
+            </Button>
             <Button 
               onClick={fetchAllUsersWithCredits}
               variant="outline"
