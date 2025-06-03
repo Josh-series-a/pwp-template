@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import CreateUserDialog from '@/components/CreateUserDialog';
 import UpdateUserRoleDialog from '@/components/UpdateUserRoleDialog';
@@ -8,67 +9,94 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+interface User {
+  id: string;
+  email: string;
+  user_metadata: {
+    name?: string;
+    role?: string;
+  };
+  created_at: string;
+  last_sign_in_at?: string;
+  email_confirmed_at?: string;
+}
 
 const AdminUsers = () => {
-  // Mock user data - in a real app, this would come from your database
-  const [users, setUsers] = useState([
-    {
-      id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      status: 'Active',
-      role: 'User',
-      joinDate: '2024-01-15',
-      lastLogin: '2024-06-02'
-    },
-    {
-      id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      status: 'Active',
-      role: 'Admin',
-      joinDate: '2024-02-03',
-      lastLogin: '2024-06-03'
-    },
-    {
-      id: '3',
-      name: 'Bob Johnson',
-      email: 'bob@example.com',
-      status: 'Inactive',
-      role: 'User',
-      joinDate: '2024-03-10',
-      lastLogin: '2024-05-28'
-    },
-    {
-      id: '4',
-      name: 'Alice Brown',
-      email: 'alice@example.com',
-      status: 'Active',
-      role: 'User',
-      joinDate: '2024-04-22',
-      lastLogin: '2024-06-01'
-    }
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleUserCreated = (newUser: any) => {
-    setUsers(prev => [...prev, newUser]);
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase.auth.admin.listUsers();
+      
+      if (error) {
+        console.error('Error fetching users:', error);
+        toast.error('Failed to fetch users');
+        return;
+      }
+
+      setUsers(data.users || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('Failed to fetch users');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const getStatusBadge = (status: string) => {
-    return status === 'Active' ? (
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleUserCreated = (newUser: any) => {
+    // Refresh the users list when a new user is created
+    fetchUsers();
+  };
+
+  const getStatusBadge = (user: User) => {
+    const isActive = user.email_confirmed_at && user.last_sign_in_at;
+    return isActive ? (
       <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>
     ) : (
       <Badge variant="secondary" className="bg-gray-100 text-gray-800">Inactive</Badge>
     );
   };
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (role?: string) => {
     return role === 'Admin' ? (
       <Badge variant="default" className="bg-blue-100 text-blue-800">Admin</Badge>
     ) : (
       <Badge variant="outline">User</Badge>
     );
   };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Never';
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const activeUsers = users.filter(user => user.email_confirmed_at && user.last_sign_in_at);
+  const adminUsers = users.filter(user => user.user_metadata?.role === 'Admin');
+  const thisMonthUsers = users.filter(user => {
+    if (!user.created_at) return false;
+    const userDate = new Date(user.created_at);
+    const now = new Date();
+    return userDate.getMonth() === now.getMonth() && userDate.getFullYear() === now.getFullYear();
+  });
+
+  if (isLoading) {
+    return (
+      <AdminLayout title="User Management">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="User Management">
@@ -102,7 +130,7 @@ const AdminUsers = () => {
               <CardTitle className="text-sm font-medium">Active Users</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{users.filter(u => u.status === 'Active').length}</div>
+              <div className="text-2xl font-bold">{activeUsers.length}</div>
               <p className="text-xs text-muted-foreground">
                 Currently active
               </p>
@@ -114,7 +142,7 @@ const AdminUsers = () => {
               <CardTitle className="text-sm font-medium">Admin Users</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{users.filter(u => u.role === 'Admin').length}</div>
+              <div className="text-2xl font-bold">{adminUsers.length}</div>
               <p className="text-xs text-muted-foreground">
                 Administrator accounts
               </p>
@@ -126,7 +154,7 @@ const AdminUsers = () => {
               <CardTitle className="text-sm font-medium">New This Month</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2</div>
+              <div className="text-2xl font-bold">{thisMonthUsers.length}</div>
               <p className="text-xs text-muted-foreground">
                 Recent signups
               </p>
@@ -155,12 +183,14 @@ const AdminUsers = () => {
               <TableBody>
                 {users.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {user.user_metadata?.name || 'No name set'}
+                    </TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>{getStatusBadge(user.status)}</TableCell>
-                    <TableCell>{getRoleBadge(user.role)}</TableCell>
-                    <TableCell>{user.joinDate}</TableCell>
-                    <TableCell>{user.lastLogin}</TableCell>
+                    <TableCell>{getStatusBadge(user)}</TableCell>
+                    <TableCell>{getRoleBadge(user.user_metadata?.role)}</TableCell>
+                    <TableCell>{formatDate(user.created_at)}</TableCell>
+                    <TableCell>{formatDate(user.last_sign_in_at)}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
