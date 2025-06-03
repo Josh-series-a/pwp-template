@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +14,38 @@ const SubscriptionPlans = () => {
   const { user } = useAuth();
   const { refreshCredits } = useCredits();
   const [isSyncing, setIsSyncing] = useState(false);
+  const [hasAutoSynced, setHasAutoSynced] = useState(false);
+
+  // Auto-sync on page load
+  useEffect(() => {
+    if (user && !hasAutoSynced) {
+      autoSyncSubscription();
+      setHasAutoSynced(true);
+    }
+  }, [user, hasAutoSynced]);
+
+  const autoSyncSubscription = async () => {
+    if (!user) return;
+
+    try {
+      console.log('Auto-syncing subscription on page load...');
+      const { data, error } = await supabase.functions.invoke('sync-subscription');
+
+      if (error) {
+        console.error('Auto-sync error:', error);
+        return;
+      }
+
+      if (data?.success) {
+        if (data.creditsAdded > 0) {
+          toast.success(`${data.creditsAdded} subscription credits automatically added!`);
+        }
+        await refreshCredits();
+      }
+    } catch (error) {
+      console.error('Auto-sync failed:', error);
+    }
+  };
 
   const syncSubscription = async () => {
     if (!user) {
@@ -24,7 +55,7 @@ const SubscriptionPlans = () => {
 
     setIsSyncing(true);
     try {
-      console.log('Starting sync subscription...');
+      console.log('Manual sync subscription...');
       const { data, error } = await supabase.functions.invoke('sync-subscription');
 
       console.log('Sync response:', { data, error });
@@ -155,7 +186,7 @@ const SubscriptionPlans = () => {
               ) : (
                 <RefreshCw className="h-4 w-4" />
               )}
-              {isSyncing ? 'Syncing...' : 'Sync Recent Purchases'}
+              {isSyncing ? 'Syncing...' : 'Manual Sync (if needed)'}
             </Button>
           </div>
         )}

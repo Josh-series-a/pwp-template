@@ -24,15 +24,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const syncSubscriptionCredits = async (user: User) => {
+    try {
+      console.log('Auto-syncing subscription credits for user:', user.email);
+      const { data, error } = await supabase.functions.invoke('sync-subscription');
+      
+      if (error) {
+        console.error('Auto-sync error:', error);
+        return;
+      }
+
+      if (data?.success && data?.creditsAdded > 0) {
+        console.log(`Auto-sync: ${data.creditsAdded} credits added`);
+      }
+    } catch (error) {
+      console.error('Auto-sync failed:', error);
+    }
+  };
+
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setIsLoading(false);
       
-      // Check subscription status when user logs in
+      // Auto-sync credits when user logs in
       if (session?.user) {
         checkSubscriptionStatus();
+        syncSubscriptionCredits(session.user);
       }
     });
 
@@ -43,9 +62,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(session?.user ?? null);
       setIsLoading(false);
       
-      // Check subscription status on auth state change
+      // Auto-sync credits on auth state change
       if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
         checkSubscriptionStatus();
+        syncSubscriptionCredits(session.user);
       }
     });
 
