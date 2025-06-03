@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -47,7 +46,7 @@ const AdminCredits = () => {
       console.log(`Initializing credits for ${usersWithoutCredits.length} users without records`);
       
       for (const user of usersWithoutCredits) {
-        await creditService.createUserCredits(user.id, 100);
+        await creditService.createUserCredits(user.id, 0);
       }
       
       toast.success(`Initialized credits for ${usersWithoutCredits.length} users`);
@@ -302,8 +301,7 @@ const AdminCredits = () => {
             <CardContent className="pt-4">
               <p className="text-sm text-yellow-800">
                 <strong>{usersWithoutCredits.length} users</strong> don't have credits records yet. 
-                This might explain why they show 0 credits here but 100 credits in their account view. 
-                Click "Initialize Missing Credits" to create records with 100 default credits for these users.
+                Click "Initialize Missing Credits" to create records with 0 default credits for these users.
               </p>
             </CardContent>
           </Card>

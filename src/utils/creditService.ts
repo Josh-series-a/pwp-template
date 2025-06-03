@@ -47,7 +47,7 @@ export const creditService = {
     return data;
   },
 
-  async createUserCredits(userId: string, initialCredits: number = 100): Promise<UserCredits | null> {
+  async createUserCredits(userId: string, initialCredits: number = 0): Promise<UserCredits | null> {
     const { data, error } = await supabase
       .from('user_credits')
       .insert({
