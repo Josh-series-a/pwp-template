@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -23,13 +22,13 @@ const UpdateUserRoleDialog = () => {
       console.log('Updating user role:', { email, newRole });
 
       // Get the user by email
-      const { data: users, error: listError } = await supabase.auth.admin.listUsers();
+      const { data: usersData, error: listError } = await supabase.auth.admin.listUsers();
       
       if (listError) {
         throw new Error(listError.message);
       }
 
-      const user = users.users.find(u => u.email === email);
+      const user = usersData.users.find((u: any) => u.email === email);
       
       if (!user) {
         throw new Error('User not found');
