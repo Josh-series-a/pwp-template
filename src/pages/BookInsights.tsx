@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -284,17 +283,6 @@ const BookInsights = () => {
                           <BookOpen className="mr-2 h-4 w-4" />
                           Read
                         </Link>
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="flex-1 group-hover:border-primary/50 transition-colors"
-                        onClick={() => {
-                          setActiveChapter(chapter.id);
-                          setIsListenDialogOpen(true);
-                        }}
-                      >
-                        <Headphones className="mr-2 h-4 w-4" />
-                        Listen
                       </Button>
                       <Button 
                         className="flex-1 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-sm"
