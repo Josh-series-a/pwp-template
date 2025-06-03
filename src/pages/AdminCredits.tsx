@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Coins, Plus, Minus, Eye, Search } from 'lucide-react';
+import { Coins, Plus, Minus, Eye, Search, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { creditService, type UserCredits, type CreditTransaction } from '@/utils/creditService';
@@ -21,6 +22,7 @@ interface UserWithCredits {
   updated_at: string;
   email_verified: boolean;
   role?: string;
+  hasCreditsRecord: boolean;
 }
 
 const AdminCredits = () => {
@@ -38,6 +40,21 @@ const AdminCredits = () => {
     fetchAllUsersWithCredits();
   }, []);
 
+  const initializeMissingCredits = async () => {
+    const usersWithoutCredits = users.filter(user => !user.hasCreditsRecord);
+    
+    if (usersWithoutCredits.length > 0) {
+      console.log(`Initializing credits for ${usersWithoutCredits.length} users without records`);
+      
+      for (const user of usersWithoutCredits) {
+        await creditService.createUserCredits(user.id, 100);
+      }
+      
+      toast.success(`Initialized credits for ${usersWithoutCredits.length} users`);
+      fetchAllUsersWithCredits(); // Refresh the data
+    }
+  };
+
   const fetchAllUsersWithCredits = async () => {
     try {
       setIsLoading(true);
@@ -50,7 +67,7 @@ const AdminCredits = () => {
         return;
       }
 
-      // Call the edge function to get users using GET method - same as AdminUsers
+      // Call the edge function to get users using GET method
       const response = await fetch(`https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/admin-users`, {
         method: 'GET',
         headers: {
@@ -74,7 +91,6 @@ const AdminCredits = () => {
 
         if (creditsError) {
           console.error('Error fetching credits:', creditsError);
-          // Don't fail completely, just continue without credits data
         }
 
         // Get profiles for additional user info
@@ -84,7 +100,6 @@ const AdminCredits = () => {
 
         if (profilesError) {
           console.error('Error fetching profiles:', profilesError);
-          // Don't fail completely, just continue without profile data
         }
 
         // Combine the data - show ALL users from auth
@@ -96,15 +111,22 @@ const AdminCredits = () => {
             id: authUser.id,
             name: userProfile?.name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || 'Unknown',
             email: authUser.email || 'No email',
-            credits: userCredits?.credits || 0,
+            credits: userCredits?.credits || 0, // Show 0 if no credits record
             created_at: userCredits?.created_at || authUser.created_at,
             updated_at: userCredits?.updated_at || authUser.updated_at || authUser.created_at,
             email_verified: authUser.email_confirmed_at ? true : false,
-            role: authUser.user_metadata?.role || 'User'
+            role: authUser.user_metadata?.role || 'User',
+            hasCreditsRecord: !!userCredits // Track whether user has a credits record
           };
         });
 
         setUsers(usersWithCredits);
+
+        // Check if there are users without credits records and offer to initialize them
+        const usersWithoutCredits = usersWithCredits.filter((user: UserWithCredits) => !user.hasCreditsRecord);
+        if (usersWithoutCredits.length > 0) {
+          console.log(`Found ${usersWithoutCredits.length} users without credits records`);
+        }
       } else {
         console.error('No users data returned');
         toast.error('No users data returned');
@@ -231,24 +253,61 @@ const AdminCredits = () => {
     );
   }
 
+  const usersWithoutCredits = users.filter(user => !user.hasCreditsRecord);
+
   return (
     <AdminLayout title="Credits Management">
       <div className="space-y-6">
-        {/* Search */}
-        <div className="flex items-center space-x-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search users..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        {/* Search and Actions */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Total users: {users.length}
+            </div>
           </div>
-          <div className="text-sm text-muted-foreground">
-            Total users: {users.length}
+          
+          <div className="flex gap-2">
+            {usersWithoutCredits.length > 0 && (
+              <Button 
+                onClick={initializeMissingCredits}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Initialize {usersWithoutCredits.length} Missing Credits
+              </Button>
+            )}
+            <Button 
+              onClick={fetchAllUsersWithCredits}
+              variant="outline"
+              size="sm"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              Refresh
+            </Button>
           </div>
         </div>
+
+        {usersWithoutCredits.length > 0 && (
+          <Card className="border-yellow-200 bg-yellow-50">
+            <CardContent className="pt-4">
+              <p className="text-sm text-yellow-800">
+                <strong>{usersWithoutCredits.length} users</strong> don't have credits records yet. 
+                This might explain why they show 0 credits here but 100 credits in their account view. 
+                Click "Initialize Missing Credits" to create records with 100 default credits for these users.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Users Credits Table */}
         <Card>
@@ -271,6 +330,7 @@ const AdminCredits = () => {
                     <TableHead>Status</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Credits</TableHead>
+                    <TableHead>Record Status</TableHead>
                     <TableHead>Last Updated</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -291,9 +351,17 @@ const AdminCredits = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="gap-1">
+                        <Badge 
+                          variant={user.hasCreditsRecord ? "outline" : "destructive"} 
+                          className="gap-1"
+                        >
                           <Coins className="h-3 w-3 text-yellow-600" />
                           {user.credits}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={user.hasCreditsRecord ? "default" : "secondary"}>
+                          {user.hasCreditsRecord ? "Has Record" : "No Record"}
                         </Badge>
                       </TableCell>
                       <TableCell>{formatDate(user.updated_at)}</TableCell>
