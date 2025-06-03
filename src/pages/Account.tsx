@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check } from 'lucide-react';
 import SubscriptionPlans from '@/components/SubscriptionPlans';
 import CreditsDisplay from '@/components/CreditsDisplay';
+import BillingHistory from '@/components/BillingHistory';
 
 const Account = () => {
   const { user } = useAuth();
@@ -176,6 +176,7 @@ const Account = () => {
           {/* Billing & Subscription Tab */}
           <TabsContent value="billing" className="space-y-6">
             <SubscriptionPlans />
+            <BillingHistory />
           </TabsContent>
 
           {/* Integrations Tab */}

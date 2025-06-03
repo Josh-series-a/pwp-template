@@ -9,6 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      billing_history: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          invoice_url: string | null
+          period_end: string
+          period_start: string
+          plan_name: string
+          purchase_date: string
+          receipt_url: string | null
+          status: string
+          stripe_invoice_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_url?: string | null
+          period_end: string
+          period_start: string
+          plan_name: string
+          purchase_date: string
+          receipt_url?: string | null
+          status?: string
+          stripe_invoice_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_url?: string | null
+          period_end?: string
+          period_start?: string
+          plan_name?: string
+          purchase_date?: string
+          receipt_url?: string | null
+          status?: string
+          stripe_invoice_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       business_health: {
         Row: {
           client_id: string
