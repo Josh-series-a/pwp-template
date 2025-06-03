@@ -28,18 +28,21 @@ const AdminUsers = () => {
         return;
       }
 
-      // Call the edge function to get users
-      const { data, error } = await supabase.functions.invoke('admin-users', {
+      // Call the edge function to get users using GET method
+      const response = await fetch(`https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/admin-users`, {
+        method: 'GET',
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY',
+          'Content-Type': 'application/json',
         },
       });
 
-      if (error) {
-        console.error('Error fetching users:', error);
-        toast.error('Failed to fetch users');
-        return;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
 
       if (data?.users) {
         setUsers(data.users);
