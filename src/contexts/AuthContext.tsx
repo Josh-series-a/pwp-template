@@ -1,71 +1,77 @@
+import React, { useState, useEffect, createContext, useContext } from 'react';
+import { Session, User } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { authService } from '@/utils/authService';
-import { useNavigate } from 'react-router-dom';
-
-type AuthContextType = {
-  isAuthenticated: boolean;
-  isLoading: boolean;
+interface AuthContextProps {
   user: User | null;
-  session: Session | null;
+  isLoading: boolean;
+  signOut: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  isLoading: true,
-  user: null,
-  session: null,
-});
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = authService.onAuthStateChange((user) => {
-      setIsAuthenticated(!!user);
-      setUser(user);
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
       setIsLoading(false);
+      
+      // Check subscription status when user logs in
+      if (session?.user) {
+        checkSubscriptionStatus();
+      }
     });
 
-    // THEN check for existing session
-    const checkAuth = async () => {
-      try {
-        const isAuth = await authService.isAuthenticated();
-        setIsAuthenticated(isAuth);
-        
-        if (isAuth) {
-          const userData = await authService.getCurrentUser();
-          const sessionData = await authService.getSession();
-          setUser(userData || null);
-          setSession(sessionData);
-        } else {
-          setUser(null);
-          setSession(null);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-      } finally {
-        setIsLoading(false);
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      setIsLoading(false);
+      
+      // Check subscription status on auth state change
+      if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+        checkSubscriptionStatus();
       }
-    };
-    
-    checkAuth();
+    });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
+  const checkSubscriptionStatus = async () => {
+    try {
+      await supabase.functions.invoke('check-subscription');
+    } catch (error) {
+      console.error('Error checking subscription status:', error);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const value: AuthContextProps = { user, isLoading, signOut };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, session }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);
