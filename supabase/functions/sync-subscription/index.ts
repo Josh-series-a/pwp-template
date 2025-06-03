@@ -63,177 +63,101 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
-    // Get recent completed checkout sessions for this customer
-    const sessions = await stripe.checkout.sessions.list({
+    // Get active subscriptions
+    const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      limit: 10,
-      status: 'complete'
+      status: 'active',
+      limit: 10
     });
 
-    logStep("Found completed sessions", { count: sessions.data.length });
+    logStep("Found active subscriptions", { count: subscriptions.data.length });
 
     let creditsAdded = 0;
-    let subscriptionCreditsAdded = 0;
 
-    for (const session of sessions.data) {
-      logStep("Processing session", { sessionId: session.id, mode: session.mode });
+    for (const subscription of subscriptions.data) {
+      logStep("Processing subscription", { subscriptionId: subscription.id });
 
-      if (session.mode === "subscription") {
-        // Handle subscription - add initial credits
-        if (session.subscription) {
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-          const priceId = subscription.items.data[0].price.id;
-          const price = await stripe.prices.retrieve(priceId);
-          const amount = price.unit_amount || 0;
+      const priceId = subscription.items.data[0].price.id;
+      const price = await stripe.prices.retrieve(priceId);
+      const amount = price.unit_amount || 0;
 
-          let planCredits = 0;
-          if (amount <= 999) {
-            planCredits = 18; // Starter plan
-          } else if (amount <= 1999) {
-            planCredits = 25; // Growth plan  
-          } else {
-            planCredits = 55; // Impact plan
-          }
+      let planCredits = 0;
+      if (amount <= 999) {
+        planCredits = 18; // Starter plan
+      } else if (amount <= 1999) {
+        planCredits = 25; // Growth plan  
+      } else {
+        planCredits = 55; // Impact plan
+      }
 
-          logStep("Subscription credits determined", { amount, planCredits });
+      logStep("Subscription credits determined", { amount, planCredits });
 
-          // Check if we already processed this subscription
-          const { data: existingTransaction } = await supabaseService
-            .from('credit_transactions')
-            .select('id')
-            .eq('user_id', user.id)
-            .eq('description', `Initial subscription credits - Session ${session.id}`)
-            .maybeSingle();
+      // Check if we already processed this subscription for this billing period
+      const billingPeriodStart = new Date(subscription.current_period_start * 1000).toISOString();
+      const { data: existingTransaction } = await supabaseService
+        .from('credit_transactions')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('description', `Monthly subscription credits - ${subscription.id}`)
+        .gte('created_at', billingPeriodStart)
+        .maybeSingle();
 
-          if (!existingTransaction && planCredits > 0) {
-            // Get current credits
-            const { data: currentCredits } = await supabaseService
-              .from('user_credits')
-              .select('credits')
-              .eq('user_id', user.id)
-              .maybeSingle();
-
-            const currentAmount = currentCredits?.credits || 0;
-            const newAmount = currentAmount + planCredits;
-
-            logStep("Current credits", { currentAmount, adding: planCredits, newTotal: newAmount });
-
-            // Update credits using upsert to handle both insert and update
-            const { data: upsertResult, error: upsertError } = await supabaseService
-              .from('user_credits')
-              .upsert({
-                user_id: user.id,
-                credits: newAmount,
-                updated_at: new Date().toISOString()
-              }, {
-                onConflict: 'user_id'
-              })
-              .select();
-
-            if (upsertError) {
-              logStep("Error upserting credits", { error: upsertError });
-              throw new Error(`Failed to update credits: ${upsertError.message}`);
-            }
-
-            logStep("Credits upserted successfully", { result: upsertResult });
-
-            // Record transaction
-            const { error: transactionError } = await supabaseService
-              .from('credit_transactions')
-              .insert({
-                user_id: user.id,
-                amount: planCredits,
-                transaction_type: 'add',
-                description: `Initial subscription credits - Session ${session.id}`,
-                feature_type: 'subscription_purchase'
-              });
-
-            if (transactionError) {
-              logStep("Error recording transaction", { error: transactionError });
-              // Don't fail the whole operation for transaction logging issues
-            }
-
-            subscriptionCreditsAdded += planCredits;
-            logStep("Subscription credits added", { planCredits, newTotal: newAmount });
-          } else {
-            logStep("Credits already processed for this session", { sessionId: session.id });
-          }
-        }
-      } else if (session.mode === "payment") {
-        // Handle one-time credit purchases
-        const amountPaid = session.amount_total || 0;
-        let purchaseCredits = 0;
-
-        if (amountPaid >= 4999) {
-          purchaseCredits = 55;
-        } else if (amountPaid >= 1999) {
-          purchaseCredits = 25;
-        } else if (amountPaid >= 999) {
-          purchaseCredits = 18;
-        }
-
-        // Check if we already processed this payment
-        const { data: existingTransaction } = await supabaseService
-          .from('credit_transactions')
-          .select('id')
+      if (!existingTransaction && planCredits > 0) {
+        // Get current credits
+        const { data: currentCredits } = await supabaseService
+          .from('user_credits')
+          .select('credits')
           .eq('user_id', user.id)
-          .eq('description', `Credits purchased - Session ${session.id}`)
           .maybeSingle();
 
-        if (!existingTransaction && purchaseCredits > 0) {
-          // Add credits for this purchase
-          const { data: currentCredits } = await supabaseService
-            .from('user_credits')
-            .select('credits')
-            .eq('user_id', user.id)
-            .maybeSingle();
+        const currentAmount = currentCredits?.credits || 0;
+        const newAmount = currentAmount + planCredits;
 
-          const currentAmount = currentCredits?.credits || 0;
-          const newAmount = currentAmount + purchaseCredits;
+        logStep("Current credits", { currentAmount, adding: planCredits, newTotal: newAmount });
 
-          // Update credits
-          const { error: upsertError } = await supabaseService
-            .from('user_credits')
-            .upsert({
-              user_id: user.id,
-              credits: newAmount,
-              updated_at: new Date().toISOString()
-            }, {
-              onConflict: 'user_id'
-            });
+        // Update credits using upsert to handle both insert and update
+        const { data: upsertResult, error: upsertError } = await supabaseService
+          .from('user_credits')
+          .upsert({
+            user_id: user.id,
+            credits: newAmount,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id'
+          })
+          .select();
 
-          if (upsertError) {
-            logStep("Error upserting purchase credits", { error: upsertError });
-            throw new Error(`Failed to update credits: ${upsertError.message}`);
-          }
-
-          // Record transaction
-          const { error: transactionError } = await supabaseService
-            .from('credit_transactions')
-            .insert({
-              user_id: user.id,
-              amount: purchaseCredits,
-              transaction_type: 'add',
-              description: `Credits purchased - Session ${session.id}`,
-              feature_type: 'credit_purchase'
-            });
-
-          if (transactionError) {
-            logStep("Error recording purchase transaction", { error: transactionError });
-          }
-
-          creditsAdded += purchaseCredits;
-          logStep("Purchase credits added", { purchaseCredits, newTotal: newAmount });
+        if (upsertError) {
+          logStep("Error upserting credits", { error: upsertError });
+          throw new Error(`Failed to update credits: ${upsertError.message}`);
         }
+
+        logStep("Credits upserted successfully", { result: upsertResult });
+
+        // Record transaction
+        const { error: transactionError } = await supabaseService
+          .from('credit_transactions')
+          .insert({
+            user_id: user.id,
+            amount: planCredits,
+            transaction_type: 'add',
+            description: `Monthly subscription credits - ${subscription.id}`,
+            feature_type: 'subscription_credits'
+          });
+
+        if (transactionError) {
+          logStep("Error recording transaction", { error: transactionError });
+          // Don't fail the whole operation for transaction logging issues
+        }
+
+        creditsAdded += planCredits;
+        logStep("Subscription credits added", { planCredits, newTotal: newAmount });
+      } else {
+        logStep("Credits already processed for this billing period", { subscriptionId: subscription.id });
       }
     }
 
-    const totalCreditsAdded = creditsAdded + subscriptionCreditsAdded;
-    logStep("Sync completed", { 
-      totalCreditsAdded, 
-      subscriptionCreditsAdded, 
-      oneTimeCreditsAdded: creditsAdded 
-    });
+    logStep("Sync completed", { totalCreditsAdded: creditsAdded });
 
     // Verify final credits state
     const { data: finalCredits } = await supabaseService
@@ -246,11 +170,9 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       success: true,
-      creditsAdded: totalCreditsAdded,
-      subscriptionCreditsAdded,
-      oneTimeCreditsAdded: creditsAdded,
+      creditsAdded,
       currentCredits: finalCredits?.credits || 0,
-      message: totalCreditsAdded > 0 ? `${totalCreditsAdded} credits added to your account` : "No new credits to add"
+      message: creditsAdded > 0 ? `${creditsAdded} credits added to your account` : "Credits already up to date"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
