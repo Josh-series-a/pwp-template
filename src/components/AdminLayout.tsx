@@ -89,7 +89,7 @@ const SidebarProfile = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem asChild>
-            <Link to="/dashboard" className="cursor-pointer">
+            <Link to="/account" className="cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               Account Settings
             </Link>
