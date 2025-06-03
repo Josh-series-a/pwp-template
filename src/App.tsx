@@ -16,7 +16,6 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Account from "./pages/Account";
-import Chat from "./pages/Chat";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import PackageDetail from "./pages/PackageDetail";
@@ -31,6 +30,7 @@ import PreloaderDemo from "./pages/PreloaderDemo";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -57,7 +57,6 @@ const App = () => (
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
               <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId" element={<ProtectedRoute><ReportDetail /></ProtectedRoute>} />
               <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId" element={<ProtectedRoute><PackageDetail /></ProtectedRoute>} />
@@ -66,6 +65,8 @@ const App = () => (
               <Route path="/dashboard/read/:chapterId" element={<ProtectedRoute><BookSession /></ProtectedRoute>} />
               <Route path="/dashboard/insights" element={<ProtectedRoute><BookInsights /></ProtectedRoute>} />
               <Route path="/dashboard/exercises" element={<ProtectedRoute><Exercises /></ProtectedRoute>} />
+              
+              <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
