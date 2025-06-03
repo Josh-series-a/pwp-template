@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,6 +33,7 @@ import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
+import AdminCredits from "./pages/AdminCredits";
 
 const queryClient = new QueryClient();
 
@@ -124,6 +124,11 @@ const App = () => (
               <Route path="/admin/users" element={
                 <RoleProtectedRoute allowedRoles={['Admin']} redirectTo="/dashboard">
                   <AdminUsers />
+                </RoleProtectedRoute>
+              } />
+              <Route path="/admin/credits" element={
+                <RoleProtectedRoute allowedRoles={['Admin']} redirectTo="/dashboard">
+                  <AdminCredits />
                 </RoleProtectedRoute>
               } />
               
