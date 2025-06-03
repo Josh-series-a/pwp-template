@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
     const method = req.method
 
     if (method === 'GET') {
-      // List all users
+      // List all users - no body parsing needed for GET requests
       const { data, error } = await supabaseAdmin.auth.admin.listUsers()
       
       if (error) {
