@@ -40,8 +40,8 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
-    const { plan, type = "subscription" } = await req.json();
-    logStep("Request received", { plan, type });
+    const { plan } = await req.json();
+    logStep("Plan received", { plan });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
@@ -55,93 +55,47 @@ serve(async (req) => {
       logStep("Creating new customer");
     }
 
-    let sessionConfig;
+    // Define pricing based on plan - updated to match frontend plan credits
+    const pricingMap = {
+      starter: { price: 999, credits: 18, name: "Starter Plan - Plant the Seed" }, // $9.99, 18 credits
+      growth: { price: 1999, credits: 25, name: "Growth Plan - Shape the Strategy" }, // $19.99, 25 credits
+      impact: { price: 4999, credits: 55, name: "Impact Plan - Lead with Purpose" } // $49.99, 55 credits
+    };
 
-    if (type === "credits") {
-      // Handle credit purchases
-      const creditPackages = {
-        starter: { price: 999, credits: 18, name: "Starter Credit Pack - 18 Credits" },
-        growth: { price: 1999, credits: 25, name: "Growth Credit Pack - 25 Credits" },
-        impact: { price: 4999, credits: 55, name: "Impact Credit Pack - 55 Credits" }
-      };
-
-      const packageDetails = creditPackages[plan as keyof typeof creditPackages];
-      if (!packageDetails) {
-        throw new Error("Invalid credit package selected");
-      }
-
-      logStep("Creating credit purchase session", packageDetails);
-
-      sessionConfig = {
-        customer: customerId,
-        customer_email: customerId ? undefined : user.email,
-        line_items: [
-          {
-            price_data: {
-              currency: "usd",
-              product_data: { 
-                name: packageDetails.name,
-                description: `${packageDetails.credits} credits for business analysis tools`
-              },
-              unit_amount: packageDetails.price,
-            },
-            quantity: 1,
-          },
-        ],
-        mode: "payment",
-        success_url: `${req.headers.get("origin")}/account?purchase_success=true&type=credits`,
-        cancel_url: `${req.headers.get("origin")}/account?canceled=true`,
-        metadata: {
-          user_id: user.id,
-          plan: plan,
-          credits: packageDetails.credits.toString(),
-          type: 'credit_purchase'
-        }
-      };
-    } else {
-      // Handle subscription purchases
-      const pricingMap = {
-        starter: { price: 999, credits: 18, name: "Starter Plan - Plant the Seed" },
-        growth: { price: 1999, credits: 25, name: "Growth Plan - Shape the Strategy" },
-        impact: { price: 4999, credits: 55, name: "Impact Plan - Lead with Purpose" }
-      };
-
-      const planDetails = pricingMap[plan as keyof typeof pricingMap];
-      if (!planDetails) {
-        throw new Error("Invalid plan selected");
-      }
-
-      logStep("Creating subscription session", planDetails);
-
-      sessionConfig = {
-        customer: customerId,
-        customer_email: customerId ? undefined : user.email,
-        line_items: [
-          {
-            price_data: {
-              currency: "usd",
-              product_data: { 
-                name: planDetails.name,
-                description: `${planDetails.credits} credits monthly`
-              },
-              unit_amount: planDetails.price,
-              recurring: { interval: "month" },
-            },
-            quantity: 1,
-          },
-        ],
-        mode: "subscription",
-        success_url: `${req.headers.get("origin")}/account?success=true`,
-        cancel_url: `${req.headers.get("origin")}/account?canceled=true`,
-        metadata: {
-          user_id: user.id,
-          plan: plan,
-          credits: planDetails.credits.toString()
-        }
-      };
+    const planDetails = pricingMap[plan as keyof typeof pricingMap];
+    if (!planDetails) {
+      throw new Error("Invalid plan selected");
     }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig);
+    logStep("Creating checkout session", planDetails);
+
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      customer_email: customerId ? undefined : user.email,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: planDetails.name,
+              description: `${planDetails.credits} credits monthly`
+            },
+            unit_amount: planDetails.price,
+            recurring: { interval: "month" },
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      success_url: `${req.headers.get("origin")}/account?success=true`,
+      cancel_url: `${req.headers.get("origin")}/account?canceled=true`,
+      metadata: {
+        user_id: user.id,
+        plan: plan,
+        credits: planDetails.credits.toString()
+      }
+    });
+
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
     return new Response(JSON.stringify({ url: session.url }), {

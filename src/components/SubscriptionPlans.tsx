@@ -1,328 +1,206 @@
-
-import React, { useState } from 'react';
-import { Check, CreditCard, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { useCredits } from '@/hooks/useCredits';
-import { toast } from 'sonner';
+import { Check, Coins, Star, Zap, Rocket } from 'lucide-react';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const SubscriptionPlans = () => {
-  const { isAuthenticated } = useAuth();
-  const { refreshCredits } = useCredits();
-  const [isLoading, setIsLoading] = useState<string | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
+  const { subscriptionInfo, createCheckoutSession, openCustomerPortal } = useSubscription();
 
-  const subscriptionPlans = [
+  const plans = [
     {
-      name: "Starter",
-      id: "starter",
-      price: "$9.99",
-      period: "/month",
-      description: "Perfect for entrepreneurs just starting their journey",
-      credits: "18 credits monthly",
+      id: 'starter',
+      name: 'Starter Plan',
+      subtitle: 'Plant the Seed',
+      price: '$9.99',
+      period: '/month',
+      credits: 18,
+      description: 'For early-stage founders laying strong roots for a sustainable business.',
       features: [
-        "Business Health Score Analysis",
-        "2-3 focused exercise packages",
-        "Basic insights and recommendations",
-        "Email support"
+        '18 credits per month',
+        'Access to selected exercises (approximately 1 pack every 2 months)',
+        'Digital access to Prosper With Purpose',
+        '1 Discovery Meeting (15 minutes, after 3 months)',
+        'Business Health Score Tool',
+        'Email support'
       ],
-      popular: false,
-      buttonText: "Start Free Trial"
+      icon: Star,
+      gradient: 'from-slate-600 to-slate-700',
+      bgAccent: 'bg-slate-50',
+      borderColor: 'border-slate-200',
+      textAccent: 'text-slate-600'
     },
     {
-      name: "Growth",
-      id: "growth", 
-      price: "$19.99",
-      period: "/month",
-      description: "Ideal for growing businesses ready to scale",
-      credits: "25 credits monthly",
+      id: 'growth',
+      name: 'Growth Plan',
+      subtitle: 'Shape the Strategy',
+      price: '$19.99',
+      period: '/month',
+      credits: 25,
+      description: 'For purpose-driven businesses building momentum and clarity.',
       features: [
-        "Everything in Starter",
-        "3-4 comprehensive exercise packages",
-        "Advanced business insights",
-        "Priority email support",
-        "Monthly strategy session"
+        '25 credits per month',
+        'Full access to exercises and workbooks (approximately 1 pack per month)',
+        'Digital access to Prosper With Purpose',
+        'Free physical copy of Prosper With Purpose',
+        '2 Discovery Meetings (30 minutes each)',
+        'Access to 3 Strategy Tools (e.g. 1+1 Proposition, Delegation Scorecard)',
+        'Monthly expert group session',
+        'Priority email support'
       ],
       popular: true,
-      buttonText: "Start Free Trial"
+      icon: Zap,
+      gradient: 'from-primary to-primary/80',
+      bgAccent: 'bg-primary/5',
+      borderColor: 'border-primary/20',
+      textAccent: 'text-primary'
     },
     {
-      name: "Impact",
-      id: "impact",
-      price: "$49.99", 
-      period: "/month",
-      description: "For established businesses focused on sustainable growth",
-      credits: "55 credits monthly",
-      features: [
-        "Everything in Growth",
-        "All exercise packages available",
-        "Comprehensive business analysis",
-        "Phone & email support",
-        "Weekly strategy sessions",
-        "Custom report generation"
-      ],
-      popular: false,
-      buttonText: "Start Free Trial"
-    }
-  ];
-
-  const creditPackages = [
-    {
-      name: "Starter Pack",
-      id: "starter",
-      price: "$9.99",
-      credits: 18,
-      description: "Perfect for trying out our analysis tools",
-      features: [
-        "18 analysis credits",
-        "1-2 business health reports",
-        "Basic exercise packages",
-        "Valid for 6 months"
-      ],
-      popular: false
-    },
-    {
-      name: "Growth Pack", 
-      id: "growth",
-      price: "$19.99",
-      credits: 25,
-      description: "Great value for regular business analysis",
-      features: [
-        "25 analysis credits",
-        "3-4 comprehensive reports",
-        "Multiple exercise packages",
-        "Valid for 6 months"
-      ],
-      popular: true
-    },
-    {
-      name: "Impact Pack",
-      id: "impact", 
-      price: "$49.99",
+      id: 'impact',
+      name: 'Impact Plan',
+      subtitle: 'Lead with Purpose',
+      price: '$49.99',
+      period: '/month',
       credits: 55,
-      description: "Maximum value for extensive business insights",
+      description: 'For founders and teams ready to transform their business and legacy.',
       features: [
-        "55 analysis credits",
-        "8-10 detailed reports",
-        "All exercise packages",
-        "Valid for 12 months"
+        '55 credits per month',
+        'Full access to all 5 packs immediately',
+        'Digital and signed physical copy of Prosper With Purpose',
+        '4 Discovery Meetings (45 minutes each)',
+        'Full access to all Strategy Tools and Templates',
+        'Custom Progress Tracker',
+        'Personalised onboarding session',
+        'Access to 1:1 coaching upgrades',
+        'Priority processing and support'
       ],
-      popular: false
+      icon: Rocket,
+      gradient: 'from-secondary to-secondary/80',
+      bgAccent: 'bg-secondary/10',
+      borderColor: 'border-secondary/30',
+      textAccent: 'text-secondary'
     }
   ];
-
-  const handleSubscription = async (planId: string) => {
-    if (!isAuthenticated) {
-      toast.error('Please log in to subscribe');
-      return;
-    }
-
-    setIsLoading(planId);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { plan: planId, type: 'subscription' }
-      });
-
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error: any) {
-      console.error('Subscription error:', error);
-      toast.error(error.message || 'Failed to create checkout session');
-    } finally {
-      setIsLoading(null);
-    }
-  };
-
-  const handleCreditPurchase = async (packageId: string) => {
-    if (!isAuthenticated) {
-      toast.error('Please log in to purchase credits');
-      return;
-    }
-
-    setIsLoading(packageId);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { plan: packageId, type: 'credits' }
-      });
-
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error: any) {
-      console.error('Credit purchase error:', error);
-      toast.error(error.message || 'Failed to create checkout session');
-    } finally {
-      setIsLoading(null);
-    }
-  };
-
-  const handleSyncPurchases = async () => {
-    if (!isAuthenticated) {
-      toast.error('Please log in to sync purchases');
-      return;
-    }
-
-    setIsSyncing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('sync-purchases');
-
-      if (error) throw error;
-      
-      toast.success(data?.message || 'Purchases synced successfully!');
-      await refreshCredits(); // Refresh credits display
-    } catch (error: any) {
-      console.error('Sync error:', error);
-      toast.error(error.message || 'Failed to sync purchases');
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   return (
-    <div className="w-full">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <h2 className="text-4xl font-bold text-foreground">
           Choose Your Plan
         </h2>
-        <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-6">
-          Whether you prefer monthly subscriptions or one-time credit purchases, we have options to fit your business needs.
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Select the plan that best fits your business journey and unlock your potential
         </p>
-        
-        {isAuthenticated && (
-          <Button
-            onClick={handleSyncPurchases}
-            disabled={isSyncing}
-            variant="outline"
-            className="mb-8 border-white/30 text-white hover:bg-white/10"
-          >
-            {isSyncing ? (
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-2 h-4 w-4" />
-            )}
-            Sync Recent Purchases
-          </Button>
-        )}
       </div>
 
-      <Tabs defaultValue="subscription" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-8 bg-white/10 border-white/20">
-          <TabsTrigger value="subscription" className="data-[state=active]:bg-white/20 text-white">
-            Monthly Subscriptions
-          </TabsTrigger>
-          <TabsTrigger value="credits" className="data-[state=active]:bg-white/20 text-white">
-            One-Time Credits
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="subscription">
-          <div className="grid md:grid-cols-3 gap-6">
-            {subscriptionPlans.map((plan) => (
-              <Card key={plan.id} className={`relative bg-white/5 backdrop-blur-sm border-white/10 shadow-2xl ${plan.popular ? 'ring-2 ring-blue-500' : ''}`}>
-                {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 hover:bg-blue-700 text-white">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {plans.map((plan, index) => {
+          const isCurrentPlan = subscriptionInfo.subscription_tier?.toLowerCase() === plan.id;
+          const IconComponent = plan.icon;
+          
+          return (
+            <Card
+              key={plan.id}
+              className={`relative group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+                isCurrentPlan
+                  ? 'ring-2 ring-primary shadow-lg scale-105'
+                  : plan.popular
+                  ? 'ring-2 ring-primary/30 shadow-lg scale-105'
+                  : 'hover:ring-2 hover:ring-primary/20 hover:shadow-md'
+              } ${plan.borderColor} overflow-hidden`}
+            >
+              {/* Subtle background decoration */}
+              <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${plan.gradient} opacity-5 rounded-full -translate-y-12 translate-x-12`} />
+              
+              {plan.popular && !isCurrentPlan && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <Badge className="bg-primary text-primary-foreground px-4 py-1 text-sm font-semibold shadow-sm">
                     Most Popular
                   </Badge>
-                )}
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-white text-xl">{plan.name}</CardTitle>
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-3xl font-bold text-white">{plan.price}</span>
-                    <span className="text-gray-300 ml-1">{plan.period}</span>
-                  </div>
-                  <CardDescription className="text-gray-300">{plan.description}</CardDescription>
-                  <div className="text-blue-400 font-medium">{plan.credits}</div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
-                        <span className="text-gray-300 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Separator className="bg-white/20" />
-                  <Button 
-                    onClick={() => handleSubscription(plan.id)}
-                    disabled={isLoading === plan.id}
-                    className={`w-full rounded-full transition-all duration-300 ${
-                      plan.popular 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                        : 'bg-white/10 hover:bg-white/20 border border-white/30 text-white'
-                    }`}
-                  >
-                    {isLoading === plan.id ? (
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <CreditCard className="mr-2 h-4 w-4" />
-                    )}
-                    {plan.buttonText}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="credits">
-          <div className="grid md:grid-cols-3 gap-6">
-            {creditPackages.map((pack) => (
-              <Card key={pack.id} className={`relative bg-white/5 backdrop-blur-sm border-white/10 shadow-2xl ${pack.popular ? 'ring-2 ring-purple-500' : ''}`}>
-                {pack.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 hover:bg-purple-700 text-white">
-                    Best Value
+                </div>
+              )}
+              {isCurrentPlan && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <Badge className="bg-green-600 text-white px-4 py-1 text-sm font-semibold shadow-sm">
+                    Current Plan
                   </Badge>
-                )}
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-white text-xl">{pack.name}</CardTitle>
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-3xl font-bold text-white">{pack.price}</span>
-                    <span className="text-gray-300 ml-1">one-time</span>
+                </div>
+              )}
+              
+              <CardHeader className={`text-center pb-6 ${plan.bgAccent} relative z-10`}>
+                <div className="flex justify-center mb-4">
+                  <div className={`p-3 rounded-full bg-gradient-to-r ${plan.gradient} text-white shadow-sm`}>
+                    <IconComponent className="h-6 w-6" />
                   </div>
-                  <CardDescription className="text-gray-300">{pack.description}</CardDescription>
-                  <div className="text-purple-400 font-medium">{pack.credits} credits</div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-3">
-                    {pack.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
-                        <span className="text-gray-300 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Separator className="bg-white/20" />
-                  <Button 
-                    onClick={() => handleCreditPurchase(pack.id)}
-                    disabled={isLoading === pack.id}
-                    className={`w-full rounded-full transition-all duration-300 ${
-                      pack.popular 
-                        ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                        : 'bg-white/10 hover:bg-white/20 border border-white/30 text-white'
-                    }`}
-                  >
-                    {isLoading === pack.id ? (
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <CreditCard className="mr-2 h-4 w-4" />
-                    )}
-                    Buy Credits
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+                
+                <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
+                <p className={`text-lg font-semibold ${plan.textAccent}`}>
+                  "{plan.subtitle}"
+                </p>
+                
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-baseline justify-center">
+                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-lg text-muted-foreground ml-1">{plan.period}</span>
+                  </div>
+                  <CardDescription className="text-base px-2">{plan.description}</CardDescription>
+                </div>
+                
+                <div className={`flex items-center justify-center gap-2 mt-6 p-3 ${plan.bgAccent} rounded-lg border ${plan.borderColor}`}>
+                  <Coins className="h-5 w-5 text-amber-600" />
+                  <span className="font-semibold text-lg text-gray-900">{plan.credits} credits/month</span>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="pt-6 space-y-6">
+                <ul className="space-y-3">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start group">
+                      <div className="flex-shrink-0 mt-1">
+                        <Check className="h-4 w-4 text-green-600 transition-transform group-hover:scale-110" />
+                      </div>
+                      <span className="ml-3 text-sm text-gray-700 leading-relaxed">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <Button 
+                  className={`w-full py-6 text-lg font-semibold transition-all duration-300 ${
+                    isCurrentPlan 
+                      ? 'bg-gray-600 hover:bg-gray-700 text-white' 
+                      : `bg-gradient-to-r ${plan.gradient} hover:shadow-md hover:scale-[1.02] text-white`
+                  }`}
+                  onClick={() => {
+                    if (isCurrentPlan) {
+                      openCustomerPortal();
+                    } else {
+                      createCheckoutSession(plan.id as 'starter' | 'growth' | 'impact');
+                    }
+                  }}
+                >
+                  {isCurrentPlan ? "Manage Subscription" : `Subscribe to ${plan.subtitle}`}
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {subscriptionInfo.subscribed && subscriptionInfo.subscription_end && (
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <p className="text-sm font-medium text-green-800">
+              Your subscription renews on{' '}
+              <span className="font-bold">
+                {new Date(subscriptionInfo.subscription_end).toLocaleDateString()}
+              </span>
+            </p>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+      )}
     </div>
   );
 };
