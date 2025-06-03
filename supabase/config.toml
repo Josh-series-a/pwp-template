@@ -78,6 +78,12 @@ verify_jwt = true
 [functions.customer-portal]
 verify_jwt = true
 
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.sync-purchases]
+verify_jwt = true
+
 [edge_runtime]
 enabled = true
 port = 54328
