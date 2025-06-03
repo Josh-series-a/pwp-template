@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,7 +46,7 @@ export const useSubscription = () => {
     }
   };
 
-  const createCheckoutSession = async (plan: 'basic' | 'premium' | 'enterprise') => {
+  const createCheckoutSession = async (plan: 'starter' | 'growth' | 'impact') => {
     if (!user) {
       toast.error('You must be logged in to subscribe');
       return;
