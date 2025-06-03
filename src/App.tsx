@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -71,11 +70,14 @@ const App = () => (
                   <Profile />
                 </RoleProtectedRoute>
               } />
+              
+              {/* Account route - accessible to both users and admins */}
               <Route path="/account" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
+                <ProtectedRoute>
                   <Account />
-                </RoleProtectedRoute>
+                </ProtectedRoute>
               } />
+              
               <Route path="/dashboard/reports" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <Reports />
