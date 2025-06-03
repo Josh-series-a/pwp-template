@@ -1,3 +1,4 @@
+
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Check } from 'lucide-react';
 import SubscriptionPlans from '@/components/SubscriptionPlans';
+import CreditsDisplay from '@/components/CreditsDisplay';
 
 const Account = () => {
   const { user } = useAuth();
@@ -70,8 +72,14 @@ const Account = () => {
   ];
 
   return (
-    <DashboardLayout title="Account Settings">
+    <DashboardLayout title="Account Settings" hideHeader>
       <div className="w-full space-y-6">
+        {/* Custom header with credits display */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
+          <CreditsDisplay />
+        </div>
+
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="w-full justify-start">
             <TabsTrigger value="profile">Profile</TabsTrigger>
