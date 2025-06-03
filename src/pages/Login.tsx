@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,16 +33,18 @@ const Login = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   
   const from = location.state?.from?.pathname || "/dashboard";
   
   useEffect(() => {
-    // Redirect if already logged in
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
+    // Redirect if already logged in based on role
+    if (isAuthenticated && user) {
+      const userRole = user.user_metadata?.role || 'User';
+      const redirectPath = userRole === 'Admin' ? '/admin/dashboard' : '/dashboard';
+      navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, user, navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,7 +63,17 @@ const Login = () => {
       
       if (result.success) {
         toast.success("Login successful!");
-        navigate("/dashboard");
+        
+        // Get the current user to check their role
+        const currentUser = await authService.getCurrentUser();
+        const userRole = currentUser?.user_metadata?.role || 'User';
+        
+        // Redirect based on user role
+        if (userRole === 'Admin') {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         setError(result.error || "Invalid credentials. Please try again.");
       }
