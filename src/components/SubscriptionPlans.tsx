@@ -1,12 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Coins, Star, Zap, Rocket } from 'lucide-react';
+import { Check, Coins, Star, Zap, Rocket, RefreshCw } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const SubscriptionPlans = () => {
   const { subscriptionInfo, createCheckoutSession, openCustomerPortal } = useSubscription();
+  const { user } = useAuth();
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const syncSubscription = async () => {
+    if (!user) {
+      toast.error('You must be logged in to sync subscription');
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sync-subscription');
+
+      if (error) {
+        console.error('Error syncing subscription:', error);
+        toast.error('Failed to sync subscription');
+        return;
+      }
+
+      if (data.success) {
+        toast.success(data.message || 'Subscription synced successfully');
+        // Refresh the page to update credits display
+        window.location.reload();
+      } else {
+        toast.error(data.error || 'Failed to sync subscription');
+      }
+    } catch (error) {
+      console.error('Error syncing subscription:', error);
+      toast.error('Failed to sync subscription');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const plans = [
     {
@@ -92,6 +128,24 @@ const SubscriptionPlans = () => {
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Select the plan that best fits your business journey and unlock your potential
         </p>
+        
+        {user && (
+          <div className="flex justify-center">
+            <Button
+              onClick={syncSubscription}
+              disabled={isSyncing}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              {isSyncing ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              {isSyncing ? 'Syncing...' : 'Sync Recent Purchases'}
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
