@@ -1,12 +1,11 @@
-
 import React from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
+import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, FileText, Activity, Settings } from 'lucide-react';
 
 const AdminDashboard = () => {
   return (
-    <DashboardLayout title="Admin Dashboard">
+    <AdminLayout title="Admin Dashboard">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -117,7 +116,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </AdminLayout>
   );
 };
 
