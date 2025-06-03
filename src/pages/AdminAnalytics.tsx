@@ -105,7 +105,11 @@ const AdminAnalytics = () => {
           oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
           return packageDate >= oneMonthAgo;
         }).length || 0,
-        averageDocuments: packages?.reduce((acc, p) => acc + (p.documents?.length || 0), 0) / (packages?.length || 1)
+        averageDocuments: packages?.reduce((acc, p) => {
+          // Safely handle the Json type for documents
+          const docs = Array.isArray(p.documents) ? p.documents : [];
+          return acc + docs.length;
+        }, 0) / (packages?.length || 1)
       };
 
       // Create recent activities from reports and packages
