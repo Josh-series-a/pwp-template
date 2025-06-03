@@ -55,11 +55,11 @@ serve(async (req) => {
       logStep("Creating new customer");
     }
 
-    // Define pricing based on plan
+    // Define pricing based on plan - updated to match frontend plan IDs
     const pricingMap = {
-      basic: { price: 999, credits: 100, name: "Basic Plan" }, // $9.99
-      premium: { price: 1999, credits: 250, name: "Premium Plan" }, // $19.99
-      enterprise: { price: 4999, credits: 1000, name: "Enterprise Plan" } // $49.99
+      starter: { price: 999, credits: 5, name: "Starter Plan - Plant the Seed" }, // $9.99
+      growth: { price: 1999, credits: 10, name: "Growth Plan - Shape the Strategy" }, // $19.99
+      impact: { price: 4999, credits: 35, name: "Impact Plan - Lead with Purpose" } // $49.99
     };
 
     const planDetails = pricingMap[plan as keyof typeof pricingMap];
