@@ -55,11 +55,11 @@ serve(async (req) => {
       logStep("Creating new customer");
     }
 
-    // Define pricing based on plan - updated to match frontend plan IDs
+    // Define pricing based on plan - updated to match frontend plan credits
     const pricingMap = {
-      starter: { price: 999, credits: 5, name: "Starter Plan - Plant the Seed" }, // $9.99
-      growth: { price: 1999, credits: 10, name: "Growth Plan - Shape the Strategy" }, // $19.99
-      impact: { price: 4999, credits: 35, name: "Impact Plan - Lead with Purpose" } // $49.99
+      starter: { price: 999, credits: 18, name: "Starter Plan - Plant the Seed" }, // $9.99, 18 credits
+      growth: { price: 1999, credits: 25, name: "Growth Plan - Shape the Strategy" }, // $19.99, 25 credits
+      impact: { price: 4999, credits: 55, name: "Impact Plan - Lead with Purpose" } // $49.99, 55 credits
     };
 
     const planDetails = pricingMap[plan as keyof typeof pricingMap];
