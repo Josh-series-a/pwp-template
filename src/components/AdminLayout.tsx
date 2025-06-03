@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -90,8 +91,8 @@ const SidebarProfile = () => {
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem asChild>
             <Link to="/dashboard" className="cursor-pointer">
-              <Users className="mr-2 h-4 w-4" />
-              User Dashboard
+              <Settings className="mr-2 h-4 w-4" />
+              Account Settings
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
