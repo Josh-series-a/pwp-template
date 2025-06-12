@@ -59,15 +59,22 @@ const CreateUserDialog: React.FC<CreateUserDialogProps> = ({ onUserCreated }) =>
       if (error) {
         console.error('Edge function error:', error);
         
-        // Handle different error types with specific messages
-        if (error.message?.includes('409')) {
-          throw new Error('A user with this email address already exists');
-        } else if (error.message?.includes('400')) {
-          throw new Error('Invalid input data. Please check all fields and try again.');
-        } else if (error.message?.includes('401')) {
-          throw new Error('Authentication failed. Please log in again.');
-        } else if (error.message?.includes('403')) {
-          throw new Error('You do not have permission to create users');
+        // Handle FunctionsHttpError specifically
+        if (error.name === 'FunctionsHttpError') {
+          // Try to get more specific error information
+          const errorMessage = error.message || 'Unknown error occurred';
+          
+          if (errorMessage.includes('409') || errorMessage.includes('Conflict')) {
+            throw new Error('A user with this email address already exists');
+          } else if (errorMessage.includes('400')) {
+            throw new Error('Invalid input data. Please check all fields and try again.');
+          } else if (errorMessage.includes('401')) {
+            throw new Error('Authentication failed. Please log in again.');
+          } else if (errorMessage.includes('403')) {
+            throw new Error('You do not have permission to create users');
+          } else {
+            throw new Error('Failed to create user. Please try again.');
+          }
         } else {
           throw new Error(error.message || 'Failed to create user');
         }
