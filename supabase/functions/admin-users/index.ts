@@ -1,14 +1,19 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.8'
-import { corsHeaders } from '../_shared/cors.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-Deno.serve(async (req) => {
-  // Handle CORS preflight requests
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    // Create a Supabase client with the service role key
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -20,11 +25,11 @@ Deno.serve(async (req) => {
       }
     )
 
-    // Get the authorization header
+    // Verify the user is authenticated and is an admin
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
+        JSON.stringify({ error: 'Authorization header missing' }),
         { 
           status: 401, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -32,19 +37,12 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Verify the user is authenticated
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    )
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    )
-
-    if (userError || !user) {
+    if (authError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
+        JSON.stringify({ error: 'Invalid authorization token' }),
         { 
           status: 401, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -52,11 +50,12 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Check if user has admin role
-    const userRole = user.user_metadata?.role
-    if (userRole !== 'Admin') {
+    // Check if user is admin (either has Admin role or is the specific admin email)
+    const isAdmin = user.user_metadata?.role === 'Admin' || user.email === 'colinfc@btinternet.com'
+    
+    if (!isAdmin) {
       return new Response(
-        JSON.stringify({ error: 'Insufficient permissions' }),
+        JSON.stringify({ error: 'Unauthorized: Admin access required' }),
         { 
           status: 403, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -64,40 +63,14 @@ Deno.serve(async (req) => {
       )
     }
 
-    const method = req.method
+    if (req.method === 'GET') {
+      // Get all users
+      const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers()
 
-    if (method === 'GET') {
-      // List all users - GET requests don't have a body to parse
-      const { data, error } = await supabaseAdmin.auth.admin.listUsers()
-      
       if (error) {
         console.error('Error fetching users:', error)
         return new Response(
           JSON.stringify({ error: error.message }),
-          { 
-            status: 500, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
-
-      return new Response(
-        JSON.stringify({ users: data.users }),
-        { 
-          status: 200, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    if (method === 'POST') {
-      // Only parse body for POST requests
-      let body
-      try {
-        body = await req.json()
-      } catch (error) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid JSON in request body' }),
           { 
             status: 400, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -105,22 +78,69 @@ Deno.serve(async (req) => {
         )
       }
 
-      const { action } = body
+      return new Response(
+        JSON.stringify({ users }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    if (req.method === 'POST') {
+      const { action, email, password, name, role, userId } = await req.json()
 
       if (action === 'create') {
-        const { email, password, name, role } = body
-        
+        console.log('Creating user:', { email, name, role })
+
+        // Create the user with the specified role
         const { data, error } = await supabaseAdmin.auth.admin.createUser({
           email,
           password,
-          user_metadata: { name, role },
+          user_metadata: {
+            name,
+            role: role || 'User'
+          },
           email_confirm: true
         })
 
         if (error) {
           console.error('Error creating user:', error)
+          
+          // Handle specific error cases with appropriate status codes
+          if (error.message?.includes('already been registered')) {
+            return new Response(
+              JSON.stringify({ error: 'A user with this email address already exists' }),
+              { 
+                status: 409, // Conflict
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            )
+          }
+          
+          if (error.message?.includes('invalid email')) {
+            return new Response(
+              JSON.stringify({ error: 'Invalid email address format' }),
+              { 
+                status: 400, // Bad Request
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            )
+          }
+          
+          if (error.message?.includes('password')) {
+            return new Response(
+              JSON.stringify({ error: 'Password does not meet requirements' }),
+              { 
+                status: 400, // Bad Request
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+              }
+            )
+          }
+
+          // Generic error response
           return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ error: error.message || 'Failed to create user' }),
             { 
               status: 400, 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -128,21 +148,26 @@ Deno.serve(async (req) => {
           )
         }
 
+        console.log('User created successfully:', data.user?.id)
+
         return new Response(
           JSON.stringify({ user: data.user }),
           { 
-            status: 200, 
+            status: 201, // Created
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
       }
 
       if (action === 'updateRole') {
-        const { userId, role } = body
-        
-        const { data, error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-          user_metadata: { role }
-        })
+        console.log('Updating user role:', { userId, role })
+
+        const { data, error } = await supabaseAdmin.auth.admin.updateUserById(
+          userId,
+          {
+            user_metadata: { role }
+          }
+        )
 
         if (error) {
           console.error('Error updating user role:', error)
@@ -155,6 +180,8 @@ Deno.serve(async (req) => {
           )
         }
 
+        console.log('User role updated successfully:', data.user?.id)
+
         return new Response(
           JSON.stringify({ user: data.user }),
           { 
@@ -163,6 +190,14 @@ Deno.serve(async (req) => {
           }
         )
       }
+
+      return new Response(
+        JSON.stringify({ error: 'Invalid action' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     return new Response(
