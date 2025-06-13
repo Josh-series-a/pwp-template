@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,7 +71,7 @@ const CreditsChart = () => {
 
   return (
     <div className="space-y-6">
-      {/* Credits Usage Chart */}
+      {/* Credits Usage Chart with Current Credits */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -78,7 +79,7 @@ const CreditsChart = () => {
             Credits Consumption
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           <ChartContainer config={chartConfig} className="h-[300px] w-full">
             <LineChart data={mockCreditData}>
               <XAxis 
@@ -105,39 +106,35 @@ const CreditsChart = () => {
               />
             </LineChart>
           </ChartContainer>
-        </CardContent>
-      </Card>
 
-      {/* Current Credits Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Credits</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-medium">
-              {currentCredits}/{maxCredits} credits
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {usagePercentage}% used
-            </span>
-          </div>
-          <Progress value={usagePercentage} className="h-2" />
-          
-          <div className="pt-4 space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Usage reset</span>
-              <span className="font-medium">{getNextResetDate()}</span>
+          {/* Current Credits Status */}
+          <div className="space-y-4 pt-4 border-t">
+            <h3 className="text-lg font-semibold">Current Credits</h3>
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-medium">
+                {currentCredits}/{maxCredits} credits
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {usagePercentage}% used
+              </span>
             </div>
+            <Progress value={usagePercentage} className="h-2" />
             
-            <Button 
-              onClick={handleBuyExtraCredits}
-              className="w-full"
-              variant="outline"
-            >
-              <CreditCard className="h-4 w-4 mr-2" />
-              Buy Extra Credits
-            </Button>
+            <div className="pt-4 space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Usage reset</span>
+                <span className="font-medium">{getNextResetDate()}</span>
+              </div>
+              
+              <Button 
+                onClick={handleBuyExtraCredits}
+                className="w-full"
+                variant="outline"
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                Buy Extra Credits
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
