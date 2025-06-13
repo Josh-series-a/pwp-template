@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check } from 'lucide-react';
 import SubscriptionPlans from '@/components/SubscriptionPlans';
 import CreditsDisplay from '@/components/CreditsDisplay';
+import CreditsChart from '@/components/CreditsChart';
 
 const Account = () => {
   const { user } = useAuth();
@@ -21,57 +22,6 @@ const Account = () => {
   const userInitials = user?.user_metadata?.name ? userName.split(' ').map(part => part[0]).join('').toUpperCase() : 'U';
   const userRole = user?.user_metadata?.role || 'User';
   const isAdmin = userRole === 'Admin' || user?.email === 'colinfc@btinternet.com';
-
-  const subscriptionPlans = [
-    {
-      name: 'Basic',
-      price: '$19',
-      period: '/month',
-      description: 'Perfect for small teams and personal use',
-      features: [
-        'Up to 10 reports per month',
-        '2,000 API calls',
-        'Basic analytics',
-        'Email support',
-        '5 team members'
-      ],
-      current: true
-    },
-    {
-      name: 'Premium',
-      price: '$49',
-      period: '/month',
-      description: 'Best for growing businesses',
-      features: [
-        'Up to 50 reports per month',
-        '10,000 API calls',
-        'Advanced analytics',
-        'Priority support',
-        '25 team members',
-        'Custom integrations',
-        'Data export'
-      ],
-      current: false,
-      popular: true
-    },
-    {
-      name: 'Enterprise',
-      price: '$99',
-      period: '/month',
-      description: 'For large organizations',
-      features: [
-        'Unlimited reports',
-        'Unlimited API calls',
-        'Advanced analytics & insights',
-        '24/7 dedicated support',
-        'Unlimited team members',
-        'Custom integrations',
-        'Priority data processing',
-        'SLA guarantee'
-      ],
-      current: false
-    }
-  ];
 
   const accountContent = (
     <div className="w-full space-y-6">
@@ -176,6 +126,7 @@ const Account = () => {
 
         {/* Billing & Subscription Tab */}
         <TabsContent value="billing" className="space-y-6">
+          <CreditsChart />
           <SubscriptionPlans />
         </TabsContent>
 
