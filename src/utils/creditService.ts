@@ -9,11 +9,19 @@ export interface UserCredits {
   updated_at: string;
 }
 
+export interface HealthScoreCredits {
+  id: string;
+  user_id: string;
+  health_score_credits: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CreditTransaction {
   id: string;
   user_id: string;
   amount: number;
-  transaction_type: string; // Changed from 'deduct' | 'add' to string to match database
+  transaction_type: string;
   description: string;
   feature_type: string;
   created_at: string;
@@ -47,6 +55,21 @@ export const creditService = {
     return data;
   },
 
+  async getHealthScoreCredits(userId: string): Promise<HealthScoreCredits | null> {
+    const { data, error } = await supabase
+      .from('health_score_credits')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching health score credits:', error);
+      return null;
+    }
+
+    return data;
+  },
+
   async createUserCredits(userId: string, initialCredits: number = 0): Promise<UserCredits | null> {
     const { data, error } = await supabase
       .from('user_credits')
@@ -59,6 +82,24 @@ export const creditService = {
 
     if (error) {
       console.error('Error creating user credits:', error);
+      return null;
+    }
+
+    return data;
+  },
+
+  async createHealthScoreCredits(userId: string, initialCredits: number = 5): Promise<HealthScoreCredits | null> {
+    const { data, error } = await supabase
+      .from('health_score_credits')
+      .insert({
+        user_id: userId,
+        health_score_credits: initialCredits
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating health score credits:', error);
       return null;
     }
 
@@ -120,6 +161,65 @@ export const creditService = {
       return { success: true, newBalance };
     } catch (error) {
       console.error('Error in deductCredits:', error);
+      return { success: false, error: 'An unexpected error occurred' };
+    }
+  },
+
+  async deductHealthScoreCredits(
+    userId: string, 
+    amount: number, 
+    description: string, 
+    featureType: string
+  ): Promise<{ success: boolean; newBalance?: number; error?: string }> {
+    try {
+      // First check current health score credits
+      const currentCredits = await this.getHealthScoreCredits(userId);
+      
+      if (!currentCredits) {
+        // Try to create health score credits record if it doesn't exist
+        const newCredits = await this.createHealthScoreCredits(userId);
+        if (!newCredits) {
+          return { success: false, error: 'Failed to initialize health score credits' };
+        }
+      }
+
+      const healthScoreCredits = currentCredits || await this.getHealthScoreCredits(userId);
+      
+      if (!healthScoreCredits || healthScoreCredits.health_score_credits < amount) {
+        return { success: false, error: 'Insufficient health score credits' };
+      }
+
+      // Deduct health score credits
+      const newBalance = healthScoreCredits.health_score_credits - amount;
+      const { error: updateError } = await supabase
+        .from('health_score_credits')
+        .update({ health_score_credits: newBalance })
+        .eq('user_id', userId);
+
+      if (updateError) {
+        console.error('Error updating health score credits:', updateError);
+        return { success: false, error: 'Failed to update health score credits' };
+      }
+
+      // Record transaction
+      const { error: transactionError } = await supabase
+        .from('credit_transactions')
+        .insert({
+          user_id: userId,
+          amount: -amount,
+          transaction_type: 'deduct',
+          description,
+          feature_type: featureType
+        });
+
+      if (transactionError) {
+        console.error('Error recording transaction:', transactionError);
+        // Don't fail the operation if transaction recording fails
+      }
+
+      return { success: true, newBalance };
+    } catch (error) {
+      console.error('Error in deductHealthScoreCredits:', error);
       return { success: false, error: 'An unexpected error occurred' };
     }
   },

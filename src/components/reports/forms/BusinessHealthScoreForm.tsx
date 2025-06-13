@@ -80,7 +80,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const { toast } = useToast();
   const { user } = useAuth();
-  const { credits, checkCredits, deductCredits, getCreditCost } = useCredits();
+  const { healthScoreCredits, checkHealthScoreCredits, deductHealthScoreCredits, getCreditCost } = useCredits();
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
     resolver: zodResolver(businessHealthScoreSchema),
@@ -113,8 +113,8 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     }
   });
 
-  const requiredCredits = getCreditCost('BUSINESS_HEALTH_SCORE');
-  const hasEnoughCredits = checkCredits(requiredCredits);
+  const requiredCredits = 1; // Health score uses 1 credit instead of 10
+  const hasEnoughCredits = checkHealthScoreCredits(requiredCredits);
 
   const autoFillForm = () => {
     const sampleData = {
@@ -199,8 +199,8 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
 
     if (!hasEnoughCredits) {
       toast({
-        title: "Insufficient credits",
-        description: `You need ${requiredCredits} credits to run a Business Health Score analysis. You currently have ${credits?.credits || 0} credits.`,
+        title: "Insufficient health score credits",
+        description: `You need ${requiredCredits} health score credit to run a Business Health Score analysis. You currently have ${healthScoreCredits?.health_score_credits || 0} health score credits.`,
         variant: "destructive",
       });
       return;
@@ -210,8 +210,8 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     console.log('Business Health Score data:', data);
     
     try {
-      // Deduct credits first
-      const creditDeducted = await deductCredits(
+      // Deduct health score credits first
+      const creditDeducted = await deductHealthScoreCredits(
         requiredCredits, 
         'Business Health Score Analysis', 
         'BUSINESS_HEALTH_SCORE'
@@ -228,7 +228,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
       onComplete();
       toast({
         title: "Business Health Score submitted successfully",
-        description: `Your business health assessment has been completed. ${requiredCredits} credits have been deducted.`,
+        description: `Your business health assessment has been completed. ${requiredCredits} health score credit has been deducted.`,
       });
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -262,10 +262,15 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <CreditsDisplay />
+              <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-lg">
+                <Coins className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">
+                  Health Score Credits: {healthScoreCredits?.health_score_credits || 0}
+                </span>
+              </div>
               <Badge variant="secondary" className="gap-2">
                 <Coins className="h-3 w-3" />
-                Cost: {requiredCredits} credits
+                Cost: {requiredCredits} health score credit
               </Badge>
               <Badge variant="secondary" className="gap-2">
                 <Star className="h-3 w-3" />
@@ -303,7 +308,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
               <div className="flex items-center gap-2 text-destructive">
                 <Coins className="h-4 w-4" />
                 <span className="text-sm font-medium">
-                  Insufficient credits: You need {requiredCredits} credits but only have {credits?.credits || 0}
+                  Insufficient health score credits: You need {requiredCredits} health score credit but only have {healthScoreCredits?.health_score_credits || 0}
                 </span>
               </div>
             </div>
@@ -372,7 +377,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
                     ) : (
                       <>
                         <CheckCircle2 className="h-4 w-4" />
-                        Submit Assessment ({requiredCredits} credits)
+                        Submit Assessment ({requiredCredits} health score credit)
                       </>
                     )}
                   </Button>
