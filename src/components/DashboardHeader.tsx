@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
 import CreditsDisplay from './CreditsDisplay';
+import HealthScoreCreditsDisplay from './HealthScoreCreditsDisplay';
 
 interface DashboardHeaderProps {
   title: string;
@@ -30,6 +31,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       </div>
       <div className="flex items-center gap-4">
         <CreditsDisplay />
+        <HealthScoreCreditsDisplay />
         {showAddButton && (
           <Button onClick={onAddClick} className="gap-2">
             <Plus className="h-4 w-4" />
