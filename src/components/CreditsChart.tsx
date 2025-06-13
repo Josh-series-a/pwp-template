@@ -130,6 +130,7 @@ const CreditsChart = () => {
                 onClick={handleBuyExtraCredits}
                 className="w-full"
                 variant="outline"
+                size="sm"
               >
                 <CreditCard className="h-4 w-4 mr-2" />
                 Buy Extra Credits
