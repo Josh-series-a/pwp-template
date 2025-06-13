@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -80,7 +81,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   const [direction, setDirection] = useState<'next' | 'prev'>('next');
   const { toast } = useToast();
   const { user } = useAuth();
-  const { healthScoreCredits, checkHealthScoreCredits, deductHealthScoreCredits, getCreditCost } = useCredits();
+  const { healthScoreCredits, checkHealthScoreCredits, deductHealthScoreCredits } = useCredits();
 
   const form = useForm<z.infer<typeof businessHealthScoreSchema>>({
     resolver: zodResolver(businessHealthScoreSchema),
@@ -113,7 +114,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     }
   });
 
-  const requiredCredits = 1; // Health score uses 1 credit instead of 10
+  const requiredCredits = 1; // 1 Business Health Score = 1 Health Score Credit
   const hasEnoughCredits = checkHealthScoreCredits(requiredCredits);
 
   const autoFillForm = () => {
@@ -244,6 +245,30 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
 
   const CurrentPageComponent = pages[currentPage].component;
 
+  // If no health score credits, show a disabled state
+  if (!hasEnoughCredits && healthScoreCredits?.health_score_credits === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center p-8 bg-card rounded-xl border shadow-lg">
+          <div className="p-3 rounded-full bg-destructive/10 text-destructive mx-auto w-fit mb-4">
+            <Coins className="h-8 w-8" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">No Health Score Credits</h2>
+          <p className="text-muted-foreground mb-6">
+            You need at least 1 health score credit to run a Business Health Score analysis. 
+            You currently have {healthScoreCredits?.health_score_credits || 0} health score credits.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Button onClick={onBack} variant="outline" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Reports
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
@@ -301,18 +326,6 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
               />
             </div>
           </div>
-
-          {/* Credit Warning */}
-          {!hasEnoughCredits && (
-            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <div className="flex items-center gap-2 text-destructive">
-                <Coins className="h-4 w-4" />
-                <span className="text-sm font-medium">
-                  Insufficient health score credits: You need {requiredCredits} health score credit but only have {healthScoreCredits?.health_score_credits || 0}
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
