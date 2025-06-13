@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import StaticHeader from './StaticHeader';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -184,7 +185,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   hideHeader = false
 }) => {
   return <SidebarProvider defaultOpen={false}>
-    <div className="min-h-screen flex w-full overflow-hidden">        
+    <div className="min-h-screen flex w-full overflow-hidden group">        
       <Sidebar 
         collapsible="icon" 
         className="fixed inset-y-0 left-0 z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar overflow-y-auto" 
@@ -200,7 +201,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </SidebarContent>
       </Sidebar>
       
-      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen">
+      <StaticHeader />
+      
+      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen pt-16">
         <div className="w-full h-full flex flex-col">
           {!hideHeader && (
             <div className="flex items-center px-6 sm:px-8 py-6 md:px-12 flex-shrink-0">
