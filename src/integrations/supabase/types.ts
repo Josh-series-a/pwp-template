@@ -171,6 +171,30 @@ export type Database = {
         }
         Relationships: []
       }
+      health_score_credits: {
+        Row: {
+          created_at: string
+          health_score_credits: number
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          health_score_credits?: number
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          health_score_credits?: number
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       packages: {
         Row: {
           created_at: string
