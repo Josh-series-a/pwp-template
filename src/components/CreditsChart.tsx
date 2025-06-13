@@ -80,8 +80,8 @@ const CreditsChart = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[300px]">
-            <LineChart data={mockCreditData}>
+          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+            <LineChart data={mockCreditData} width="100%">
               <XAxis 
                 dataKey="date" 
                 tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
