@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,21 +8,24 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Coins, Plus, Minus, Eye, Search, RefreshCw } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Coins, Plus, Minus, Eye, Search, RefreshCw, Heart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { creditService, type UserCredits, type CreditTransaction } from '@/utils/creditService';
+import { creditService, type UserCredits, type CreditTransaction, type HealthScoreCredits } from '@/utils/creditService';
 
 interface UserWithCredits {
   id: string;
   name: string;
   email: string;
   credits: number;
+  health_score_credits: number;
   created_at: string;
   updated_at: string;
   email_verified: boolean;
   role?: string;
   hasCreditsRecord: boolean;
+  hasHealthScoreCreditsRecord: boolean;
 }
 
 const AdminCredits = () => {
@@ -34,19 +38,25 @@ const AdminCredits = () => {
   const [description, setDescription] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [actionType, setActionType] = useState<'add' | 'remove'>('add');
+  const [creditType, setCreditType] = useState<'regular' | 'health_score'>('regular');
 
   useEffect(() => {
     fetchAllUsersWithCredits();
   }, []);
 
   const initializeMissingCredits = async () => {
-    const usersWithoutCredits = users.filter(user => !user.hasCreditsRecord);
+    const usersWithoutCredits = users.filter(user => !user.hasCreditsRecord || !user.hasHealthScoreCreditsRecord);
     
     if (usersWithoutCredits.length > 0) {
       console.log(`Initializing credits for ${usersWithoutCredits.length} users without records`);
       
       for (const user of usersWithoutCredits) {
-        await creditService.createUserCredits(user.id, 0);
+        if (!user.hasCreditsRecord) {
+          await creditService.createUserCredits(user.id, 0);
+        }
+        if (!user.hasHealthScoreCreditsRecord) {
+          await creditService.createHealthScoreCredits(user.id, 5);
+        }
       }
       
       toast.success(`Initialized credits for ${usersWithoutCredits.length} users`);
@@ -69,19 +79,43 @@ const AdminCredits = () => {
         return;
       }
 
+      // Update all existing health score credit records to 0
+      const { error: updateHealthError } = await supabase
+        .from('health_score_credits')
+        .update({ health_score_credits: 0 });
+
+      if (updateHealthError) {
+        console.error('Error updating health score credits:', updateHealthError);
+        toast.error('Failed to reset health score credits');
+        return;
+      }
+
       // Record transactions for all users
-      const usersWithCredits = users.filter(user => user.hasCreditsRecord && user.credits > 0);
+      const usersWithCredits = users.filter(user => user.hasCreditsRecord && (user.credits > 0 || user.health_score_credits > 0));
       
       for (const user of usersWithCredits) {
-        await supabase
-          .from('credit_transactions')
-          .insert({
-            user_id: user.id,
-            amount: -user.credits,
-            transaction_type: 'deduct',
-            description: 'Admin reset all credits to 0',
-            feature_type: 'admin_reset'
-          });
+        if (user.credits > 0) {
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: user.id,
+              amount: -user.credits,
+              transaction_type: 'deduct',
+              description: 'Admin reset all credits to 0',
+              feature_type: 'admin_reset'
+            });
+        }
+        if (user.health_score_credits > 0) {
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: user.id,
+              amount: -user.health_score_credits,
+              transaction_type: 'deduct',
+              description: 'Admin reset all health score credits to 0',
+              feature_type: 'admin_reset_health_score'
+            });
+        }
       }
 
       toast.success('All user credits have been reset to 0');
@@ -130,6 +164,15 @@ const AdminCredits = () => {
           console.error('Error fetching credits:', creditsError);
         }
 
+        // Get health score credits for all users
+        const { data: healthScoreCredits, error: healthScoreCreditsError } = await supabase
+          .from('health_score_credits')
+          .select('*');
+
+        if (healthScoreCreditsError) {
+          console.error('Error fetching health score credits:', healthScoreCreditsError);
+        }
+
         // Get profiles for additional user info
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
@@ -142,6 +185,7 @@ const AdminCredits = () => {
         // Combine the data - show ALL users from auth
         const usersWithCredits = data.users.map((authUser: any) => {
           const userCredits = credits?.find(c => c.user_id === authUser.id);
+          const userHealthScoreCredits = healthScoreCredits?.find(c => c.user_id === authUser.id);
           const userProfile = profiles?.find(p => p.id === authUser.id);
           
           return {
@@ -149,18 +193,20 @@ const AdminCredits = () => {
             name: userProfile?.name || authUser.user_metadata?.name || authUser.user_metadata?.full_name || 'Unknown',
             email: authUser.email || 'No email',
             credits: userCredits?.credits || 0, // Show 0 if no credits record
+            health_score_credits: userHealthScoreCredits?.health_score_credits || 0, // Show 0 if no health score credits record
             created_at: userCredits?.created_at || authUser.created_at,
             updated_at: userCredits?.updated_at || authUser.updated_at || authUser.created_at,
             email_verified: authUser.email_confirmed_at ? true : false,
             role: authUser.user_metadata?.role || 'User',
-            hasCreditsRecord: !!userCredits // Track whether user has a credits record
+            hasCreditsRecord: !!userCredits, // Track whether user has a credits record
+            hasHealthScoreCreditsRecord: !!userHealthScoreCredits // Track whether user has a health score credits record
           };
         });
 
         setUsers(usersWithCredits);
 
         // Check if there are users without credits records and offer to initialize them
-        const usersWithoutCredits = usersWithCredits.filter((user: UserWithCredits) => !user.hasCreditsRecord);
+        const usersWithoutCredits = usersWithCredits.filter((user: UserWithCredits) => !user.hasCreditsRecord || !user.hasHealthScoreCreditsRecord);
         if (usersWithoutCredits.length > 0) {
           console.log(`Found ${usersWithoutCredits.length} users without credits records`);
         }
@@ -195,58 +241,116 @@ const AdminCredits = () => {
     }
 
     try {
-      if (actionType === 'add') {
-        // Add credits
-        const currentUser = users.find(u => u.id === selectedUserId);
-        const newCredits = (currentUser?.credits || 0) + amount;
+      if (creditType === 'regular') {
+        // Handle regular credits
+        if (actionType === 'add') {
+          // Add credits
+          const currentUser = users.find(u => u.id === selectedUserId);
+          const newCredits = (currentUser?.credits || 0) + amount;
 
-        const { error: updateError } = await supabase
-          .from('user_credits')
-          .upsert({
-            user_id: selectedUserId,
-            credits: newCredits
-          }, { onConflict: 'user_id' });
+          const { error: updateError } = await supabase
+            .from('user_credits')
+            .upsert({
+              user_id: selectedUserId,
+              credits: newCredits
+            }, { onConflict: 'user_id' });
 
-        if (updateError) throw updateError;
+          if (updateError) throw updateError;
 
-        // Record transaction
-        await supabase
-          .from('credit_transactions')
-          .insert({
-            user_id: selectedUserId,
-            amount: amount,
-            transaction_type: 'add',
-            description,
-            feature_type: 'admin_allocation'
-          });
+          // Record transaction
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: selectedUserId,
+              amount: amount,
+              transaction_type: 'add',
+              description,
+              feature_type: 'admin_allocation'
+            });
 
-        toast.success(`Added ${amount} credits successfully`);
+          toast.success(`Added ${amount} credits successfully`);
+        } else {
+          // Remove credits
+          const currentCredits = users.find(u => u.id === selectedUserId)?.credits || 0;
+          const newCredits = Math.max(0, currentCredits - amount);
+
+          const { error: updateError } = await supabase
+            .from('user_credits')
+            .upsert({
+              user_id: selectedUserId,
+              credits: newCredits
+            }, { onConflict: 'user_id' });
+
+          if (updateError) throw updateError;
+
+          // Record transaction
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: selectedUserId,
+              amount: -amount,
+              transaction_type: 'deduct',
+              description,
+              feature_type: 'admin_deduction'
+            });
+
+          toast.success(`Removed ${amount} credits successfully`);
+        }
       } else {
-        // Remove credits
-        const currentCredits = users.find(u => u.id === selectedUserId)?.credits || 0;
-        const newCredits = Math.max(0, currentCredits - amount);
+        // Handle health score credits
+        if (actionType === 'add') {
+          // Add health score credits
+          const currentUser = users.find(u => u.id === selectedUserId);
+          const newHealthScoreCredits = (currentUser?.health_score_credits || 0) + amount;
 
-        const { error: updateError } = await supabase
-          .from('user_credits')
-          .upsert({
-            user_id: selectedUserId,
-            credits: newCredits
-          }, { onConflict: 'user_id' });
+          const { error: updateError } = await supabase
+            .from('health_score_credits')
+            .upsert({
+              user_id: selectedUserId,
+              health_score_credits: newHealthScoreCredits
+            }, { onConflict: 'user_id' });
 
-        if (updateError) throw updateError;
+          if (updateError) throw updateError;
 
-        // Record transaction
-        await supabase
-          .from('credit_transactions')
-          .insert({
-            user_id: selectedUserId,
-            amount: -amount,
-            transaction_type: 'deduct',
-            description,
-            feature_type: 'admin_deduction'
-          });
+          // Record transaction
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: selectedUserId,
+              amount: amount,
+              transaction_type: 'add',
+              description,
+              feature_type: 'admin_health_score_allocation'
+            });
 
-        toast.success(`Removed ${amount} credits successfully`);
+          toast.success(`Added ${amount} health score credits successfully`);
+        } else {
+          // Remove health score credits
+          const currentHealthScoreCredits = users.find(u => u.id === selectedUserId)?.health_score_credits || 0;
+          const newHealthScoreCredits = Math.max(0, currentHealthScoreCredits - amount);
+
+          const { error: updateError } = await supabase
+            .from('health_score_credits')
+            .upsert({
+              user_id: selectedUserId,
+              health_score_credits: newHealthScoreCredits
+            }, { onConflict: 'user_id' });
+
+          if (updateError) throw updateError;
+
+          // Record transaction
+          await supabase
+            .from('credit_transactions')
+            .insert({
+              user_id: selectedUserId,
+              amount: -amount,
+              transaction_type: 'deduct',
+              description,
+              feature_type: 'admin_health_score_deduction'
+            });
+
+          toast.success(`Removed ${amount} health score credits successfully`);
+        }
       }
 
       // Refresh data
@@ -290,7 +394,7 @@ const AdminCredits = () => {
     );
   }
 
-  const usersWithoutCredits = users.filter(user => !user.hasCreditsRecord);
+  const usersWithoutCredits = users.filter(user => !user.hasCreditsRecord || !user.hasHealthScoreCreditsRecord);
 
   return (
     <AdminLayout title="Credits Management">
@@ -346,7 +450,7 @@ const AdminCredits = () => {
             <CardContent className="pt-4">
               <p className="text-sm text-yellow-800">
                 <strong>{usersWithoutCredits.length} users</strong> don't have credits records yet. 
-                Click "Initialize Missing Credits" to create records with 0 default credits for these users.
+                Click "Initialize Missing Credits" to create records with default credits for these users.
               </p>
             </CardContent>
           </Card>
@@ -360,7 +464,7 @@ const AdminCredits = () => {
               All System Users - Credits Management
             </CardTitle>
             <CardDescription>
-              View and manage credits for all users in the system
+              View and manage both regular credits and health score credits for all users in the system
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -372,7 +476,8 @@ const AdminCredits = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Role</TableHead>
-                    <TableHead>Credits</TableHead>
+                    <TableHead>Regular Credits</TableHead>
+                    <TableHead>Health Score Credits</TableHead>
                     <TableHead>Record Status</TableHead>
                     <TableHead>Last Updated</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -403,9 +508,23 @@ const AdminCredits = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={user.hasCreditsRecord ? "default" : "secondary"}>
-                          {user.hasCreditsRecord ? "Has Record" : "No Record"}
+                        <Badge 
+                          variant={user.hasHealthScoreCreditsRecord ? "outline" : "destructive"} 
+                          className="gap-1"
+                        >
+                          <Heart className="h-3 w-3 text-red-600" />
+                          {user.health_score_credits}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          <Badge variant={user.hasCreditsRecord ? "default" : "secondary"} className="text-xs">
+                            Regular: {user.hasCreditsRecord ? "Has Record" : "No Record"}
+                          </Badge>
+                          <Badge variant={user.hasHealthScoreCreditsRecord ? "default" : "secondary"} className="text-xs">
+                            Health: {user.hasHealthScoreCreditsRecord ? "Has Record" : "No Record"}
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell>{formatDate(user.updated_at)}</TableCell>
                       <TableCell className="text-right">
@@ -416,9 +535,11 @@ const AdminCredits = () => {
                             onClick={() => {
                               setSelectedUserId(user.id);
                               setActionType('add');
+                              setCreditType('regular');
                               setIsDialogOpen(true);
                             }}
                             className="h-8 w-8 p-0"
+                            title="Add Regular Credits"
                           >
                             <Plus className="h-4 w-4" />
                           </Button>
@@ -428,11 +549,27 @@ const AdminCredits = () => {
                             onClick={() => {
                               setSelectedUserId(user.id);
                               setActionType('remove');
+                              setCreditType('regular');
                               setIsDialogOpen(true);
                             }}
                             className="h-8 w-8 p-0"
+                            title="Remove Regular Credits"
                           >
                             <Minus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUserId(user.id);
+                              setActionType('add');
+                              setCreditType('health_score');
+                              setIsDialogOpen(true);
+                            }}
+                            className="h-8 w-8 p-0 bg-red-50 hover:bg-red-100 border-red-200"
+                            title="Add Health Score Credits"
+                          >
+                            <Heart className="h-4 w-4 text-red-600" />
                           </Button>
                           <Dialog>
                             <DialogTrigger asChild>
@@ -441,6 +578,7 @@ const AdminCredits = () => {
                                 size="sm"
                                 onClick={() => fetchUserTransactions(user.id)}
                                 className="h-8 w-8 p-0"
+                                title="View Transaction History"
                               >
                                 <Eye className="h-4 w-4" />
                               </Button>
@@ -461,7 +599,7 @@ const AdminCredits = () => {
                                         <div>
                                           <p className="font-medium">{transaction.description}</p>
                                           <p className="text-sm text-muted-foreground">
-                                            {formatDate(transaction.created_at)}
+                                            {formatDate(transaction.created_at)} • {transaction.feature_type}
                                           </p>
                                         </div>
                                         <Badge 
@@ -497,10 +635,22 @@ const AdminCredits = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {actionType === 'add' ? 'Add Credits' : 'Remove Credits'}
+                {actionType === 'add' ? 'Add' : 'Remove'} {creditType === 'regular' ? 'Regular' : 'Health Score'} Credits
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Credit Type</label>
+                <Select value={creditType} onValueChange={(value: 'regular' | 'health_score') => setCreditType(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="regular">Regular Credits</SelectItem>
+                    <SelectItem value="health_score">Health Score Credits</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Amount</label>
                 <Input
@@ -524,7 +674,7 @@ const AdminCredits = () => {
                   Cancel
                 </Button>
                 <Button onClick={handleCreditAction}>
-                  {actionType === 'add' ? 'Add Credits' : 'Remove Credits'}
+                  {actionType === 'add' ? 'Add' : 'Remove'} {creditType === 'regular' ? 'Regular' : 'Health Score'} Credits
                 </Button>
               </div>
             </div>
