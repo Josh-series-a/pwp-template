@@ -6,18 +6,18 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { useCredits } from '@/hooks/useCredits';
 import { useSubscription } from '@/hooks/useSubscription';
-import { CreditCard, TrendingDown } from 'lucide-react';
+import { CreditCard, TrendingDown, Heart } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 // Mock data for credit consumption over time
 const mockCreditData = [
-  { date: '2025-01-01', credits: 120 },
-  { date: '2025-01-03', credits: 115 },
-  { date: '2025-01-05', credits: 108 },
-  { date: '2025-01-07', credits: 102 },
-  { date: '2025-01-09', credits: 95 },
-  { date: '2025-01-11', credits: 88 },
-  { date: '2025-01-13', credits: 80 },
+  { date: '2025-01-01', credits: 120, healthScoreCredits: 5 },
+  { date: '2025-01-03', credits: 115, healthScoreCredits: 5 },
+  { date: '2025-01-05', credits: 108, healthScoreCredits: 4 },
+  { date: '2025-01-07', credits: 102, healthScoreCredits: 4 },
+  { date: '2025-01-09', credits: 95, healthScoreCredits: 3 },
+  { date: '2025-01-11', credits: 88, healthScoreCredits: 3 },
+  { date: '2025-01-13', credits: 80, healthScoreCredits: 2 },
 ];
 
 const chartConfig = {
@@ -25,10 +25,14 @@ const chartConfig = {
     label: "Credits",
     color: "hsl(var(--primary))",
   },
+  healthScoreCredits: {
+    label: "Health Score Credits",
+    color: "hsl(var(--destructive))",
+  },
 };
 
 const CreditsChart = () => {
-  const { credits } = useCredits();
+  const { credits, healthScoreCredits } = useCredits();
   const { subscriptionInfo } = useSubscription();
   
   // Get subscription tier to determine max credits
@@ -47,7 +51,11 @@ const CreditsChart = () => {
 
   const maxCredits = getMaxCredits(subscriptionInfo.subscription_tier);
   const currentCredits = credits?.credits || 0;
+  const currentHealthScoreCredits = healthScoreCredits?.health_score_credits || 0;
+  const maxHealthScoreCredits = 5; // Standard max for health score credits
+  
   const usagePercentage = maxCredits > 0 ? Math.round((currentCredits / maxCredits) * 100) : 0;
+  const healthScoreUsagePercentage = maxHealthScoreCredits > 0 ? Math.round((currentHealthScoreCredits / maxHealthScoreCredits) * 100) : 0;
   
   // Calculate next reset date (example: 30 days from subscription start or monthly)
   const getNextResetDate = () => {
@@ -71,7 +79,7 @@ const CreditsChart = () => {
 
   return (
     <div className="space-y-6">
-      {/* Credits Usage Chart with Current Credits */}
+      {/* Credits Usage Chart with Both Credit Types */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -89,7 +97,11 @@ const CreditsChart = () => {
               <YAxis />
               <ChartTooltip 
                 content={<ChartTooltipContent />}
-                formatter={(value, name) => [`${value} credits`, 'Credits Remaining']}
+                formatter={(value, name) => {
+                  if (name === 'credits') return [`${value} credits`, 'Regular Credits'];
+                  if (name === 'healthScoreCredits') return [`${value} credits`, 'Health Score Credits'];
+                  return [`${value}`, name];
+                }}
                 labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', { 
                   month: 'long', 
                   day: 'numeric',
@@ -104,21 +116,54 @@ const CreditsChart = () => {
                 dot={{ fill: "var(--color-credits)", strokeWidth: 2, r: 4 }}
                 activeDot={{ r: 6, stroke: "var(--color-credits)", strokeWidth: 2 }}
               />
+              <Line 
+                type="monotone" 
+                dataKey="healthScoreCredits" 
+                stroke="var(--color-healthScoreCredits)" 
+                strokeWidth={3}
+                dot={{ fill: "var(--color-healthScoreCredits)", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: "var(--color-healthScoreCredits)", strokeWidth: 2 }}
+              />
             </LineChart>
           </ChartContainer>
 
           {/* Current Credits Status */}
-          <div className="space-y-4 pt-4 border-t">
+          <div className="space-y-6 pt-4 border-t">
             <h3 className="text-lg font-semibold">Current Credits</h3>
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-medium">
-                {currentCredits}/{maxCredits} credits
-              </span>
-              <span className="text-sm text-muted-foreground">
-                {usagePercentage}% used
-              </span>
+            
+            {/* Regular Credits */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                <span className="font-medium">Regular Credits</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-medium">
+                  {currentCredits}/{maxCredits} credits
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {usagePercentage}% used
+                </span>
+              </div>
+              <Progress value={usagePercentage} className="h-2" />
             </div>
-            <Progress value={usagePercentage} className="h-2" />
+
+            {/* Health Score Credits */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Heart className="h-4 w-4 text-red-500" />
+                <span className="font-medium">Health Score Credits</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-medium">
+                  {currentHealthScoreCredits}/{maxHealthScoreCredits} credits
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {healthScoreUsagePercentage}% used
+                </span>
+              </div>
+              <Progress value={healthScoreUsagePercentage} className="h-2" />
+            </div>
             
             <div className="pt-4 space-y-3">
               <div className="flex items-center justify-between text-sm">
