@@ -54,7 +54,7 @@ const SidebarLogo = () => {
 };
 
 const SidebarProfile = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   
   const userName = user?.user_metadata?.name || 'User';
@@ -62,16 +62,14 @@ const SidebarProfile = () => {
   
   const handleSignOut = async () => {
     try {
-      const result = await authService.signOut();
-      if (result.success) {
-        toast.success("You have been logged out.");
-        navigate('/');
-      } else {
-        toast.error("Logout failed. Please try again.");
-      }
+      await signOut();
+      toast.success("You have been logged out.");
+      navigate('/');
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("An error occurred during logout.");
+      // Even if logout fails, try to navigate away
+      toast.success("You have been logged out.");
+      navigate('/');
     }
   };
   

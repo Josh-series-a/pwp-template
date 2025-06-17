@@ -36,17 +36,29 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       setIsLoading(true);
-      const result = await authService.signOut();
       
-      if (result.success) {
-        toast.success("You have been logged out.");
-        navigate('/');
-      } else {
-        toast.error("Logout failed. Please try again.");
+      // Always clear local state first
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Try to sign out from Supabase
+      try {
+        await supabase.auth.signOut();
+      } catch (error) {
+        // Ignore Supabase signOut errors since we've already cleared local state
+        console.warn('Supabase signOut warning (ignoring):', error);
       }
+
+      toast.success("You have been logged out.");
+      navigate('/');
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("An error occurred during logout.");
+      // Even if logout fails, try to navigate away
+      toast.success("You have been logged out.");
+      navigate('/');
     } finally {
       setIsLoading(false);
     }

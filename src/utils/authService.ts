@@ -61,13 +61,42 @@ class AuthService {
   // Sign out the user
   async signOut() {
     try {
+      // Check if there's an active session first
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // No active session, just clear local storage and return success
+        this.clearLocalAuth();
+        return { success: true };
+      }
+
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      if (error) {
+        // If signOut fails but we know there was a session, clear locally anyway
+        this.clearLocalAuth();
+        console.warn("Supabase signOut error, but clearing local state:", error.message);
+        return { success: true };
+      }
+      
+      this.clearLocalAuth();
       return { success: true };
     } catch (error: any) {
+      // Always clear local state even if signOut fails
+      this.clearLocalAuth();
       console.error("Sign out error:", error.message);
-      return { success: false, error: error.message };
+      // Still return success since we cleared local state
+      return { success: true };
     }
+  }
+
+  // Clear local authentication state
+  private clearLocalAuth() {
+    // Clear any auth-related items from localStorage
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+        localStorage.removeItem(key);
+      }
+    });
   }
 
   // Check if the user is authenticated

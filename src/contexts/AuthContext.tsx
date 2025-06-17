@@ -82,10 +82,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      // Always clear local state first
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Try to sign out from Supabase
+      try {
+        await supabase.auth.signOut();
+      } catch (error) {
+        // Ignore Supabase signOut errors since we've already cleared local state
+        console.warn('Supabase signOut warning (ignoring):', error);
+      }
+
+      // Update local state
       setUser(null);
     } catch (error) {
       console.error('Error signing out:', error);
+      // Even if there's an error, clear the user state
+      setUser(null);
     }
   };
 
