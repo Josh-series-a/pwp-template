@@ -248,14 +248,25 @@ const AdminCredits = () => {
           const currentUser = users.find(u => u.id === selectedUserId);
           const newCredits = (currentUser?.credits || 0) + amount;
 
-          const { error: updateError } = await supabase
-            .from('user_credits')
-            .upsert({
-              user_id: selectedUserId,
-              credits: newCredits
-            }, { onConflict: 'user_id' });
-
-          if (updateError) throw updateError;
+          // Check if user has credits record first
+          if (currentUser?.hasCreditsRecord) {
+            const { error: updateError } = await supabase
+              .from('user_credits')
+              .update({ credits: newCredits })
+              .eq('user_id', selectedUserId);
+            
+            if (updateError) throw updateError;
+          } else {
+            // Create new record
+            const { error: insertError } = await supabase
+              .from('user_credits')
+              .insert({
+                user_id: selectedUserId,
+                credits: newCredits
+              });
+            
+            if (insertError) throw insertError;
+          }
 
           // Record transaction
           await supabase
@@ -274,14 +285,26 @@ const AdminCredits = () => {
           const currentCredits = users.find(u => u.id === selectedUserId)?.credits || 0;
           const newCredits = Math.max(0, currentCredits - amount);
 
-          const { error: updateError } = await supabase
-            .from('user_credits')
-            .upsert({
-              user_id: selectedUserId,
-              credits: newCredits
-            }, { onConflict: 'user_id' });
-
-          if (updateError) throw updateError;
+          // Check if user has credits record first
+          const currentUser = users.find(u => u.id === selectedUserId);
+          if (currentUser?.hasCreditsRecord) {
+            const { error: updateError } = await supabase
+              .from('user_credits')
+              .update({ credits: newCredits })
+              .eq('user_id', selectedUserId);
+            
+            if (updateError) throw updateError;
+          } else {
+            // Create new record with reduced amount
+            const { error: insertError } = await supabase
+              .from('user_credits')
+              .insert({
+                user_id: selectedUserId,
+                credits: newCredits
+              });
+            
+            if (insertError) throw insertError;
+          }
 
           // Record transaction
           await supabase
@@ -303,14 +326,25 @@ const AdminCredits = () => {
           const currentUser = users.find(u => u.id === selectedUserId);
           const newHealthScoreCredits = (currentUser?.health_score_credits || 0) + amount;
 
-          const { error: updateError } = await supabase
-            .from('health_score_credits')
-            .upsert({
-              user_id: selectedUserId,
-              health_score_credits: newHealthScoreCredits
-            }, { onConflict: 'user_id' });
-
-          if (updateError) throw updateError;
+          // Check if user has health score credits record first
+          if (currentUser?.hasHealthScoreCreditsRecord) {
+            const { error: updateError } = await supabase
+              .from('health_score_credits')
+              .update({ health_score_credits: newHealthScoreCredits })
+              .eq('user_id', selectedUserId);
+            
+            if (updateError) throw updateError;
+          } else {
+            // Create new record
+            const { error: insertError } = await supabase
+              .from('health_score_credits')
+              .insert({
+                user_id: selectedUserId,
+                health_score_credits: newHealthScoreCredits
+              });
+            
+            if (insertError) throw insertError;
+          }
 
           // Record transaction
           await supabase
@@ -329,14 +363,26 @@ const AdminCredits = () => {
           const currentHealthScoreCredits = users.find(u => u.id === selectedUserId)?.health_score_credits || 0;
           const newHealthScoreCredits = Math.max(0, currentHealthScoreCredits - amount);
 
-          const { error: updateError } = await supabase
-            .from('health_score_credits')
-            .upsert({
-              user_id: selectedUserId,
-              health_score_credits: newHealthScoreCredits
-            }, { onConflict: 'user_id' });
-
-          if (updateError) throw updateError;
+          // Check if user has health score credits record first
+          const currentUser = users.find(u => u.id === selectedUserId);
+          if (currentUser?.hasHealthScoreCreditsRecord) {
+            const { error: updateError } = await supabase
+              .from('health_score_credits')
+              .update({ health_score_credits: newHealthScoreCredits })
+              .eq('user_id', selectedUserId);
+            
+            if (updateError) throw updateError;
+          } else {
+            // Create new record with reduced amount
+            const { error: insertError } = await supabase
+              .from('health_score_credits')
+              .insert({
+                user_id: selectedUserId,
+                health_score_credits: newHealthScoreCredits
+              });
+            
+            if (insertError) throw insertError;
+          }
 
           // Record transaction
           await supabase
