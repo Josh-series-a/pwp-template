@@ -29,7 +29,10 @@ export interface CreditTransaction {
 
 // Credit costs for different features
 export const CREDIT_COSTS = {
-  BUSINESS_HEALTH_SCORE: 10,
+  // Health Score Credits (separate system)
+  BUSINESS_HEALTH_SCORE: 1, // Uses 1 Health Score Credit
+  
+  // Regular Credits
   PACKAGES: {
     'PYBLC1': 8, // Plan Your Business Legacy with Confidence
     'USICD2': 6, // Understand and Serve Your Ideal Customers Deeply

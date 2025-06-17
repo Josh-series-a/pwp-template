@@ -15,10 +15,11 @@ import {
 } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Building2, Plus } from 'lucide-react';
+import { CheckCircle, Building2, Plus, Heart, Coins } from 'lucide-react';
 import NewCompanyForm from './NewCompanyForm';
 import ExistingCompanyForm from './ExistingCompanyForm';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCredits } from '@/hooks/useCredits';
 
 interface RunAnalysisModalProps {
   isOpen: boolean;
@@ -33,6 +34,10 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState('new-company');
   const { user } = useAuth();
+  const { healthScoreCredits, checkHealthScoreCredits } = useCredits();
+
+  const requiredHealthScoreCredits = 1;
+  const hasEnoughHealthScoreCredits = checkHealthScoreCredits(requiredHealthScoreCredits);
 
   const handleSubmitComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => {
     console.log("Analysis complete with pitchDeckUrl:", pitchDeckUrl, "and companyId:", companyId);
@@ -57,15 +62,46 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                 <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                   Run Business Health Score
                 </SheetTitle>
-                <Badge variant="secondary" className="mt-1 text-xs">
-                  AI-Powered Analysis
-                </Badge>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="secondary" className="text-xs gap-1">
+                    <Heart className="h-3 w-3 text-red-500" />
+                    AI-Powered Analysis
+                  </Badge>
+                  <Badge variant="outline" className="text-xs gap-1">
+                    <Heart className="h-3 w-3 text-red-500" />
+                    Cost: {requiredHealthScoreCredits} Health Score Credit
+                  </Badge>
+                </div>
               </div>
             </div>
             <SheetDescription className="text-base text-muted-foreground leading-relaxed">
               Generate comprehensive business health insights using our AI-powered analysis framework. 
               Complete the steps below to receive personalized recommendations.
             </SheetDescription>
+
+            {/* Health Score Credits Display */}
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-red-500" />
+                <span className="font-medium">Health Score Credits Available:</span>
+              </div>
+              <Badge variant={hasEnoughHealthScoreCredits ? "default" : "destructive"} className="gap-1">
+                <Heart className="h-3 w-3" />
+                {healthScoreCredits?.health_score_credits || 0}
+              </Badge>
+            </div>
+
+            {/* Warning if insufficient credits */}
+            {!hasEnoughHealthScoreCredits && (
+              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <div className="flex items-center gap-2 text-destructive">
+                  <Heart className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    Insufficient health score credits: You need {requiredHealthScoreCredits} health score credit but only have {healthScoreCredits?.health_score_credits || 0}
+                  </span>
+                </div>
+              </div>
+            )}
           </SheetHeader>
 
           {/* Content Section */}
@@ -76,6 +112,7 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                   <TabsTrigger 
                     value="new-company" 
                     className="text-sm font-medium rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+                    disabled={!hasEnoughHealthScoreCredits}
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     New Company
@@ -83,6 +120,7 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                   <TabsTrigger 
                     value="existing-company" 
                     className="text-sm font-medium rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+                    disabled={!hasEnoughHealthScoreCredits}
                   >
                     <Building2 className="mr-2 h-4 w-4" />
                     Existing Company
@@ -105,7 +143,14 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                       </div>
                     </div>
                   </div>
-                  <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
+                  {hasEnoughHealthScoreCredits ? (
+                    <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
+                  ) : (
+                    <div className="text-center p-8 text-muted-foreground">
+                      <Heart className="h-12 w-12 mx-auto mb-4 text-red-500/50" />
+                      <p>You need at least {requiredHealthScoreCredits} health score credit to start a new analysis.</p>
+                    </div>
+                  )}
                 </TabsContent>
                 
                 <TabsContent value="existing-company" className="mt-0 space-y-6">
@@ -122,7 +167,14 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                       </div>
                     </div>
                   </div>
-                  <ExistingCompanyForm onComplete={handleSubmitComplete} userData={user} />
+                  {hasEnoughHealthScoreCredits ? (
+                    <ExistingCompanyForm onComplete={handleSubmitComplete} userData={user} />
+                  ) : (
+                    <div className="text-center p-8 text-muted-foreground">
+                      <Heart className="h-12 w-12 mx-auto mb-4 text-red-500/50" />
+                      <p>You need at least {requiredHealthScoreCredits} health score credit to start a new analysis.</p>
+                    </div>
+                  )}
                 </TabsContent>
               </div>
             </Tabs>
