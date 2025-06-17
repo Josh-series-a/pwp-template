@@ -329,7 +329,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="fixed left-4 top-4 bottom-4 h-[calc(100vh-2rem)] w-[70vw] max-w-4xl overflow-hidden p-0 flex flex-col translate-x-0 translate-y-0 rounded-2xl border-0 shadow-2xl bg-gradient-to-br from-background via-background to-muted/30">
+      <DialogContent className="fixed left-0 top-0 bottom-0 h-full w-[70vw] max-w-4xl overflow-hidden p-0 flex flex-col translate-x-0 translate-y-0 rounded-none border-0 shadow-2xl bg-gradient-to-br from-background via-background to-muted/30 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left data-[state=closed]:duration-300 data-[state=open]:duration-300">
         {/* Enhanced Header with gradient background */}
         <DialogHeader className="relative p-8 pb-6 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-b border-border/50">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/10 to-transparent rounded-full blur-3xl" />
