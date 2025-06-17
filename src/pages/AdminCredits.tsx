@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,17 +50,43 @@ const AdminCredits = () => {
       console.log(`Initializing credits for ${usersWithoutCredits.length} users without records`);
       
       for (const user of usersWithoutCredits) {
-        if (!user.hasCreditsRecord) {
-          await creditService.createUserCredits(user.id, 0);
-        }
-        if (!user.hasHealthScoreCreditsRecord) {
-          await creditService.createHealthScoreCredits(user.id, 5);
+        try {
+          if (!user.hasCreditsRecord) {
+            await adminCreateUserCredits(user.id, 0);
+          }
+          if (!user.hasHealthScoreCreditsRecord) {
+            await adminCreateHealthScoreCredits(user.id, 5);
+          }
+        } catch (error) {
+          console.error(`Failed to initialize credits for user ${user.id}:`, error);
         }
       }
       
       toast.success(`Initialized credits for ${usersWithoutCredits.length} users`);
       fetchAllUsersWithCredits(); // Refresh the data
     }
+  };
+
+  const adminCreateUserCredits = async (userId: string, initialCredits: number) => {
+    const { error } = await supabase
+      .from('user_credits')
+      .insert({
+        user_id: userId,
+        credits: initialCredits
+      });
+    
+    if (error) throw error;
+  };
+
+  const adminCreateHealthScoreCredits = async (userId: string, initialCredits: number) => {
+    const { error } = await supabase
+      .from('health_score_credits')
+      .insert({
+        user_id: userId,
+        health_score_credits: initialCredits
+      });
+    
+    if (error) throw error;
   };
 
   const resetAllCreditsToZero = async () => {
@@ -258,14 +283,7 @@ const AdminCredits = () => {
             if (updateError) throw updateError;
           } else {
             // Create new record
-            const { error: insertError } = await supabase
-              .from('user_credits')
-              .insert({
-                user_id: selectedUserId,
-                credits: newCredits
-              });
-            
-            if (insertError) throw insertError;
+            await adminCreateUserCredits(selectedUserId, newCredits);
           }
 
           // Record transaction
@@ -296,14 +314,7 @@ const AdminCredits = () => {
             if (updateError) throw updateError;
           } else {
             // Create new record with reduced amount
-            const { error: insertError } = await supabase
-              .from('user_credits')
-              .insert({
-                user_id: selectedUserId,
-                credits: newCredits
-              });
-            
-            if (insertError) throw insertError;
+            await adminCreateUserCredits(selectedUserId, newCredits);
           }
 
           // Record transaction
@@ -336,14 +347,7 @@ const AdminCredits = () => {
             if (updateError) throw updateError;
           } else {
             // Create new record
-            const { error: insertError } = await supabase
-              .from('health_score_credits')
-              .insert({
-                user_id: selectedUserId,
-                health_score_credits: newHealthScoreCredits
-              });
-            
-            if (insertError) throw insertError;
+            await adminCreateHealthScoreCredits(selectedUserId, newHealthScoreCredits);
           }
 
           // Record transaction
@@ -374,14 +378,7 @@ const AdminCredits = () => {
             if (updateError) throw updateError;
           } else {
             // Create new record with reduced amount
-            const { error: insertError } = await supabase
-              .from('health_score_credits')
-              .insert({
-                user_id: selectedUserId,
-                health_score_credits: newHealthScoreCredits
-              });
-            
-            if (insertError) throw insertError;
+            await adminCreateHealthScoreCredits(selectedUserId, newHealthScoreCredits);
           }
 
           // Record transaction
