@@ -266,6 +266,8 @@ const AdminCredits = () => {
     }
 
     try {
+      console.log(`Starting credit action: ${actionType} ${amount} ${creditType} credits for user ${selectedUserId}`);
+      
       if (creditType === 'regular') {
         // Handle regular credits
         if (actionType === 'add') {
@@ -275,14 +277,19 @@ const AdminCredits = () => {
 
           // Check if user has credits record first
           if (currentUser?.hasCreditsRecord) {
+            console.log('Updating existing regular credits record');
             const { error: updateError } = await supabase
               .from('user_credits')
               .update({ credits: newCredits })
               .eq('user_id', selectedUserId);
             
-            if (updateError) throw updateError;
+            if (updateError) {
+              console.error('Error updating regular credits:', updateError);
+              throw updateError;
+            }
           } else {
             // Create new record
+            console.log('Creating new regular credits record');
             await adminCreateUserCredits(selectedUserId, newCredits);
           }
 
@@ -306,14 +313,19 @@ const AdminCredits = () => {
           // Check if user has credits record first
           const currentUser = users.find(u => u.id === selectedUserId);
           if (currentUser?.hasCreditsRecord) {
+            console.log('Updating existing regular credits record (remove)');
             const { error: updateError } = await supabase
               .from('user_credits')
               .update({ credits: newCredits })
               .eq('user_id', selectedUserId);
             
-            if (updateError) throw updateError;
+            if (updateError) {
+              console.error('Error updating regular credits:', updateError);
+              throw updateError;
+            }
           } else {
             // Create new record with reduced amount
+            console.log('Creating new regular credits record (remove)');
             await adminCreateUserCredits(selectedUserId, newCredits);
           }
 
@@ -339,14 +351,19 @@ const AdminCredits = () => {
 
           // Check if user has health score credits record first
           if (currentUser?.hasHealthScoreCreditsRecord) {
+            console.log('Updating existing health score credits record');
             const { error: updateError } = await supabase
               .from('health_score_credits')
               .update({ health_score_credits: newHealthScoreCredits })
               .eq('user_id', selectedUserId);
             
-            if (updateError) throw updateError;
+            if (updateError) {
+              console.error('Error updating health score credits:', updateError);
+              throw updateError;
+            }
           } else {
             // Create new record
+            console.log('Creating new health score credits record');
             await adminCreateHealthScoreCredits(selectedUserId, newHealthScoreCredits);
           }
 
@@ -370,14 +387,19 @@ const AdminCredits = () => {
           // Check if user has health score credits record first
           const currentUser = users.find(u => u.id === selectedUserId);
           if (currentUser?.hasHealthScoreCreditsRecord) {
+            console.log('Updating existing health score credits record (remove)');
             const { error: updateError } = await supabase
               .from('health_score_credits')
               .update({ health_score_credits: newHealthScoreCredits })
               .eq('user_id', selectedUserId);
             
-            if (updateError) throw updateError;
+            if (updateError) {
+              console.error('Error updating health score credits:', updateError);
+              throw updateError;
+            }
           } else {
             // Create new record with reduced amount
+            console.log('Creating new health score credits record (remove)');
             await adminCreateHealthScoreCredits(selectedUserId, newHealthScoreCredits);
           }
 
@@ -397,6 +419,7 @@ const AdminCredits = () => {
       }
 
       // Refresh data
+      console.log('Refreshing data after credit action');
       await fetchAllUsersWithCredits();
       if (selectedUserId) {
         await fetchUserTransactions(selectedUserId);
@@ -406,9 +429,11 @@ const AdminCredits = () => {
       setCreditAmount('');
       setDescription('');
       setIsDialogOpen(false);
+      
+      console.log('Credit action completed successfully');
     } catch (error) {
       console.error('Error updating credits:', error);
-      toast.error('Failed to update credits');
+      toast.error(`Failed to update credits: ${error.message || 'Unknown error'}`);
     }
   };
 
