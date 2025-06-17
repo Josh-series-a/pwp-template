@@ -57,8 +57,8 @@ const packages: Package[] = [
   {
     id: 'PYBLC1',
     title: 'Plan Your Business Legacy with Confidence',
-    description: '🧭 For founders who want to build with the end in mind and reduce long-term stress.',
-    icon: '🧭',
+    description: 'For founders who want to build with the end in mind and reduce long-term stress.',
+    icon: '',
     items: [
       'Founder Exit Strategy Report',
       'Exit Readiness Blueprint Report',
@@ -69,8 +69,8 @@ const packages: Package[] = [
   {
     id: 'USICD2',
     title: 'Understand and Serve Your Ideal Customers Deeply',
-    description: '🔍 For teams that want to sharpen their customer insight and increase resonance.',
-    icon: '🔍',
+    description: 'For teams that want to sharpen their customer insight and increase resonance.',
+    icon: '',
     items: [
       'Know Your Customer Persona Toolkit (Exercise 6)',
       'Customer Journey Mapping Workshops',
@@ -81,8 +81,8 @@ const packages: Package[] = [
   {
     id: 'DIIP3',
     title: 'Differentiate Yourself with an Irresistible Proposition',
-    description: '💡 For companies struggling to stand out in crowded markets.',
-    icon: '💡',
+    description: 'For companies struggling to stand out in crowded markets.',
+    icon: '',
     items: [
       '1+1 Proposition Creation Workshop (Exercise 7)',
       'Strategic Differentiation Playbook',
@@ -93,8 +93,8 @@ const packages: Package[] = [
   {
     id: 'ETYSDD4',
     title: 'Empower Your Team and Step Back from the Day-to-Day',
-    description: '🛠️ For founders stuck in the weeds and seeking more freedom.',
-    icon: '🛠️',
+    description: 'For founders stuck in the weeds and seeking more freedom.',
+    icon: '',
     items: [
       'Delegation Audit and Scorecard (Exercise 18)',
       'Leadership Empowerment Workshops',
@@ -105,8 +105,8 @@ const packages: Package[] = [
   {
     id: 'SGKCR5',
     title: 'Strengthen and Grow Your Key Customer Relationships',
-    description: '🤝 For businesses ready to scale revenue through strategic client relationships.',
-    icon: '🤝',
+    description: 'For businesses ready to scale revenue through strategic client relationships.',
+    icon: '',
     items: [
       'Key Customer Mapping and Insights (Exercise 27)',
       'Customer Relationship Management (CRM) Playbook',
@@ -512,7 +512,6 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                             <div className="flex-1">
                               <div className="flex items-start justify-between gap-4">
                                 <CardTitle className={`text-lg leading-tight group-hover:text-primary transition-colors ${isDisabled ? 'text-muted-foreground' : ''}`}>
-                                  <span className="text-2xl mr-3">{pkg.icon}</span>
                                   {pkg.title}
                                 </CardTitle>
                                 <div className="flex items-center gap-3 flex-shrink-0">
@@ -625,7 +624,6 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                               <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                   <CardTitle className="text-base flex items-center gap-2">
-                                    <span className="text-xl">{pkg.icon}</span>
                                     {pkg.title}
                                   </CardTitle>
                                   <Badge variant="outline" className="gap-1">
