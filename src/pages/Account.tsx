@@ -1,3 +1,4 @@
+
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import AdminLayout from '@/components/AdminLayout';
@@ -12,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check } from 'lucide-react';
 import SubscriptionPlans from '@/components/SubscriptionPlans';
 import CreditsDisplay from '@/components/CreditsDisplay';
+import HealthScoreCreditsDisplay from '@/components/HealthScoreCreditsDisplay';
 import CreditsChart from '@/components/CreditsChart';
 
 const Account = () => {
@@ -28,7 +30,10 @@ const Account = () => {
       {/* Custom header with credits display */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
-        <CreditsDisplay />
+        <div className="flex items-center gap-4">
+          <CreditsDisplay />
+          <HealthScoreCreditsDisplay />
+        </div>
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
@@ -126,6 +131,23 @@ const Account = () => {
 
         {/* Billing & Subscription Tab */}
         <TabsContent value="billing" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <CreditsDisplay showDetails />
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <span className="text-red-500">❤️</span>
+                  Health Score Credits
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <HealthScoreCreditsDisplay />
+                <div className="mt-4 text-sm text-muted-foreground">
+                  Used for Business Health Score assessments
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           <CreditsChart />
           <SubscriptionPlans />
         </TabsContent>
