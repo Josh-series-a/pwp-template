@@ -254,8 +254,8 @@ const AdminCredits = () => {
   };
 
   const handleCreditAction = async () => {
-    if (!selectedUserId || !creditAmount || !description) {
-      toast.error('Please fill in all fields');
+    if (!selectedUserId || !creditAmount) {
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -268,6 +268,9 @@ const AdminCredits = () => {
     try {
       console.log(`Starting credit action: ${actionType} ${amount} ${creditType} credits for user ${selectedUserId}`);
       
+      // Use description or default value if empty
+      const transactionDescription = description || `Admin ${actionType} ${creditType} credits`;
+
       if (creditType === 'regular') {
         // Handle regular credits
         if (actionType === 'add') {
@@ -300,7 +303,7 @@ const AdminCredits = () => {
               user_id: selectedUserId,
               amount: amount,
               transaction_type: 'add',
-              description,
+              description: transactionDescription,
               feature_type: 'admin_allocation'
             });
 
@@ -336,7 +339,7 @@ const AdminCredits = () => {
               user_id: selectedUserId,
               amount: -amount,
               transaction_type: 'deduct',
-              description,
+              description: transactionDescription,
               feature_type: 'admin_deduction'
             });
 
@@ -374,7 +377,7 @@ const AdminCredits = () => {
               user_id: selectedUserId,
               amount: amount,
               transaction_type: 'add',
-              description,
+              description: transactionDescription,
               feature_type: 'admin_health_score_allocation'
             });
 
@@ -410,7 +413,7 @@ const AdminCredits = () => {
               user_id: selectedUserId,
               amount: -amount,
               transaction_type: 'deduct',
-              description,
+              description: transactionDescription,
               feature_type: 'admin_health_score_deduction'
             });
 
@@ -720,7 +723,7 @@ const AdminCredits = () => {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Amount</label>
+                <label className="block text-sm font-medium mb-2">Amount *</label>
                 <Input
                   type="number"
                   placeholder="Enter credit amount"
@@ -730,9 +733,9 @@ const AdminCredits = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Description</label>
+                <label className="block text-sm font-medium mb-2">Description (Optional)</label>
                 <Input
-                  placeholder="Reason for credit adjustment"
+                  placeholder="Reason for credit adjustment (optional)"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
