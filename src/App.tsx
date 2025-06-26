@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleProtectedRoute from "./components/RoleProtectedRoute";
 import TransitionWrapper from "./components/TransitionWrapper";
+import ScrollToTop from "./components/ScrollToTop";
 
 import Index from "./pages/Index";
 import About from "./pages/About";
@@ -44,6 +45,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <TransitionWrapper>
             <Routes>
