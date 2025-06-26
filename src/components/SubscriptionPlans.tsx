@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -265,7 +266,7 @@ const SubscriptionPlans = () => {
                 </ul>
                 
                 <Button 
-                  className={`w-full py-6 text-lg font-semibold transition-all duration-300 ${
+                  className={`w-full py-6 text-base font-semibold transition-all duration-300 ${
                     isCurrentPlan 
                       ? 'bg-gray-600 hover:bg-gray-700 text-white' 
                       : `bg-gradient-to-r ${plan.gradient} hover:shadow-md hover:scale-[1.02] text-white`
@@ -278,7 +279,7 @@ const SubscriptionPlans = () => {
                     }
                   }}
                 >
-                  {isCurrentPlan ? "Manage Subscription" : `Subscribe to ${plan.subtitle}`}
+                  {isCurrentPlan ? "Manage Subscription" : `Get ${plan.name}`}
                 </Button>
               </CardContent>
             </Card>
