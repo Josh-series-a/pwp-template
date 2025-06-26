@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -193,7 +192,7 @@ const SubscriptionPlans = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto pt-6">
         {plans.map((plan, index) => {
           const isCurrentPlan = subscriptionInfo.subscription_tier?.toLowerCase() === plan.id;
           const IconComponent = plan.icon;
@@ -207,27 +206,27 @@ const SubscriptionPlans = () => {
                   : plan.popular
                   ? 'ring-2 ring-primary/30 shadow-lg'
                   : 'hover:ring-2 hover:ring-primary/20 hover:shadow-md'
-              } ${plan.borderColor} overflow-hidden`}
+              } ${plan.borderColor} overflow-visible`}
             >
               {/* Subtle background decoration */}
               <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${plan.gradient} opacity-5 rounded-full -translate-y-12 translate-x-12`} />
               
               {plan.popular && !isCurrentPlan && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <Badge className="bg-primary text-primary-foreground px-4 py-1 text-sm font-semibold shadow-sm">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                  <Badge className="bg-primary text-primary-foreground px-4 py-1 text-sm font-semibold shadow-md whitespace-nowrap">
                     Most Popular
                   </Badge>
                 </div>
               )}
               {isCurrentPlan && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <Badge className="bg-green-600 text-white px-4 py-1 text-sm font-semibold shadow-sm">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                  <Badge className="bg-green-600 text-white px-4 py-1 text-sm font-semibold shadow-md whitespace-nowrap">
                     Current Plan
                   </Badge>
                 </div>
               )}
               
-              <CardHeader className={`text-center pb-6 ${plan.bgAccent} relative z-10 ${plan.popular || isCurrentPlan ? 'pt-8' : 'pt-6'}`}>
+              <CardHeader className={`text-center pb-6 ${plan.bgAccent} relative z-10 ${plan.popular || isCurrentPlan ? 'pt-10' : 'pt-6'}`}>
                 <div className="flex justify-center mb-4">
                   <div className={`p-3 rounded-full bg-gradient-to-r ${plan.gradient} text-white shadow-sm`}>
                     <IconComponent className="h-6 w-6" />
