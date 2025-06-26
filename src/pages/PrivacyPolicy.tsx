@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -84,7 +83,7 @@ const PrivacyPolicy = () => {
 
           <TransitionWrapper animation="slide-up" delay={200}>
             <div className="mt-8 text-center">
-              <Button asChild variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 rounded-2xl px-8 py-4 text-lg font-semibold backdrop-blur-sm">
+              <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-8 py-4 text-lg font-semibold">
                 <Link to="/">
                   <ArrowLeft className="mr-2 h-5 w-5" />
                   Back to Home
