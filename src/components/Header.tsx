@@ -83,23 +83,23 @@ const Header = () => {
   return (
     <header className={cn(
       "sticky w-full top-0 z-50 transition-all duration-300 ease-in-out bg-slate-900",
-      "px-6 md:px-8 py-4"
+      "px-4 md:px-6 lg:px-8 py-3 md:py-4"
     )}>
       <div className={cn(
-        "max-w-6xl mx-auto rounded-2xl transition-all duration-300 ease-in-out px-6 py-3",
-        "backdrop-blur-md border border-white/10",
-        "bg-slate-900 shadow-xl border-white/20"
+        "max-w-6xl mx-auto rounded-2xl transition-all duration-300 ease-in-out backdrop-blur-md border border-white/10",
+        "bg-slate-900 shadow-xl border-white/20",
+        "px-4 md:px-5 lg:px-6 py-2 md:py-3"
       )}>
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2 md:gap-3">
             <img 
               src="/lovable-uploads/PWP.svg" 
               alt="Prosper with Purpose Logo" 
-              className="h-8 md:h-10 w-8 md:w-10"
+              className="h-7 md:h-8 lg:h-10 w-7 md:w-8 lg:w-10"
             />
             <div className="hidden sm:block">
               <span className={cn(
-                "text-lg md:text-xl font-bold leading-tight transition-colors duration-300",
+                "text-base md:text-lg lg:text-xl font-bold leading-tight transition-colors duration-300",
                 "text-white"
               )}>
                 Prosper<br />With Purpose
@@ -107,7 +107,15 @@ const Header = () => {
             </div>
           </Link>
           
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+            <NavLink to="/" current={location.pathname === "/"} isScrolled={true}>Home</NavLink>
+            <NavLink to="/about" current={location.pathname === "/about"} isScrolled={true}>About</NavLink>
+            <NavLink to="/products" current={location.pathname === "/products"} isScrolled={true}>Products</NavLink>
+            <NavLink to="/contact" current={location.pathname === "/contact"} isScrolled={true}>Contact</NavLink>
+          </nav>
+          
+          {/* Tablet Navigation - visible on md screens */}
+          <nav className="hidden md:flex lg:hidden items-center space-x-4">
             <NavLink to="/" current={location.pathname === "/"} isScrolled={true}>Home</NavLink>
             <NavLink to="/about" current={location.pathname === "/about"} isScrolled={true}>About</NavLink>
             <NavLink to="/products" current={location.pathname === "/products"} isScrolled={true}>Products</NavLink>
@@ -122,18 +130,19 @@ const Header = () => {
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
           
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3 lg:gap-4">
             {isLoading ? (
-              <div className="h-10 w-20 animate-pulse bg-white/20 rounded-full"></div>
+              <div className="h-9 md:h-10 w-16 md:w-20 animate-pulse bg-white/20 rounded-full"></div>
             ) : isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:bg-white/10 border border-white/20 text-white">
-                    <Avatar className="h-8 w-8">
+                  <Button variant="ghost" className="flex items-center gap-2 rounded-full px-3 md:px-4 py-2 transition-all duration-300 hover:bg-white/10 border border-white/20 text-white">
+                    <Avatar className="h-7 md:h-8 w-7 md:w-8">
                       <AvatarImage src={user?.user_metadata?.avatar_url} />
                       <AvatarFallback className="bg-white/20 text-white text-xs">{userInitials}</AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-medium hidden sm:inline">{userName}</span>
+                    <span className="text-sm font-medium hidden lg:inline">{userName}</span>
+                    <span className="text-sm font-medium hidden md:inline lg:hidden truncate max-w-20">{userName.split(' ')[0]}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -164,16 +173,17 @@ const Header = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" className="rounded-full border border-white/30 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-white/50 text-white">
+                  <Button variant="ghost" className="rounded-full border border-white/30 backdrop-blur-sm transition-all duration-300 hover:bg-white/10 hover:border-white/50 text-white text-sm px-3 md:px-4">
                     <LogIn className="mr-2 h-3 w-3" />
                     Login
                   </Button>
                 </Link>
                 <Link 
                   to="/contact"
-                  className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-yellow-400 text-slate-900 hover:bg-yellow-300 shadow-lg border-0 hover:scale-105"
+                  className="px-4 md:px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-yellow-400 text-slate-900 hover:bg-yellow-300 shadow-lg border-0 hover:scale-105 whitespace-nowrap"
                 >
-                  Book Free Discovery Call
+                  <span className="hidden lg:inline">Book Free Discovery Call</span>
+                  <span className="lg:hidden">Book Call</span>
                 </Link>
               </>
             )}
@@ -261,7 +271,7 @@ const NavLink = ({ to, current, children, isScrolled }: NavLinkProps) => (
   <Link 
     to={to} 
     className={cn(
-      "text-sm font-medium transition-all duration-300 px-4 py-2 rounded-full",
+      "text-sm font-medium transition-all duration-300 px-3 md:px-4 py-2 rounded-full",
       "hover:bg-white/10",
       current 
         ? "bg-white/20 text-white" 
