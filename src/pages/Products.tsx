@@ -104,11 +104,11 @@ const Products = () => {
                   <Button 
                     variant="outline" 
                     size="lg" 
-                    className="rounded-full border-white/30 text-white hover:bg-white/10"
+                    className="rounded-full border-white/30 text-white hover:bg-white/10 px-6 py-3 whitespace-nowrap"
                     onClick={() => setIsTalkToAuthorOpen(true)}
                   >
-                    <Headphones className="mr-2 h-4 w-4" />
-                    Talk to the Author
+                    <Headphones className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span>Talk to the Author</span>
                   </Button>
                 </div>
                 <p className="text-sm text-gray-400 mt-2">Available in paperback & Kindle</p>
