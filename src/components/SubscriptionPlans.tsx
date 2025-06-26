@@ -167,10 +167,10 @@ const SubscriptionPlans = () => {
   return (
     <div className="space-y-8">
       <div className="text-center space-y-4">
-        <h2 className="text-4xl font-bold text-foreground">
+        <h2 className="text-4xl font-bold text-white">
           Choose Your Plan
         </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-white max-w-2xl mx-auto">
           Select the plan that best fits your business journey and unlock your potential
         </p>
         
