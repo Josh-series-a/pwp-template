@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
@@ -97,7 +96,7 @@ const Header = () => {
               alt="Prosper with Purpose Logo" 
               className="h-7 md:h-8 lg:h-10 w-7 md:w-8 lg:w-10"
             />
-            <div className="hidden sm:block">
+            <div className="hidden sm:block md:hidden lg:block">
               <span className={cn(
                 "text-base md:text-lg lg:text-xl font-bold leading-tight transition-colors duration-300",
                 "text-white"
