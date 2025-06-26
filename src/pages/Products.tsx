@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Book, ArrowRight, CheckCircle, User, FileText, FileBox, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -279,7 +280,7 @@ const Products = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="outline" size="sm" className="w-full border-white/30 text-white hover:bg-white/10">Apply to Partner</Button>
+                  <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">Apply to Partner</Button>
                 </CardFooter>
               </Card>
             </TransitionWrapper>
