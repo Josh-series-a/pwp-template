@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -202,9 +203,9 @@ const SubscriptionPlans = () => {
               key={plan.id}
               className={`relative group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
                 isCurrentPlan
-                  ? 'ring-2 ring-primary shadow-lg scale-105'
+                  ? 'ring-2 ring-primary shadow-lg'
                   : plan.popular
-                  ? 'ring-2 ring-primary/30 shadow-lg scale-105'
+                  ? 'ring-2 ring-primary/30 shadow-lg'
                   : 'hover:ring-2 hover:ring-primary/20 hover:shadow-md'
               } ${plan.borderColor} overflow-hidden`}
             >
@@ -226,7 +227,7 @@ const SubscriptionPlans = () => {
                 </div>
               )}
               
-              <CardHeader className={`text-center pb-6 ${plan.bgAccent} relative z-10`}>
+              <CardHeader className={`text-center pb-6 ${plan.bgAccent} relative z-10 ${plan.popular || isCurrentPlan ? 'pt-8' : 'pt-6'}`}>
                 <div className="flex justify-center mb-4">
                   <div className={`p-3 rounded-full bg-gradient-to-r ${plan.gradient} text-white shadow-sm`}>
                     <IconComponent className="h-6 w-6" />
