@@ -20,14 +20,14 @@ const Index = () => {
       <TalkToAuthorDialog isOpen={isTalkToAuthorOpen} onClose={() => setIsTalkToAuthorOpen(false)} />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-32 px-6 md:px-8 bg-slate-900 relative overflow-hidden">
+      <section className="pt-20 md:pt-32 pb-16 md:pb-32 px-4 md:px-6 lg:px-8 bg-slate-900 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
             <TransitionWrapper animation="slide-right">
-              <div className="space-y-8">
-                <div className="space-y-6">
-                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+              <div className="space-y-6 md:space-y-8 text-center lg:text-left">
+                <div className="space-y-4 md:space-y-6">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight">
                     Build Stronger
                     <br />
                     Businesses <span className="text-yellow-400 italic">With</span>
@@ -35,18 +35,19 @@ const Index = () => {
                     <span className="text-yellow-400 italic">Less Stress</span>
                   </h1>
                   
-                  <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-2xl">
+                  <p className="text-lg sm:text-xl md:text-2xl text-gray-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                     Transform your business with AI-powered insights from <span className="font-semibold text-white">Prosper With Purpose</span>
                   </p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button asChild size="lg" className="bg-yellow-400 text-slate-900 hover:bg-yellow-300 rounded-full px-8 py-6 text-lg font-semibold shadow-lg border-0">
+                <div className="flex flex-col gap-3 md:gap-4 max-w-md mx-auto lg:max-w-none lg:mx-0 lg:flex-row">
+                  <Button asChild size="lg" className="bg-yellow-400 text-slate-900 hover:bg-yellow-300 rounded-full px-6 md:px-8 py-4 md:py-6 text-base md:text-lg font-semibold shadow-lg border-0 w-full lg:w-auto">
                     <Link to="/chat">
-                      Get Your Free Business Health Check
+                      <span className="hidden sm:inline">Get Your Free Business Health Check</span>
+                      <span className="sm:hidden">Free Business Health Check</span>
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-lg font-semibold border-2 border-white bg-transparent text-white hover:bg-white hover:text-slate-900 transition-all duration-300" onClick={() => setIsTalkToAuthorOpen(true)}>
+                  <Button size="lg" variant="outline" className="rounded-full px-6 md:px-8 py-4 md:py-6 text-base md:text-lg font-semibold border-2 border-white bg-transparent text-white hover:bg-white hover:text-slate-900 transition-all duration-300 w-full lg:w-auto" onClick={() => setIsTalkToAuthorOpen(true)}>
                     Talk to the Author
                   </Button>
                 </div>
@@ -55,9 +56,9 @@ const Index = () => {
             
             {/* Right Book Image */}
             <TransitionWrapper animation="slide-left" delay={200}>
-              <div className="flex justify-center lg:justify-end">
+              <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
                 <div className="relative">
-                  <img src="/lovable-uploads/BookDigital.png" alt="Prosper with Purpose book" className="w-96 lg:w-[500px] xl:w-[600px] h-auto" />
+                  <img src="/lovable-uploads/BookDigital.png" alt="Prosper with Purpose book" className="w-64 sm:w-80 md:w-96 lg:w-[500px] xl:w-[600px] h-auto" />
                 </div>
               </div>
             </TransitionWrapper>
