@@ -252,7 +252,7 @@ const Products = () => {
                 </CardContent>
                 <CardFooter className="flex-col items-start gap-2">
                   <p className="font-bold text-lg text-white">Coming Soon</p>
-                  <Button variant="outline" size="sm" className="w-full border-white/30 text-white hover:bg-white/10">Notify Me When Available</Button>
+                  <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">Notify Me When Available</Button>
                 </CardFooter>
               </Card>
             </TransitionWrapper>
