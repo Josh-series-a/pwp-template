@@ -129,9 +129,9 @@ const Products = () => {
               <div className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-2xl max-w-sm mx-auto">
                 <div className="flex justify-center mb-4">
                   <img 
-                    src="/lovable-uploads/e47f8e5e-394f-454a-a8b5-8abf5cc18daa.png" 
+                    src="/lovable-uploads/PWP.svg" 
                     alt="Prosper with Purpose Logo" 
-                    className="h-16"
+                    className="h-16 filter brightness-0 invert"
                   />
                 </div>
                 <h4 className="text-xl font-medium text-center mb-4 text-white">Business Health Report</h4>
