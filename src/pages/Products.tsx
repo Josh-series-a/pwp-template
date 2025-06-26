@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Book, ArrowRight, CheckCircle, User, FileText, FileBox, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -102,9 +101,8 @@ const Products = () => {
                   </Button>
                   
                   <Button 
-                    variant="outline" 
                     size="lg" 
-                    className="rounded-full border-white/30 text-white hover:bg-white/10 px-6 py-3 whitespace-nowrap"
+                    className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 whitespace-nowrap"
                     onClick={() => setIsTalkToAuthorOpen(true)}
                   >
                     <Headphones className="mr-2 h-4 w-4 flex-shrink-0" />
@@ -320,8 +318,7 @@ const Products = () => {
               
               <Button 
                 size="lg" 
-                variant="outline" 
-                className="rounded-full border-white/30 text-white hover:bg-white/10"
+                className="rounded-full bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={() => setIsTalkToAuthorOpen(true)}
               >
                 <Headphones className="mr-2 h-4 w-4" />
