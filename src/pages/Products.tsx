@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Book, ArrowRight, CheckCircle, User, FileText, FileBox, Headphones } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -310,7 +309,7 @@ const Products = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               
-              <Button asChild size="lg" variant="outline" className="rounded-full border-white/30 text-white hover:bg-white/10">
+              <Button asChild size="lg" className="rounded-full bg-blue-600 hover:bg-blue-700 text-white">
                 <Link to="/chat">
                   Get the Analysis
                   <ArrowRight className="ml-2 h-4 w-4" />
