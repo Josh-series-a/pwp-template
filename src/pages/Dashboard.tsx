@@ -223,10 +223,10 @@ const Dashboard = () => {
 
           {/* Dashboard Pages Overview */}
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-2xl font-bold">Dashboard Overview</h2>
-                <p className="text-muted-foreground">Quick access to all your tools</p>
+            <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-3 text-center sm:text-left">
+              <div className="text-center sm:text-left">
+                <h2 className="text-2xl font-bold text-center">Dashboard Overview</h2>
+                <p className="text-muted-foreground text-center">Quick access to all your tools</p>
               </div>
               <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-purple-50 text-blue-800 border-blue-200">
                 <Sparkles className="h-3 w-3 mr-1" />
