@@ -215,7 +215,7 @@ const Read = () => {
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-semibold">Prosper with Purpose</h1>
+            <h1 className="hidden sm:block text-xl font-semibold">Prosper with Purpose</h1>
             {!isSubscribed && (
               <div className="ml-4 flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm">
                 <Lock className="h-4 w-4" />
