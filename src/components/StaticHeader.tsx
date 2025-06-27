@@ -15,7 +15,7 @@ const StaticHeader: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 right-0 left-20 z-40 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-6 group-data-[state=expanded]:left-64 transition-all duration-200">
+    <header className="fixed top-0 left-0 right-0 z-40 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-6 transition-all duration-200">
       <div className="flex items-center justify-center lg:hidden">
         <Button
           variant="ghost"
