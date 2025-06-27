@@ -201,15 +201,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       
       <StaticHeader />
       
-      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[3rem] lg:group-data-[state=expanded]:ml-[14rem] overflow-y-auto h-screen pt-16">
-        <div className="w-full h-full flex flex-col max-w-7xl mx-auto">
+      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] lg:group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen pt-16">
+        <div className="w-full h-full flex flex-col max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {!hideHeader && (
-            <div className="flex items-center px-4 sm:px-6 lg:px-8 py-6 xl:px-12 flex-shrink-0">
+            <div className="flex items-center py-6 flex-shrink-0">
               <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{title}</h1>
             </div>
           )}
           <div className={cn(
-            "flex-1 px-4 sm:px-6 lg:px-8 pb-8 xl:px-12 min-h-0",
+            "flex-1 pb-8 min-h-0",
             hideHeader && "pt-6"
           )}>
             {children}
