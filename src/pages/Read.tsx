@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { 
   BookOpen, Search, ChevronLeft, ChevronRight, X,
   Share, ZoomIn, ZoomOut, Printer, ExternalLink, Download,
-  Bookmark, Headphones, Lock
+  Bookmark, Headphones, Lock, Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +33,13 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const Read = () => {
   const navigate = useNavigate();
@@ -56,6 +63,7 @@ const Read = () => {
   const [pageDirection, setPageDirection] = useState<'next' | 'prev'>('next');
   const [listenDialogOpen, setListenDialogOpen] = useState(false);
   const [isSkipToPageOpen, setIsSkipToPageOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const chapters = bookChapters;
   const isSubscribed = subscriptionInfo.subscribed;
@@ -235,6 +243,86 @@ const Read = () => {
                 className="pl-10 w-40 lg:w-64"
               />
             </div>
+            
+            {/* Mobile Menu Button */}
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="sm:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Reading Options</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-4 mt-6">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Search in book..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="justify-start gap-2" 
+                    onClick={() => {
+                      setIsSkipToPageOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Skip to Page
+                  </Button>
+                  
+                  <Button variant="outline" className="justify-start gap-2" onClick={handleShare}>
+                    <Share className="h-4 w-4" />
+                    Share
+                  </Button>
+                  
+                  <Button variant="outline" className="justify-start gap-2" onClick={handleZoomIn}>
+                    <ZoomIn className="h-4 w-4" />
+                    Zoom In
+                  </Button>
+                  
+                  <Button variant="outline" className="justify-start gap-2" onClick={handleZoomOut}>
+                    <ZoomOut className="h-4 w-4" />
+                    Zoom Out
+                  </Button>
+                  
+                  <Button variant="outline" className="justify-start gap-2" onClick={handlePrint}>
+                    <Printer className="h-4 w-4" />
+                    Print
+                  </Button>
+                  
+                  <Button variant="outline" className="justify-start gap-2" onClick={handleDownload}>
+                    <Download className="h-4 w-4" />
+                    Download
+                  </Button>
+                  
+                  <Button variant="outline" className="justify-start gap-2" onClick={handleBookmark}>
+                    <Bookmark className="h-4 w-4" />
+                    Bookmark
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="justify-start gap-2" 
+                    onClick={() => {
+                      handleOpenListenDialog();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Headphones className="h-4 w-4" />
+                    Listen
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
             
             <Drawer open={isSkipToPageOpen} onOpenChange={setIsSkipToPageOpen}>
               <DrawerTrigger asChild>
