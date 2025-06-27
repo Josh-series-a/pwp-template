@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -201,15 +202,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       
       <StaticHeader />
       
-      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen pt-16">
+      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-[5rem] lg:group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen pt-16">
         <div className="w-full h-full flex flex-col">
           {!hideHeader && (
-            <div className="flex items-center px-6 sm:px-8 py-6 md:px-12 flex-shrink-0">
-              <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+            <div className="flex items-center px-4 sm:px-6 lg:px-8 py-6 xl:px-12 flex-shrink-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{title}</h1>
             </div>
           )}
           <div className={cn(
-            "flex-1 px-6 sm:px-8 pb-8 md:px-12 min-h-0",
+            "flex-1 px-4 sm:px-6 lg:px-8 pb-8 xl:px-12 min-h-0",
             hideHeader && "pt-6"
           )}>
             {children}
