@@ -21,7 +21,7 @@ const HealthScoreCreditsDisplay = () => {
   return (
     <Badge variant="outline" className="gap-2 px-3 py-1">
       <Heart className="h-4 w-4 text-red-500" />
-      <span className="font-medium">Health Score Credits: {currentCredits}</span>
+      <span className="font-medium">{currentCredits}</span>
     </Badge>
   );
 };
