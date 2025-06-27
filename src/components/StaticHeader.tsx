@@ -16,14 +16,16 @@ const StaticHeader: React.FC = () => {
 
   return (
     <header className="fixed top-0 right-0 left-20 z-40 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-6 group-data-[state=expanded]:left-64 transition-all duration-200">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={toggleSidebar}
-        className="lg:hidden flex items-center justify-center h-8 w-8 p-0"
-      >
-        <Menu className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center justify-center lg:hidden">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleSidebar}
+          className="flex items-center justify-center h-8 w-8 p-0"
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
+      </div>
       
       <div className="flex items-center gap-4 ml-auto">
         <CreditsDisplay />
