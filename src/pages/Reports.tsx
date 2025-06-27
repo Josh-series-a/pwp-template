@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCredits } from '@/hooks/useCredits';
 import { toast } from 'sonner';
+
 interface Report {
   id: string;
   title: string;
@@ -358,11 +359,13 @@ This report was generated on ${new Date().toLocaleDateString()}.
   };
   return <DashboardLayout title="My Reports">
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <p className="text-muted-foreground">
-            View all your business health checks and analyses
-          </p>
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+          <div className="flex-1">
+            <p className="text-muted-foreground text-base">
+              View all your business health checks and analyses
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:flex-shrink-0">
             {allRecommendedCIKs.length > 0 && <div className="flex flex-wrap gap-1 items-center">
                 <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
                 {allRecommendedCIKs.slice(0, 5).map((cik, index) => <Badge key={index} variant="outline" className="text-xs">
@@ -372,14 +375,16 @@ This report was generated on ${new Date().toLocaleDateString()}.
                     +{allRecommendedCIKs.length - 5} more
                   </Badge>}
               </div>}
-            <Button variant="outline" onClick={handleCreatePackage}>
-              <Package className="mr-2 h-4 w-4" />
-              Create Package
-            </Button>
-            <Button onClick={openModal} disabled={!hasEnoughCredits}>
-              <Plus className="mr-2 h-4 w-4" />
-              Run Business Health Score
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button variant="outline" onClick={handleCreatePackage} className="w-full sm:w-auto">
+                <Package className="mr-2 h-4 w-4" />
+                Create Package
+              </Button>
+              <Button onClick={openModal} disabled={!hasEnoughCredits} className="w-full sm:w-auto">
+                <Plus className="mr-2 h-4 w-4" />
+                Run Business Health Score
+              </Button>
+            </div>
           </div>
         </div>
         
