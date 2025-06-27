@@ -419,7 +419,7 @@ const Read = () => {
             variant="outline"
             onClick={handlePrevPage}
             disabled={currentPage <= 1}
-            className="flex items-center"
+            className="flex items-center justify-center text-center"
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Previous Chapter
@@ -429,7 +429,7 @@ const Read = () => {
             variant="outline"
             onClick={handleNextPage}
             disabled={currentPage >= chapters.length || (!isSubscribed && currentPage >= 1)}
-            className="flex items-center"
+            className="flex items-center justify-center text-center"
           >
             {!isSubscribed && currentPage >= 1 ? (
               <>
