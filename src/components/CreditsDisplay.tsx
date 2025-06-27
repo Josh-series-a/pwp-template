@@ -53,8 +53,7 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
   if (!user || isLoading) {
     return (
       <Badge variant="outline" className={className}>
-        <Coins className="h-3 w-3 mr-1" />
-        Loading...
+        <Coins className="h-3 w-3" />
       </Badge>
     );
   }
@@ -62,8 +61,7 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
   if (!credits) {
     return (
       <Badge variant="destructive" className={className}>
-        <Coins className="h-3 w-3 mr-1" />
-        0 credits
+        <Coins className="h-3 w-3" />
       </Badge>
     );
   }
@@ -141,10 +139,8 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
   }
 
   return (
-    <Badge variant="outline" className={`${className} gap-1 px-3 py-1`}>
+    <Badge variant="outline" className={`${className} px-2 py-1`}>
       <Coins className="h-3 w-3 text-yellow-600" />
-      <span className="font-semibold">{credits.credits}</span>
-      <span className="text-muted-foreground">credits</span>
     </Badge>
   );
 };
