@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, FileText, Lightbulb, BarChart3, ArrowRight, CheckCircle, Users, PieChart, Compass, Headphones, Star, Zap, Target, TrendingUp } from 'lucide-react';
@@ -67,27 +68,37 @@ const Index = () => {
       </section>
       
       {/* Stats Section */}
-      <section className="py-24 px-6 md:px-8 bg-slate-900">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="py-16 md:py-24 px-4 md:px-6 lg:px-8 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 md:w-96 h-64 md:h-96 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 rounded-full blur-3xl"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[{
-            number: "10,000+",
-            label: "Businesses Transformed"
-          }, {
-            number: "95%",
-            label: "Success Rate"
-          }, {
-            number: "50+",
-            label: "Countries Reached"
-          }, {
-            number: "4.9★",
-            label: "Average Rating"
-          }].map((stat, index) => <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
-                <div className="text-center p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="text-4xl md:text-5xl font-bold text-yellow-400 mb-3">{stat.number}</div>
-                  <div className="text-sm text-gray-300 font-medium uppercase tracking-wider">{stat.label}</div>
+              number: "10,000+",
+              label: "Businesses Transformed"
+            }, {
+              number: "95%",
+              label: "Success Rate"
+            }, {
+              number: "50+",
+              label: "Countries Reached"
+            }, {
+              number: "4.9★",
+              label: "Average Rating"
+            }].map((stat, index) => (
+              <TransitionWrapper key={index} animation="slide-up" delay={index * 100}>
+                <div className="text-center p-4 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-yellow-400 mb-2 md:mb-3 leading-tight">
+                    {stat.number}
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-300 font-medium uppercase tracking-wider leading-tight">
+                    {stat.label}
+                  </div>
                 </div>
-              </TransitionWrapper>)}
+              </TransitionWrapper>
+            ))}
           </div>
         </div>
       </section>
