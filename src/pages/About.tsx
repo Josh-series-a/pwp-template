@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Target, Users, Heart, Award, CheckCircle, Mail, Twitter, Building2, Trophy } from 'lucide-react';
@@ -447,7 +448,7 @@ const About = () => {
                       Get Your Free Analysis
                     </Link>
                   </Button>
-                  <Button asChild size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/50 rounded-2xl px-8 py-6 text-lg font-semibold backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
+                  <Button asChild size="lg" className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 hover:from-yellow-300 hover:to-yellow-400 rounded-2xl px-8 py-6 text-lg font-semibold shadow-xl border-0 transform hover:scale-105 transition-all duration-300">
                     <Link to="/">
                       <ArrowLeft className="mr-2 h-5 w-5" />
                       Back to Home
