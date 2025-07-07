@@ -151,12 +151,28 @@ const AdminCredits = () => {
     }
   };
 
+  const refreshSession = async () => {
+    try {
+      const { data, error } = await supabase.auth.refreshSession();
+      if (error) {
+        console.error('Session refresh failed:', error);
+        toast.error('Session expired. Please log in again.');
+        return false;
+      }
+      console.log('Session refreshed successfully');
+      return true;
+    } catch (error) {
+      console.error('Session refresh error:', error);
+      return false;
+    }
+  };
+
   const fetchAllUsersWithCredits = async () => {
     try {
       setIsLoading(true);
       
       // Get the current session for authorization
-      const { data: { session } } = await supabase.auth.getSession();
+      let { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
         toast.error('Not authenticated');
@@ -164,7 +180,7 @@ const AdminCredits = () => {
       }
 
       // Call the edge function to get users using GET method
-      const response = await fetch(`https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/admin-users`, {
+      let response = await fetch(`https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/admin-users`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -172,6 +188,29 @@ const AdminCredits = () => {
           'Content-Type': 'application/json',
         },
       });
+
+      // If we get a 401, try to refresh the session and retry
+      if (response.status === 401) {
+        console.log('Got 401, attempting to refresh session...');
+        const refreshed = await refreshSession();
+        
+        if (refreshed) {
+          // Get the new session after refresh
+          const { data: { session: newSession } } = await supabase.auth.getSession();
+          
+          if (newSession) {
+            // Retry the request with the new token
+            response = await fetch(`https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/admin-users`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${newSession.access_token}`,
+                'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY',
+                'Content-Type': 'application/json',
+              },
+            });
+          }
+        }
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -241,7 +280,7 @@ const AdminCredits = () => {
       }
     } catch (error) {
       console.error('Error fetching users with credits:', error);
-      toast.error('Failed to load users and credits');
+      toast.error('Failed to load users and credits. Please try refreshing the page or logging in again.');
     } finally {
       setIsLoading(false);
     }
