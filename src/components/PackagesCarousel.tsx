@@ -8,17 +8,22 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface Document {
+  id: string;
   name: string;
-  document: string[];
+  credits: number;
+  components: number;
 }
 
 interface Package {
   id: string;
-  package_name: string;
+  name: string;
+  description: string;
+  color: string;
+  text_color: string;
+  credits: number;
   documents: Document[];
   created_at: string;
-  user_id: string;
-  report_id: string;
+  visibility: string;
 }
 
 interface PackagesCarouselProps {
@@ -34,34 +39,32 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
 
   useEffect(() => {
     fetchPackages();
-  }, [reportId, user]);
+  }, []);
 
   const fetchPackages = async () => {
-    if (!reportId) return;
-    
     setIsLoading(true);
     try {
-      // Fetch packages using the edge function
-      const response = await fetch(
-        `https://eiksxjzbwzujepqgmxsp.supabase.co/functions/v1/packages?reportId=${reportId}${user ? `&userId=${user.id}` : ''}`,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await fetch('/functions/v1/advisorpro-api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          endpoint: 'coach-packages',
+          method: 'GET'
+        })
+      });
 
       const result = await response.json();
       
-      if (result.success) {
-        setPackages(result.packages);
+      if (result.data && result.data.success) {
+        setPackages(result.data.data || []);
       } else {
-        console.error('Error fetching packages:', result.error);
+        console.error('Failed to fetch coach packages:', result);
+        toast.error('Failed to load packages');
       }
     } catch (error) {
-      console.error('Error fetching packages:', error);
+      console.error('Error fetching coach packages:', error);
       toast.error('Failed to load packages');
     } finally {
       setIsLoading(false);
@@ -118,10 +121,10 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                 
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-gray-900 leading-tight line-clamp-3">
-                    {pkg.package_name}
+                    {pkg.name}
                   </h2>
                   <p className="text-base font-medium text-gray-800">
-                    {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''}
+                    {pkg.documents.length} Document{pkg.documents.length !== 1 ? 's' : ''} • {pkg.credits} Credits
                   </p>
                   <Badge variant="outline" className="text-xs bg-white/80 w-fit">
                     {new Date(pkg.created_at).toLocaleDateString()}
