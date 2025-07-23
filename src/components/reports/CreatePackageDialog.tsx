@@ -53,69 +53,6 @@ interface Package {
   items: string[];
 }
 
-const packages: Package[] = [
-  {
-    id: 'PYBLC1',
-    title: 'Plan Your Business Legacy with Confidence',
-    description: 'For founders who want to build with the end in mind and reduce long-term stress.',
-    icon: '',
-    items: [
-      'Founder Exit Strategy Report',
-      'Exit Readiness Blueprint Report',
-      'Stress-Free Exit Roadmap Report',
-      'Legacy & Exit Planning Report'
-    ]
-  },
-  {
-    id: 'USICD2',
-    title: 'Understand and Serve Your Ideal Customers Deeply',
-    description: 'For teams that want to sharpen their customer insight and increase resonance.',
-    icon: '',
-    items: [
-      'Know Your Customer Persona Toolkit (Exercise 6)',
-      'Customer Journey Mapping Workshops',
-      'Ideal Customer Profile Scorecard',
-      'Engagement Strategy Plan'
-    ]
-  },
-  {
-    id: 'DIIP3',
-    title: 'Differentiate Yourself with an Irresistible Proposition',
-    description: 'For companies struggling to stand out in crowded markets.',
-    icon: '',
-    items: [
-      '1+1 Proposition Creation Workshop (Exercise 7)',
-      'Strategic Differentiation Playbook',
-      'Emotional Hook Messaging Templates',
-      'Customer Delight Blueprint'
-    ]
-  },
-  {
-    id: 'ETYSDD4',
-    title: 'Empower Your Team and Step Back from the Day-to-Day',
-    description: 'For founders stuck in the weeds and seeking more freedom.',
-    icon: '',
-    items: [
-      'Delegation Audit and Scorecard (Exercise 18)',
-      'Leadership Empowerment Workshops',
-      'Team Accountability & Development Toolkit',
-      'Freedom Framework: Reducing Founder Bottlenecks'
-    ]
-  },
-  {
-    id: 'SGKCR5',
-    title: 'Strengthen and Grow Your Key Customer Relationships',
-    description: 'For businesses ready to scale revenue through strategic client relationships.',
-    icon: '',
-    items: [
-      'Key Customer Mapping and Insights (Exercise 27)',
-      'Customer Relationship Management (CRM) Playbook',
-      'Second-Order Sales Strategy Plan (based on Chapter 23)',
-      'Relationship Building and Loyalty Tools'
-    ]
-  }
-];
-
 const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({ 
   isOpen, 
   onClose, 
@@ -128,13 +65,49 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedPackages, setSelectedPackages] = useState<string[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [packages, setPackages] = useState<Package[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const { credits, checkCredits, deductCredits, getCreditCost } = useCredits();
 
+  const fetchPackages = async () => {
+    try {
+      const response = await fetch('/functions/v1/advisorpro-api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          endpoint: 'coach-packages',
+          method: 'GET'
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.data && result.data.success) {
+        const coachPackages = result.data.data.map((pkg: any) => ({
+          id: pkg.id,
+          title: pkg.name,
+          description: pkg.description || '',
+          icon: '',
+          items: pkg.documents?.map((doc: any) => doc.name) || []
+        }));
+        setPackages(coachPackages);
+      } else {
+        console.error('Failed to fetch coach packages:', result);
+        toast.error('Failed to load packages');
+      }
+    } catch (error) {
+      console.error('Error fetching coach packages:', error);
+      toast.error('Failed to load packages');
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       fetchCompanies();
+      fetchPackages();
     }
   }, [isOpen, user]);
 
