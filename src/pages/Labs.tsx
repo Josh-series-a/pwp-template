@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Play, Copy, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Labs = () => {
   const [selectedEndpoint, setSelectedEndpoint] = useState("");
@@ -88,20 +89,15 @@ const Labs = () => {
 
     try {
       const endpoint = endpoints.find(e => e.value === selectedEndpoint);
-      const baseUrl = "https://api.advisorpro.ai/functions/v1/packages-api";
-      const url = selectedEndpoint === "create-package" ? baseUrl : `${baseUrl}/${selectedEndpoint}`;
       
-      const options: RequestInit = {
-        method: endpoint?.method || "GET",
-        headers: {
-          "Authorization": "Bearer AdvisorPro_Labs",
-          "Content-Type": "application/json"
-        }
+      const requestData: any = {
+        endpoint: selectedEndpoint,
+        method: endpoint?.method || "GET"
       };
 
       if (endpoint?.requiresBody && requestBody) {
         try {
-          options.body = requestBody;
+          requestData.body = JSON.parse(requestBody);
         } catch (error) {
           toast.error("Invalid JSON in request body");
           setLoading(false);
@@ -109,23 +105,31 @@ const Labs = () => {
         }
       }
 
-      const res = await fetch(url, options);
-      const data = await res.json();
-      
-      setResponse({
-        status: res.status,
-        statusText: res.statusText,
-        headers: Object.fromEntries(res.headers.entries()),
-        data: data
+      console.log('Making request via edge function:', requestData);
+
+      // Use Supabase edge function to make the API call
+      const { data, error } = await supabase.functions.invoke('advisorpro-api', {
+        body: requestData
       });
 
-      if (res.ok) {
-        toast.success("API request successful");
+      if (error) {
+        console.error('Edge function error:', error);
+        setResponse({
+          error: error.message || "Edge function call failed"
+        });
+        toast.error(`Edge function error: ${error.message}`);
       } else {
-        toast.error(`API request failed: ${res.status} ${res.statusText}`);
+        console.log('Edge function response:', data);
+        setResponse(data);
+        
+        if (data.status && data.status >= 200 && data.status < 300) {
+          toast.success("API request successful");
+        } else {
+          toast.error(`API request failed: ${data.status} ${data.statusText || 'Unknown error'}`);
+        }
       }
     } catch (error) {
-      console.error("API request error:", error);
+      console.error("Request error:", error);
       setResponse({
         error: error instanceof Error ? error.message : "Unknown error occurred"
       });
