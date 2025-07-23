@@ -36,6 +36,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminCredits from "./pages/AdminCredits";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import Labs from "./pages/Labs";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,11 @@ const App = () => (
               <Route path="/dashboard/exercises" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <Exercises />
+                </RoleProtectedRoute>
+              } />
+              <Route path="/dashboard/labs" element={
+                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
+                  <Labs />
                 </RoleProtectedRoute>
               } />
               
