@@ -229,48 +229,46 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
       }
 
       const selectedCompanyData = companies.find(c => c.id === selectedCompany);
+      const selectedPackageData = packages.filter(p => selectedPackages.includes(p.id));
 
-      // Prepare query parameters
-      const params = new URLSearchParams();
-      params.append('user_id', user.id);
-      params.append('user_email', user.email || '');
-      params.append('user_name', user.user_metadata?.name || 'Unknown User');
-      params.append('company_name', selectedCompanyData?.company_name || '');
-      params.append('company_id', selectedCompany);
-      params.append('package_count', selectedPackages.length.toString());
-      params.append('total_credits_deducted', totalCost.toString());
-      params.append('timestamp', new Date().toISOString());
-      params.append('submitted_from', 'Create Package Dialog');
-      
-      // Add new parameters for reportId, statusType, and companyId
-      if (reportId) {
-        params.append('report_id', reportId);
-      }
-      if (statusType) {
-        params.append('status_type', statusType);
-      }
-      if (companyId) {
-        params.append('new_company_id', companyId);
-      }
-      
-      // Add selected packages IDs as separate array parameters
-      selectedPackages.forEach((packageId) => {
-        params.append('selected_packages_ID[]', packageId);
+      // Prepare the payload for AdvisorPro API
+      const payload = {
+        name: selectedPackageData[0]?.title || 'Custom Package',
+        description: selectedPackageData[0]?.description || 'Custom package description',
+        color: "#3b82f6",
+        text_color: "#ffffff",
+        documents: selectedPackageData.flatMap(pkg => pkg.items || []),
+        user_id: user.id,
+        client_id: reportId || selectedCompany,
+        companyName: selectedCompanyData?.company_name || '',
+        package_id: selectedPackages[0] || 'custom'
+      };
+
+      console.log('Sending package creation request:', payload);
+
+      // Send to AdvisorPro API via edge function
+      const { data, error } = await supabase.functions.invoke('advisorpro-api', {
+        body: {
+          endpoint: 'create-package',
+          method: 'POST',
+          body: payload
+        }
       });
 
-      console.log('Sending data to webhook as query string:', params.toString());
+      if (error) {
+        console.error('Error creating package:', error);
+        toast.error('Failed to create package');
+        return;
+      }
 
-      // Send to webhook with query parameters
-      const webhookUrl = 'https://hook.eu2.make.com/aha19x6d2fppxppp3kvuzws49rknm31p';
-      
-      await fetch(`${webhookUrl}?${params.toString()}`, {
-        method: 'GET',
-        mode: 'no-cors',
-      });
-
-      console.log('Webhook data sent successfully');
-      
-      toast.success(`Package request submitted successfully! ${totalCost} credits deducted.`);
+      if (data && data.data && data.data.success) {
+        console.log('Package created successfully:', data.data);
+        toast.success(`Package created successfully! ${totalCost} credits deducted.`);
+      } else {
+        console.error('Package creation failed:', data);
+        toast.error('Failed to create package');
+        return;
+      }
       
       // Reset form
       setCurrentPage(1);
