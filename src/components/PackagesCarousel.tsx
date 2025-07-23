@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, FileText, ExternalLink } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Document {
   id: string;
@@ -44,23 +45,23 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
   const fetchPackages = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/functions/v1/advisorpro-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('advisorpro-api', {
+        body: {
           endpoint: 'coach-packages',
           method: 'GET'
-        })
+        }
       });
 
-      const result = await response.json();
-      
-      if (result.data && result.data.success) {
-        setPackages(result.data.data || []);
+      if (error) {
+        console.error('Error calling advisorpro-api:', error);
+        toast.error('Failed to load packages');
+        return;
+      }
+
+      if (data && data.data && data.data.success) {
+        setPackages(data.data.data || []);
       } else {
-        console.error('Failed to fetch coach packages:', result);
+        console.error('Failed to fetch coach packages:', data);
         toast.error('Failed to load packages');
       }
     } catch (error) {

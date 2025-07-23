@@ -72,21 +72,21 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   const fetchPackages = async () => {
     try {
-      const response = await fetch('/functions/v1/advisorpro-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('advisorpro-api', {
+        body: {
           endpoint: 'coach-packages',
           method: 'GET'
-        })
+        }
       });
 
-      const result = await response.json();
-      
-      if (result.data && result.data.success) {
-        const coachPackages = result.data.data.map((pkg: any) => ({
+      if (error) {
+        console.error('Error calling advisorpro-api:', error);
+        toast.error('Failed to load packages');
+        return;
+      }
+
+      if (data && data.data && data.data.success) {
+        const coachPackages = data.data.data.map((pkg: any) => ({
           id: pkg.id,
           title: pkg.name,
           description: pkg.description || '',
@@ -95,7 +95,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
         }));
         setPackages(coachPackages);
       } else {
-        console.error('Failed to fetch coach packages:', result);
+        console.error('Failed to fetch coach packages:', data);
         toast.error('Failed to load packages');
       }
     } catch (error) {
