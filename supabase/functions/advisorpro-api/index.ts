@@ -17,11 +17,11 @@ serve(async (req) => {
     console.log('AdvisorPro API request:', { endpoint, method });
 
     // Get the API key from environment
-    const apiKey = Deno.env.get('ADVISORPRO_API_KEY');
+    const apiKey = Deno.env.get('AdvisorPro_Labs');
     if (!apiKey) {
-      console.error('ADVISORPRO_API_KEY not found in environment');
+      console.error('AdvisorPro_Labs secret not found in environment');
       return new Response(
-        JSON.stringify({ error: 'API key not configured' }),
+        JSON.stringify({ error: 'AdvisorPro API key not configured' }),
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
