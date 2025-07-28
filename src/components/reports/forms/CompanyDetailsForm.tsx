@@ -14,13 +14,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, ArrowRight, User, Building2, Upload, CheckCircle } from 'lucide-react';
 import DropZone from '../../upload/DropZone';
 import { supabase } from '@/integrations/supabase/client';
 
 export const companyDetailsSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   companyName: z.string().min(2, { message: "Company name is required" }),
+  industry: z.string().min(2, { message: "Industry is required" }),
+  companySize: z.string().min(1, { message: "Company size is required" }),
   pitchDeck: z.instanceof(File)
     .refine((file) => {
       return file instanceof File && file.size <= 10 * 1024 * 1024;
@@ -40,11 +44,32 @@ interface CompanyDetailsFormProps {
 const initialCompanyValues: Partial<CompanyDetailsFormValues> = {
   fullName: '',
   companyName: '',
+  industry: '',
+  companySize: '',
 };
+
+const pages = [
+  { 
+    title: 'Personal Information', 
+    icon: User, 
+    description: 'Tell us about yourself'
+  },
+  { 
+    title: 'Company Information', 
+    icon: Building2, 
+    description: 'Basic company details'
+  },
+  { 
+    title: 'Document Upload', 
+    icon: Upload, 
+    description: 'Upload your pitch deck'
+  }
+];
 
 const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
   
   const form = useForm<CompanyDetailsFormValues>({
     resolver: zodResolver(companyDetailsSchema),
@@ -112,98 +137,276 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => 
     }
   };
 
+  const nextPage = async () => {
+    const isValid = await form.trigger(getFieldsForPage(currentPage));
+    if (isValid && currentPage < pages.length - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const getFieldsForPage = (page: number): (keyof CompanyDetailsFormValues)[] => {
+    switch (page) {
+      case 0: return ['fullName'];
+      case 1: return ['companyName', 'industry', 'companySize'];
+      case 2: return ['pitchDeck'];
+      default: return [];
+    }
+  };
+
+  const isPageComplete = (page: number): boolean => {
+    const fields = getFieldsForPage(page);
+    const values = form.getValues();
+    return fields.every(field => {
+      const value = values[field];
+      return value && String(value).trim() !== '';
+    });
+  };
+
+  const currentPageData = pages[currentPage];
+  const IconComponent = currentPageData.icon;
+
   return (
-    <>
-      <div className="mb-6">
-        <h3 className="text-lg font-medium">Step 1: Enter Company Details</h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Please provide basic information about the company. All fields are required.
-        </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="flex items-center justify-center gap-3">
+          <div className="p-3 rounded-full bg-primary/10 text-primary">
+            <IconComponent className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold">{currentPageData.title}</h3>
+            <p className="text-sm text-muted-foreground">{currentPageData.description}</p>
+          </div>
+        </div>
+        
+        {/* Progress Bar */}
+        <div className="w-full max-w-md mx-auto">
+          <div className="flex justify-between text-xs text-muted-foreground mb-2">
+            <span>Step {currentPage + 1} of {pages.length}</span>
+            <span>{Math.round(((currentPage + 1) / pages.length) * 100)}%</span>
+          </div>
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-primary transition-all duration-300 ease-out"
+              style={{ width: `${((currentPage + 1) / pages.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Page Indicators */}
+        <div className="flex justify-center gap-2">
+          {pages.map((page, index) => {
+            const PageIcon = page.icon;
+            const isActive = index === currentPage;
+            const isCompleted = index < currentPage || (index === currentPage && isPageComplete(index));
+            
+            return (
+              <div
+                key={index}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
+                  isActive 
+                    ? 'bg-primary/10 border border-primary/20' 
+                    : isCompleted 
+                    ? 'bg-green-50 border border-green-200' 
+                    : 'bg-muted border border-border'
+                }`}
+              >
+                <div className={`p-1 rounded ${
+                  isActive 
+                    ? 'bg-primary text-primary-foreground' 
+                    : isCompleted 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-muted-foreground text-muted'
+                }`}>
+                  {isCompleted && index !== currentPage ? (
+                    <CheckCircle className="h-3 w-3" />
+                  ) : (
+                    <PageIcon className="h-3 w-3" />
+                  )}
+                </div>
+                <span className={`text-xs font-medium ${
+                  isActive 
+                    ? 'text-primary' 
+                    : isCompleted 
+                    ? 'text-green-700' 
+                    : 'text-muted-foreground'
+                }`}>
+                  {page.title}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
+      {/* Form Content */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="fullName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                  Full Name
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="John Smith" {...field} required />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="companyName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                  Company Name
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="Acme Inc." {...field} required />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="pitchDeck"
-            render={({ field: { value, onChange, ...field } }) => (
-              <FormItem>
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                  Upload Pitch Deck
-                </FormLabel>
-                <FormDescription>
-                  Drag and drop or click to upload your pitch deck (Required, Max 10MB, PDF format only)
-                </FormDescription>
-                <FormControl>
-                  <DropZone
-                    isUploading={isUploading}
-                    onFilesSelected={handleFilesSelected}
-                  />
-                </FormControl>
-                <FormMessage />
-                {form.watch('pitchDeckUrl') && (
-                  <div className="mt-2 text-sm text-green-600">
-                    File uploaded successfully! ✓
-                  </div>
+        <div className="max-w-md mx-auto space-y-6">
+          {/* Page 1: Personal Information */}
+          {currentPage === 0 && (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Full Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Smith" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter your full name as it appears on official documents
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                <div className="mt-2 text-sm text-muted-foreground">
-                  Don't have pitch deck yet?{' '}
-                  <a 
-                    href="/contact" 
-                    className="text-blue-600 hover:text-blue-800 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Book Discovery Meeting
-                  </a>
-                </div>
-              </FormItem>
-            )}
-          />
+              />
+            </div>
+          )}
 
-          <div className="pt-4">
-            <Button 
-              type="submit" 
-              disabled={!form.watch('pitchDeckUrl') || isUploading}
+          {/* Page 2: Company Information */}
+          {currentPage === 1 && (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Company Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Acme Inc." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="industry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Industry
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Technology, Healthcare, Finance..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="companySize"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Company Size
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="1-10, 11-50, 51-200, 200+ employees" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          {/* Page 3: Document Upload */}
+          {currentPage === 2 && (
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="pitchDeck"
+                render={({ field: { value, onChange, ...field } }) => (
+                  <FormItem>
+                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                      Upload Pitch Deck
+                    </FormLabel>
+                    <FormDescription>
+                      Drag and drop or click to upload your pitch deck (Required, Max 10MB, PDF format only)
+                    </FormDescription>
+                    <FormControl>
+                      <DropZone
+                        isUploading={isUploading}
+                        onFilesSelected={handleFilesSelected}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {form.watch('pitchDeckUrl') && (
+                      <div className="mt-2 text-sm text-green-600 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        File uploaded successfully!
+                      </div>
+                    )}
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      Don't have pitch deck yet?{' '}
+                      <a 
+                        href="/contact" 
+                        className="text-primary hover:text-primary/80 underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Book Discovery Meeting
+                      </a>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevPage}
+              disabled={currentPage === 0}
+              className="gap-2"
             >
-              Continue to Exercise Selection
+              <ArrowLeft className="h-4 w-4" />
+              Previous
             </Button>
+
+            {currentPage < pages.length - 1 ? (
+              <Button
+                type="button"
+                onClick={nextPage}
+                disabled={!isPageComplete(currentPage)}
+                className="gap-2"
+              >
+                Next
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={() => form.handleSubmit(onSubmit)()}
+                disabled={!form.watch('pitchDeckUrl') || isUploading}
+                className="gap-2"
+              >
+                <CheckCircle className="h-4 w-4" />
+                Complete Setup
+              </Button>
+            )}
           </div>
-        </form>
+        </div>
       </Form>
-    </>
+    </div>
   );
 };
 

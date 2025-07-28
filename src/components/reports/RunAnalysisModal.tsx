@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, X, Heart, Sparkles, Building2, FileText, Users, Target, DollarSign, TreePine } from 'lucide-react';
+import { CheckCircle, X, Heart, Sparkles, Building2, FileText, Users, Target, DollarSign, TreePine, User, Upload } from 'lucide-react';
 import NewCompanyForm from './NewCompanyForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCredits } from '@/hooks/useCredits';
@@ -34,9 +34,21 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   const navigationSteps = [
     { 
       step: 1, 
-      title: 'Enter Company Details', 
+      title: 'Personal Information', 
+      icon: User,
+      description: 'Tell us about yourself'
+    },
+    { 
+      step: 2, 
+      title: 'Company Information', 
       icon: Building2,
-      description: 'Provide basic company information'
+      description: 'Basic company details'
+    },
+    { 
+      step: 3, 
+      title: 'Document Upload', 
+      icon: Upload,
+      description: 'Upload your pitch deck'
     }
   ];
 
