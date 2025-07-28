@@ -474,7 +474,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
               viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {reports.map(report => (
-                    <Card key={report.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:scale-[1.02] bg-gradient-to-br from-card to-card/50" onClick={() => navigateToReport(report)}>
+                    <Card key={report.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:scale-[1.02] bg-gradient-to-br from-card to-card/50" onClick={() => navigateToReport(report)}>
                       <CardHeader className="pb-4 space-y-4">
                         {/* Header Section */}
                         <div className="flex items-start justify-between">
