@@ -32,6 +32,19 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Get the AdvisorPro API key
+    const advisorProApiKey = Deno.env.get('AdvisorPro_Labs');
+    if (!advisorProApiKey) {
+      console.error('[BUSINESS-HEALTH-SUBMISSION] AdvisorPro API key not found');
+      return new Response(
+        JSON.stringify({ error: 'AdvisorPro API key not configured' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     // Submit to AdvisorPro API
     console.log('[BUSINESS-HEALTH-SUBMISSION] Submitting to AdvisorPro API...');
     console.log('[BUSINESS-HEALTH-SUBMISSION] Full payload:', JSON.stringify(payload, null, 2));
@@ -40,6 +53,7 @@ Deno.serve(async (req) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': advisorProApiKey,
       },
       body: JSON.stringify(payload),
     });
