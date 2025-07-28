@@ -77,10 +77,10 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-none w-screen h-screen p-0 gap-0 bg-gradient-to-br from-background via-background/95 to-muted/30">
-        <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+      <DialogContent className="max-w-7xl w-[95vw] h-[90vh] p-0 gap-0 bg-gradient-to-br from-background via-background/95 to-muted/30 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full overflow-hidden">
           {/* Left Panel - Hero Section */}
-          <div className="relative flex flex-col justify-center p-8 lg:p-12 bg-gradient-to-br from-primary/5 via-primary/3 to-background">
+          <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-12 bg-gradient-to-br from-primary/5 via-primary/3 to-background overflow-y-auto">
             {/* Close Button */}
             <Button
               variant="ghost"
@@ -204,13 +204,13 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
           </div>
 
           {/* Right Panel - Form Section */}
-          <div className="flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-8 lg:p-12">
-              <div className="max-w-2xl mx-auto">
+          <div className="flex flex-col overflow-hidden min-h-0">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-12">
+              <div className="max-w-2xl mx-auto h-full">
                 {hasEnoughHealthScoreCredits ? (
                   <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+                  <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-6">
                     <div className="p-6 rounded-full bg-destructive/10">
                       <Heart className="h-12 w-12 text-destructive" />
                     </div>
