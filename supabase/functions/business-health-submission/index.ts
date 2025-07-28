@@ -47,7 +47,17 @@ Deno.serve(async (req) => {
 
     // Submit to AdvisorPro API
     console.log('[BUSINESS-HEALTH-SUBMISSION] Submitting to AdvisorPro API...');
-    console.log('[BUSINESS-HEALTH-SUBMISSION] Full payload:', JSON.stringify(payload, null, 2));
+    
+    // Transform payload to match AdvisorPro API expectations
+    const advisorProPayload = {
+      ...payload,
+      client_id: payload.reportId
+    };
+    
+    // Remove the original reportId field
+    delete advisorProPayload.reportId;
+    
+    console.log('[BUSINESS-HEALTH-SUBMISSION] Full payload:', JSON.stringify(advisorProPayload, null, 2));
     
     const advisorProResponse = await fetch('https://api.advisorpro.ai/functions/v1/packages-api/new-client-api', {
       method: 'POST',
@@ -55,7 +65,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
         'X-API-Key': advisorProApiKey,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(advisorProPayload),
     });
 
     console.log('[BUSINESS-HEALTH-SUBMISSION] AdvisorPro API response status:', advisorProResponse.status);
