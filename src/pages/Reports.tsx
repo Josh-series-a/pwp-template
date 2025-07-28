@@ -4,7 +4,6 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
@@ -35,6 +34,7 @@ interface Report {
   stressLeadership?: number;
   overall?: number;
 }
+
 const Reports = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -43,31 +43,27 @@ const Reports = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [allRecommendedCIKs, setAllRecommendedCIKs] = useState<string[]>([]);
-  const {
-    user
-  } = useAuth();
-  const {
-    credits,
-    checkCredits
-  } = useCredits();
+  const { user } = useAuth();
+  const { credits, checkCredits } = useCredits();
   const navigate = useNavigate();
 
   // Check if user has enough credits for Business Health Score (requires 10 credits)
   const hasEnoughCredits = checkCredits(10);
+
   useEffect(() => {
     const fetchReports = async () => {
       if (!user) return;
       setIsLoading(true);
       try {
-        const {
-          data,
-          error
-        } = await supabase.from('reports').select('*').order('created_at', {
-          ascending: false
-        });
+        const { data, error } = await supabase
+          .from('reports')
+          .select('*')
+          .order('created_at', { ascending: false });
+
         if (error) {
           throw error;
         }
+
         if (data) {
           const formattedReports = data.map(report => ({
             id: report.id,
@@ -120,16 +116,20 @@ const Reports = () => {
         setIsLoading(false);
       }
     };
+
     fetchReports();
   }, [user]);
+
   const findOriginalNewReport = async (companyName: string) => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('reports').select('id').eq('company_name', companyName).eq('status_type', 'New').order('created_at', {
-        ascending: true
-      }).limit(1);
+      const { data, error } = await supabase
+        .from('reports')
+        .select('id')
+        .eq('company_name', companyName)
+        .eq('status_type', 'New')
+        .order('created_at', { ascending: true })
+        .limit(1);
+
       if (error) throw error;
       return data && data.length > 0 ? data[0].id : null;
     } catch (error) {
@@ -137,6 +137,7 @@ const Reports = () => {
       return null;
     }
   };
+
   const openModal = () => {
     if (!hasEnoughCredits) {
       toast.error(`You need 10 credits to run a Business Health Score. You currently have ${credits?.credits || 0} credits.`);
@@ -144,21 +145,26 @@ const Reports = () => {
     }
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const openViewModal = (reportId: string) => {
     setSelectedReportId(reportId);
     setViewModalOpen(true);
   };
+
   const closeViewModal = () => {
     setSelectedReportId(null);
     setViewModalOpen(false);
   };
+
   const navigateToReport = (report: Report) => {
     const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
     navigate(`/dashboard/reports/${companySlug}/${report.exerciseId || 'unknown'}/${report.id}`);
   };
+
   const handleDownload = async (report: Report) => {
     try {
       const reportContent = `
@@ -170,9 +176,8 @@ Status: ${report.status}
 
 This report was generated on ${new Date().toLocaleDateString()}.
       `.trim();
-      const blob = new Blob([reportContent], {
-        type: 'text/plain'
-      });
+
+      const blob = new Blob([reportContent], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -181,33 +186,38 @@ This report was generated on ${new Date().toLocaleDateString()}.
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
       toast.success('Report downloaded successfully');
     } catch (error) {
       console.error('Error downloading report:', error);
       toast.error('Failed to download report');
     }
   };
+
   const handleReAnalyze = async (report: Report) => {
     try {
-      const {
-        error
-      } = await supabase.from('reports').update({
-        status: 'In Progress'
-      }).eq('id', report.id);
+      const { error } = await supabase
+        .from('reports')
+        .update({ status: 'In Progress' })
+        .eq('id', report.id);
+
       if (error) throw error;
-      setReports(reports.map(r => r.id === report.id ? {
-        ...r,
-        status: 'In Progress'
-      } : r));
+
+      setReports(reports.map(r => 
+        r.id === report.id ? { ...r, status: 'In Progress' } : r
+      ));
+
       toast.success(`Re-analysis started for ${report.company}. Estimated completion: 20 minutes.`);
     } catch (error) {
       console.error('Error re-analyzing report:', error);
       toast.error('Failed to start re-analysis');
     }
   };
+
   const handleShare = async (report: Report) => {
     try {
       const shareUrl = `${window.location.origin}/dashboard/reports/${report.company.toLowerCase().replace(/\s+/g, '-')}/${report.exerciseId || 'unknown'}/${report.id}`;
+      
       if (navigator.share) {
         await navigator.share({
           title: `Business Health Check: ${report.company}`,
@@ -223,14 +233,17 @@ This report was generated on ${new Date().toLocaleDateString()}.
       toast.error('Failed to share report');
     }
   };
+
   const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string) => {
     try {
       if (!user) {
         toast.error("You must be logged in to create a report.");
         return;
       }
+
       const exerciseMatch = exerciseTitle.match(/Exercise (\d+):/);
       const exerciseId = exerciseMatch ? `exercise-${exerciseMatch[1]}` : 'unknown';
+
       let finalCompanyId = companyId;
       if (type === 'Existing') {
         const originalReportId = await findOriginalNewReport(companyName);
@@ -238,22 +251,26 @@ This report was generated on ${new Date().toLocaleDateString()}.
           finalCompanyId = originalReportId;
         }
       }
-      const {
-        data: reportData,
-        error
-      } = await supabase.from('reports').insert({
-        title: exerciseTitle,
-        company_name: companyName,
-        exercise_id: exerciseId,
-        status: 'In Progress',
-        status_type: type || 'New',
-        user_id: user.id,
-        pitch_deck_url: pitchDeckUrl,
-        company_id: finalCompanyId
-      }).select().single();
+
+      const { data: reportData, error } = await supabase
+        .from('reports')
+        .insert({
+          title: exerciseTitle,
+          company_name: companyName,
+          exercise_id: exerciseId,
+          status: 'In Progress',
+          status_type: type || 'New',
+          user_id: user.id,
+          pitch_deck_url: pitchDeckUrl,
+          company_id: finalCompanyId
+        })
+        .select()
+        .single();
+
       if (error) {
         throw error;
       }
+
       if (reportData) {
         const newReport = {
           id: reportData.id,
@@ -272,7 +289,9 @@ This report was generated on ${new Date().toLocaleDateString()}.
           stressLeadership: reportData.stress_leadership_score,
           overall: reportData.overall_score
         };
+
         setReports([newReport, ...reports]);
+
         try {
           const webhookUrl = new URL('https://hook.eu2.make.com/dioppcyf0ife7k5jcxfegfkoi9dir29n');
           webhookUrl.searchParams.append('reportId', reportData.id);
@@ -292,10 +311,17 @@ This report was generated on ${new Date().toLocaleDateString()}.
           if (pitchDeckUrl) {
             webhookUrl.searchParams.append('pitchDeckUrl', pitchDeckUrl);
           }
-          const combinedQuestionsAnswers = ['What is your current monthly revenue? Strong financial foundation with positive cash flow', 'How many employees do you have? Marketing strategy needs improvement', 'What are your main marketing channels? Leadership team is well-structured'];
+
+          const combinedQuestionsAnswers = [
+            'What is your current monthly revenue? Strong financial foundation with positive cash flow',
+            'How many employees do you have? Marketing strategy needs improvement',
+            'What are your main marketing channels? Leadership team is well-structured'
+          ];
+
           combinedQuestionsAnswers.forEach((qa, index) => {
             webhookUrl.searchParams.append(`questionsAnswers[${index}]`, qa);
           });
+
           console.log('Sending data to webhook with query parameters:', webhookUrl.toString());
           await fetch(webhookUrl.toString(), {
             method: 'GET',
@@ -306,6 +332,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
           console.error('Error sending data to webhook:', webhookError);
         }
       }
+
       closeModal();
       toast.success(`Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`);
     } catch (error) {
@@ -313,12 +340,16 @@ This report was generated on ${new Date().toLocaleDateString()}.
       toast.error("Failed to create report. Please try again.");
     }
   };
+
   const handleDelete = async (report: Report) => {
     try {
-      const {
-        error
-      } = await supabase.from('reports').delete().eq('id', report.id);
+      const { error } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', report.id);
+
       if (error) throw error;
+
       setReports(reports.filter(r => r.id !== report.id));
       toast.success(`Report for ${report.company} has been deleted successfully`);
     } catch (error) {
@@ -326,38 +357,28 @@ This report was generated on ${new Date().toLocaleDateString()}.
       toast.error('Failed to delete report');
     }
   };
+
   const getScoreColor = (score: number | null | undefined) => {
     if (score === null || score === undefined) return 'text-gray-400';
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
     return 'text-red-600';
   };
+
   const formatScore = (score: number | null | undefined) => {
     return score !== null && score !== undefined ? Math.round(score * 10) / 10 : '-';
   };
-  const ScoreCell = ({
-    score
-  }: {
-    score: number | null | undefined;
-  }) => {
-    if (score === null || score === undefined) {
-      return <TableCell className="text-center">
-          <div className="flex justify-center">
-            <Skeleton className="h-4 w-8" />
-          </div>
-        </TableCell>;
-    }
-    return <TableCell className={`text-center font-medium ${getScoreColor(score)}`}>
-        {formatScore(score)}
-      </TableCell>;
-  };
+
   const handleCreatePackage = () => {
     setCreatePackageOpen(true);
   };
+
   const closeCreatePackageDialog = () => {
     setCreatePackageOpen(false);
   };
-  return <DashboardLayout title="My Reports">
+
+  return (
+    <DashboardLayout title="My Reports">
       <div className="space-y-6">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
           <div className="flex-1">
@@ -366,15 +387,21 @@ This report was generated on ${new Date().toLocaleDateString()}.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:flex-shrink-0">
-            {allRecommendedCIKs.length > 0 && <div className="flex flex-wrap gap-1 items-center">
+            {allRecommendedCIKs.length > 0 && (
+              <div className="flex flex-wrap gap-1 items-center">
                 <span className="text-sm font-medium text-muted-foreground">Recommended CIKs:</span>
-                {allRecommendedCIKs.slice(0, 5).map((cik, index) => <Badge key={index} variant="outline" className="text-xs">
+                {allRecommendedCIKs.slice(0, 5).map((cik, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
                     {cik}
-                  </Badge>)}
-                {allRecommendedCIKs.length > 5 && <Badge variant="outline" className="text-xs">
+                  </Badge>
+                ))}
+                {allRecommendedCIKs.length > 5 && (
+                  <Badge variant="outline" className="text-xs">
                     +{allRecommendedCIKs.length - 5} more
-                  </Badge>}
-              </div>}
+                  </Badge>
+                )}
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button variant="outline" onClick={handleCreatePackage} className="w-full sm:w-auto">
                 <Package className="mr-2 h-4 w-4" />
@@ -396,97 +423,133 @@ This report was generated on ${new Date().toLocaleDateString()}.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading ? <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
                 <LoadingRayMeter size="lg" autoAnimate={true} />
                 <p className="text-muted-foreground">Loading reports...</p>
-              </div> : reports.length > 0 ? <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Company</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-center">Plan</TableHead>
-                      <TableHead className="text-center">People</TableHead>
-                      <TableHead className="text-center">Profits</TableHead>
-                      <TableHead className="text-center">Purpose & Impact</TableHead>
-                      <TableHead className="text-center">Stress & Leadership</TableHead>
-                      <TableHead className="text-center">Overall</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reports.map(report => <TableRow key={report.id} className="cursor-pointer hover:bg-muted/70" onClick={() => navigateToReport(report)}>
-                        <TableCell className="font-medium">{report.title}</TableCell>
-                        <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
-                        <TableCell>{report.company}</TableCell>
-                        <TableCell>
-                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${report.statusType === 'New' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
-                            {report.statusType}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${report.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
-                            {report.status}
-                          </span>
-                        </TableCell>
-                        <ScoreCell score={report.plan} />
-                        <ScoreCell score={report.people} />
-                        <ScoreCell score={report.profits} />
-                        <ScoreCell score={report.purposeImpact} />
-                        <ScoreCell score={report.stressLeadership} />
-                        <ScoreCell score={report.overall} />
-                        <TableCell className="text-right">
-                          <div onClick={e => e.stopPropagation()}>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => navigateToReport(report)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View Report
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => openViewModal(report.id)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  Quick View
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDownload(report)}>
-                                  <DownloadCloud className="mr-2 h-4 w-4" />
-                                  Download
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
-                                  <RefreshCw className="mr-2 h-4 w-4" />
-                                  Re-analyze
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleShare(report)}>
-                                  <Share2 className="mr-2 h-4 w-4" />
-                                  Share
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+              </div>
+            ) : reports.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {reports.map(report => (
+                  <Card key={report.id} className="cursor-pointer hover:shadow-lg transition-shadow duration-200" onClick={() => navigateToReport(report)}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-lg truncate">{report.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground mt-1">{report.company}</p>
+                        </div>
+                        <div onClick={e => e.stopPropagation()}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => navigateToReport(report)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Report
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => openViewModal(report.id)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Quick View
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDownload(report)}>
+                                <DownloadCloud className="mr-2 h-4 w-4" />
+                                Download
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
+                                <RefreshCw className="mr-2 h-4 w-4" />
+                                Re-analyze
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleShare(report)}>
+                                <Share2 className="mr-2 h-4 w-4" />
+                                Share
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <Badge variant={report.statusType === 'New' ? 'default' : 'secondary'} className="text-xs">
+                          {report.statusType}
+                        </Badge>
+                        <Badge variant={report.status === 'In Progress' ? 'outline' : 'default'} className="text-xs">
+                          {report.status}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="space-y-3">
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(report.date).toLocaleDateString()}
+                        </div>
+                        
+                        {(report.plan !== null && report.plan !== undefined) && (
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div className="space-y-2">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Plan</span>
+                                <span className={`font-medium ${getScoreColor(report.plan)}`}>
+                                  {formatScore(report.plan)}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">People</span>
+                                <span className={`font-medium ${getScoreColor(report.people)}`}>
+                                  {formatScore(report.people)}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Profits</span>
+                                <span className={`font-medium ${getScoreColor(report.profits)}`}>
+                                  {formatScore(report.profits)}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground text-xs">Purpose</span>
+                                <span className={`font-medium ${getScoreColor(report.purposeImpact)}`}>
+                                  {formatScore(report.purposeImpact)}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground text-xs">Stress</span>
+                                <span className={`font-medium ${getScoreColor(report.stressLeadership)}`}>
+                                  {formatScore(report.stressLeadership)}
+                                </span>
+                              </div>
+                              <div className="flex justify-between border-t pt-2">
+                                <span className="font-medium">Overall</span>
+                                <span className={`font-bold ${getScoreColor(report.overall)}`}>
+                                  {formatScore(report.overall)}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </TableCell>
-                      </TableRow>)}
-                  </TableBody>
-                </Table>
-              </div> : <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
                 <LoadingRayMeter size="lg" progress={0} autoAnimate={false} />
                 <div className="text-center space-y-2">
                   <p className="text-lg font-medium">No reports found</p>
                   <p className="text-muted-foreground">Click "Run Business Health Score" to create your first report.</p>
                 </div>
-              </div>}
+              </div>
+            )}
           </CardContent>
-          {reports.length > 0 && <CardFooter>
+          {reports.length > 0 && (
+            <CardFooter>
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
@@ -506,17 +569,29 @@ This report was generated on ${new Date().toLocaleDateString()}.
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
-            </CardFooter>}
+            </CardFooter>
+          )}
         </Card>
-
-        
       </div>
 
-      <RunAnalysisModal isOpen={isModalOpen} onClose={closeModal} onSubmitComplete={handleAnalysisComplete} />
+      <RunAnalysisModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        onSubmitComplete={handleAnalysisComplete} 
+      />
 
-      <ViewReportModal isOpen={viewModalOpen} onClose={closeViewModal} reportId={selectedReportId} />
+      <ViewReportModal 
+        isOpen={viewModalOpen} 
+        onClose={closeViewModal} 
+        reportId={selectedReportId} 
+      />
 
-      <CreatePackageDialog isOpen={createPackageOpen} onClose={closeCreatePackageDialog} />
-    </DashboardLayout>;
+      <CreatePackageDialog 
+        isOpen={createPackageOpen} 
+        onClose={closeCreatePackageDialog} 
+      />
+    </DashboardLayout>
+  );
 };
+
 export default Reports;
