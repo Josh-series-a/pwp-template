@@ -60,37 +60,36 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-7xl w-[95vw] h-[90vh] p-0 gap-0 bg-gradient-to-br from-background via-background/95 to-muted/30 overflow-hidden">
+        {/* Close Button - Outside the main content */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="absolute top-4 right-4 h-8 w-8 rounded-full bg-background/80 hover:bg-background z-50 shadow-md"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full overflow-hidden">
           {/* Left Panel - Hero Section */}
           <div className="relative flex flex-col justify-center p-6 md:p-8 lg:p-12 bg-gradient-to-br from-primary/5 via-primary/3 to-background overflow-y-auto">
-            {/* Close Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="absolute top-6 right-6 h-10 w-10 rounded-full hover:bg-background/80"
-            >
-              <X className="h-5 w-5" />
-            </Button>
-
             <div className="max-w-lg mx-auto lg:mx-0 space-y-8">
               {/* Header */}
               <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                  <CheckCircle className="h-8 w-8" />
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                    <CheckCircle className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-3xl font-bold text-foreground">
+                      Business Health Score
+                    </DialogTitle>
+                    <Badge variant="secondary" className="gap-2 px-3 py-1 mt-2">
+                      <Sparkles className="h-3 w-3" />
+                      AI-Powered Analysis
+                    </Badge>
+                  </div>
                 </div>
-                <div>
-                  <DialogTitle className="text-3xl font-bold text-foreground">
-                    Business Health Score
-                  </DialogTitle>
-                  <Badge variant="secondary" className="gap-2 px-3 py-1 mt-2">
-                    <Sparkles className="h-3 w-3" />
-                    AI-Powered Analysis
-                  </Badge>
-                </div>
-              </div>
-                
               </div>
 
               {/* Navigation Steps */}
