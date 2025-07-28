@@ -199,50 +199,6 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => 
           </div>
         </div>
 
-        {/* Page Indicators */}
-        <div className="flex justify-center gap-2">
-          {pages.map((page, index) => {
-            const PageIcon = page.icon;
-            const isActive = index === currentPage;
-            const isCompleted = index < currentPage || (index === currentPage && isPageComplete(index));
-            
-            return (
-              <div
-                key={index}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
-                  isActive 
-                    ? 'bg-primary/10 border border-primary/20' 
-                    : isCompleted 
-                    ? 'bg-green-50 border border-green-200' 
-                    : 'bg-muted border border-border'
-                }`}
-              >
-                <div className={`p-1 rounded ${
-                  isActive 
-                    ? 'bg-primary text-primary-foreground' 
-                    : isCompleted 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-muted-foreground text-muted'
-                }`}>
-                  {isCompleted && index !== currentPage ? (
-                    <CheckCircle className="h-3 w-3" />
-                  ) : (
-                    <PageIcon className="h-3 w-3" />
-                  )}
-                </div>
-                <span className={`text-xs font-medium ${
-                  isActive 
-                    ? 'text-primary' 
-                    : isCompleted 
-                    ? 'text-green-700' 
-                    : 'text-muted-foreground'
-                }`}>
-                  {page.title}
-                </span>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* Form Content */}
