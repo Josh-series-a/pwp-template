@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     // Transform payload to match AdvisorPro API expectations
     const advisorProPayload = {
       ...payload,
-      client_id: payload.reportId
+      client: payload.reportId
     };
     
     // Remove the original reportId field
