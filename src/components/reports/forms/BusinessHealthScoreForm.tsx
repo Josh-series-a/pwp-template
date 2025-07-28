@@ -157,11 +157,7 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
   };
 
   const pages = [
-    { component: StressLeadershipPage, title: 'Stress & Leadership' },
-    { component: PlanPage, title: 'Plan' },
-    { component: PeoplePage, title: 'People' },
-    { component: ProfitsPage, title: 'Profits' },
-    { component: PurposeImpactPage, title: 'Purpose & Impact' }
+    { component: StressLeadershipPage, title: 'Stress & Leadership' }
   ];
 
   const handlePageTransition = (newPage: number, dir: 'next' | 'prev') => {

@@ -43,30 +43,6 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
       title: 'Stress & Leadership', 
       icon: Target,
       description: 'Leadership assessment'
-    },
-    { 
-      step: 3, 
-      title: 'Plan', 
-      icon: FileText,
-      description: 'Strategic planning'
-    },
-    { 
-      step: 4, 
-      title: 'People', 
-      icon: Users,
-      description: 'Team & delegation'
-    },
-    { 
-      step: 5, 
-      title: 'Profits', 
-      icon: DollarSign,
-      description: 'Financial health'
-    },
-    { 
-      step: 6, 
-      title: 'Purpose & Impact', 
-      icon: TreePine,
-      description: 'Mission & values'
     }
   ];
 
