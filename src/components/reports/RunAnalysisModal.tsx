@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, X, Heart, Sparkles } from 'lucide-react';
+import { CheckCircle, X, Heart, Sparkles, Building2, FileText, Users, Target, DollarSign, TreePine } from 'lucide-react';
 import NewCompanyForm from './NewCompanyForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCredits } from '@/hooks/useCredits';
@@ -26,9 +26,49 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
 }) => {
   const { user } = useAuth();
   const { healthScoreCredits, checkHealthScoreCredits } = useCredits();
+  const [currentStep, setCurrentStep] = useState(1);
 
   const requiredHealthScoreCredits = 1;
   const hasEnoughHealthScoreCredits = checkHealthScoreCredits(requiredHealthScoreCredits);
+
+  const navigationSteps = [
+    { 
+      step: 1, 
+      title: 'Company Details', 
+      icon: Building2,
+      description: 'Basic company information'
+    },
+    { 
+      step: 2, 
+      title: 'Stress & Leadership', 
+      icon: Target,
+      description: 'Leadership assessment'
+    },
+    { 
+      step: 3, 
+      title: 'Plan', 
+      icon: FileText,
+      description: 'Strategic planning'
+    },
+    { 
+      step: 4, 
+      title: 'People', 
+      icon: Users,
+      description: 'Team & delegation'
+    },
+    { 
+      step: 5, 
+      title: 'Profits', 
+      icon: DollarSign,
+      description: 'Financial health'
+    },
+    { 
+      step: 6, 
+      title: 'Purpose & Impact', 
+      icon: TreePine,
+      description: 'Mission & values'
+    }
+  ];
 
   const handleSubmitComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => {
     console.log("Analysis complete with pitchDeckUrl:", pitchDeckUrl, "and companyId:", companyId);
@@ -68,26 +108,63 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                   <DialogTitle className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent leading-tight">
                     Business Health Score
                   </DialogTitle>
-                  <p className="text-xl text-muted-foreground mt-4 leading-relaxed">
-                    Get comprehensive AI-powered insights about your business health with actionable recommendations.
-                  </p>
                 </div>
               </div>
 
-              {/* Features */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border border-border/50">
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm font-medium">5-pillar comprehensive analysis</span>
-                </div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border border-border/50">
-                  <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                  <span className="text-sm font-medium">Personalized recommendations</span>
-                </div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border border-border/50">
-                  <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                  <span className="text-sm font-medium">Instant detailed report</span>
-                </div>
+              {/* Navigation Steps */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Assessment Steps</h3>
+                {navigationSteps.map((navStep) => {
+                  const IconComponent = navStep.icon;
+                  const isActive = currentStep === navStep.step;
+                  const isCompleted = currentStep > navStep.step;
+                  
+                  return (
+                    <div
+                      key={navStep.step}
+                      className={`flex items-center gap-4 p-3 rounded-lg transition-all ${
+                        isActive 
+                          ? 'bg-primary/10 border border-primary/20' 
+                          : isCompleted 
+                          ? 'bg-muted/50 border border-border/30' 
+                          : 'bg-background/30 border border-border/20'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-lg ${
+                        isActive 
+                          ? 'bg-primary text-primary-foreground' 
+                          : isCompleted 
+                          ? 'bg-green-500 text-white' 
+                          : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {isCompleted ? (
+                          <CheckCircle className="h-4 w-4" />
+                        ) : (
+                          <IconComponent className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className={`font-medium ${
+                          isActive ? 'text-primary' : isCompleted ? 'text-foreground' : 'text-muted-foreground'
+                        }`}>
+                          {navStep.title}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {navStep.description}
+                        </div>
+                      </div>
+                      <div className={`text-xs px-2 py-1 rounded-full ${
+                        isActive 
+                          ? 'bg-primary text-primary-foreground' 
+                          : isCompleted 
+                          ? 'bg-green-500 text-white' 
+                          : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {navStep.step}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Credits Display */}
