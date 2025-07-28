@@ -76,15 +76,20 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
             <div className="max-w-lg mx-auto lg:mx-0 space-y-8">
               {/* Header */}
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                    <CheckCircle className="h-8 w-8" />
-                  </div>
-                  <Badge variant="secondary" className="gap-2 px-3 py-1">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                  <CheckCircle className="h-8 w-8" />
+                </div>
+                <div>
+                  <DialogTitle className="text-3xl font-bold text-foreground">
+                    Business Health Score
+                  </DialogTitle>
+                  <Badge variant="secondary" className="gap-2 px-3 py-1 mt-2">
                     <Sparkles className="h-3 w-3" />
-                    AI-Powered
+                    AI-Powered Analysis
                   </Badge>
                 </div>
+              </div>
                 
               </div>
 
