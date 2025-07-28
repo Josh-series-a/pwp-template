@@ -17,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { ArrowLeft, ArrowRight, Building2, Upload, CheckCircle } from 'lucide-react';
 import DropZone from '../../upload/DropZone';
 import { supabase } from '@/integrations/supabase/client';
@@ -92,7 +93,9 @@ const companySizeOptions = [
 
 const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onStepChange }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   
   const form = useForm<CompanyDetailsFormValues>({
@@ -166,6 +169,80 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const handleCompleteSetup = async (data: CompanyDetailsFormValues) => {
+    setIsSubmitting(true);
+    try {
+      // First, call the original onSubmit to create the report
+      onSubmit(data);
+
+      // Then submit the Business Health Score data
+      await submitBusinessHealthScore(data);
+      
+      toast({
+        title: "Business Health Score submitted successfully",
+        description: "Your business health assessment has been completed.",
+      });
+    } catch (error) {
+      console.error("Error submitting Business Health Score:", error);
+      toast({
+        title: "Submission error", 
+        description: "There was an error submitting your business health assessment.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitBusinessHealthScore = async (data: CompanyDetailsFormValues) => {
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    // Create a basic business health score payload with company information
+    const payload = {
+      companyName: data.companyName,
+      contactName: user.user_metadata?.name || 'Unknown Contact',
+      fromExisting: false,
+      reportId: crypto.randomUUID(),
+      originalCompanyId: null,
+      companyType: 'New',
+      exerciseId: 'business-health-score',
+      exerciseTitle: 'Business Health Score',
+      rawData: {
+        companyName: data.companyName,
+        documentName: data.pitchDeckUrl ? data.pitchDeckUrl.split('/').pop() : null,
+        industry: data.industry,
+        companySize: data.companySize
+      },
+      responses: `Company: ${data.companyName}\nIndustry: ${data.industry}\nSize: ${data.companySize}\nPitch Deck: ${data.pitchDeckUrl ? 'Uploaded' : 'Not provided'}`,
+      userId: user.id,
+      userEmail: user.email || 'unknown@example.com',
+      businessDocUrl: data.pitchDeckUrl || null,
+      submittedAt: new Date().toISOString()
+    };
+
+    console.log('Submitting Business Health Score via edge function:', payload);
+
+    // Submit to Supabase edge function
+    const { data: result, error: submitError } = await supabase.functions.invoke('business-health-submission', {
+      body: payload,
+    });
+
+    if (submitError) {
+      console.error('Supabase function error:', submitError);
+      throw new Error(`Submission failed: ${submitError.message}`);
+    }
+
+    if (!result?.success) {
+      console.error('Business Health Submission failed:', result);
+      throw new Error(`Submission failed: ${result?.error || 'Unknown error'}`);
+    }
+
+    console.log('Business Health Score submitted successfully:', result);
+    return result;
   };
 
   const nextPage = async () => {
@@ -379,12 +456,12 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
             ) : (
               <Button
                 type="button"
-                onClick={() => form.handleSubmit(onSubmit)()}
-                disabled={!form.watch('pitchDeckUrl') || isUploading}
+                onClick={() => form.handleSubmit(handleCompleteSetup)()}
+                disabled={!form.watch('pitchDeckUrl') || isUploading || isSubmitting}
                 className="gap-2"
               >
                 <CheckCircle className="h-4 w-4" />
-                Complete Setup
+                {isSubmitting ? 'Submitting...' : 'Complete Setup'}
               </Button>
             )}
           </div>

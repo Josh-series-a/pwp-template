@@ -341,14 +341,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
       }
 
       closeModal();
-      
-      // For business health score, redirect to the exercises page to complete the assessment
-      if (exerciseId === 'unknown' && exerciseTitle === 'Business Health Score') {
-        toast.success(`Company setup complete! Redirecting to Business Health Score assessment...`);
-        navigate(`/exercises?reportId=${reportData.id}&companyId=${finalCompanyId}`);
-      } else {
-        toast.success(`Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`);
-      }
+      toast.success(`Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`);
     } catch (error) {
       console.error('Error creating report:', error);
       toast.error("Failed to create report. Please try again.");
