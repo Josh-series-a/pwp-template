@@ -223,8 +223,50 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
         return;
       }
 
-      // Here you would send the data to your webhook or backend
-      // For now, we'll just simulate success
+      // Format responses for the API
+      const formattedResponses = Object.entries(data).map(([key, value]) => {
+        const fieldName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        return `${fieldName} - ${Array.isArray(value) ? value.join(', ') : value}`;
+      }).join('\n\n');
+
+      // Prepare payload for AdvisorPro API
+      const payload = {
+        companyName: companyDetails?.companyName || 'Unknown Company',
+        contactName: companyDetails?.fullName || user.user_metadata?.name || 'Unknown Contact',
+        fromExisting: !!companyDetails?.companyId,
+        reportId: companyDetails?.companyId || crypto.randomUUID(),
+        originalCompanyId: companyDetails?.companyId || null,
+        companyType: companyDetails?.companyId ? 'Existing' : 'New',
+        exerciseId: 'business-health-score',
+        exerciseTitle: 'Business Health Score',
+        rawData: {
+          companyName: companyDetails?.companyName || 'Unknown Company',
+          documentName: companyDetails?.pitchDeckUrl ? companyDetails.pitchDeckUrl.split('/').pop() : null
+        },
+        responses: formattedResponses,
+        userId: user.id,
+        userEmail: user.email || 'unknown@example.com',
+        businessDocUrl: companyDetails?.pitchDeckUrl || null,
+        submittedAt: new Date().toISOString()
+      };
+
+      console.log('Submitting to AdvisorPro API:', payload);
+
+      // Submit to AdvisorPro API
+      const response = await fetch('https://api.advisorpro.ai/functions/v1/packages-api/new-client-api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('AdvisorPro API response:', result);
       
       onComplete();
       toast({
