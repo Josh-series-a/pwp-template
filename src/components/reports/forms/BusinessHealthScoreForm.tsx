@@ -23,6 +23,7 @@ import PeoplePage from './business-health-pages/PeoplePage';
 import ProfitsPage from './business-health-pages/ProfitsPage';
 import PurposeImpactPage from './business-health-pages/PurposeImpactPage';
 import PageTransition from '@/components/PageTransition';
+import { supabase } from '@/integrations/supabase/client';
 
 // ... keep existing code (schema definition)
 const businessHealthScoreSchema = z.object({
@@ -246,23 +247,24 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
         submittedAt: new Date().toISOString()
       };
 
-      console.log('Submitting to AdvisorPro API:', payload);
+      console.log('Submitting to Business Health Submission API:', payload);
 
-      // Submit to AdvisorPro API
-      const response = await fetch('https://api.advisorpro.ai/functions/v1/packages-api/new-client-api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+      // Submit to Supabase edge function instead of direct API call
+      const { data: result, error: submitError } = await supabase.functions.invoke('business-health-submission', {
+        body: payload,
       });
 
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
+      if (submitError) {
+        console.error('Supabase function error:', submitError);
+        throw new Error(`API request failed: ${submitError.message}`);
       }
 
-      const result = await response.json();
-      console.log('AdvisorPro API response:', result);
+      if (!result?.success) {
+        console.error('Business Health Submission failed:', result);
+        throw new Error(`API request failed: ${result?.error || 'Unknown error'}`);
+      }
+
+      console.log('Business Health Submission API response:', result);
       
       onComplete();
       toast({
