@@ -13,6 +13,7 @@ import {
   FormDescription
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
@@ -64,6 +65,26 @@ const pages = [
     icon: Upload, 
     description: 'Upload your pitch deck'
   }
+];
+
+const industryOptions = [
+  "Technology",
+  "Healthcare",
+  "Finance & Banking",
+  "Manufacturing",
+  "Retail & E-commerce",
+  "Education",
+  "Real Estate",
+  "Construction",
+  "Consulting",
+  "Marketing & Advertising",
+  "Transportation",
+  "Energy & Utilities",
+  "Food & Beverage",
+  "Entertainment & Media",
+  "Non-profit",
+  "Government",
+  "Other"
 ];
 
 const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => {
@@ -256,7 +277,18 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => 
                       Industry
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Technology, Healthcare, Finance..." {...field} />
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your industry" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 bg-background border border-border z-50">
+                          {industryOptions.map((industry) => (
+                            <SelectItem key={industry} value={industry}>
+                              {industry}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
