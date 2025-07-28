@@ -87,6 +87,15 @@ const industryOptions = [
   "Other"
 ];
 
+const companySizeOptions = [
+  "1-10 employees",
+  "11-50 employees", 
+  "51-200 employees",
+  "201-500 employees",
+  "501-1000 employees",
+  "1000+ employees"
+];
+
 const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
@@ -304,7 +313,18 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => 
                       Company Size
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="1-10, 11-50, 51-200, 200+ employees" {...field} />
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select company size" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 bg-background border border-border z-50">
+                          {companySizeOptions.map((size) => (
+                            <SelectItem key={size} value={size}>
+                              {size}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
