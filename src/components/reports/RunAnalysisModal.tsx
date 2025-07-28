@@ -104,11 +104,6 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
                   </Badge>
                 </div>
                 
-                <div>
-                  <DialogTitle className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent leading-tight">
-                    Business Health Score
-                  </DialogTitle>
-                </div>
               </div>
 
               {/* Navigation Steps */}
