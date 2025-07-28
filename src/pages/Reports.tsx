@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { DownloadCloud, Eye, RefreshCw, Share2, Plus, MoreHorizontal, Trash2, Package } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DownloadCloud, Eye, RefreshCw, Share2, Plus, MoreHorizontal, Trash2, Package, Grid3X3, List } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
 import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
@@ -43,6 +44,7 @@ const Reports = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [allRecommendedCIKs, setAllRecommendedCIKs] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { user } = useAuth();
   const { credits, checkCredits } = useCredits();
   const navigate = useNavigate();
@@ -417,10 +419,32 @@ This report was generated on ${new Date().toLocaleDateString()}.
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle>Recent Reports</CardTitle>
-            <CardDescription>
-              All AI-generated evaluations, archived and downloadable
-            </CardDescription>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle>Recent Reports</CardTitle>
+                <CardDescription>
+                  All AI-generated evaluations, archived and downloadable
+                </CardDescription>
+              </div>
+              <div className="flex gap-1 border rounded-lg p-1">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="h-8 px-3"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="h-8 px-3"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -429,115 +453,212 @@ This report was generated on ${new Date().toLocaleDateString()}.
                 <p className="text-muted-foreground">Loading reports...</p>
               </div>
             ) : reports.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {reports.map(report => (
-                  <Card key={report.id} className="cursor-pointer hover:shadow-lg transition-shadow duration-200" onClick={() => navigateToReport(report)}>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          <CardTitle className="text-lg truncate">{report.title}</CardTitle>
-                          <p className="text-sm text-muted-foreground mt-1">{report.company}</p>
-                        </div>
-                        <div onClick={e => e.stopPropagation()}>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => navigateToReport(report)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Report
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => openViewModal(report.id)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Quick View
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDownload(report)}>
-                                <DownloadCloud className="mr-2 h-4 w-4" />
-                                Download
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
-                                <RefreshCw className="mr-2 h-4 w-4" />
-                                Re-analyze
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleShare(report)}>
-                                <Share2 className="mr-2 h-4 w-4" />
-                                Share
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 mt-3">
-                        <Badge variant={report.statusType === 'New' ? 'default' : 'secondary'} className="text-xs">
-                          {report.statusType}
-                        </Badge>
-                        <Badge variant={report.status === 'In Progress' ? 'outline' : 'default'} className="text-xs">
-                          {report.status}
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-3">
-                        <div className="text-xs text-muted-foreground">
-                          {new Date(report.date).toLocaleDateString()}
-                        </div>
-                        
-                        {(report.plan !== null && report.plan !== undefined) && (
-                          <div className="grid grid-cols-2 gap-3 text-sm">
-                            <div className="space-y-2">
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Plan</span>
-                                <span className={`font-medium ${getScoreColor(report.plan)}`}>
-                                  {formatScore(report.plan)}
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">People</span>
-                                <span className={`font-medium ${getScoreColor(report.people)}`}>
-                                  {formatScore(report.people)}
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Profits</span>
-                                <span className={`font-medium ${getScoreColor(report.profits)}`}>
-                                  {formatScore(report.profits)}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground text-xs">Purpose</span>
-                                <span className={`font-medium ${getScoreColor(report.purposeImpact)}`}>
-                                  {formatScore(report.purposeImpact)}
-                                </span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground text-xs">Stress</span>
-                                <span className={`font-medium ${getScoreColor(report.stressLeadership)}`}>
-                                  {formatScore(report.stressLeadership)}
-                                </span>
-                              </div>
-                              <div className="flex justify-between border-t pt-2">
-                                <span className="font-medium">Overall</span>
-                                <span className={`font-bold ${getScoreColor(report.overall)}`}>
-                                  {formatScore(report.overall)}
-                                </span>
-                              </div>
-                            </div>
+              viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {reports.map(report => (
+                    <Card key={report.id} className="cursor-pointer hover:shadow-lg transition-shadow duration-200" onClick={() => navigateToReport(report)}>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <CardTitle className="text-lg truncate">{report.title}</CardTitle>
+                            <p className="text-sm text-muted-foreground mt-1">{report.company}</p>
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                          <div onClick={e => e.stopPropagation()}>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => navigateToReport(report)}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  View Report
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => openViewModal(report.id)}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  Quick View
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownload(report)}>
+                                  <DownloadCloud className="mr-2 h-4 w-4" />
+                                  Download
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
+                                  <RefreshCw className="mr-2 h-4 w-4" />
+                                  Re-analyze
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare(report)}>
+                                  <Share2 className="mr-2 h-4 w-4" />
+                                  Share
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mt-3">
+                          <Badge variant={report.statusType === 'New' ? 'default' : 'secondary'} className="text-xs">
+                            {report.statusType}
+                          </Badge>
+                          <Badge variant={report.status === 'In Progress' ? 'outline' : 'default'} className="text-xs">
+                            {report.status}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="space-y-3">
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(report.date).toLocaleDateString()}
+                          </div>
+                          
+                          {(report.plan !== null && report.plan !== undefined) && (
+                            <div className="grid grid-cols-2 gap-3 text-sm">
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">Plan</span>
+                                  <span className={`font-medium ${getScoreColor(report.plan)}`}>
+                                    {formatScore(report.plan)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">People</span>
+                                  <span className={`font-medium ${getScoreColor(report.people)}`}>
+                                    {formatScore(report.people)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground">Profits</span>
+                                  <span className={`font-medium ${getScoreColor(report.profits)}`}>
+                                    {formatScore(report.profits)}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground text-xs">Purpose</span>
+                                  <span className={`font-medium ${getScoreColor(report.purposeImpact)}`}>
+                                    {formatScore(report.purposeImpact)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-muted-foreground text-xs">Stress</span>
+                                  <span className={`font-medium ${getScoreColor(report.stressLeadership)}`}>
+                                    {formatScore(report.stressLeadership)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between border-t pt-2">
+                                  <span className="font-medium">Overall</span>
+                                  <span className={`font-bold ${getScoreColor(report.overall)}`}>
+                                    {formatScore(report.overall)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Company</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-center">Plan</TableHead>
+                        <TableHead className="text-center">People</TableHead>
+                        <TableHead className="text-center">Profits</TableHead>
+                        <TableHead className="text-center">Purpose & Impact</TableHead>
+                        <TableHead className="text-center">Stress & Leadership</TableHead>
+                        <TableHead className="text-center">Overall</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reports.map(report => (
+                        <TableRow key={report.id} className="cursor-pointer hover:bg-muted/70" onClick={() => navigateToReport(report)}>
+                          <TableCell className="font-medium">{report.title}</TableCell>
+                          <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
+                          <TableCell>{report.company}</TableCell>
+                          <TableCell>
+                            <Badge variant={report.statusType === 'New' ? 'default' : 'secondary'} className="text-xs">
+                              {report.statusType}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={report.status === 'In Progress' ? 'outline' : 'default'} className="text-xs">
+                              {report.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className={`text-center font-medium ${getScoreColor(report.plan)}`}>
+                            {formatScore(report.plan)}
+                          </TableCell>
+                          <TableCell className={`text-center font-medium ${getScoreColor(report.people)}`}>
+                            {formatScore(report.people)}
+                          </TableCell>
+                          <TableCell className={`text-center font-medium ${getScoreColor(report.profits)}`}>
+                            {formatScore(report.profits)}
+                          </TableCell>
+                          <TableCell className={`text-center font-medium ${getScoreColor(report.purposeImpact)}`}>
+                            {formatScore(report.purposeImpact)}
+                          </TableCell>
+                          <TableCell className={`text-center font-medium ${getScoreColor(report.stressLeadership)}`}>
+                            {formatScore(report.stressLeadership)}
+                          </TableCell>
+                          <TableCell className={`text-center font-medium ${getScoreColor(report.overall)}`}>
+                            {formatScore(report.overall)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div onClick={e => e.stopPropagation()}>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => navigateToReport(report)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Report
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => openViewModal(report.id)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Quick View
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDownload(report)}>
+                                    <DownloadCloud className="mr-2 h-4 w-4" />
+                                    Download
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
+                                    <RefreshCw className="mr-2 h-4 w-4" />
+                                    Re-analyze
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleShare(report)}>
+                                    <Share2 className="mr-2 h-4 w-4" />
+                                    Share
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )
             ) : (
               <div className="flex flex-col items-center justify-center py-12 space-y-4">
                 <LoadingRayMeter size="lg" progress={0} autoAnimate={false} />
