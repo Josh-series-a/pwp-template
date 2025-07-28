@@ -18,7 +18,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData, o
 
   const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
     console.log("Company details submitted for new company with companyId:", companyId);
-    // Directly complete the process with company details
+    // Pass the correct exercise ID to ensure proper routing
     onComplete(data.companyName, 'Business Health Score', data.pitchDeckUrl, companyId);
   };
 
