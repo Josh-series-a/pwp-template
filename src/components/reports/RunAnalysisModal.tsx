@@ -34,15 +34,9 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   const navigationSteps = [
     { 
       step: 1, 
-      title: 'Company Details', 
+      title: 'Enter Company Details', 
       icon: Building2,
-      description: 'Basic company information'
-    },
-    { 
-      step: 2, 
-      title: 'Stress & Leadership', 
-      icon: Target,
-      description: 'Leadership assessment'
+      description: 'Provide basic company information'
     }
   ];
 
