@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { 
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@/components/ui/sheet';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Plus, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, X, Heart, Sparkles } from 'lucide-react';
 import NewCompanyForm from './NewCompanyForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCredits } from '@/hooks/useCredits';
@@ -36,97 +36,121 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent 
-        side="left" 
-        className="w-full sm:max-w-2xl overflow-y-auto m-4 h-[calc(100vh-2rem)] rounded-2xl border-0 shadow-2xl bg-gradient-to-br from-background via-background to-muted/20"
-      >
-        <div className="relative">
-          {/* Header Section */}
-          <SheetHeader className="space-y-4 pb-8 border-b border-border/50">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                <CheckCircle className="h-6 w-6" />
-              </div>
-              <div>
-                <SheetTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                  Run Business Health Score
-                </SheetTitle>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="secondary" className="text-xs gap-1">
-                    <Heart className="h-3 w-3 text-red-500" />
-                    AI-Powered Analysis
-                  </Badge>
-                  <Badge variant="outline" className="text-xs gap-1">
-                    <Heart className="h-3 w-3 text-red-500" />
-                    Cost: {requiredHealthScoreCredits} Health Score Credit
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <SheetDescription className="text-base text-muted-foreground leading-relaxed">
-              Generate comprehensive business health insights using our AI-powered analysis framework. 
-              Complete the steps below to receive personalized recommendations.
-            </SheetDescription>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-none w-screen h-screen p-0 gap-0 bg-gradient-to-br from-background via-background/95 to-muted/30">
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+          {/* Left Panel - Hero Section */}
+          <div className="relative flex flex-col justify-center p-8 lg:p-12 bg-gradient-to-br from-primary/5 via-primary/3 to-background">
+            {/* Close Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="absolute top-6 right-6 h-10 w-10 rounded-full hover:bg-background/80"
+            >
+              <X className="h-5 w-5" />
+            </Button>
 
-            {/* Health Score Credits Display */}
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Heart className="h-5 w-5 text-red-500" />
-                <span className="font-medium">Health Score Credits Available:</span>
-              </div>
-              <Badge variant={hasEnoughHealthScoreCredits ? "default" : "destructive"} className="gap-1">
-                <Heart className="h-3 w-3" />
-                {healthScoreCredits?.health_score_credits || 0}
-              </Badge>
-            </div>
-
-            {/* Warning if insufficient credits */}
-            {!hasEnoughHealthScoreCredits && (
-              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <div className="flex items-center gap-2 text-destructive">
-                  <Heart className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    Insufficient health score credits: You need {requiredHealthScoreCredits} health score credit but only have {healthScoreCredits?.health_score_credits || 0}
-                  </span>
-                </div>
-              </div>
-            )}
-          </SheetHeader>
-
-          {/* Content Section */}
-          <div className="pt-6">
-            <div className="space-y-6">
-              <div className="p-6 rounded-xl bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/30 dark:border-blue-800/30">
-                <div className="flex items-start gap-3">
-                  <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 mt-0.5">
-                    <Plus className="h-4 w-4" />
+            <div className="max-w-lg mx-auto lg:mx-0 space-y-8">
+              {/* Header */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                    <CheckCircle className="h-8 w-8" />
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="font-semibold text-blue-900 dark:text-blue-100">New Company Analysis</h3>
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                      Start fresh with a comprehensive business health assessment for a new company.
-                    </p>
-                  </div>
+                  <Badge variant="secondary" className="gap-2 px-3 py-1">
+                    <Sparkles className="h-3 w-3" />
+                    AI-Powered
+                  </Badge>
+                </div>
+                
+                <div>
+                  <DialogTitle className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent leading-tight">
+                    Business Health Score
+                  </DialogTitle>
+                  <p className="text-xl text-muted-foreground mt-4 leading-relaxed">
+                    Get comprehensive AI-powered insights about your business health with actionable recommendations.
+                  </p>
                 </div>
               </div>
-              {hasEnoughHealthScoreCredits ? (
-                <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
-              ) : (
-                <div className="text-center p-8 text-muted-foreground">
-                  <Heart className="h-12 w-12 mx-auto mb-4 text-red-500/50" />
-                  <p>You need at least {requiredHealthScoreCredits} health score credit to start a new analysis.</p>
+
+              {/* Features */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border border-border/50">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm font-medium">5-pillar comprehensive analysis</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border border-border/50">
+                  <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                  <span className="text-sm font-medium">Personalized recommendations</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-background/50 border border-border/50">
+                  <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+                  <span className="text-sm font-medium">Instant detailed report</span>
+                </div>
+              </div>
+
+              {/* Credits Display */}
+              <div className="p-6 rounded-2xl bg-background/80 border border-border/50 backdrop-blur-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Heart className="h-5 w-5 text-red-500" />
+                    <span className="font-semibold">Health Score Credits</span>
+                  </div>
+                  <Badge variant={hasEnoughHealthScoreCredits ? "default" : "destructive"} className="gap-2 px-3 py-1">
+                    <Heart className="h-3 w-3" />
+                    {healthScoreCredits?.health_score_credits || 0}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
+                  <span className="text-sm text-muted-foreground">Cost per analysis</span>
+                  <span className="text-sm font-medium">{requiredHealthScoreCredits} credit</span>
+                </div>
+              </div>
+
+              {/* Warning if insufficient credits */}
+              {!hasEnoughHealthScoreCredits && (
+                <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-xl">
+                  <div className="flex items-center gap-2 text-destructive">
+                    <Heart className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      Insufficient credits. You need {requiredHealthScoreCredits} credit but have {healthScoreCredits?.health_score_credits || 0}.
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
+
+            {/* Decorative Elements */}
+            <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-tr from-secondary/10 to-transparent rounded-full blur-2xl"></div>
           </div>
 
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/5 to-transparent rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-secondary/5 to-transparent rounded-full blur-2xl pointer-events-none" />
+          {/* Right Panel - Form Section */}
+          <div className="flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto p-8 lg:p-12">
+              <div className="max-w-2xl mx-auto">
+                {hasEnoughHealthScoreCredits ? (
+                  <NewCompanyForm onComplete={handleSubmitComplete} userData={user} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+                    <div className="p-6 rounded-full bg-destructive/10">
+                      <Heart className="h-12 w-12 text-destructive" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Credits Required</h3>
+                      <p className="text-muted-foreground">
+                        You need at least {requiredHealthScoreCredits} health score credit to start a new analysis.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 };
 
