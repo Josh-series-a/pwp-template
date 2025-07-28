@@ -5,10 +5,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DownloadCloud, Eye, RefreshCw, Share2, Plus, MoreHorizontal, Trash2, Package, Grid3X3, List, TrendingUp, Users, DollarSign, Target, Zap, BarChart3 } from 'lucide-react';
+import { DownloadCloud, Eye, RefreshCw, Share2, Plus, MoreHorizontal, Trash2, Package, Grid3X3, List, TrendingUp, Users, DollarSign, Target, Zap, BarChart3, Search, Filter } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
 import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
@@ -45,6 +47,9 @@ const Reports = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allRecommendedCIKs, setAllRecommendedCIKs] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusTypeFilter, setStatusTypeFilter] = useState<string>('all');
   const { user } = useAuth();
   const { credits, checkCredits } = useCredits();
   const navigate = useNavigate();
@@ -397,6 +402,21 @@ This report was generated on ${new Date().toLocaleDateString()}.
     setCreatePackageOpen(false);
   };
 
+  // Filter reports based on search and filters
+  const filteredReports = reports.filter(report => {
+    const matchesSearch = searchQuery === '' || 
+      report.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      report.title.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || 
+      report.status.toLowerCase().includes(statusFilter.toLowerCase());
+    
+    const matchesStatusType = statusTypeFilter === 'all' || 
+      report.statusType === statusTypeFilter;
+    
+    return matchesSearch && matchesStatus && matchesStatusType;
+  });
+
   return (
     <DashboardLayout title="My Reports">
       <div className="space-y-6">
@@ -436,7 +456,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
         </div>
         
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-4">
             <div className="flex justify-between items-start">
               <div>
                 <CardTitle>Recent Reports</CardTitle>
@@ -463,6 +483,44 @@ This report was generated on ${new Date().toLocaleDateString()}.
                 </Button>
               </div>
             </div>
+            
+            {/* Search and Filter Controls */}
+            <div className="flex flex-col sm:flex-row gap-4 mt-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search reports by company name..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              <div className="flex gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[140px]">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={statusTypeFilter} onValueChange={setStatusTypeFilter}>
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="New">New</SelectItem>
+                    <SelectItem value="Existing">Existing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -470,10 +528,10 @@ This report was generated on ${new Date().toLocaleDateString()}.
                 <LoadingRayMeter size="lg" autoAnimate={true} />
                 <p className="text-muted-foreground">Loading reports...</p>
               </div>
-            ) : reports.length > 0 ? (
+            ) : filteredReports.length > 0 ? (
               viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {reports.map(report => (
+                  {filteredReports.map(report => (
                     <Card key={report.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:scale-[1.02] bg-gradient-to-br from-card to-card/50" onClick={() => navigateToReport(report)}>
                       <CardHeader className="pb-4 space-y-4">
                         {/* Header Section */}
@@ -661,7 +719,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {reports.map(report => (
+                      {filteredReports.map(report => (
                         <TableRow key={report.id} className="cursor-pointer hover:bg-muted/70" onClick={() => navigateToReport(report)}>
                           <TableCell className="font-medium">{report.title}</TableCell>
                           <TableCell>{new Date(report.date).toLocaleDateString()}</TableCell>
@@ -741,8 +799,14 @@ This report was generated on ${new Date().toLocaleDateString()}.
               <div className="flex flex-col items-center justify-center py-12 space-y-4">
                 <LoadingRayMeter size="lg" progress={0} autoAnimate={false} />
                 <div className="text-center space-y-2">
-                  <p className="text-lg font-medium">No reports found</p>
-                  <p className="text-muted-foreground">Click "Run Business Health Score" to create your first report.</p>
+                  <p className="text-lg font-medium">
+                    {reports.length === 0 ? "No reports found" : "No reports match your filters"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {reports.length === 0 
+                      ? "Click \"Run Business Health Score\" to create your first report." 
+                      : "Try adjusting your search or filter criteria."}
+                  </p>
                 </div>
               </div>
             )}
