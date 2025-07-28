@@ -41,6 +41,7 @@ export type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
 interface CompanyDetailsFormProps {
   onSubmit: (data: CompanyDetailsFormValues) => void;
   onStepChange?: (step: number) => void;
+  reportId?: string; // Add reportId prop to get the actual report ID
 }
 
 const initialCompanyValues: Partial<CompanyDetailsFormValues> = {
