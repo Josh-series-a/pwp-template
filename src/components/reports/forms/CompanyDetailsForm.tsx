@@ -17,12 +17,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, ArrowRight, User, Building2, Upload, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Building2, Upload, CheckCircle } from 'lucide-react';
 import DropZone from '../../upload/DropZone';
 import { supabase } from '@/integrations/supabase/client';
 
 export const companyDetailsSchema = z.object({
-  fullName: z.string().min(2, { message: "Full name is required" }),
   companyName: z.string().min(2, { message: "Company name is required" }),
   industry: z.string().min(2, { message: "Industry is required" }),
   companySize: z.string().min(1, { message: "Company size is required" }),
@@ -44,18 +43,12 @@ interface CompanyDetailsFormProps {
 }
 
 const initialCompanyValues: Partial<CompanyDetailsFormValues> = {
-  fullName: '',
   companyName: '',
   industry: '',
   companySize: '',
 };
 
 const pages = [
-  { 
-    title: 'Personal Information', 
-    icon: User, 
-    description: 'Tell us about yourself'
-  },
   { 
     title: 'Company Information', 
     icon: Building2, 
@@ -190,9 +183,8 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
 
   const getFieldsForPage = (page: number): (keyof CompanyDetailsFormValues)[] => {
     switch (page) {
-      case 0: return ['fullName'];
-      case 1: return ['companyName', 'industry', 'companySize'];
-      case 2: return ['pitchDeck'];
+      case 0: return ['companyName', 'industry', 'companySize'];
+      case 1: return ['pitchDeck'];
       default: return [];
     }
   };
@@ -242,32 +234,8 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
       {/* Form Content */}
       <Form {...form}>
         <div className="max-w-md mx-auto space-y-6">
-          {/* Page 1: Personal Information */}
+          {/* Page 1: Company Information */}
           {currentPage === 0 && (
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      Full Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Smith" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Enter your full name as it appears on official documents
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          )}
-
-          {/* Page 2: Company Information */}
-          {currentPage === 1 && (
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -341,8 +309,8 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
             </div>
           )}
 
-          {/* Page 3: Document Upload */}
-          {currentPage === 2 && (
+          {/* Page 2: Document Upload */}
+          {currentPage === 1 && (
             <div className="space-y-4">
               <FormField
                 control={form.control}
