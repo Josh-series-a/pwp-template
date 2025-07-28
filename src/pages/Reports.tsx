@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DownloadCloud, Eye, RefreshCw, Share2, Plus, MoreHorizontal, Trash2, Package, Grid3X3, List } from 'lucide-react';
+import { DownloadCloud, Eye, RefreshCw, Share2, Plus, MoreHorizontal, Trash2, Package, Grid3X3, List, TrendingUp, Users, DollarSign, Target, Zap, BarChart3 } from 'lucide-react';
 import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
 import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
@@ -361,14 +361,32 @@ This report was generated on ${new Date().toLocaleDateString()}.
   };
 
   const getScoreColor = (score: number | null | undefined) => {
-    if (score === null || score === undefined) return 'text-gray-400';
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score === null || score === undefined) return 'text-muted-foreground';
+    if (score >= 8) return 'text-green-600';
+    if (score >= 5) return 'text-amber-600';
     return 'text-red-600';
+  };
+
+  const getScoreBgColor = (score: number | null | undefined) => {
+    if (score === null || score === undefined) return 'bg-muted/20';
+    if (score >= 8) return 'bg-green-100/50';
+    if (score >= 5) return 'bg-amber-100/50';
+    return 'bg-red-100/50';
   };
 
   const formatScore = (score: number | null | undefined) => {
     return score !== null && score !== undefined ? Math.round(score * 10) / 10 : '-';
+  };
+
+  const getMetricIcon = (metric: string) => {
+    switch (metric) {
+      case 'plan': return TrendingUp;
+      case 'people': return Users;
+      case 'profits': return DollarSign;
+      case 'purpose': return Target;
+      case 'stress': return Zap;
+      default: return BarChart3;
+    }
   };
 
   const handleCreatePackage = () => {
@@ -456,17 +474,29 @@ This report was generated on ${new Date().toLocaleDateString()}.
               viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {reports.map(report => (
-                    <Card key={report.id} className="cursor-pointer hover:shadow-lg transition-shadow duration-200" onClick={() => navigateToReport(report)}>
-                      <CardHeader className="pb-3">
+                    <Card key={report.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-md hover:scale-[1.02] bg-gradient-to-br from-card to-card/50" onClick={() => navigateToReport(report)}>
+                      <CardHeader className="pb-4 space-y-4">
+                        {/* Header Section */}
                         <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <CardTitle className="text-lg truncate">{report.title}</CardTitle>
-                            <p className="text-sm text-muted-foreground mt-1">{report.company}</p>
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <div className="text-sm font-medium text-primary tracking-wide">
+                              Business Health Score
+                            </div>
+                            <CardTitle className="text-xl font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                              {report.company}
+                            </CardTitle>
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(report.date).toLocaleDateString('en-US', { 
+                                day: 'numeric', 
+                                month: 'long', 
+                                year: 'numeric' 
+                              })}
+                            </div>
                           </div>
                           <div onClick={e => e.stopPropagation()}>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-60 hover:opacity-100">
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -499,66 +529,114 @@ This report was generated on ${new Date().toLocaleDateString()}.
                             </DropdownMenu>
                           </div>
                         </div>
-                        <div className="flex gap-2 mt-3">
-                          <Badge variant={report.statusType === 'New' ? 'default' : 'secondary'} className="text-xs">
+
+                        {/* Status Tags */}
+                        <div className="flex gap-2">
+                          <Badge 
+                            variant={report.statusType === 'Existing' ? 'default' : 'secondary'} 
+                            className={`text-xs font-medium px-2.5 py-1 ${
+                              report.statusType === 'Existing' 
+                                ? 'bg-amber-100 text-amber-800 border-amber-200' 
+                                : 'bg-blue-100 text-blue-800 border-blue-200'
+                            }`}
+                          >
                             {report.statusType}
                           </Badge>
-                          <Badge variant={report.status === 'In Progress' ? 'outline' : 'default'} className="text-xs">
+                          <Badge 
+                            variant={report.status === 'Completed' ? 'default' : 'outline'} 
+                            className={`text-xs font-medium px-2.5 py-1 ${
+                              report.status === 'Completed' 
+                                ? 'bg-slate-800 text-white border-slate-800' 
+                                : 'bg-amber-100 text-amber-800 border-amber-200'
+                            }`}
+                          >
                             {report.status}
                           </Badge>
                         </div>
                       </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="space-y-3">
-                          <div className="text-xs text-muted-foreground">
-                            {new Date(report.date).toLocaleDateString()}
-                          </div>
-                          
-                          {(report.plan !== null && report.plan !== undefined) && (
-                            <div className="grid grid-cols-2 gap-3 text-sm">
-                              <div className="space-y-2">
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Plan</span>
-                                  <span className={`font-medium ${getScoreColor(report.plan)}`}>
-                                    {formatScore(report.plan)}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">People</span>
-                                  <span className={`font-medium ${getScoreColor(report.people)}`}>
-                                    {formatScore(report.people)}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">Profits</span>
-                                  <span className={`font-medium ${getScoreColor(report.profits)}`}>
-                                    {formatScore(report.profits)}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="space-y-2">
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground text-xs">Purpose</span>
-                                  <span className={`font-medium ${getScoreColor(report.purposeImpact)}`}>
-                                    {formatScore(report.purposeImpact)}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground text-xs">Stress</span>
-                                  <span className={`font-medium ${getScoreColor(report.stressLeadership)}`}>
-                                    {formatScore(report.stressLeadership)}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between border-t pt-2">
-                                  <span className="font-medium">Overall</span>
-                                  <span className={`font-bold ${getScoreColor(report.overall)}`}>
+
+                      <CardContent className="pt-0 space-y-6">
+                        {/* Overall Score - Prominent Display */}
+                        {(report.overall !== null && report.overall !== undefined) && (
+                          <div className="flex items-center justify-center">
+                            <div className="relative">
+                              <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 ${getScoreBgColor(report.overall)} ${
+                                report.overall >= 8 ? 'border-green-200' : 
+                                report.overall >= 5 ? 'border-amber-200' : 'border-red-200'
+                              }`}>
+                                <div className="text-center">
+                                  <div className={`text-2xl font-bold ${getScoreColor(report.overall)}`}>
                                     {formatScore(report.overall)}
-                                  </span>
+                                  </div>
+                                  <div className="text-xs text-muted-foreground font-medium">
+                                    Overall
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
+                        
+                        {/* Metrics Grid */}
+                        {(report.plan !== null && report.plan !== undefined) && (
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Left Column */}
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                <div className="flex items-center gap-2">
+                                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium text-muted-foreground">Plan</span>
+                                </div>
+                                <span className={`text-lg font-bold ${getScoreColor(report.plan)}`}>
+                                  {formatScore(report.plan)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                <div className="flex items-center gap-2">
+                                  <Users className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium text-muted-foreground">People</span>
+                                </div>
+                                <span className={`text-lg font-bold ${getScoreColor(report.people)}`}>
+                                  {formatScore(report.people)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                <div className="flex items-center gap-2">
+                                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium text-muted-foreground">Profits</span>
+                                </div>
+                                <span className={`text-lg font-bold ${getScoreColor(report.profits)}`}>
+                                  {formatScore(report.profits)}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Right Column */}
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                <div className="flex items-center gap-2">
+                                  <Target className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium text-muted-foreground">Purpose</span>
+                                </div>
+                                <span className={`text-lg font-bold ${getScoreColor(report.purposeImpact)}`}>
+                                  {formatScore(report.purposeImpact)}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                <div className="flex items-center gap-2">
+                                  <Zap className="h-4 w-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium text-muted-foreground">Stress</span>
+                                </div>
+                                <span className={`text-lg font-bold ${getScoreColor(report.stressLeadership)}`}>
+                                  {formatScore(report.stressLeadership)}
+                                </span>
+                              </div>
+                              <div className="py-2">
+                                {/* Spacer to align with overall score above */}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
