@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,6 +40,7 @@ export type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
 
 interface CompanyDetailsFormProps {
   onSubmit: (data: CompanyDetailsFormValues) => void;
+  onStepChange?: (step: number) => void;
 }
 
 const initialCompanyValues: Partial<CompanyDetailsFormValues> = {
@@ -96,7 +97,7 @@ const companySizeOptions = [
   "1000+ employees"
 ];
 
-const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => {
+const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onStepChange }) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -105,6 +106,13 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit }) => 
     resolver: zodResolver(companyDetailsSchema),
     defaultValues: initialCompanyValues as any
   });
+
+  // Update parent step when currentPage changes
+  useEffect(() => {
+    if (onStepChange) {
+      onStepChange(currentPage + 1); // Convert 0-based to 1-based
+    }
+  }, [currentPage, onStepChange]);
 
   const handleFilesSelected = async (files: FileList) => {
     if (files.length === 0) return;

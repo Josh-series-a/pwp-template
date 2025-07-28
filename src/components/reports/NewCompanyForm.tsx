@@ -7,9 +7,10 @@ import StepSelector from './StepSelector';
 interface NewCompanyFormProps {
   onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => void;
   userData: any;
+  onStepChange?: (step: number) => void;
 }
 
-const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData }) => {
+const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData, onStepChange }) => {
   const step = 1; // Always step 1 since we only have one step
   const selectedExercise = 'business-health-score';
   const [companyId] = useState<string>(() => crypto.randomUUID());
@@ -28,7 +29,7 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData })
   return (
     <div className="space-y-6">
       <StepSelector step={step} onBack={handleBack} exerciseId={selectedExercise}>
-        <CompanyDetailsForm onSubmit={onCompanyDetailsSubmit} />
+        <CompanyDetailsForm onSubmit={onCompanyDetailsSubmit} onStepChange={onStepChange} />
       </StepSelector>
     </div>
   );
