@@ -15,6 +15,7 @@ import RunAnalysisModal from '@/components/reports/RunAnalysisModal';
 import ViewReportModal from '@/components/reports/ViewReportModal';
 import CreatePackageDialog from '@/components/reports/CreatePackageDialog';
 import LoadingRayMeter from '@/components/LoadingRayMeter';
+import InProgressReportCard from '@/components/InProgressReportCard';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCredits } from '@/hooks/useCredits';
@@ -532,171 +533,184 @@ This report was generated on ${new Date().toLocaleDateString()}.
               viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredReports.map(report => (
-                    <Card key={report.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:scale-[1.02] bg-gradient-to-br from-card to-card/50" onClick={() => navigateToReport(report)}>
-                      <CardHeader className="pb-4 space-y-4">
-                        {/* Header Section */}
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0 space-y-2">
-                            <div className="text-sm font-medium text-primary tracking-wide">
-                              Business Health Score
+                    report.status === 'In Progress' ? (
+                      <InProgressReportCard
+                        key={report.id}
+                        report={report}
+                        onNavigate={navigateToReport}
+                        onViewModal={openViewModal}
+                        onDownload={handleDownload}
+                        onReAnalyze={handleReAnalyze}
+                        onShare={handleShare}
+                        onDelete={handleDelete}
+                      />
+                    ) : (
+                      <Card key={report.id} className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:scale-[1.02] bg-gradient-to-br from-card to-card/50" onClick={() => navigateToReport(report)}>
+                        <CardHeader className="pb-4 space-y-4">
+                          {/* Header Section */}
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0 space-y-2">
+                              <div className="text-sm font-medium text-primary tracking-wide">
+                                Business Health Score
+                              </div>
+                              <CardTitle className="text-xl font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                                {report.company}
+                              </CardTitle>
+                              <div className="text-xs text-muted-foreground">
+                                {new Date(report.date).toLocaleDateString('en-US', { 
+                                  day: 'numeric', 
+                                  month: 'long', 
+                                  year: 'numeric' 
+                                })}
+                              </div>
                             </div>
-                            <CardTitle className="text-xl font-bold text-foreground truncate group-hover:text-primary transition-colors">
-                              {report.company}
-                            </CardTitle>
-                            <div className="text-xs text-muted-foreground">
-                              {new Date(report.date).toLocaleDateString('en-US', { 
-                                day: 'numeric', 
-                                month: 'long', 
-                                year: 'numeric' 
-                              })}
+                            <div onClick={e => e.stopPropagation()}>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 opacity-60 hover:opacity-100">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => navigateToReport(report)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Report
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => openViewModal(report.id)}>
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Quick View
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDownload(report)}>
+                                    <DownloadCloud className="mr-2 h-4 w-4" />
+                                    Download
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
+                                    <RefreshCw className="mr-2 h-4 w-4" />
+                                    Re-analyze
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleShare(report)}>
+                                    <Share2 className="mr-2 h-4 w-4" />
+                                    Share
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                           </div>
-                          <div onClick={e => e.stopPropagation()}>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 opacity-60 hover:opacity-100">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => navigateToReport(report)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View Report
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => openViewModal(report.id)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  Quick View
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDownload(report)}>
-                                  <DownloadCloud className="mr-2 h-4 w-4" />
-                                  Download
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleReAnalyze(report)}>
-                                  <RefreshCw className="mr-2 h-4 w-4" />
-                                  Re-analyze
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleShare(report)}>
-                                  <Share2 className="mr-2 h-4 w-4" />
-                                  Share
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDelete(report)} className="text-red-600 focus:text-red-600">
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+
+                          {/* Status Tags */}
+                          <div className="flex gap-2">
+                            <Badge 
+                              variant={report.statusType === 'Existing' ? 'default' : 'secondary'} 
+                              className={`text-xs font-medium px-2.5 py-1 ${
+                                report.statusType === 'Existing' 
+                                  ? 'bg-amber-100 text-amber-800 border-amber-200' 
+                                  : 'bg-blue-100 text-blue-800 border-blue-200'
+                              }`}
+                            >
+                              {report.statusType}
+                            </Badge>
+                            <Badge 
+                              variant={report.status === 'Completed' ? 'default' : 'outline'} 
+                              className={`text-xs font-medium px-2.5 py-1 ${
+                                report.status === 'Completed' 
+                                  ? 'bg-slate-800 text-white border-slate-800' 
+                                  : 'bg-amber-100 text-amber-800 border-amber-200'
+                              }`}
+                            >
+                              {report.status}
+                            </Badge>
                           </div>
-                        </div>
+                        </CardHeader>
 
-                        {/* Status Tags */}
-                        <div className="flex gap-2">
-                          <Badge 
-                            variant={report.statusType === 'Existing' ? 'default' : 'secondary'} 
-                            className={`text-xs font-medium px-2.5 py-1 ${
-                              report.statusType === 'Existing' 
-                                ? 'bg-amber-100 text-amber-800 border-amber-200' 
-                                : 'bg-blue-100 text-blue-800 border-blue-200'
-                            }`}
-                          >
-                            {report.statusType}
-                          </Badge>
-                          <Badge 
-                            variant={report.status === 'Completed' ? 'default' : 'outline'} 
-                            className={`text-xs font-medium px-2.5 py-1 ${
-                              report.status === 'Completed' 
-                                ? 'bg-slate-800 text-white border-slate-800' 
-                                : 'bg-amber-100 text-amber-800 border-amber-200'
-                            }`}
-                          >
-                            {report.status}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-
-                      <CardContent className="pt-0 space-y-6">
-                        {/* Overall Score - Prominent Display */}
-                        {(report.overall !== null && report.overall !== undefined) && (
-                          <div className="flex items-center justify-center">
-                            <div className="relative">
-                              <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 ${getScoreBgColor(report.overall)} ${
-                                report.overall >= 8 ? 'border-green-200' : 
-                                report.overall >= 5 ? 'border-amber-200' : 'border-red-200'
-                              }`}>
-                                <div className="text-center">
-                                  <div className={`text-2xl font-bold ${getScoreColor(report.overall)}`}>
-                                    {formatScore(report.overall)}
+                        <CardContent className="pt-0 space-y-6">
+                          {/* Overall Score - Prominent Display */}
+                          {(report.overall !== null && report.overall !== undefined) && (
+                            <div className="flex items-center justify-center">
+                              <div className="relative">
+                                <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 ${getScoreBgColor(report.overall)} ${
+                                  report.overall >= 8 ? 'border-green-200' : 
+                                  report.overall >= 5 ? 'border-amber-200' : 'border-red-200'
+                                }`}>
+                                  <div className="text-center">
+                                    <div className={`text-2xl font-bold ${getScoreColor(report.overall)}`}>
+                                      {formatScore(report.overall)}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground font-medium">
+                                      Overall
+                                    </div>
                                   </div>
-                                  <div className="text-xs text-muted-foreground font-medium">
-                                    Overall
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Metrics Grid */}
+                          {(report.plan !== null && report.plan !== undefined) && (
+                            <div className="grid grid-cols-2 gap-4">
+                              {/* Left Column */}
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                  <div className="flex items-center gap-2">
+                                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">Plan</span>
                                   </div>
+                                  <span className={`text-lg font-bold ${getScoreColor(report.plan)}`}>
+                                    {formatScore(report.plan)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                  <div className="flex items-center gap-2">
+                                    <Users className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">People</span>
+                                  </div>
+                                  <span className={`text-lg font-bold ${getScoreColor(report.people)}`}>
+                                    {formatScore(report.people)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                  <div className="flex items-center gap-2">
+                                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">Profits</span>
+                                  </div>
+                                  <span className={`text-lg font-bold ${getScoreColor(report.profits)}`}>
+                                    {formatScore(report.profits)}
+                                  </span>
                                 </div>
                               </div>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* Metrics Grid */}
-                        {(report.plan !== null && report.plan !== undefined) && (
-                          <div className="grid grid-cols-2 gap-4">
-                            {/* Left Column */}
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
-                                <div className="flex items-center gap-2">
-                                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                                  <span className="text-sm font-medium text-muted-foreground">Plan</span>
-                                </div>
-                                <span className={`text-lg font-bold ${getScoreColor(report.plan)}`}>
-                                  {formatScore(report.plan)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
-                                <div className="flex items-center gap-2">
-                                  <Users className="h-4 w-4 text-muted-foreground" />
-                                  <span className="text-sm font-medium text-muted-foreground">People</span>
-                                </div>
-                                <span className={`text-lg font-bold ${getScoreColor(report.people)}`}>
-                                  {formatScore(report.people)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
-                                <div className="flex items-center gap-2">
-                                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                                  <span className="text-sm font-medium text-muted-foreground">Profits</span>
-                                </div>
-                                <span className={`text-lg font-bold ${getScoreColor(report.profits)}`}>
-                                  {formatScore(report.profits)}
-                                </span>
-                              </div>
-                            </div>
 
-                            {/* Right Column */}
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
-                                <div className="flex items-center gap-2">
-                                  <Target className="h-4 w-4 text-muted-foreground" />
-                                  <span className="text-sm font-medium text-muted-foreground">Purpose</span>
+                              {/* Right Column */}
+                              <div className="space-y-3">
+                                <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                  <div className="flex items-center gap-2">
+                                    <Target className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">Purpose</span>
+                                  </div>
+                                  <span className={`text-lg font-bold ${getScoreColor(report.purposeImpact)}`}>
+                                    {formatScore(report.purposeImpact)}
+                                  </span>
                                 </div>
-                                <span className={`text-lg font-bold ${getScoreColor(report.purposeImpact)}`}>
-                                  {formatScore(report.purposeImpact)}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
-                                <div className="flex items-center gap-2">
-                                  <Zap className="h-4 w-4 text-muted-foreground" />
-                                  <span className="text-sm font-medium text-muted-foreground">Stress</span>
+                                <div className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/30">
+                                  <div className="flex items-center gap-2">
+                                    <Zap className="h-4 w-4 text-muted-foreground" />
+                                    <span className="text-sm font-medium text-muted-foreground">Stress</span>
+                                  </div>
+                                  <span className={`text-lg font-bold ${getScoreColor(report.stressLeadership)}`}>
+                                    {formatScore(report.stressLeadership)}
+                                  </span>
                                 </div>
-                                <span className={`text-lg font-bold ${getScoreColor(report.stressLeadership)}`}>
-                                  {formatScore(report.stressLeadership)}
-                                </span>
-                              </div>
-                              <div className="py-2">
-                                {/* Spacer to align with overall score above */}
+                                <div className="py-2">
+                                  {/* Spacer to align with overall score above */}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )
                   ))}
                 </div>
               ) : (
