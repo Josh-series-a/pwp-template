@@ -156,7 +156,7 @@ const InProgressReportCard = ({
           </div>
           <Progress value={progress} className="h-2" />
           <div className="text-xs text-muted-foreground text-center">
-            Estimated completion: {Math.max(1, Math.round((100 - progress) / 5))} minutes remaining
+            Estimated completion: {Math.max(1, Math.round(20 - (progress * 0.2)))} minutes remaining
           </div>
         </div>
         
