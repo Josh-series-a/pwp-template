@@ -45,15 +45,23 @@ const InProgressReportCard = ({
   onDelete
 }: InProgressReportCardProps) => {
   const [progress, setProgress] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
-    // Simulate progress animation
+    const startTime = Date.now();
+    const duration = 20 * 60 * 1000; // 20 minutes in milliseconds
+
     const timer = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + Math.random() * 3;
-        return newProgress > 95 ? 95 : newProgress;
-      });
-    }, 2000);
+      const elapsed = Date.now() - startTime;
+      const progressPercent = Math.min((elapsed / duration) * 100, 95);
+      
+      if (elapsed >= duration) {
+        setIsRetrying(true);
+        setProgress(95);
+      } else {
+        setProgress(progressPercent);
+      }
+    }, 1000); // Update every second
 
     return () => clearInterval(timer);
   }, []);
@@ -140,9 +148,14 @@ const InProgressReportCard = ({
           </Badge>
           <Badge 
             variant="outline"
-            className="text-xs font-medium px-2.5 py-1 bg-amber-100 text-amber-800 border-amber-200 animate-pulse"
+            className={cn(
+              "text-xs font-medium px-2.5 py-1",
+              isRetrying 
+                ? "bg-orange-100 text-orange-800 border-orange-200 animate-pulse"
+                : "bg-amber-100 text-amber-800 border-amber-200 animate-pulse"
+            )}
           >
-            {report.status}
+            {isRetrying ? 'Retrying...' : report.status}
           </Badge>
         </div>
       </CardHeader>
@@ -151,12 +164,17 @@ const InProgressReportCard = ({
         {/* Overall Progress */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">Analysis Progress</span>
+            <span className="text-sm font-medium text-foreground">
+              {isRetrying ? 'Retrying Analysis...' : 'Analysis Progress'}
+            </span>
             <span className="text-sm font-medium text-primary">{Math.round(progress)}%</span>
           </div>
           <Progress value={progress} className="h-2" />
           <div className="text-xs text-muted-foreground text-center">
-            Estimated completion: {Math.max(1, Math.round(20 - (progress * 0.2)))} minutes remaining
+            {isRetrying 
+              ? 'Analysis is taking longer than expected. Please wait...'
+              : `Estimated completion: ${Math.max(1, Math.round(20 - (progress * 0.2)))} minutes remaining`
+            }
           </div>
         </div>
         
