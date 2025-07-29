@@ -128,7 +128,7 @@ const PackageDetail = () => {
               Package ID: {packageData.id}
             </p>
             <p className="text-sm text-muted-foreground">
-              Created: {new Date(packageData.created_at).toLocaleDateString()}
+              Created: {new Date(packageData.created_at).toLocaleDateString()} • Total Cost: {packageData.documents.length * 5} Credits
             </p>
           </div>
 
@@ -170,7 +170,7 @@ const PackageDetail = () => {
                     <CardContent className="pt-0">
                       <div className="flex justify-between items-center">
                         <p className="text-sm text-muted-foreground">
-                          {doc.document.length} document{doc.document.length !== 1 ? 's' : ''}
+                          {doc.document.length} document{doc.document.length !== 1 ? 's' : ''} • 5 Credits
                         </p>
                         <div className="flex gap-2">
                           <Button
