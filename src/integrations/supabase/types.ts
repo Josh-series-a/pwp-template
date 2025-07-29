@@ -67,7 +67,7 @@ export type Database = {
       }
       business_health: {
         Row: {
-          client_id: string
+          client_id: string | null
           created_at: string
           id: string
           overview: string | null
@@ -79,7 +79,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          client_id: string
+          client_id?: string | null
           created_at?: string
           id?: string
           overview?: string | null
@@ -91,7 +91,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          client_id?: string
+          client_id?: string | null
           created_at?: string
           id?: string
           overview?: string | null
