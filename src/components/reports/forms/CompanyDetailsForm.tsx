@@ -24,8 +24,6 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const companyDetailsSchema = z.object({
   companyName: z.string().min(2, { message: "Company name is required" }),
-  industry: z.string().min(2, { message: "Industry is required" }),
-  companySize: z.string().min(1, { message: "Company size is required" }),
   pitchDeck: z.instanceof(File)
     .refine((file) => {
       return file instanceof File && file.size <= 10 * 1024 * 1024;
@@ -46,8 +44,6 @@ interface CompanyDetailsFormProps {
 
 const initialCompanyValues: Partial<CompanyDetailsFormValues> = {
   companyName: '',
-  industry: '',
-  companySize: '',
 };
 
 const pages = [
@@ -214,11 +210,9 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
       exerciseTitle: 'Business Health Score',
       rawData: {
         companyName: data.companyName,
-        documentName: data.pitchDeckUrl ? data.pitchDeckUrl.split('/').pop() : null,
-        industry: data.industry,
-        companySize: data.companySize
+        documentName: data.pitchDeckUrl ? data.pitchDeckUrl.split('/').pop() : null
       },
-      responses: `Company: ${data.companyName}\nIndustry: ${data.industry}\nSize: ${data.companySize}\nPitch Deck: ${data.pitchDeckUrl ? 'Uploaded' : 'Not provided'}`,
+      responses: `Company: ${data.companyName}\nPitch Deck: ${data.pitchDeckUrl ? 'Uploaded' : 'Not provided'}`,
       userId: user.id,
       userEmail: user.email || 'unknown@example.com',
       businessDocUrl: data.pitchDeckUrl || null,
@@ -261,7 +255,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
 
   const getFieldsForPage = (page: number): (keyof CompanyDetailsFormValues)[] => {
     switch (page) {
-      case 0: return ['companyName', 'industry', 'companySize'];
+      case 0: return ['companyName'];
       case 1: return ['pitchDeck'];
       default: return [];
     }
@@ -325,60 +319,6 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
                     </FormLabel>
                     <FormControl>
                       <Input placeholder="Acme Inc." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="industry"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      Industry
-                    </FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your industry" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60 bg-background border border-border z-50">
-                          {industryOptions.map((industry) => (
-                            <SelectItem key={industry} value={industry}>
-                              {industry}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="companySize"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                      Company Size
-                    </FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select company size" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60 bg-background border border-border z-50">
-                          {companySizeOptions.map((size) => (
-                            <SelectItem key={size} value={size}>
-                              {size}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
