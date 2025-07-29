@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -25,7 +24,9 @@ import PurposeImpactPage from './business-health-pages/PurposeImpactPage';
 import PageTransition from '@/components/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
 
-// ... keep existing code (schema definition)
+// Define the Zod schema for the Business Health Score form
+// Each field corresponds to a question in the assessment
+// and has specific validation rules.
 const businessHealthScoreSchema = z.object({
   // STRESS & LEADERSHIP
   hoursInVsOn: z.string().min(1, { message: "Please select a rating" }),
@@ -313,55 +314,43 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-primary/10 text-primary">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">Business Health Score Assessment</h1>
+                <h1 className="text-xl sm:text-2xl font-bold">Business Health Score</h1>
                 <p className="text-sm text-muted-foreground">
-                  {pages[currentPage].title} - Page {currentPage + 1} of {pages.length}
+                  {pages[currentPage].title}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-lg">
-                <Coins className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">
-                  Health Score Credits: {healthScoreCredits?.health_score_credits || 0}
+            
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg dark:bg-amber-950/20 dark:border-amber-800">
+                <Coins className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <span className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                  {healthScoreCredits?.health_score_credits || 0}
                 </span>
               </div>
-              <Badge variant="secondary" className="gap-2">
-                <Coins className="h-3 w-3" />
-                Cost: {requiredCredits} health score credit
-              </Badge>
-              <Badge variant="secondary" className="gap-2">
+              <Badge variant="secondary" className="gap-1.5 px-2.5 py-1">
                 <Star className="h-3 w-3" />
-                AI-Powered Analysis
+                AI Analysis
               </Badge>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={autoFillForm}
-                className="gap-2"
-              >
-                <Star className="h-4 w-4" />
-                Auto-Fill (Dev)
-              </Button>
             </div>
           </div>
           
           {/* Progress Bar */}
-          <div className="mt-4">
-            <div className="flex justify-between text-xs text-muted-foreground mb-2">
-              <span>Progress</span>
-              <span>{Math.round(((currentPage + 1) / pages.length) * 100)}%</span>
+          <div className="mt-6">
+            <div className="flex justify-between text-xs text-muted-foreground mb-3">
+              <span>Assessment Progress</span>
+              <span>Step {currentPage + 1} of {pages.length}</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div 
-                className="h-full bg-primary transition-all duration-300 ease-out"
+                className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-500 ease-out"
                 style={{ width: `${((currentPage + 1) / pages.length) * 100}%` }}
               />
             </div>
@@ -369,77 +358,106 @@ const BusinessHealthScoreForm: React.FC<BusinessHealthScoreFormProps> = ({
         </div>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="container mx-auto px-6 py-8">
-          <PageTransition
-            isAnimating={isAnimating}
-            direction={direction}
-            pageNumber={currentPage + 1}
-            totalPages={pages.length}
-          >
-            <CurrentPageComponent form={form} />
-          </PageTransition>
-
-          {/* Navigation */}
-          <div className="sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-6 mt-8">
-            <div className="flex justify-between items-center max-w-4xl mx-auto">
-              <div className="flex gap-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={currentPage === 0 ? onBack : prevPage}
-                  className="gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  {currentPage === 0 ? 'Back to Reports' : 'Previous'}
-                </Button>
+      {/* Main Content */}
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
+            <PageTransition
+              isAnimating={isAnimating}
+              direction={direction}
+              pageNumber={currentPage + 1}
+              totalPages={pages.length}
+            >
+              <div className="mb-8">
+                <CurrentPageComponent form={form} />
               </div>
+            </PageTransition>
 
-              <div className="flex items-center gap-2">
-                {pages.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`h-2 w-8 rounded-full transition-colors ${
-                      index === currentPage
-                        ? 'bg-primary'
-                        : index < currentPage
-                        ? 'bg-primary/60'
-                        : 'bg-muted'
-                    }`}
-                  />
-                ))}
-              </div>
+            {/* Navigation */}
+            <div className="sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border/50 p-4 sm:p-6 mt-8 -mx-4 sm:-mx-6">
+              <div className="max-w-4xl mx-auto">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                  <div className="flex gap-2 order-2 sm:order-1">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={currentPage === 0 ? onBack : prevPage}
+                      className="gap-2 min-w-[120px]"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      {currentPage === 0 ? 'Back' : 'Previous'}
+                    </Button>
+                  </div>
 
-              <div className="flex gap-2">
-                {currentPage < pages.length - 1 ? (
-                  <Button type="button" onClick={nextPage} className="gap-2">
-                    Next
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button 
-                    type="submit" 
-                    disabled={isSubmitting || !hasEnoughCredits} 
-                    className="gap-2 px-8"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        Submitting...
-                      </>
+                  {/* Progress Dots */}
+                  <div className="flex items-center gap-2 order-1 sm:order-2">
+                    {pages.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`h-2 w-8 sm:w-12 rounded-full transition-all duration-300 ${
+                          index === currentPage
+                            ? 'bg-primary shadow-sm'
+                            : index < currentPage
+                            ? 'bg-primary/60'
+                            : 'bg-muted'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="flex gap-2 order-3">
+                    {currentPage < pages.length - 1 ? (
+                      <Button 
+                        type="button" 
+                        onClick={nextPage} 
+                        className="gap-2 min-w-[120px]"
+                      >
+                        Next
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
                     ) : (
-                      <>
-                        <CheckCircle2 className="h-4 w-4" />
-                        Submit Assessment ({requiredCredits} health score credit)
-                      </>
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmitting || !hasEnoughCredits} 
+                        className="gap-2 px-6 sm:px-8 min-w-[140px]"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="h-4 w-4" />
+                            Complete Assessment
+                          </>
+                        )}
+                      </Button>
                     )}
-                  </Button>
+                  </div>
+                </div>
+
+                {/* Credit info for final step */}
+                {currentPage === pages.length - 1 && (
+                  <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border/50">
+                    <div className="flex items-center gap-2 justify-center text-sm text-muted-foreground">
+                      <Coins className="h-4 w-4" />
+                      <span>
+                        This will use {requiredCredits} health score credit for AI analysis
+                        {!hasEnoughCredits && (
+                          <span className="text-destructive ml-1">
+                            (Insufficient credits: {healthScoreCredits?.health_score_credits || 0} available)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };
