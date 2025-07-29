@@ -7,24 +7,21 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { packageService } from '@/utils/packageService';
 
-interface Document {
-  id: string;
+interface PackageDocument {
   name: string;
-  credits: number;
-  components: number;
+  document: string[];
 }
 
 interface Package {
   id: string;
-  name: string;
-  description: string;
-  color: string;
-  text_color: string;
-  credits: number;
-  documents: Document[];
+  user_id: string;
+  report_id: string;
+  package_name: string;
+  documents: PackageDocument[];
   created_at: string;
-  visibility: string;
+  updated_at: string;
 }
 
 interface PackagesCarouselProps {
@@ -45,28 +42,13 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
   const fetchPackages = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('advisorpro-api', {
-        body: {
-          endpoint: 'coach-packages',
-          method: 'GET'
-        }
-      });
-
-      if (error) {
-        console.error('Error calling advisorpro-api:', error);
-        toast.error('Failed to load packages');
-        return;
-      }
-
-      if (data && data.data && data.data.success) {
-        setPackages(data.data.data || []);
-      } else {
-        console.error('Failed to fetch coach packages:', data);
-        toast.error('Failed to load packages');
-      }
+      // Instead of fetching demo packages, use the packageService to get user-specific packages
+      const userPackages = await packageService.getPackages(reportId, user?.id);
+      setPackages(userPackages || []);
     } catch (error) {
-      console.error('Error fetching coach packages:', error);
+      console.error('Error fetching packages:', error);
       toast.error('Failed to load packages');
+      setPackages([]);
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +104,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                 
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-gray-900 leading-tight line-clamp-3">
-                    {pkg.name}
+                    {pkg.package_name}
                   </h2>
                   <p className="text-base font-medium text-gray-800">
                     {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''} • {(pkg.documents?.length || 0) * 5} Credits
