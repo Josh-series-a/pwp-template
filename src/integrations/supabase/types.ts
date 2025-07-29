@@ -268,6 +268,7 @@ export type Database = {
           company_name: string
           completion_date: string | null
           created_at: string
+          current_progress: number | null
           exercise_id: string
           id: string
           overall_score: number | null
@@ -275,6 +276,7 @@ export type Database = {
           pitch_deck_url: string | null
           plan_score: number | null
           profits_score: number | null
+          progress_start_time: string | null
           purpose_impact_score: number | null
           status: string
           status_type: string
@@ -289,6 +291,7 @@ export type Database = {
           company_name: string
           completion_date?: string | null
           created_at?: string
+          current_progress?: number | null
           exercise_id: string
           id?: string
           overall_score?: number | null
@@ -296,6 +299,7 @@ export type Database = {
           pitch_deck_url?: string | null
           plan_score?: number | null
           profits_score?: number | null
+          progress_start_time?: string | null
           purpose_impact_score?: number | null
           status?: string
           status_type?: string
@@ -310,6 +314,7 @@ export type Database = {
           company_name?: string
           completion_date?: string | null
           created_at?: string
+          current_progress?: number | null
           exercise_id?: string
           id?: string
           overall_score?: number | null
@@ -317,6 +322,7 @@ export type Database = {
           pitch_deck_url?: string | null
           plan_score?: number | null
           profits_score?: number | null
+          progress_start_time?: string | null
           purpose_impact_score?: number | null
           status?: string
           status_type?: string

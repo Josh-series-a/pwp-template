@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Eye, DownloadCloud, RefreshCw, Share2, Trash2, TrendingUp, Users, DollarSign, Target, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Report {
   id: string;
@@ -23,6 +24,8 @@ interface Report {
   purposeImpact?: number;
   stressLeadership?: number;
   overall?: number;
+  progressStartTime?: string;
+  currentProgress?: number;
 }
 
 interface InProgressReportCardProps {
@@ -44,14 +47,35 @@ const InProgressReportCard = ({
   onShare,
   onDelete
 }: InProgressReportCardProps) => {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(report.currentProgress || 0);
   const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
-    const startTime = Date.now();
+    // Initialize progress start time if not set
+    const initializeProgress = async () => {
+      if (!report.progressStartTime) {
+        const { error } = await supabase
+          .from('reports')
+          .update({ 
+            progress_start_time: new Date().toISOString(),
+            current_progress: 0 
+          })
+          .eq('id', report.id);
+        
+        if (error) {
+          console.error('Error initializing progress:', error);
+        }
+      }
+    };
+
+    initializeProgress();
+
+    const startTime = report.progressStartTime 
+      ? new Date(report.progressStartTime).getTime() 
+      : Date.now();
     const duration = 20 * 60 * 1000; // 20 minutes in milliseconds
 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       const elapsed = Date.now() - startTime;
       const progressPercent = Math.min((elapsed / duration) * 100, 95);
       
@@ -60,11 +84,19 @@ const InProgressReportCard = ({
         setProgress(95);
       } else {
         setProgress(progressPercent);
+        
+        // Update progress in database every 30 seconds
+        if (Math.floor(elapsed / 1000) % 30 === 0) {
+          await supabase
+            .from('reports')
+            .update({ current_progress: progressPercent })
+            .eq('id', report.id);
+        }
       }
     }, 1000); // Update every second
 
     return () => clearInterval(timer);
-  }, []);
+  }, [report.id, report.progressStartTime]);
 
   const metricProgress = Math.min(progress + Math.random() * 10, 85);
 

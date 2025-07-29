@@ -37,6 +37,8 @@ interface Report {
   purposeImpact?: number;
   stressLeadership?: number;
   overall?: number;
+  progressStartTime?: string;
+  currentProgress?: number;
 }
 
 const Reports = () => {
@@ -87,7 +89,9 @@ const Reports = () => {
             profits: report.profits_score,
             purposeImpact: report.purpose_impact_score,
             stressLeadership: report.stress_leadership_score,
-            overall: report.overall_score
+            overall: report.overall_score,
+            progressStartTime: report.progress_start_time,
+            currentProgress: report.current_progress
           }));
           setReports(formattedReports);
 
@@ -270,7 +274,9 @@ This report was generated on ${new Date().toLocaleDateString()}.
           status_type: type || 'New',
           user_id: user.id,
           pitch_deck_url: pitchDeckUrl,
-          company_id: finalCompanyId
+          company_id: finalCompanyId,
+          progress_start_time: new Date().toISOString(),
+          current_progress: 0
         })
         .select()
         .single();
@@ -295,7 +301,9 @@ This report was generated on ${new Date().toLocaleDateString()}.
           profits: reportData.profits_score,
           purposeImpact: reportData.purpose_impact_score,
           stressLeadership: reportData.stress_leadership_score,
-          overall: reportData.overall_score
+          overall: reportData.overall_score,
+          progressStartTime: reportData.progress_start_time,
+          currentProgress: reportData.current_progress
         };
 
         setReports([newReport, ...reports]);
