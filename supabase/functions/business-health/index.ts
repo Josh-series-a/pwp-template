@@ -17,9 +17,8 @@ interface SubPillar {
 }
 
 interface BusinessHealthData {
-  clientId: string;
   tabId: string;
-  reportId?: string;
+  reportId: string;
   Overview: string;
   Purpose: string;
   Sub_Pillars: SubPillar[];
@@ -49,9 +48,9 @@ serve(async (req) => {
       console.log('Received business health data:', JSON.stringify(requestData, null, 2));
 
       // Validate required fields
-      if (!requestData.clientId || !requestData.tabId) {
+      if (!requestData.reportId || !requestData.tabId) {
         return new Response(
-          JSON.stringify({ error: 'clientId and tabId are required' }),
+          JSON.stringify({ error: 'reportId and tabId are required' }),
           { 
             status: 400, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -63,7 +62,7 @@ serve(async (req) => {
       const { data: existingData, error: selectError } = await supabaseClient
         .from('business_health')
         .select('id')
-        .eq('client_id', requestData.clientId)
+        .eq('report_id', requestData.reportId)
         .eq('tab_id', requestData.tabId)
         .maybeSingle();
 
@@ -79,9 +78,9 @@ serve(async (req) => {
       }
 
       const businessHealthRecord = {
-        client_id: requestData.clientId,
+        client_id: null,
         tab_id: requestData.tabId,
-        report_id: requestData.reportId || null,
+        report_id: requestData.reportId,
         overview: requestData.Overview || null,
         purpose: requestData.Purpose || null,
         sub_pillars: requestData.Sub_Pillars || [],
@@ -96,7 +95,7 @@ serve(async (req) => {
         const { data, error } = await supabaseClient
           .from('business_health')
           .update(businessHealthRecord)
-          .eq('client_id', requestData.clientId)
+          .eq('report_id', requestData.reportId)
           .eq('tab_id', requestData.tabId)
           .select()
           .single();
