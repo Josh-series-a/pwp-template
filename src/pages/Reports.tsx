@@ -242,11 +242,11 @@ This report was generated on ${new Date().toLocaleDateString()}.
     }
   };
 
-  const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string) => {
+  const handleAnalysisComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string): Promise<string> => {
     try {
       if (!user) {
         toast.error("You must be logged in to create a report.");
-        return;
+        throw new Error("User not logged in");
       }
 
       const exerciseMatch = exerciseTitle.match(/Exercise (\d+):/);
@@ -343,9 +343,13 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
       closeModal();
       toast.success(`Analysis for ${companyName} is now in progress. Estimated completion time: 20 minutes.`);
+      
+      // Return the reportId for business health submission
+      return reportData.id;
     } catch (error) {
       console.error('Error creating report:', error);
       toast.error("Failed to create report. Please try again.");
+      throw error;
     }
   };
 

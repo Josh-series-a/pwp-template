@@ -37,7 +37,7 @@ export const companyDetailsSchema = z.object({
 export type CompanyDetailsFormValues = z.infer<typeof companyDetailsSchema>;
 
 interface CompanyDetailsFormProps {
-  onSubmit: (data: CompanyDetailsFormValues) => void;
+  onSubmit: (data: CompanyDetailsFormValues, reportId?: string) => Promise<string | void> | string | void;
   onStepChange?: (step: number) => void;
   reportId?: string; // Add reportId prop to get the actual report ID
 }
@@ -88,7 +88,7 @@ const companySizeOptions = [
   "1000+ employees"
 ];
 
-const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onStepChange }) => {
+const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onStepChange, reportId: passedReportId }) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
@@ -171,11 +171,16 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
   const handleCompleteSetup = async (data: CompanyDetailsFormValues) => {
     setIsSubmitting(true);
     try {
-      // First, call the original onSubmit to create the report
-      onSubmit(data);
+      // First, call the original onSubmit to create the report and get the reportId
+      const result = await onSubmit(data, passedReportId);
+      const reportId = typeof result === 'string' ? result : passedReportId;
 
-      // Then submit the Business Health Score data
-      await submitBusinessHealthScore(data);
+      // Then submit the Business Health Score data with the actual reportId
+      if (reportId) {
+        await submitBusinessHealthScore(data, reportId);
+      } else {
+        throw new Error("No report ID available for submission");
+      }
       
       toast({
         title: "Business Health Score submitted successfully",
@@ -193,9 +198,13 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
     }
   };
 
-  const submitBusinessHealthScore = async (data: CompanyDetailsFormValues) => {
+  const submitBusinessHealthScore = async (data: CompanyDetailsFormValues, reportId?: string) => {
     if (!user) {
       throw new Error("User not authenticated");
+    }
+
+    if (!reportId) {
+      throw new Error("Report ID is required for Business Health Score submission");
     }
 
     // Create a basic business health score payload with company information
@@ -203,7 +212,7 @@ const CompanyDetailsForm: React.FC<CompanyDetailsFormProps> = ({ onSubmit, onSte
       companyName: data.companyName,
       contactName: user.user_metadata?.name || 'Unknown Contact',
       fromExisting: false,
-      reportId: crypto.randomUUID(),
+      reportId: reportId, // Use the actual reportId from the database
       originalCompanyId: null,
       companyType: 'New',
       exerciseId: 'business-health-score',

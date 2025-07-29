@@ -5,7 +5,7 @@ import CompanyDetailsForm, { CompanyDetailsFormValues } from './forms/CompanyDet
 import StepSelector from './StepSelector';
 
 interface NewCompanyFormProps {
-  onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => void;
+  onComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => Promise<string> | void;
   userData: any;
   onStepChange?: (step: number) => void;
 }
@@ -16,10 +16,12 @@ const NewCompanyForm: React.FC<NewCompanyFormProps> = ({ onComplete, userData, o
   const [companyId] = useState<string>(() => crypto.randomUUID());
   const { user } = useAuth();
 
-  const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues) => {
-    console.log("Company details submitted for new company with companyId:", companyId);
-    // Pass the correct exercise ID to ensure proper routing
-    onComplete(data.companyName, 'Business Health Score', data.pitchDeckUrl, companyId);
+  const onCompanyDetailsSubmit = async (data: CompanyDetailsFormValues, reportId?: string) => {
+    console.log("Company details submitted for new company with companyId:", companyId, "reportId:", reportId);
+    // Call onComplete and get the actual reportId from the created report
+    const result = await onComplete(data.companyName, 'Business Health Score', data.pitchDeckUrl, companyId);
+    // Return the actual reportId if available
+    return typeof result === 'string' ? result : companyId;
   };
 
   const handleBack = () => {

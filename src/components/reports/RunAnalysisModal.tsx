@@ -16,7 +16,7 @@ import { useCredits } from '@/hooks/useCredits';
 interface RunAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmitComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string) => void;
+  onSubmitComplete: (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, type?: string, companyId?: string) => Promise<string> | string | void;
 }
 
 const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({ 
@@ -46,9 +46,10 @@ const RunAnalysisModal: React.FC<RunAnalysisModalProps> = ({
     }
   ];
 
-  const handleSubmitComplete = (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => {
+  const handleSubmitComplete = async (companyName: string, exerciseTitle: string, pitchDeckUrl?: string, companyId?: string) => {
     console.log("Analysis complete with pitchDeckUrl:", pitchDeckUrl, "and companyId:", companyId);
-    onSubmitComplete(companyName, exerciseTitle, pitchDeckUrl, 'New', companyId);
+    const result = await onSubmitComplete(companyName, exerciseTitle, pitchDeckUrl, 'New', companyId);
+    return typeof result === 'string' ? result : companyId;
   };
 
   return (
