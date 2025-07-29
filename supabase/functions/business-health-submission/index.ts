@@ -47,15 +47,13 @@ Deno.serve(async (req) => {
     // Submit to AdvisorPro API
     console.log('[BUSINESS-HEALTH-SUBMISSION] Submitting to AdvisorPro API...');
     
-    // Transform payload to match AdvisorPro API expectations
+    // Create payload with only required fields
     const advisorProPayload = {
-      ...payload,
+      companyName: payload.companyName,
+      userId: payload.userId,
       client_id: payload.reportId,
       webhook_url: 'https://hook.eu2.make.com/dfy1e9marxrcpg6aw0x6ocf4bd9nosbt'
     };
-    
-    // Remove the original reportId field
-    delete advisorProPayload.reportId;
     
     console.log('[BUSINESS-HEALTH-SUBMISSION] Full payload:', JSON.stringify(advisorProPayload, null, 2));
     
