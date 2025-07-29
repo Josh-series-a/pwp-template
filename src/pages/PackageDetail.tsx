@@ -128,7 +128,7 @@ const PackageDetail = () => {
               Package ID: {packageData.id}
             </p>
             <p className="text-sm text-muted-foreground">
-              Created: {new Date(packageData.created_at).toLocaleDateString()} • Total Cost: {packageData.documents.length * 5} Credits
+              Created: {new Date(packageData.created_at).toLocaleDateString()} • Total Cost: {(packageData.documents?.length || 0) * 5} Credits
             </p>
           </div>
 
