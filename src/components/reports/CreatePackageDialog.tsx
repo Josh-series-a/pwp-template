@@ -158,7 +158,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
   };
 
   const handlePackageToggle = (packageId: string) => {
-    const packageCost = getCreditCost(packageId as keyof typeof getCreditCost);
+    const pkg = packages.find(p => p.id === packageId);
+    const packageCost = pkg ? pkg.items.length * 5 : 0; // 5 credits per document
     const hasEnoughCreditsForPackage = checkCredits(packageCost);
     
     if (!hasEnoughCreditsForPackage && !selectedPackages.includes(packageId)) {
@@ -175,7 +176,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
 
   const getTotalCost = () => {
     return selectedPackages.reduce((total, packageId) => {
-      return total + getCreditCost(packageId as keyof typeof getCreditCost);
+      const pkg = packages.find(p => p.id === packageId);
+      return total + (pkg ? pkg.items.length * 5 : 0); // 5 credits per document
     }, 0);
   };
 
@@ -506,7 +508,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                     </div>
                     <div className="grid gap-6 max-w-4xl mx-auto">
                       {packages.map((pkg) => {
-                        const packageCost = getCreditCost(pkg.id as keyof typeof getCreditCost);
+                        const packageCost = pkg.items.length * 5; // 5 credits per document
                         const hasEnoughCreditsForPackage = checkCredits(packageCost);
                         const isSelected = selectedPackages.includes(pkg.id);
                         const isDisabled = !hasEnoughCreditsForPackage && !isSelected;
@@ -642,7 +644,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
                           )}
                           <div className="grid gap-4">
                             {selectedPackageDetails.map((pkg) => {
-                              const packageCost = getCreditCost(pkg.id as keyof typeof getCreditCost);
+                              const packageCost = pkg.items.length * 5; // 5 credits per document
                               return (
                                 <Card key={pkg.id} className="bg-background/80 backdrop-blur-sm">
                                   <CardHeader className="pb-3">
