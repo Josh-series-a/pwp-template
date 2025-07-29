@@ -16,12 +16,11 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     console.log('[BUSINESS-HEALTH-SUBMISSION] Payload received:', {
       companyName: payload.companyName,
-      exerciseTitle: payload.exerciseTitle,
       userId: payload.userId
     });
 
     // Validate required fields
-    if (!payload.companyName || !payload.exerciseTitle) {
+    if (!payload.companyName) {
       console.error('[BUSINESS-HEALTH-SUBMISSION] Missing required fields');
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
