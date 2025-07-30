@@ -115,9 +115,6 @@ const InProgressReportCard = ({
         {/* Header Section */}
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0 space-y-2">
-            <div className="text-sm font-medium text-primary tracking-wide">
-              Business Health Score
-            </div>
             <CardTitle className="text-xl font-bold text-foreground truncate group-hover:text-primary transition-colors">
               {report.company}
             </CardTitle>
