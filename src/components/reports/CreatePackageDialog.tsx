@@ -233,7 +233,8 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
         user_id: user.id,
         client_id: reportId, // Always use reportId as client_id
         companyName: selectedCompanyData?.company_name || '',
-        package_id: selectedPackages[0] || 'custom'
+        package_id: selectedPackages[0] || 'custom',
+        webhook_url: "https://hook.eu2.make.com/1oitiml9rehzq4rbvywwxjssgbt1subm"
       };
 
       console.log('Sending package creation request:', payload);
