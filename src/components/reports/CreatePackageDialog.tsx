@@ -231,7 +231,7 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
         text_color: "#ffffff",
         documents: selectedPackageData.flatMap(pkg => pkg.items || []),
         user_id: user.id,
-        client_id: reportId, // Always use reportId as client_id
+        client_id: reportId || `company_${selectedCompany}`, // Use reportId or fallback to company-based ID
         companyName: selectedCompanyData?.company_name || '',
         package_id: selectedPackages[0] || 'custom'
       };
