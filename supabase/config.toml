@@ -61,19 +61,19 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.business-health]
-verify_jwt = true
+verify_jwt = false
 
 [functions.business-health-submission]
 verify_jwt = true
 
 [functions.client-report]
-verify_jwt = true
+verify_jwt = false
 
 [functions.create-admin-user]
 verify_jwt = false
 
 [functions.packages]
-verify_jwt = true
+verify_jwt = false
 
 [functions.create-checkout]
 verify_jwt = true
