@@ -52,6 +52,7 @@ Deno.serve(async (req) => {
       companyName: payload.companyName,
       userId: payload.userId,
       client_id: payload.reportId,
+      pitch_deck_url: payload.businessDocUrl || null,
       webhook_url: 'https://hook.eu2.make.com/dfy1e9marxrcpg6aw0x6ocf4bd9nosbt'
     };
     
