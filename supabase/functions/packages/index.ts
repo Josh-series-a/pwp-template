@@ -102,17 +102,51 @@ async function handleCreatePackage(req: Request, supabaseClient: any) {
     );
   }
 
-  // Create the package
-  const { data: packageData, error: packageError } = await supabaseClient
+  // Check if a package with the same name and report already exists
+  const { data: existingPackage, error: existingError } = await supabaseClient
     .from('packages')
-    .insert({
-      user_id: report.user_id,
-      report_id: reportId,
-      package_name,
-      documents: documents || []
-    })
-    .select()
-    .single();
+    .select('*')
+    .eq('report_id', reportId)
+    .eq('package_name', package_name)
+    .maybeSingle();
+
+  let packageData;
+  let packageError;
+
+  if (existingPackage) {
+    // Update existing package by appending new documents
+    const existingDocuments = existingPackage.documents || [];
+    const newDocuments = documents || [];
+    const allDocuments = [...existingDocuments, ...newDocuments];
+
+    const { data, error } = await supabaseClient
+      .from('packages')
+      .update({
+        documents: allDocuments,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', existingPackage.id)
+      .select()
+      .single();
+
+    packageData = data;
+    packageError = error;
+  } else {
+    // Create new package
+    const { data, error } = await supabaseClient
+      .from('packages')
+      .insert({
+        user_id: report.user_id,
+        report_id: reportId,
+        package_name,
+        documents: documents || []
+      })
+      .select()
+      .single();
+
+    packageData = data;
+    packageError = error;
+  }
 
   if (packageError) {
     console.error('Error creating package:', packageError);
