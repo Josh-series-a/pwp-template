@@ -14,7 +14,6 @@ interface Document {
 }
 
 interface PackageRequest {
-  userId: string;
   reportId: string;
   package_name: string;
   documents: Document[];
@@ -67,12 +66,12 @@ async function handleCreatePackage(req: Request, supabaseClient: any) {
   const requestData: PackageRequest = await req.json();
   console.log('Received package data:', requestData);
 
-  const { userId, reportId, package_name, documents } = requestData;
+  const { reportId, package_name, documents } = requestData;
 
   // Validate required fields
-  if (!userId || !reportId || !package_name) {
+  if (!reportId || !package_name) {
     return new Response(
-      JSON.stringify({ error: 'Missing required fields: userId, reportId, package_name' }),
+      JSON.stringify({ error: 'Missing required fields: reportId, package_name' }),
       { 
         status: 400, 
         headers: { 
@@ -83,17 +82,16 @@ async function handleCreatePackage(req: Request, supabaseClient: any) {
     );
   }
 
-  // Verify the report exists and belongs to the user
+  // Verify the report exists
   const { data: report, error: reportError } = await supabaseClient
     .from('reports')
     .select('id, user_id')
     .eq('id', reportId)
-    .eq('user_id', userId)
     .single();
 
   if (reportError || !report) {
     return new Response(
-      JSON.stringify({ error: 'Report not found or access denied' }),
+      JSON.stringify({ error: 'Report not found' }),
       { 
         status: 404, 
         headers: { 
@@ -108,7 +106,7 @@ async function handleCreatePackage(req: Request, supabaseClient: any) {
   const { data: packageData, error: packageError } = await supabaseClient
     .from('packages')
     .insert({
-      user_id: userId,
+      user_id: report.user_id,
       report_id: reportId,
       package_name,
       documents: documents || []
@@ -149,7 +147,6 @@ async function handleCreatePackage(req: Request, supabaseClient: any) {
 async function handleGetPackages(req: Request, supabaseClient: any) {
   const url = new URL(req.url);
   const reportId = url.searchParams.get('reportId');
-  const userId = url.searchParams.get('userId');
 
   if (!reportId) {
     return new Response(
@@ -164,17 +161,11 @@ async function handleGetPackages(req: Request, supabaseClient: any) {
     );
   }
 
-  let query = supabaseClient
+  const { data: packages, error } = await supabaseClient
     .from('packages')
     .select('*')
     .eq('report_id', reportId)
     .order('created_at', { ascending: false });
-
-  if (userId) {
-    query = query.eq('user_id', userId);
-  }
-
-  const { data: packages, error } = await query;
 
   if (error) {
     console.error('Error fetching packages:', error);

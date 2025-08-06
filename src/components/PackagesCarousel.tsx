@@ -43,7 +43,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
     setIsLoading(true);
     try {
       // Instead of fetching demo packages, use the packageService to get user-specific packages
-      const userPackages = await packageService.getPackages(reportId, user?.id);
+      const userPackages = await packageService.getPackages(reportId);
       setPackages(userPackages || []);
     } catch (error) {
       console.error('Error fetching packages:', error);

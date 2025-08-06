@@ -5,7 +5,6 @@ interface Document {
 }
 
 interface CreatePackageRequest {
-  userId: string;
   reportId: string;
   package_name: string;
   documents: Document[];
@@ -43,12 +42,9 @@ export const packageService = {
     return result.package;
   },
 
-  async getPackages(reportId: string, userId?: string): Promise<Package[]> {
+  async getPackages(reportId: string): Promise<Package[]> {
     const url = new URL(PACKAGES_FUNCTION_URL);
     url.searchParams.append('reportId', reportId);
-    if (userId) {
-      url.searchParams.append('userId', userId);
-    }
 
     const response = await fetch(url.toString(), {
       method: 'GET',

@@ -41,7 +41,7 @@ const PackageDetail = () => {
     
     setIsLoading(true);
     try {
-      const packages = await packageService.getPackages(reportId, user?.id);
+      const packages = await packageService.getPackages(reportId);
       const currentPackage = packages.find(pkg => pkg.id === packageId);
       
       if (currentPackage) {
