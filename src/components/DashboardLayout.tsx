@@ -103,9 +103,14 @@ const SidebarProfile = ({ onNotificationsOpen, onMoreMenuOpen }: { onNotificatio
           >
             <HelpCircle className="h-4 w-4" />
           </Link>
-          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+          <a 
+            href="https://www.linkedin.com/in/colin-crooks-mbe-hondsc-652aab16/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
+          >
             <Linkedin className="h-4 w-4" />
-          </button>
+          </a>
           <button 
             onClick={onMoreMenuOpen}
             className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
