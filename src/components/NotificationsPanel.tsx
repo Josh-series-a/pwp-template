@@ -73,7 +73,7 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
       {/* Backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 z-40" 
+          className="fixed inset-0 z-40" 
           onClick={onClose}
         />
       )}
@@ -140,12 +140,6 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
           </div>
         </ScrollArea>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-border">
-          <Button variant="outline" size="sm" className="w-full">
-            Mark All as Read
-          </Button>
-        </div>
       </div>
     </>
   );
