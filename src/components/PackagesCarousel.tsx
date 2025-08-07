@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { packageService } from '@/utils/packageService';
+import { packageQueueService, PackageQueueItem } from '@/utils/packageQueueService';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import QueuedPackageCard from '@/components/QueuedPackageCard';
 import sampleCover1 from '/lovable-uploads/package-covers/sample-cover-1.jpg';
@@ -37,7 +38,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [queuedPackages, setQueuedPackages] = useState<Array<{ id: string; name: string; requestedAt: Date }>>([]);
+  const [queuedPackages, setQueuedPackages] = useState<PackageQueueItem[]>([]);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -46,15 +47,54 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
 
   useEffect(() => {
     fetchPackages();
-    // Demo: Add a queued package for testing
-    setQueuedPackages([
-      {
-        id: 'demo-queued-1',
-        name: 'Market Analysis Package',
-        requestedAt: new Date()
-      }
-    ]);
-  }, []);
+    fetchQueuedPackages();
+
+    // Set up real-time subscription for package queue updates
+    const channel = supabase
+      .channel('package-queue-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'package_queue',
+          filter: `report_id=eq.${reportId}`
+        },
+        (payload) => {
+          console.log('Package queue updated:', payload);
+          fetchQueuedPackages(); // Refresh queue data
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'packages',
+          filter: `report_id=eq.${reportId}`
+        },
+        (payload) => {
+          console.log('Package created:', payload);
+          fetchPackages(); // Refresh packages data
+          fetchQueuedPackages(); // Refresh queue data (trigger should mark as completed)
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [reportId]);
+
+  const fetchQueuedPackages = async () => {
+    try {
+      const queueItems = await packageQueueService.getQueuedPackages(reportId);
+      setQueuedPackages(queueItems);
+    } catch (error) {
+      console.error('Error fetching queued packages:', error);
+      toast({ title: 'Failed to load queued packages', variant: 'destructive' });
+    }
+  };
 
   const fetchPackages = async () => {
     setIsLoading(true);
@@ -170,8 +210,8 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
             {queuedPackages.map((queuedPkg) => (
               <QueuedPackageCard 
                 key={queuedPkg.id}
-                packageName={queuedPkg.name}
-                estimatedTime={600} // 10 minutes
+                packageName={queuedPkg.package_name}
+                estimatedTime={packageQueueService.getRemainingTime(queuedPkg.estimated_completion_time)}
               />
             ))}
           </div>

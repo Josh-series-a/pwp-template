@@ -237,6 +237,7 @@ export type Database = {
         Row: {
           completed_at: string | null
           created_at: string
+          documents: string[] | null
           estimated_completion_time: string
           id: string
           package_name: string
@@ -249,6 +250,7 @@ export type Database = {
         Insert: {
           completed_at?: string | null
           created_at?: string
+          documents?: string[] | null
           estimated_completion_time?: string
           id?: string
           package_name: string
@@ -261,6 +263,7 @@ export type Database = {
         Update: {
           completed_at?: string | null
           created_at?: string
+          documents?: string[] | null
           estimated_completion_time?: string
           id?: string
           package_name?: string
