@@ -455,7 +455,7 @@ const Dashboard = () => {
 
           {/* Business Overview Stats */}
           <div className="space-y-6">
-            <div className="text-center">
+                <div className="text-left">
               <h2 className="text-2xl font-bold mb-2">Business Overview</h2>
               <p className="text-muted-foreground">Your key business metrics at a glance</p>
             </div>
