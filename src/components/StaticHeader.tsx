@@ -77,7 +77,7 @@ const StaticHeader: React.FC = () => {
   };
 
   return (
-    <header className={`fixed top-0 right-0 z-40 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border flex items-center justify-between px-6 transition-all duration-200 ${isCollapsed ? 'left-0 lg:left-[5rem]' : 'left-0 lg:left-[16rem]'}`}>
+    <header className={`fixed top-0 right-0 z-40 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center justify-between px-6 transition-all duration-200 ${isCollapsed ? 'left-0 lg:left-[5rem]' : 'left-0 lg:left-[16rem]'}`}>
       <div className="flex items-center gap-4">
         <div className="flex items-center justify-center lg:hidden">
           <Button
