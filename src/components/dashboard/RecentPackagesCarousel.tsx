@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, Package } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, Package, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { dashboardPackageService, RecentPackage } from '@/utils/dashboardPackageService';
 import { toast } from '@/hooks/use-toast';
@@ -115,26 +115,32 @@ const RecentPackagesCarousel: React.FC = () => {
             <Package className="h-5 w-5" />
             Recent Generated Packages ({packages.length})
           </CardTitle>
-          {shouldShowControls && (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={prevSlide}
-                disabled={packages.length <= 3}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={nextSlide}
-                disabled={packages.length <= 3}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/reports')}>
+              <Eye className="h-4 w-4 mr-2" />
+              View All
+            </Button>
+            {shouldShowControls && (
+              <>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={prevSlide}
+                  disabled={packages.length <= 3}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={nextSlide}
+                  disabled={packages.length <= 3}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent>
