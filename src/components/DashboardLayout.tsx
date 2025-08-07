@@ -77,7 +77,7 @@ const SidebarProfile = () => {
     <>
       {/* Upgrade Plan Card */}
       <div className="px-4 py-3 mb-4">
-        <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-3">
+        <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-3 group-data-[collapsible=icon]:hidden">
           <h4 className="font-semibold text-sm text-foreground mb-1">Upgrade Plan</h4>
           <p className="text-xs text-muted-foreground mb-3">Unlock more features and capabilities</p>
           <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors">
