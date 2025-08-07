@@ -39,7 +39,7 @@ const QueuedPackageCard: React.FC<QueuedPackageCardProps> = ({
       <div className="h-full bg-gradient-to-br from-muted/50 via-muted/30 to-muted/50 relative">
         {/* Shimmer Effect */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_ease-in-out_infinite] -skew-x-12" />
+          <div className="h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer -skew-x-12" />
         </div>
         
         {/* Content */}

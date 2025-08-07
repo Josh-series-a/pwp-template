@@ -151,6 +151,10 @@ export default {
 						transformOrigin: "left center",
 						boxShadow: "0 0 0 rgba(0,0,0,0)"
 					}
+				},
+				'shimmer': {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(100%)' }
 				}
 			},
 			animation: {
@@ -165,7 +169,8 @@ export default {
 				'blur-in': 'blur-in 0.6s ease-out',
 				'pulse-subtle': 'pulse-subtle 3s ease-in-out infinite',
 				'page-flip-forward': 'page-flip-forward 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000)',
-				'page-flip-backward': 'page-flip-backward 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000)'
+				'page-flip-backward': 'page-flip-backward 0.7s cubic-bezier(0.645, 0.045, 0.355, 1.000)',
+				'shimmer': 'shimmer 2s ease-in-out infinite'
 			},
 			typography: (theme) => ({
 				DEFAULT: {
