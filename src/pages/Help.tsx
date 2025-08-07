@@ -98,7 +98,7 @@ const Help = () => {
     <div className="min-h-screen bg-slate-900">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 pt-32">
+      <main className="max-w-6xl mx-auto px-4 py-8 pt-32">
         {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-4">
