@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import StaticHeader from './StaticHeader';
 import NotificationsPanel from './NotificationsPanel';
+import MoreMenuDropdown from './MoreMenuDropdown';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -54,7 +55,7 @@ const SidebarLogo = () => {
   </div>;
 };
 
-const SidebarProfile = ({ onNotificationsOpen }: { onNotificationsOpen: () => void }) => {
+const SidebarProfile = ({ onNotificationsOpen, onMoreMenuOpen }: { onNotificationsOpen: () => void; onMoreMenuOpen: () => void }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   
@@ -102,7 +103,10 @@ const SidebarProfile = ({ onNotificationsOpen }: { onNotificationsOpen: () => vo
           <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
             <Linkedin className="h-4 w-4" />
           </button>
-          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+          <button 
+            onClick={onMoreMenuOpen}
+            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
+          >
             <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
@@ -193,6 +197,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   hideHeader = false
 }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   return <SidebarProvider defaultOpen={true}>
     <div className="min-h-screen flex w-full overflow-hidden group">
@@ -201,6 +206,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <NotificationsPanel 
         isOpen={isNotificationsOpen} 
         onClose={() => setIsNotificationsOpen(false)} 
+      />
+      
+      {/* More Menu Dropdown */}
+      <MoreMenuDropdown 
+        isOpen={isMoreMenuOpen} 
+        onClose={() => setIsMoreMenuOpen(false)} 
       />
       <Sidebar 
         collapsible="icon" 
@@ -213,7 +224,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <SidebarContent className="flex flex-col h-full">
           <SidebarLogo />
           <SidebarNavigation />
-          <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} />
+          <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} onMoreMenuOpen={() => setIsMoreMenuOpen(true)} />
         </SidebarContent>
       </Sidebar>
       
