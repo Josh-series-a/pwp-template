@@ -42,38 +42,42 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
           <div className="p-3">
             <div className="grid grid-cols-2 gap-4">
               {/* More Section - Left */}
-              <div className="border-b border-border pb-3">
+              <div>
                 <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">More</h3>
-                <div className="space-y-1">
-                  {moreLinks.map((link) => (
-                    <a
-                      key={link.name}
-                      href={link.href}
-                      className="block text-xs text-foreground hover:text-primary transition-colors"
-                      target={link.external ? "_blank" : undefined}
-                      rel={link.external ? "noopener noreferrer" : undefined}
-                    >
-                      {link.name}
-                    </a>
-                  ))}
+                <div className="border-t border-border pt-2">
+                  <div className="space-y-1">
+                    {moreLinks.map((link) => (
+                      <a
+                        key={link.name}
+                        href={link.href}
+                        className="block text-xs text-foreground hover:text-primary transition-colors"
+                        target={link.external ? "_blank" : undefined}
+                        rel={link.external ? "noopener noreferrer" : undefined}
+                      >
+                        {link.name}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               {/* Company Section - Right */}
-              <div className="border-b border-border pb-3">
+              <div>
                 <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">Company</h3>
-                <div className="space-y-1">
-                  {companyLinks.map((link) => (
-                    <a
-                      key={link.name}
-                      href={link.href}
-                      className="block text-xs text-foreground hover:text-primary transition-colors"
-                      target={link.external ? "_blank" : undefined}
-                      rel={link.external ? "noopener noreferrer" : undefined}
-                    >
-                      {link.name}
-                    </a>
-                  ))}
+                <div className="border-t border-border pt-2">
+                  <div className="space-y-1">
+                    {companyLinks.map((link) => (
+                      <a
+                        key={link.name}
+                        href={link.href}
+                        className="block text-xs text-foreground hover:text-primary transition-colors"
+                        target={link.external ? "_blank" : undefined}
+                        rel={link.external ? "noopener noreferrer" : undefined}
+                      >
+                        {link.name}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
