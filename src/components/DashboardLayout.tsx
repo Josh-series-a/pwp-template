@@ -215,13 +215,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       />
       <Sidebar 
         collapsible="icon" 
-        className="fixed inset-y-0 left-0 z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar overflow-y-auto" 
+        className="fixed inset-y-0 left-0 z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar" 
         style={{
           "--sidebar-width": "16rem",
           "--sidebar-width-icon": "5rem"
         } as React.CSSProperties}
       >
-        <SidebarContent className="flex flex-col h-full">
+        <SidebarContent className="flex flex-col h-full overflow-y-auto">
           <SidebarLogo />
           <SidebarNavigation />
           <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} onMoreMenuOpen={() => setIsMoreMenuOpen(true)} />
