@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Menu, Users, HelpCircle, Globe, Palette, Code, Crown, Settings, LogOut } from 'lucide-react';
+import { CreditCard, Menu, Users, HelpCircle, Crown, Settings, LogOut } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import CreditsDisplay from './CreditsDisplay';
@@ -184,49 +184,6 @@ const StaticHeader: React.FC = () => {
                 <Settings className="mr-2 h-4 w-4" />
                 Account
               </Link>
-            </DropdownMenuItem>
-            
-            {/* Language Submenu */}
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Globe className="mr-2 h-4 w-4" />
-                Language
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem className="cursor-pointer justify-between">
-                  <span>English</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <span>Spanish</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <span>French</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            
-            {/* Theme Submenu */}
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Palette className="mr-2 h-4 w-4" />
-                Theme
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem className="cursor-pointer justify-between">
-                  <span>Light</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <span>Dark</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <span>System</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            
-            <DropdownMenuItem className="cursor-pointer">
-              <Code className="mr-2 h-4 w-4" />
-              Use AI code
             </DropdownMenuItem>
             
             <DropdownMenuSeparator />
