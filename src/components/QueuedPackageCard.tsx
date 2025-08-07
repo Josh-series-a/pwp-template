@@ -35,12 +35,10 @@ const QueuedPackageCard: React.FC<QueuedPackageCardProps> = ({
 
   return (
     <div className="relative overflow-hidden rounded-xl aspect-square">
-      {/* Shimmer Animation Container */}
-      <div className="h-full bg-gradient-to-br from-muted/50 via-muted/30 to-muted/50 relative">
-        {/* Shimmer Effect */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="h-full w-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer -skew-x-12" />
-        </div>
+      {/* Animated Shimmer Background */}
+      <div className="h-full bg-gradient-to-r from-muted via-muted/80 to-muted animate-pulse relative">
+        {/* Moving Shimmer Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer -skew-x-12" />
         
         {/* Content */}
         <div className="h-full flex flex-col justify-between p-6 relative z-10">
