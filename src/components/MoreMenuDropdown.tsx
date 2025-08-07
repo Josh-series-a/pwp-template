@@ -30,75 +30,75 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
       {/* Backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 z-40" 
+          className="fixed inset-0 z-40" 
           onClick={onClose}
         />
       )}
       
       {/* More Menu Dropdown */}
-      <div className={`fixed left-0 top-0 h-screen w-80 bg-background border-r border-border shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
-        isOpen ? 'translate-x-64' : '-translate-x-full'
-      }`}>
-        {/* Header */}
-        <div className="p-4 border-b border-border">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-lg">More</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-6">
-          {/* First Grid - More */}
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground mb-3 uppercase tracking-wide">More</h3>
-            <div className="space-y-1">
-              {moreLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors group"
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                >
-                  <span className="text-sm font-medium">{link.name}</span>
-                  {link.external && (
-                    <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  )}
-                </a>
-              ))}
+      {isOpen && (
+        <div className="absolute left-full top-0 ml-2 w-56 bg-popover border border-border rounded-lg shadow-lg z-50">
+          {/* Header */}
+          <div className="p-3 border-b border-border">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-sm">More</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="h-6 w-6 p-0"
+              >
+                <X className="h-3 w-3" />
+              </Button>
             </div>
           </div>
 
-          {/* Second Grid - Company */}
-          <div>
-            <h3 className="font-medium text-sm text-muted-foreground mb-3 uppercase tracking-wide">Company</h3>
-            <div className="space-y-1">
-              {companyLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors group"
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                >
-                  <span className="text-sm font-medium">{link.name}</span>
-                  {link.external && (
-                    <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  )}
-                </a>
-              ))}
+          {/* Content */}
+          <div className="p-2 space-y-3 max-h-80 overflow-y-auto">
+            {/* First Grid - More */}
+            <div>
+              <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide px-2">More</h3>
+              <div className="space-y-0.5">
+                {moreLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-accent transition-colors group text-sm"
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                  >
+                    <span>{link.name}</span>
+                    {link.external && (
+                      <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Second Grid - Company */}
+            <div>
+              <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide px-2">Company</h3>
+              <div className="space-y-0.5">
+                {companyLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-accent transition-colors group text-sm"
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                  >
+                    <span>{link.name}</span>
+                    {link.external && (
+                      <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    )}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
