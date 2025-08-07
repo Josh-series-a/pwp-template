@@ -535,51 +535,6 @@ const Dashboard = () => {
             </div>
           </div>
           
-          {/* Call to Action */}
-          <Card className="border-0 bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground shadow-xl">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/20 rounded-lg">
-                  <Sparkles className="h-6 w-6" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl md:text-2xl">Ready to transform your business?</CardTitle>
-                  <CardDescription className="text-primary-foreground/90 text-base">
-                    {documents.length > 0 ? 'Continue your business journey with AI-powered insights' : 'Start your business transformation today'}
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pb-4">
-              <p className="text-primary-foreground/80">
-                {documents.length > 0 
-                  ? 'Generate comprehensive reports, create shareable packages, and unlock AI-powered business insights.'
-                  : 'Upload your business documents and get instant AI-powered analysis to unlock your company\'s potential.'
-                }
-              </p>
-            </CardContent>
-            <CardFooter className="flex flex-col sm:flex-row gap-3">
-              {documents.length > 0 ? (
-                <Button variant="secondary" asChild className="w-full sm:w-auto shadow-sm">
-                  <Link to="/dashboard/reports">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Generate New Report
-                  </Link>
-                </Button>
-              ) : (
-                <Button variant="secondary" asChild className="w-full sm:w-auto shadow-sm">
-                  <Link to="/chat">
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Upload Documents
-                  </Link>
-                </Button>
-              )}
-              <Button variant="outline" className="w-full sm:w-auto bg-white/10 border-white/20 text-primary-foreground hover:bg-white/20">
-                <BookOpen className="h-4 w-4 mr-2" />
-                Learn More
-              </Button>
-            </CardFooter>
-          </Card>
         </div>
       </div>
     </DashboardLayout>
