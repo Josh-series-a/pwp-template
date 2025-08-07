@@ -141,7 +141,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <ExternalLink className="h-5 w-5 text-gray-700" />
+                  
                 </div>
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-gray-900 leading-tight line-clamp-3">
