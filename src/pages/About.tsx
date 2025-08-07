@@ -46,7 +46,7 @@ const About = () => {
             </div>
           </TransitionWrapper>
 
-          <div className="grid lg:grid-cols-3 gap-8 md:gap-16 items-start">
+          <div className="grid grid-cols-1 gap-8 md:gap-16 items-start w-full">
             <TransitionWrapper animation="slide-up" delay={100}>
               <div className="lg:col-span-1">
                 <Card className="relative overflow-hidden border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
