@@ -37,6 +37,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminCredits from "./pages/AdminCredits";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import Labs from "./pages/Labs";
+import Help from "./pages/Help";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/help" element={<Help />} />
               
               {/* User Dashboard Routes - Only for regular users */}
               <Route path="/dashboard" element={
