@@ -5,10 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, FileText, ExternalLink, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { packageService } from '@/utils/packageService';
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 interface PackageDocument {
   name: string;
   document: string[];
@@ -47,23 +47,20 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
       setPackages(userPackages || []);
     } catch (error) {
       console.error('Error fetching packages:', error);
-      toast.error('Failed to load packages');
+      toast({ title: 'Failed to load packages', variant: 'destructive' });
       setPackages([]);
     } finally {
       setIsLoading(false);
     }
   };
-  const handleDeletePackage = async (e: React.MouseEvent, packageId: string) => {
-    e.stopPropagation();
-    const confirmDelete = window.confirm('Are you sure you want to delete this package? This action cannot be undone.');
-    if (!confirmDelete) return;
+  const confirmDeletePackage = async (packageId: string) => {
     try {
       await packageService.deletePackage(packageId);
       setPackages((prev) => prev.filter((p) => p.id !== packageId));
-      toast.success('Package deleted');
+      toast({ title: 'Package deleted' });
     } catch (error) {
       console.error('Error deleting package:', error);
-      toast.error('Failed to delete package');
+      toast({ title: 'Failed to delete package', variant: 'destructive' });
     }
   };
 
@@ -111,15 +108,39 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
             >
               <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 h-full flex flex-col justify-between p-6">
                 <div className="flex justify-end gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:bg-destructive/10"
-                    onClick={(e) => handleDeletePackage(e, pkg.id)}
-                    aria-label="Delete package"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:bg-destructive/10"
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label="Delete package"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete this package?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. The package and its references will be permanently removed.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            confirmDeletePackage(pkg.id);
+                          }}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <ExternalLink className="h-5 w-5 text-gray-700" />
                 </div>
                 <div className="space-y-3">
