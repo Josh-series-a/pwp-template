@@ -43,7 +43,7 @@ const SidebarLogo = () => {
         alt="PWP Logo" 
         className="h-10 w-10 rounded-lg flex-shrink-0 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
       />
-      <span className="font-semibold text-base text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+      <span className="font-bold text-base text-sidebar-foreground group-data-[collapsible=icon]:hidden leading-tight">
         Prosper<br />With Purpose
       </span>
     </div>
