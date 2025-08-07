@@ -225,7 +225,7 @@ const Dashboard = () => {
           )}
 
           {/* Package Queue and Recent Packages */}
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6">
             <PackageQueueSection />
             <RecentPackagesCarousel />
           </div>
