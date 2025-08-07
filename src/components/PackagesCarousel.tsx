@@ -148,7 +148,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                     {pkg.package_name}
                   </h2>
                   <p className="text-base font-medium text-gray-800">
-                    {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''} • {(pkg.documents?.length || 0) * 5} Credits
+                    {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''}
                   </p>
                   <Badge variant="outline" className="text-xs bg-white/80 w-fit">
                     {new Date(pkg.created_at).toLocaleDateString()}
