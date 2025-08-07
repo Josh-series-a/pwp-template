@@ -97,9 +97,12 @@ const SidebarProfile = ({ onNotificationsOpen, onMoreMenuOpen }: { onNotificatio
           >
             <Bell className="h-4 w-4" />
           </button>
-          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+          <Link 
+            to="/help" 
+            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
+          >
             <HelpCircle className="h-4 w-4" />
-          </button>
+          </Link>
           <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
             <Linkedin className="h-4 w-4" />
           </button>
