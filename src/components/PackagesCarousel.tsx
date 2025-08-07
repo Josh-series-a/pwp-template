@@ -52,43 +52,54 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
       // Fetch packages and enhance with cover images
       const userPackages = await packageService.getPackages(reportId);
       
+      // First, let's see what's actually in the storage bucket
+      const { data: allFiles, error: listError } = await supabase.storage
+        .from('package-covers')
+        .list('', {
+          limit: 1000,
+          sortBy: { column: 'name', order: 'asc' }
+        });
+
+      console.log('All files in package-covers bucket:', allFiles);
+      
+      if (listError) {
+        console.error('Error listing files:', listError);
+      }
+
       // Fetch cover images for each package
       const packagesWithCovers = await Promise.all(
         userPackages.map(async (pkg, index) => {
           try {
-            // Try to get cover image from storage using multiple naming patterns
-            const { data: files } = await supabase.storage
-              .from('package-covers')
-              .list(`${pkg.user_id}`, {
-                limit: 100,
-              });
-
-            console.log(`Looking for cover for package ${pkg.id}:`, files);
-
             let coverImageUrl = null;
             
-            if (files && files.length > 0) {
-              // Look for files that match the package ID
-              const matchingFile = files.find(file => 
-                file.name.includes(pkg.id) || 
-                file.name.includes(pkg.package_name.toLowerCase().replace(/\s+/g, '-'))
-              );
+            if (allFiles && allFiles.length > 0) {
+              // Look for files that match the package in various ways
+              const matchingFile = allFiles.find(file => {
+                const fileName = file.name.toLowerCase();
+                const packageId = pkg.id.toLowerCase();
+                const packageName = pkg.package_name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                
+                return fileName.includes(packageId) || 
+                       fileName.includes(packageName) ||
+                       fileName.includes(pkg.package_name.toLowerCase());
+              });
               
               if (matchingFile) {
                 const { data } = supabase.storage
                   .from('package-covers')
-                  .getPublicUrl(`${pkg.user_id}/${matchingFile.name}`);
+                  .getPublicUrl(matchingFile.name);
                 
                 coverImageUrl = data.publicUrl;
-                console.log(`Found cover for ${pkg.id}:`, coverImageUrl);
+                console.log(`Found cover for ${pkg.package_name} (${pkg.id}):`, matchingFile.name, coverImageUrl);
               } else {
-                console.log(`No matching cover found for package ${pkg.id}. Available files:`, files.map(f => f.name));
+                console.log(`No matching cover found for package "${pkg.package_name}" (${pkg.id})`);
+                console.log('Available files:', allFiles.map(f => f.name));
               }
             }
             
             // Only use sample covers if no storage image found
             if (!coverImageUrl) {
-              console.log(`Using sample cover for package ${pkg.id}`);
+              console.log(`Using sample cover for package ${pkg.package_name}`);
               coverImageUrl = sampleCovers[index % sampleCovers.length];
             }
             
