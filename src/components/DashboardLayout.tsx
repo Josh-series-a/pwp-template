@@ -85,38 +85,6 @@ const SidebarProfile = () => {
           </button>
         </div>
       </div>
-      
-      <div className="px-4 py-4 mt-auto border-t border-sidebar-border/40">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center space-x-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 w-full text-left">
-              <Avatar className="h-9 w-9 ring-2 ring-sidebar-accent/30">
-                <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback className="bg-primary text-primary-foreground font-medium text-sm">
-                  {userInitials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-                <span className="text-sm font-medium text-sidebar-foreground">{userName}</span>
-                <span className="text-xs text-sidebar-foreground/60">View profile</span>
-              </div>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem asChild>
-              <Link to="/account" className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                Account Settings
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
     </>
   );
 };

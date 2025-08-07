@@ -3,15 +3,37 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Menu } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Settings, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 import CreditsDisplay from './CreditsDisplay';
 import HealthScoreCreditsDisplay from './HealthScoreCreditsDisplay';
 
 const StaticHeader: React.FC = () => {
   const { toggleSidebar, state } = useSidebar();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const isCollapsed = state === 'collapsed';
+  
+  const userName = user?.user_metadata?.name || 'User';
+  const userInitials = user?.user_metadata?.name ? userName.split(' ').map(part => part[0]).join('').toUpperCase() : 'U';
+  
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("You have been logged out.");
+      navigate('/');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.success("You have been logged out.");
+      navigate('/');
+    }
+  };
   
   // Generate breadcrumb items based on current route
   const getBreadcrumbItems = (): Array<{ label: string; href: string; isActive?: boolean }> => {
@@ -100,6 +122,33 @@ const StaticHeader: React.FC = () => {
           <CreditCard className="h-4 w-4" />
           Buy Credits
         </Button>
+        
+        {/* Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center space-x-2 p-1 rounded-lg hover:bg-accent transition-colors duration-200">
+              <Avatar className="h-8 w-8 ring-2 ring-accent/30">
+                <AvatarImage src={user?.user_metadata?.avatar_url} />
+                <AvatarFallback className="bg-primary text-primary-foreground font-medium text-xs">
+                  {userInitials}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem asChild>
+              <Link to="/account" className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                Account Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
