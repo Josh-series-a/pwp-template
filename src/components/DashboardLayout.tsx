@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut, Book, TestTube, HelpCircle, Linkedin } from 'lucide-react';
+import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut, Book, TestTube, HelpCircle, Linkedin, MoreHorizontal } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -97,6 +97,9 @@ const SidebarProfile = () => {
           </button>
           <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
             <Linkedin className="h-4 w-4" />
+          </button>
+          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+            <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
       </div>
