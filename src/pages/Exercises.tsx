@@ -46,7 +46,7 @@ import AssessNetworkingDialog from '@/components/exercises/AssessNetworkingDialo
 import ValuesDialog from '@/components/exercises/ValuesDialog';
 import RightPeopleDialog from '@/components/exercises/RightPeopleDialog';
 import RecruitRetainDialog from '@/components/exercises/RecruitRetainDialog';
-import TestNotification from '@/components/TestNotification';
+
 
 const Exercises = () => {
   const navigate = useNavigate();
@@ -879,10 +879,6 @@ const Exercises = () => {
         }}
       />
 
-      {/* Test Notification Component - Remove this in production */}
-      <div className="mt-8">
-        <TestNotification />
-      </div>
 
       <RunAnalysisModal 
         isOpen={isRunAnalysisModalOpen} 
