@@ -79,7 +79,7 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
       )}
       
       {/* Notifications Panel */}
-      <div className={`fixed left-0 top-0 h-screen w-64 bg-background border-r border-border shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
+      <div className={`fixed left-6 top-0 h-screen w-64 bg-background border-r border-border shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
         isOpen ? 'translate-x-64' : '-translate-x-full'
       }`}>
         {/* Header */}
