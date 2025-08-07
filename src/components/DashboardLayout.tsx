@@ -229,7 +229,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           "--sidebar-width-icon": "5rem"
         } as React.CSSProperties}
       >
-        <SidebarContent className="flex flex-col h-full overflow-y-auto">
+        <SidebarContent className="flex flex-col h-full overflow-hidden">
           <SidebarLogo />
           <SidebarNavigation />
           <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} onMoreMenuOpen={() => setIsMoreMenuOpen(true)} />
