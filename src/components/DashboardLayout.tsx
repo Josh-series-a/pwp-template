@@ -200,7 +200,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   return <SidebarProvider defaultOpen={true}>
-    <div className="min-h-screen flex w-full overflow-hidden group">
+    <div className="min-h-screen flex w-full relative">
         
       {/* Notifications Panel */}
       <NotificationsPanel 
