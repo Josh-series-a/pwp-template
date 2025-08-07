@@ -73,31 +73,19 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
             let coverImageUrl = null;
             
             if (allFiles && allFiles.length > 0) {
-              // Look for files that match the package in various ways
-              const matchingFile = allFiles.find(file => {
-                const fileName = file.name.toLowerCase();
-                const packageId = pkg.id.toLowerCase();
-                const packageName = pkg.package_name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-                
-                return fileName.includes(packageId) || 
-                       fileName.includes(packageName) ||
-                       fileName.includes(pkg.package_name.toLowerCase());
-              });
+              // Use uploaded images by cycling through them
+              const fileIndex = index % allFiles.length;
+              const selectedFile = allFiles[fileIndex];
               
-              if (matchingFile) {
-                const { data } = supabase.storage
-                  .from('package-covers')
-                  .getPublicUrl(matchingFile.name);
-                
-                coverImageUrl = data.publicUrl;
-                console.log(`Found cover for ${pkg.package_name} (${pkg.id}):`, matchingFile.name, coverImageUrl);
-              } else {
-                console.log(`No matching cover found for package "${pkg.package_name}" (${pkg.id})`);
-                console.log('Available files:', allFiles.map(f => f.name));
-              }
+              const { data } = supabase.storage
+                .from('package-covers')
+                .getPublicUrl(selectedFile.name);
+              
+              coverImageUrl = data.publicUrl;
+              console.log(`Using uploaded cover for ${pkg.package_name}: ${selectedFile.name}`);
             }
             
-            // Only use sample covers if no storage image found
+            // Only use sample covers if no storage images found
             if (!coverImageUrl) {
               console.log(`Using sample cover for package ${pkg.package_name}`);
               coverImageUrl = sampleCovers[index % sampleCovers.length];
