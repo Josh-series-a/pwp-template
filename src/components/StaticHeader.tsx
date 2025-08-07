@@ -29,17 +29,20 @@ const StaticHeader: React.FC = () => {
       'account': 'Account',
     };
     
-    const items: Array<{ label: string; href: string; isActive?: boolean }> = [
-      { label: 'All Components', href: '/dashboard' }
-    ];
+    const items: Array<{ label: string; href: string; isActive?: boolean }> = [];
+    let currentPath = '';
     
-    if (segments.length > 1) {
-      items.push({ label: 'Application', href: '/dashboard' });
+    segments.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      const label = routeMap[segment] || segment;
+      const isActive = index === segments.length - 1;
       
-      const currentSegment = segments[segments.length - 1];
-      const currentLabel = routeMap[currentSegment] || currentSegment;
-      items.push({ label: currentLabel, href: path, isActive: true });
-    }
+      items.push({ 
+        label, 
+        href: currentPath, 
+        isActive 
+      });
+    });
     
     return items;
   };
