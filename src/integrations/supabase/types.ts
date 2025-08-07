@@ -233,6 +233,45 @@ export type Database = {
         }
         Relationships: []
       }
+      package_queue: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          estimated_completion_time: string
+          id: string
+          package_name: string
+          report_id: string
+          requested_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          estimated_completion_time?: string
+          id?: string
+          package_name: string
+          report_id: string
+          requested_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          estimated_completion_time?: string
+          id?: string
+          package_name?: string
+          report_id?: string
+          requested_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       packages: {
         Row: {
           created_at: string
