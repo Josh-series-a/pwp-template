@@ -9,6 +9,9 @@ import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { packageService } from '@/utils/packageService';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import sampleCover1 from '/lovable-uploads/package-covers/sample-cover-1.jpg';
+import sampleCover2 from '/lovable-uploads/package-covers/sample-cover-2.jpg';
+import sampleCover3 from '/lovable-uploads/package-covers/sample-cover-3.jpg';
 interface PackageDocument {
   name: string;
   document: string[];
@@ -36,6 +39,9 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Sample covers for demo purposes
+  const sampleCovers = [sampleCover1, sampleCover2, sampleCover3];
+
   useEffect(() => {
     fetchPackages();
   }, []);
@@ -48,7 +54,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
       
       // Fetch cover images for each package
       const packagesWithCovers = await Promise.all(
-        userPackages.map(async (pkg) => {
+        userPackages.map(async (pkg, index) => {
           try {
             // Try to get cover image from storage
             const { data: files } = await supabase.storage
@@ -57,18 +63,24 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                 search: `${pkg.id}`,
               });
 
+            let coverImageUrl = null;
+            
             if (files && files.length > 0) {
               const { data } = supabase.storage
                 .from('package-covers')
                 .getPublicUrl(`${pkg.user_id}/${files[0].name}`);
               
-              return { ...pkg, cover_image_url: data.publicUrl };
+              coverImageUrl = data.publicUrl;
+            } else {
+              // Use sample cover as fallback
+              coverImageUrl = sampleCovers[index % sampleCovers.length];
             }
             
-            return pkg;
+            return { ...pkg, cover_image_url: coverImageUrl };
           } catch (error) {
             console.error('Error fetching cover image for package:', pkg.id, error);
-            return pkg;
+            // Fallback to sample cover
+            return { ...pkg, cover_image_url: sampleCovers[index % sampleCovers.length] };
           }
         })
       );
