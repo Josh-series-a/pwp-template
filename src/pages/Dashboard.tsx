@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { apiService } from '@/utils/apiService';
+import PackageQueueSection from '@/components/dashboard/PackageQueueSection';
+import RecentPackagesCarousel from '@/components/dashboard/RecentPackagesCarousel';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -220,6 +222,12 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Package Queue and Recent Packages */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <PackageQueueSection />
+            <RecentPackagesCarousel />
+          </div>
 
           {/* Dashboard Pages Overview */}
           <div className="space-y-6">
