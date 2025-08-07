@@ -208,7 +208,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   return <SidebarProvider defaultOpen={true}>
-    <div className="min-h-screen w-full relative">
+    <div className="min-h-screen flex w-full relative">
         
       {/* Notifications Panel */}
       <NotificationsPanel 
@@ -238,8 +238,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       
       <StaticHeader />
       
-      <main className="min-h-screen bg-background/50 transition-all duration-200 ease-linear ml-0 lg:ml-[5rem] lg:group-data-[state=expanded]:ml-[16rem] pt-16">
-        <div className="w-full min-h-screen flex flex-col mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+      <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-0 lg:ml-[5rem] lg:group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen pt-16">
+        <div className="w-full h-full flex flex-col mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {!hideHeader && (
             <div className="flex items-center justify-start py-4 sm:py-6 flex-shrink-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground text-center">{title}</h1>
