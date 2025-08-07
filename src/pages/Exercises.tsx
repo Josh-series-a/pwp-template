@@ -78,17 +78,14 @@ const Exercises = () => {
   const isSubscribed = subscriptionInfo.subscribed;
   const hasEnoughCreditsForNewCompany = checkCredits(10);
 
-  // Enhanced exercises data with the new recruit and retain exercise
-  const exercises = [
+  // Static exercise definitions
+  const exerciseDefinitions = [
     { 
       id: 1, 
       title: "How Does Stress Affect You?", 
-      progress: 0, 
-      status: "new",
       intro: "Recognise how stress impacts your decision-making and relationships. Understanding your patterns can make you a more effective and reflective leader.",
       category: "leadership",
       sections: 1,
-      completedSections: 0,
       tags: ["leadership", "self-awareness"],
       priority: "high",
       estimatedTime: "5 min"
@@ -96,12 +93,9 @@ const Exercises = () => {
     { 
       id: 2, 
       title: "Create a Mission Statement", 
-      progress: 60, 
-      status: "in-progress",
       intro: "This exercise helps align your business with a clear, motivating direction — essential for making sound decisions, attracting the right customers and staff, and staying focused.",
       category: "planning",
       sections: 3,
-      completedSections: 2,
       tags: ["planning"],
       priority: "high",
       estimatedTime: "15 min"
@@ -109,12 +103,9 @@ const Exercises = () => {
     { 
       id: 3, 
       title: "Use Future-Back Planning", 
-      progress: 0, 
-      status: "new",
       intro: "Envision your ideal future and work backwards step by step to figure out how to get there. Powerful for setting strategy and avoiding reactive thinking.",
       category: "planning",
       sections: 6,
-      completedSections: 0,
       tags: ["planning", "strategy"],
       priority: "high",
       estimatedTime: "25 min"
@@ -122,12 +113,9 @@ const Exercises = () => {
     { 
       id: 4, 
       title: "Define Your Exit Strategy", 
-      progress: 0, 
-      status: "new",
       intro: "Many business owners avoid thinking about the end — but knowing how you want to exit your business brings clarity, motivation, and better day-to-day decisions.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "strategy"],
       priority: "high",
       estimatedTime: "20 min"
@@ -135,12 +123,9 @@ const Exercises = () => {
     { 
       id: 5, 
       title: "Environmental and Social Impact Self-Assessment", 
-      progress: 0, 
-      status: "new",
       intro: "Evaluate how your business is currently engaging with environmental and social responsibility — a key part of being future-fit and resilient.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "sustainability"],
       priority: "medium",
       estimatedTime: "10 min"
@@ -148,12 +133,9 @@ const Exercises = () => {
     { 
       id: 6, 
       title: "Know Your Customer", 
-      progress: 0, 
-      status: "new",
       intro: "If you try to sell to everyone, you end up selling to no one. This exercise helps you identify who your ideal customer really is — so you can focus your time, energy, and money where it counts.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "customers"],
       priority: "high",
       estimatedTime: "20 min"
@@ -161,12 +143,9 @@ const Exercises = () => {
     { 
       id: 7, 
       title: "Create Your '1+1' Proposition", 
-      progress: 0, 
-      status: "new",
       intro: "A '1+1 Proposition' is what makes you stand out. It's the special combination of two things that makes your business uniquely valuable — and hard to copy.",
       category: "planning",
       sections: 4,
-      completedSections: 0,
       tags: ["planning", "strategy"],
       priority: "high",
       estimatedTime: "15 min"
@@ -174,12 +153,9 @@ const Exercises = () => {
     { 
       id: 8, 
       title: "How to Reach Your Customers", 
-      progress: 0, 
-      status: "new",
       intro: "Knowing who your customer is isn't enough — you also need a strategy for how to reach them. This exercise helps you define your communication and sales channels.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "customers"],
       priority: "high",
       estimatedTime: "20 min"
@@ -187,12 +163,9 @@ const Exercises = () => {
     { 
       id: 9, 
       title: "Define Your Geographic Reach", 
-      progress: 0, 
-      status: "new",
       intro: "This exercise sharpens your focus by identifying where you operate best. Knowing your true geographic market saves time, effort, and money — and helps you scale intentionally.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "expansion"],
       priority: "high",
       estimatedTime: "15 min"
@@ -200,12 +173,9 @@ const Exercises = () => {
     { 
       id: 10, 
       title: "Complete Your Future-Fit Business Model Canvas", 
-      progress: 0, 
-      status: "new",
       intro: "This adapted canvas helps you think holistically about your business — not just how it makes money, but also its impact on people and planet. It's a one-page strategy snapshot.",
       category: "planning",
       sections: 10,
-      completedSections: 0,
       tags: ["planning", "strategy"],
       priority: "high",
       estimatedTime: "30 min"
@@ -213,12 +183,9 @@ const Exercises = () => {
     { 
       id: 11, 
       title: "Prepare Your SWOT Analysis", 
-      progress: 0, 
-      status: "new",
       intro: "A well-done SWOT helps you face reality clearly — building on your strengths, addressing weaknesses, seizing opportunities, and preparing for threats.",
       category: "planning",
       sections: 4,
-      completedSections: 0,
       tags: ["planning", "strategy"],
       priority: "high",
       estimatedTime: "20 min"
@@ -226,12 +193,9 @@ const Exercises = () => {
     { 
       id: 12, 
       title: "List Your Networking Opportunities", 
-      progress: 0, 
-      status: "new",
       intro: "Business growth is often about who you know. This exercise helps you map out where you can meet valuable contacts — partners, customers, suppliers, or mentors.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "networking"],
       priority: "high",
       estimatedTime: "15 min"
@@ -239,12 +203,9 @@ const Exercises = () => {
     { 
       id: 13, 
       title: "Assess Your Networking", 
-      progress: 0, 
-      status: "new",
       intro: "Now that you've mapped out your networking opportunities, this exercise helps you evaluate how effective your current efforts are — and where to improve.",
       category: "planning",
       sections: 5,
-      completedSections: 0,
       tags: ["planning", "networking"],
       priority: "high",
       estimatedTime: "10 min"
@@ -252,12 +213,9 @@ const Exercises = () => {
     { 
       id: 14, 
       title: "Think About Your Values", 
-      progress: 0, 
-      status: "new",
       intro: "Your business values shape culture, attract the right team, and guide decision-making — especially when things get tough. This exercise helps you clarify and articulate them.",
       category: "people",
       sections: 5,
-      completedSections: 0,
       tags: ["people", "culture"],
       priority: "high",
       estimatedTime: "20 min"
@@ -265,12 +223,9 @@ const Exercises = () => {
     { 
       id: 15, 
       title: "Are the Right People in the Right Seats?", 
-      progress: 0, 
-      status: "new",
       intro: "This exercise helps you assess whether your team members are playing to their strengths — a key part of reducing stress and building a high-performance business.",
       category: "people",
       sections: 6,
-      completedSections: 0,
       tags: ["people", "leadership"],
       priority: "high",
       estimatedTime: "25 min"
@@ -278,69 +233,50 @@ const Exercises = () => {
     { 
       id: 16, 
       title: "How Do You Recruit and Retain Staff?", 
-      progress: 0, 
-      status: "new",
       intro: "The right people make or break your business. This exercise helps you review how you find, choose, and keep great team members — especially those aligned with your values.",
       category: "people",
       sections: 5,
-      completedSections: 0,
       tags: ["people", "recruitment"],
       priority: "high",
       estimatedTime: "20 min"
-    },
-    { 
-      id: 17, 
-      title: "Future Growth Planning", 
-      progress: 15, 
-      status: "in-progress",
-      intro: "Map out your company's growth trajectory for the next 3-5 years.",
-      category: "planning",
-      sections: 6,
-      completedSections: 1,
-      tags: ["planning", "profit"],
-      priority: "medium",
-      estimatedTime: "30 min"
-    },
-    { 
-      id: 18, 
-      title: "Customer Persona Development", 
-      progress: 0, 
-      status: "suggested",
-      intro: "Create detailed profiles of your ideal customers to improve targeting.",
-      category: "planning",
-      sections: 3,
-      completedSections: 0,
-      tags: ["planning"],
-      priority: "low",
-      estimatedTime: "25 min"
-    },
-    { 
-      id: 19, 
-      title: "Profit Margin Analysis", 
-      progress: 0, 
-      status: "suggested",
-      intro: "Analyze your current profit margins and identify opportunities for improvement.",
-      category: "profit",
-      sections: 5,
-      completedSections: 0,
-      tags: ["profit"],
-      priority: "medium",
-      estimatedTime: "20 min"
-    },
-    { 
-      id: 20, 
-      title: "Leadership Development Plan", 
-      progress: 100, 
-      status: "completed",
-      intro: "Create a structured plan to develop leadership capabilities in your organization.",
-      category: "people",
-      sections: 4,
-      completedSections: 4,
-      tags: ["people"],
-      priority: "high",
-      estimatedTime: "25 min"
-    },
+    }
   ];
+
+  // Fetch exercise answers from database
+  const { data: exerciseAnswers = [], isLoading: isLoadingAnswers } = useQuery({
+    queryKey: ['exercise-answers', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('exercise_answers')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching exercise answers:', error);
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Combine static definitions with dynamic data from database
+  const exercises = exerciseDefinitions.map(definition => {
+    const savedAnswer = exerciseAnswers.find(answer => answer.exercise_id === definition.id);
+    
+    return {
+      ...definition,
+      progress: savedAnswer?.progress || 0,
+      status: savedAnswer?.status || "new",
+      completedSections: savedAnswer ? 
+        Object.values(savedAnswer.answers || {}).filter(answer => answer && answer !== '').length : 0,
+      completed_at: savedAnswer?.completed_at,
+      answers: savedAnswer?.answers || {}
+    };
+  });
 
   // Check if exercise is accessible
   const isExerciseAccessible = (exerciseId: number) => {
