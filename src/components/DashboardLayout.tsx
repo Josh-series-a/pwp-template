@@ -139,18 +139,20 @@ const SidebarNavigation = () => {
     {
       name: 'Labs',
       href: '/dashboard/labs',
-      icon: TestTube
+      icon: TestTube,
+      hidden: true
     }, 
     {
       name: 'Book a Session',
       href: '/dashboard/book-session',
       icon: Calendar,
-      disabled: true
+      disabled: true,
+      hidden: true
     }
   ];
   return <div className="flex-1 px-4">
     <div className="space-y-1">
-      {navigation.map(item => {
+      {navigation.filter(item => !item.hidden).map(item => {
         const isActive = location.pathname === item.href;
         return <div key={item.name}>
           <Link 
