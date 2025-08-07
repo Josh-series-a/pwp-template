@@ -132,10 +132,6 @@ const StaticHeader: React.FC = () => {
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-medium text-foreground">{userName}</span>
-                <span className="text-xs text-muted-foreground">{userEmail}</span>
-              </div>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
