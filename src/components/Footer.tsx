@@ -56,16 +56,6 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link to="/chat" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  AI Analysis
-                </Link>
-              </li>
-              <li>
                 <Link to="/contact" className="text-gray-400 hover:text-white transition-colors duration-300">
                   Contact
                 </Link>
