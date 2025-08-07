@@ -61,4 +61,22 @@ export const packageService = {
     
     return result.packages;
   },
+
+  async deletePackage(packageId: string): Promise<void> {
+    const url = new URL(PACKAGES_FUNCTION_URL);
+    url.searchParams.append('packageId', packageId);
+
+    const response = await fetch(url.toString(), {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3N4anpid3p1amVwcWdteHNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4MTk4NTMsImV4cCI6MjA1ODM5NTg1M30.8DC-2c-QaqQlGbwrw2bNutDfTJYFFEPtPbzhWobZOLY`,
+      },
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to delete package');
+    }
+  },
 };

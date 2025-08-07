@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, ExternalLink } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, ExternalLink, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -53,6 +53,19 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
       setIsLoading(false);
     }
   };
+  const handleDeletePackage = async (e: React.MouseEvent, packageId: string) => {
+    e.stopPropagation();
+    const confirmDelete = window.confirm('Are you sure you want to delete this package? This action cannot be undone.');
+    if (!confirmDelete) return;
+    try {
+      await packageService.deletePackage(packageId);
+      setPackages((prev) => prev.filter((p) => p.id !== packageId));
+      toast.success('Package deleted');
+    } catch (error) {
+      console.error('Error deleting package:', error);
+      toast.error('Failed to delete package');
+    }
+  };
 
   const handlePackageClick = (packageId: string) => {
     // Navigate to package detail page
@@ -60,7 +73,6 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
     const packageDetailPath = `${currentPath}/${packageId}`;
     navigate(packageDetailPath);
   };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -98,10 +110,18 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
               className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
             >
               <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 h-full flex flex-col justify-between p-6">
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:bg-destructive/10"
+                    onClick={(e) => handleDeletePackage(e, pkg.id)}
+                    aria-label="Delete package"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                   <ExternalLink className="h-5 w-5 text-gray-700" />
                 </div>
-                
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-gray-900 leading-tight line-clamp-3">
                     {pkg.package_name}

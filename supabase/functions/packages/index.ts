@@ -6,6 +6,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
 };
 
 interface Document {
@@ -35,6 +36,8 @@ serve(async (req) => {
       return await handleCreatePackage(req, supabaseClient);
     } else if (req.method === 'GET') {
       return await handleGetPackages(req, supabaseClient);
+    } else if (req.method === 'DELETE') {
+      return await handleDeletePackage(req, supabaseClient);
     } else {
       return new Response(
         JSON.stringify({ error: 'Method not allowed' }),
@@ -185,6 +188,73 @@ async function handleGetPackages(req: Request, supabaseClient: any) {
     JSON.stringify({ 
       success: true, 
       packages: packages || [] 
+    }),
+    { 
+      status: 200, 
+      headers: { 
+        'Content-Type': 'application/json',
+        ...corsHeaders 
+      } 
+    }
+  );
+}
+
+async function handleDeletePackage(req: Request, supabaseClient: any) {
+  const url = new URL(req.url);
+  const packageId = url.searchParams.get('packageId');
+
+  if (!packageId) {
+    return new Response(
+      JSON.stringify({ error: 'Missing packageId parameter' }),
+      { 
+        status: 400, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        } 
+      }
+    );
+  }
+
+  const { data, error } = await supabaseClient
+    .from('packages')
+    .delete()
+    .eq('id', packageId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error deleting package:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to delete package' }),
+      { 
+        status: 500, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        } 
+      }
+    );
+  }
+
+  if (!data) {
+    return new Response(
+      JSON.stringify({ error: 'Package not found' }),
+      { 
+        status: 404, 
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders 
+        } 
+      }
+    );
+  }
+
+  return new Response(
+    JSON.stringify({ 
+      success: true,
+      message: 'Package deleted successfully',
+      id: packageId
     }),
     { 
       status: 200, 
