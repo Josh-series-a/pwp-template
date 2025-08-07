@@ -537,7 +537,7 @@ const Dashboard = () => {
           
           {/* Call to Action */}
           <Card className="border-0 bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground shadow-xl">
-            <CardHeader className="pb-4">
+            <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-lg">
                   <Sparkles className="h-6 w-6" />
