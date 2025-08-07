@@ -187,7 +187,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
   hideHeader = false
 }) => {
-  return <SidebarProvider defaultOpen={false}>
+  return <SidebarProvider defaultOpen={true}>
     <div className="min-h-screen flex w-full overflow-hidden group">        
       <Sidebar 
         collapsible="icon" 
