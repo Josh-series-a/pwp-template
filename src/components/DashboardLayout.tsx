@@ -207,7 +207,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <StaticHeader />
       
       <main className="flex-1 bg-background/50 transition-all duration-200 ease-linear ml-0 lg:ml-[5rem] lg:group-data-[state=expanded]:ml-[16rem] overflow-y-auto h-screen pt-16">
-        <div className="w-full h-full flex flex-col mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-none sm:max-w-7xl">
+        <div className="w-full h-full flex flex-col mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {!hideHeader && (
             <div className="flex items-center justify-start py-4 sm:py-6 flex-shrink-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground text-center">{title}</h1>
