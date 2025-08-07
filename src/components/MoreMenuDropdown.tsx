@@ -37,7 +37,7 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
       
       {/* More Menu Dropdown */}
       {isOpen && (
-        <div className="fixed left-60 bottom-20 w-72 bg-popover border border-border rounded-xl shadow-lg z-50">
+        <div className="fixed left-64 bottom-20 w-72 bg-popover border border-border rounded-xl shadow-lg z-50">
           {/* Content - 2 Grids */}
           <div className="p-3">
             <div className="grid grid-cols-2 gap-4">
