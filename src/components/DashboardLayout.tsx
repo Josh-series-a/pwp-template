@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut, Book, TestTube } from 'lucide-react';
+import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut, Book, TestTube, HelpCircle } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,6 +82,18 @@ const SidebarProfile = () => {
           <p className="text-xs text-muted-foreground mb-3">Unlock more features and capabilities</p>
           <button className="w-full bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors">
             Upgrade Now
+          </button>
+        </div>
+      </div>
+      
+      {/* Footer Icons */}
+      <div className="px-4 py-3 border-t border-sidebar-border/40">
+        <div className="flex group-data-[collapsible=icon]:flex-col items-center group-data-[collapsible=icon]:items-center gap-3 group-data-[collapsible=icon]:gap-2">
+          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+            <Bell className="h-4 w-4" />
+          </button>
+          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+            <HelpCircle className="h-4 w-4" />
           </button>
         </div>
       </div>
