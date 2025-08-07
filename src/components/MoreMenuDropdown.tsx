@@ -37,39 +37,24 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
       
       {/* More Menu Dropdown */}
       {isOpen && (
-        <div className="absolute left-full top-0 ml-2 w-56 bg-popover border border-border rounded-lg shadow-lg z-50">
-          {/* Header */}
-          <div className="p-3 border-b border-border">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-sm">More</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="h-6 w-6 p-0"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-2 space-y-3 max-h-80 overflow-y-auto">
+        <div className="absolute right-full top-0 mr-2 w-48 bg-popover border border-border rounded-xl shadow-lg z-50">
+          {/* Content - 2 Grids */}
+          <div className="p-3 space-y-4">
             {/* First Grid - More */}
             <div>
-              <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide px-2">More</h3>
-              <div className="space-y-0.5">
+              <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">More</h3>
+              <div className="grid grid-cols-2 gap-1">
                 {moreLinks.map((link) => (
                   <a
                     key={link.name}
                     href={link.href}
-                    className="flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-accent transition-colors group text-sm"
+                    className="flex flex-col items-center p-2 rounded-lg hover:bg-accent transition-colors group text-center"
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
                   >
-                    <span>{link.name}</span>
+                    <span className="text-xs font-medium leading-tight">{link.name}</span>
                     {link.external && (
-                      <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      <ExternalLink className="h-2 w-2 text-muted-foreground group-hover:text-foreground transition-colors mt-1" />
                     )}
                   </a>
                 ))}
@@ -78,19 +63,19 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
 
             {/* Second Grid - Company */}
             <div>
-              <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide px-2">Company</h3>
-              <div className="space-y-0.5">
+              <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">Company</h3>
+              <div className="grid grid-cols-2 gap-1">
                 {companyLinks.map((link) => (
                   <a
                     key={link.name}
                     href={link.href}
-                    className="flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-accent transition-colors group text-sm"
+                    className="flex flex-col items-center p-2 rounded-lg hover:bg-accent transition-colors group text-center"
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
                   >
-                    <span>{link.name}</span>
+                    <span className="text-xs font-medium leading-tight">{link.name}</span>
                     {link.external && (
-                      <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      <ExternalLink className="h-2 w-2 text-muted-foreground group-hover:text-foreground transition-colors mt-1" />
                     )}
                   </a>
                 ))}
