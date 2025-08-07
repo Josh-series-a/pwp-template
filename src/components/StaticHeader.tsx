@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Menu, Users, HelpCircle, Crown, Settings, LogOut } from 'lucide-react';
+import { CreditCard, Menu, HelpCircle, Crown, Settings, LogOut } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -159,11 +159,6 @@ const StaticHeader: React.FC = () => {
             <DropdownMenuItem className="cursor-pointer">
               <Crown className="mr-2 h-4 w-4" />
               Get a plan
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem className="cursor-pointer">
-              <Users className="mr-2 h-4 w-4" />
-              Add members
             </DropdownMenuItem>
             
             <DropdownMenuSeparator />
