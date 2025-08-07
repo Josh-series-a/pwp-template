@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Home, FileText, BookOpen, Dumbbell, Calendar, ChevronLeft, ChevronRight, Search, Bell, Settings, LogOut, Book, TestTube, HelpCircle, Linkedin, MoreHorizontal } from 'lucide-react';
@@ -12,6 +12,7 @@ import { authService } from '@/utils/authService';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import StaticHeader from './StaticHeader';
+import NotificationsPanel from './NotificationsPanel';
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -53,7 +54,7 @@ const SidebarLogo = () => {
   </div>;
 };
 
-const SidebarProfile = () => {
+const SidebarProfile = ({ onNotificationsOpen }: { onNotificationsOpen: () => void }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   
@@ -89,7 +90,10 @@ const SidebarProfile = () => {
       {/* Footer Icons */}
       <div className="px-4 py-3 border-t border-sidebar-border/40">
         <div className="flex group-data-[collapsible=icon]:flex-col items-center group-data-[collapsible=icon]:items-center gap-3 group-data-[collapsible=icon]:gap-2">
-          <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+          <button 
+            onClick={onNotificationsOpen}
+            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
+          >
             <Bell className="h-4 w-4" />
           </button>
           <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
@@ -188,8 +192,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
   hideHeader = false
 }) => {
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
   return <SidebarProvider defaultOpen={true}>
-    <div className="min-h-screen flex w-full overflow-hidden group">        
+    <div className="min-h-screen flex w-full overflow-hidden group">
+        
+      {/* Notifications Panel */}
+      <NotificationsPanel 
+        isOpen={isNotificationsOpen} 
+        onClose={() => setIsNotificationsOpen(false)} 
+      />
       <Sidebar 
         collapsible="icon" 
         className="fixed inset-y-0 left-0 z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar overflow-y-auto" 
@@ -201,7 +213,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <SidebarContent className="flex flex-col h-full">
           <SidebarLogo />
           <SidebarNavigation />
-          <SidebarProfile />
+          <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} />
         </SidebarContent>
       </Sidebar>
       
