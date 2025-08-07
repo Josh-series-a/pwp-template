@@ -1,13 +1,12 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Menu } from 'lucide-react';
+import { CreditCard, Menu, Users, HelpCircle, Globe, Palette, Code, Crown, Settings, LogOut } from 'lucide-react';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Settings, LogOut } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import CreditsDisplay from './CreditsDisplay';
@@ -20,8 +19,9 @@ const StaticHeader: React.FC = () => {
   const { user, signOut } = useAuth();
   const isCollapsed = state === 'collapsed';
   
-  const userName = user?.user_metadata?.name || 'User';
-  const userInitials = user?.user_metadata?.name ? userName.split(' ').map(part => part[0]).join('').toUpperCase() : 'U';
+  const userName = user?.user_metadata?.name || 'Josh O\'Shea';
+  const userEmail = user?.email || 'josh@series-a.co.uk';
+  const userInitials = user?.user_metadata?.name ? userName.split(' ').map(part => part[0]).join('').toUpperCase() : 'JO';
   
   const handleSignOut = async () => {
     try {
@@ -125,26 +125,124 @@ const StaticHeader: React.FC = () => {
         {/* Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center space-x-2 p-1 rounded-lg hover:bg-accent transition-colors duration-200">
+            <button className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent transition-colors duration-200">
               <Avatar className="h-8 w-8 ring-2 ring-accent/30">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
                 <AvatarFallback className="bg-primary text-primary-foreground font-medium text-xs">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
+              <div className="hidden md:flex flex-col items-start">
+                <span className="text-sm font-medium text-foreground">{userName}</span>
+                <span className="text-xs text-muted-foreground">{userEmail}</span>
+              </div>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
+            {/* User Info Header */}
+            <div className="flex items-center gap-3 p-3 pb-2">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={user?.user_metadata?.avatar_url} />
+                <AvatarFallback className="bg-primary text-primary-foreground font-medium">
+                  {userInitials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-foreground">{userName}</span>
+                <span className="text-xs text-muted-foreground">{userEmail}</span>
+              </div>
+            </div>
+            
+            <DropdownMenuSeparator />
+            
+            {/* Plan Actions */}
+            <DropdownMenuItem className="cursor-pointer">
+              <Crown className="mr-2 h-4 w-4" />
+              Get a plan
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem className="cursor-pointer">
+              <Users className="mr-2 h-4 w-4" />
+              Add members
+            </DropdownMenuItem>
+            
+            <DropdownMenuSeparator />
+            
+            {/* Subscription Info */}
+            <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+              Subscription
+            </DropdownMenuLabel>
+            <DropdownMenuItem className="cursor-pointer justify-between">
+              <span>Free</span>
+            </DropdownMenuItem>
+            
+            <DropdownMenuSeparator />
+            
+            {/* Settings */}
             <DropdownMenuItem asChild>
               <Link to="/account" className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
-                Account Settings
+                Account
               </Link>
             </DropdownMenuItem>
+            
+            {/* Language Submenu */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Globe className="mr-2 h-4 w-4" />
+                Language
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem className="cursor-pointer justify-between">
+                  <span>English</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <span>Spanish</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <span>French</span>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            
+            {/* Theme Submenu */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Palette className="mr-2 h-4 w-4" />
+                Theme
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem className="cursor-pointer justify-between">
+                  <span>Light</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <span>Dark</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <span>System</span>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            
+            <DropdownMenuItem className="cursor-pointer">
+              <Code className="mr-2 h-4 w-4" />
+              Use AI code
+            </DropdownMenuItem>
+            
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+            
+            {/* Help */}
+            <DropdownMenuItem className="cursor-pointer">
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Help center
+            </DropdownMenuItem>
+            
+            <DropdownMenuSeparator />
+            
+            {/* Sign Out */}
+            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
-              Sign out
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
