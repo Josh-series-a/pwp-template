@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 interface MoreMenuDropdownProps {
@@ -8,21 +9,17 @@ interface MoreMenuDropdownProps {
 }
 
 const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) => {
-  const moreLinks = [
-    { name: 'API for Developers', href: '#', external: true },
-    { name: 'Android', href: '#', external: true },
-    { name: 'iOS', href: '#', external: true },
-    { name: 'Sell content', href: '#', external: true },
-    { name: 'Company', href: '#', external: true },
+  const quickLinks = [
+    { name: 'Home', href: '/', external: false },
+    { name: 'About Us', href: '/about', external: false },
+    { name: 'Products', href: '/products', external: false },
+    { name: 'Contact', href: '/contact', external: false },
   ];
 
-  const companyLinks = [
-    { name: 'About us', href: '#', external: true },
-    { name: 'Pricing', href: '#', external: true },
-    { name: 'AI Partners Program', href: '#', external: true },
-    { name: 'Events', href: '#', external: true },
-    { name: 'Blog', href: '#', external: true },
-    { name: 'Terms of use', href: '#', external: true },
+  const resourceLinks = [
+    { name: 'Exercises', href: '/dashboard/exercises', external: false },
+    { name: 'Reports', href: '/dashboard/reports', external: false },
+    { name: 'Help Center', href: '/help', external: false },
   ];
 
   return (
@@ -41,41 +38,39 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
           {/* Content - 2 Grids */}
           <div className="p-3">
             <div className="grid grid-cols-2 gap-4">
-              {/* More Section - Left */}
+              {/* Quick Links Section - Left */}
               <div>
-                <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">More</h3>
+                <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">Quick Links</h3>
                 <div className="border-t border-border pt-2">
                   <div className="space-y-1">
-                    {moreLinks.map((link) => (
-                      <a
+                    {quickLinks.map((link) => (
+                      <Link
                         key={link.name}
-                        href={link.href}
+                        to={link.href}
                         className="block text-xs text-foreground hover:text-primary transition-colors"
-                        target={link.external ? "_blank" : undefined}
-                        rel={link.external ? "noopener noreferrer" : undefined}
+                        onClick={onClose}
                       >
                         {link.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Company Section - Right */}
+              {/* Resources Section - Right */}
               <div>
-                <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">Company</h3>
+                <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">Resources</h3>
                 <div className="border-t border-border pt-2">
                   <div className="space-y-1">
-                    {companyLinks.map((link) => (
-                      <a
+                    {resourceLinks.map((link) => (
+                      <Link
                         key={link.name}
-                        href={link.href}
+                        to={link.href}
                         className="block text-xs text-foreground hover:text-primary transition-colors"
-                        target={link.external ? "_blank" : undefined}
-                        rel={link.external ? "noopener noreferrer" : undefined}
+                        onClick={onClose}
                       >
                         {link.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
