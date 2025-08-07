@@ -43,7 +43,7 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
             {/* First Grid - More */}
             <div>
               <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">More</h3>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-2 gap-2">
                 {moreLinks.map((link) => (
                   <a
                     key={link.name}
@@ -64,7 +64,7 @@ const MoreMenuDropdown: React.FC<MoreMenuDropdownProps> = ({ isOpen, onClose }) 
             {/* Second Grid - Company */}
             <div>
               <h3 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">Company</h3>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-2 gap-2">
                 {companyLinks.map((link) => (
                   <a
                     key={link.name}
