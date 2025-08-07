@@ -79,8 +79,8 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
       )}
       
       {/* Notifications Panel */}
-      <div className={`fixed left-16 top-0 h-screen w-64 bg-background border-r border-border shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
+      <div className={`fixed left-0 top-0 h-screen w-64 bg-background border-r border-border shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${
+        isOpen ? 'translate-x-64' : '-translate-x-full'
       }`}>
         {/* Header */}
         <div className="p-4 border-b border-border">
@@ -140,6 +140,12 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ isOpen, onClose
           </div>
         </ScrollArea>
 
+        {/* Footer */}
+        <div className="p-4 border-t border-border">
+          <Button variant="outline" size="sm" className="w-full">
+            Mark All as Read
+          </Button>
+        </div>
       </div>
     </>
   );
