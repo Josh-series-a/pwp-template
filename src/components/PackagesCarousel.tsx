@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, ExternalLink, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -22,6 +22,7 @@ interface Package {
   documents: PackageDocument[];
   created_at: string;
   updated_at: string;
+  cover_image_url?: string;
 }
 
 interface PackagesCarouselProps {
@@ -42,9 +43,37 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
   const fetchPackages = async () => {
     setIsLoading(true);
     try {
-      // Instead of fetching demo packages, use the packageService to get user-specific packages
+      // Fetch packages and enhance with cover images
       const userPackages = await packageService.getPackages(reportId);
-      setPackages(userPackages || []);
+      
+      // Fetch cover images for each package
+      const packagesWithCovers = await Promise.all(
+        userPackages.map(async (pkg) => {
+          try {
+            // Try to get cover image from storage
+            const { data: files } = await supabase.storage
+              .from('package-covers')
+              .list(`${pkg.user_id}`, {
+                search: `${pkg.id}`,
+              });
+
+            if (files && files.length > 0) {
+              const { data } = supabase.storage
+                .from('package-covers')
+                .getPublicUrl(`${pkg.user_id}/${files[0].name}`);
+              
+              return { ...pkg, cover_image_url: data.publicUrl };
+            }
+            
+            return pkg;
+          } catch (error) {
+            console.error('Error fetching cover image for package:', pkg.id, error);
+            return pkg;
+          }
+        })
+      );
+      
+      setPackages(packagesWithCovers || []);
     } catch (error) {
       console.error('Error fetching packages:', error);
       toast({ title: 'Failed to load packages', variant: 'destructive' });
@@ -106,14 +135,28 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
               onClick={() => handlePackageClick(pkg.id)}
               className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
             >
-              <div className="bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400 h-full flex flex-col justify-between p-6">
-                <div className="flex justify-end gap-2">
+              {/* Background Image or Gradient Fallback */}
+              <div 
+                className={`h-full flex flex-col justify-between p-6 ${
+                  pkg.cover_image_url 
+                    ? 'bg-cover bg-center bg-no-repeat' 
+                    : 'bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400'
+                }`}
+                style={pkg.cover_image_url ? { backgroundImage: `url(${pkg.cover_image_url})` } : {}}
+              >
+                {/* Dark overlay for better text readability when using images */}
+                {pkg.cover_image_url && (
+                  <div className="absolute inset-0 bg-black/40 rounded-xl" />
+                )}
+                <div className="flex justify-end gap-2 relative z-10">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-destructive hover:bg-destructive/10"
+                        className={`text-destructive hover:bg-destructive/10 ${
+                          pkg.cover_image_url ? 'bg-white/20 hover:bg-white/30' : ''
+                        }`}
                         onClick={(e) => e.stopPropagation()}
                         aria-label="Delete package"
                       >
@@ -143,14 +186,22 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                   </AlertDialog>
                   
                 </div>
-                <div className="space-y-3">
-                  <h2 className="text-xl font-bold text-gray-900 leading-tight line-clamp-3">
+                <div className="space-y-3 relative z-10">
+                  <h2 className={`text-xl font-bold leading-tight line-clamp-3 ${
+                    pkg.cover_image_url ? 'text-white drop-shadow-lg' : 'text-gray-900'
+                  }`}>
                     {pkg.package_name}
                   </h2>
-                  <p className="text-base font-medium text-gray-800">
+                  <p className={`text-base font-medium ${
+                    pkg.cover_image_url ? 'text-white/90 drop-shadow' : 'text-gray-800'
+                  }`}>
                     {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''}
                   </p>
-                  <Badge variant="outline" className="text-xs bg-white/80 w-fit">
+                  <Badge variant="outline" className={`text-xs w-fit ${
+                    pkg.cover_image_url 
+                      ? 'bg-white/90 text-gray-900 border-white/50' 
+                      : 'bg-white/80'
+                  }`}>
                     {new Date(pkg.created_at).toLocaleDateString()}
                   </Badge>
                 </div>
