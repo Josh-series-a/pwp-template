@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { apiService } from '@/utils/apiService';
 import PackageQueueSection from '@/components/dashboard/PackageQueueSection';
 import RecentPackagesCarousel from '@/components/dashboard/RecentPackagesCarousel';
+import RecentReportsGrid from '@/components/dashboard/RecentReportsGrid';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -228,6 +229,9 @@ const Dashboard = () => {
             <PackageQueueSection />
             <RecentPackagesCarousel />
           </div>
+
+          {/* Recent Reports Grid */}
+          <RecentReportsGrid />
 
           {/* Dashboard Pages Overview */}
           <div className="space-y-6">
