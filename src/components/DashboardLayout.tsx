@@ -55,7 +55,7 @@ const SidebarLogo = () => {
   </div>;
 };
 
-const SidebarProfile = ({ onNotificationsOpen, onMoreMenuOpen }: { onNotificationsOpen: () => void; onMoreMenuOpen: () => void }) => {
+const SidebarProfile = ({ onNotificationsOpen, isMoreMenuOpen, onMoreMenuOpen, onMoreMenuClose }: { onNotificationsOpen: () => void; isMoreMenuOpen: boolean; onMoreMenuOpen: () => void; onMoreMenuClose: () => void }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   
@@ -103,12 +103,18 @@ const SidebarProfile = ({ onNotificationsOpen, onMoreMenuOpen }: { onNotificatio
           <button className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
             <Linkedin className="h-4 w-4" />
           </button>
-          <button 
-            onClick={onMoreMenuOpen}
-            className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={onMoreMenuOpen}
+              className="flex items-center justify-center h-9 w-9 rounded-lg hover:bg-sidebar-accent transition-colors duration-200 text-sidebar-foreground/70 hover:text-sidebar-foreground group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+            <MoreMenuDropdown 
+              isOpen={isMoreMenuOpen} 
+              onClose={onMoreMenuClose} 
+            />
+          </div>
         </div>
       </div>
     </>
@@ -207,12 +213,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         isOpen={isNotificationsOpen} 
         onClose={() => setIsNotificationsOpen(false)} 
       />
-      
-      {/* More Menu Dropdown */}
-      <MoreMenuDropdown 
-        isOpen={isMoreMenuOpen} 
-        onClose={() => setIsMoreMenuOpen(false)} 
-      />
       <Sidebar 
         collapsible="icon" 
         className="fixed inset-y-0 left-0 z-30 shadow-lg border-r border-sidebar-border/50 bg-sidebar" 
@@ -224,7 +224,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <SidebarContent className="flex flex-col h-full overflow-y-auto">
           <SidebarLogo />
           <SidebarNavigation />
-          <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} onMoreMenuOpen={() => setIsMoreMenuOpen(true)} />
+          <SidebarProfile onNotificationsOpen={() => setIsNotificationsOpen(true)} isMoreMenuOpen={isMoreMenuOpen} onMoreMenuOpen={() => setIsMoreMenuOpen(true)} onMoreMenuClose={() => setIsMoreMenuOpen(false)} />
         </SidebarContent>
       </Sidebar>
       
