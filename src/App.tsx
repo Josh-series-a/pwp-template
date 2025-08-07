@@ -88,17 +88,17 @@ const App = () => (
                   <Reports />
                 </RoleProtectedRoute>
               } />
-              <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId" element={
+              <Route path="/dashboard/reports/:companySlug/:reportId" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <ReportDetail />
                 </RoleProtectedRoute>
               } />
-              <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId" element={
+              <Route path="/dashboard/reports/:companySlug/:reportId/:packageId" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <PackageDetail />
                 </RoleProtectedRoute>
               } />
-              <Route path="/dashboard/reports/:companySlug/:exerciseId/:reportId/:packageId/preview" element={
+              <Route path="/dashboard/reports/:companySlug/:reportId/:packageId/preview" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <DocumentPreview />
                 </RoleProtectedRoute>

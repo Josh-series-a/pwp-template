@@ -174,7 +174,7 @@ const Reports = () => {
 
   const navigateToReport = (report: Report) => {
     const companySlug = report.company.toLowerCase().replace(/\s+/g, '-');
-    navigate(`/dashboard/reports/${companySlug}/${report.exerciseId || 'unknown'}/${report.id}`);
+    navigate(`/dashboard/reports/${companySlug}/${report.id}`);
   };
 
   const handleDownload = async (report: Report) => {
@@ -228,7 +228,7 @@ This report was generated on ${new Date().toLocaleDateString()}.
 
   const handleShare = async (report: Report) => {
     try {
-      const shareUrl = `${window.location.origin}/dashboard/reports/${report.company.toLowerCase().replace(/\s+/g, '-')}/${report.exerciseId || 'unknown'}/${report.id}`;
+      const shareUrl = `${window.location.origin}/dashboard/reports/${report.company.toLowerCase().replace(/\s+/g, '-')}/${report.id}`;
       
       if (navigator.share) {
         await navigator.share({

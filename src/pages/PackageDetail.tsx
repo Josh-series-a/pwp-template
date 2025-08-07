@@ -26,7 +26,7 @@ interface Package {
 }
 
 const PackageDetail = () => {
-  const { companySlug, exerciseId, reportId, packageId } = useParams();
+  const { companySlug, reportId, packageId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [packageData, setPackageData] = useState<Package | null>(null);
@@ -48,7 +48,7 @@ const PackageDetail = () => {
         setPackageData(currentPackage);
       } else {
         toast.error('Package not found');
-        navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportId}`);
+        navigate(`/dashboard/reports/${companySlug}/${reportId}`);
       }
     } catch (error) {
       console.error('Error fetching package data:', error);
@@ -59,7 +59,7 @@ const PackageDetail = () => {
   };
 
   const handleBackToReport = () => {
-    navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportId}`);
+    navigate(`/dashboard/reports/${companySlug}/${reportId}`);
   };
 
   const handleDocumentClick = (doc: any) => {
@@ -67,7 +67,7 @@ const PackageDetail = () => {
       url: encodeURIComponent(doc.url),
       title: encodeURIComponent(doc.title)
     });
-    navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportId}/${packageId}/preview?${params.toString()}`);
+    navigate(`/dashboard/reports/${companySlug}/${reportId}/${packageId}/preview?${params.toString()}`);
   };
 
   const openInNewTab = (url: string) => {

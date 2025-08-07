@@ -28,7 +28,7 @@ interface BusinessHealthData {
 }
 
 const ReportDetail = () => {
-  const { companySlug, exerciseId, reportId } = useParams();
+  const { companySlug, reportId } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
@@ -51,7 +51,7 @@ const ReportDetail = () => {
 
   useEffect(() => {
     const fetchReportData = async () => {
-      if (!companySlug || !exerciseId || !reportId) return;
+      if (!companySlug || !reportId) return;
       
       setIsLoading(true);
       try {
@@ -154,7 +154,7 @@ const ReportDetail = () => {
     };
 
     fetchReportData();
-  }, [companySlug, exerciseId, reportId]);
+  }, [companySlug, reportId]);
 
   if (isLoading) {
     return <ReportLoadingState />;
