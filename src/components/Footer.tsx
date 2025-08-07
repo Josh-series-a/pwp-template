@@ -68,11 +68,6 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white mb-4">Resources</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/read" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  Business Insights
-                </Link>
-              </li>
-              <li>
                 <Link to="/exercises" className="text-gray-400 hover:text-white transition-colors duration-300">
                   Exercises
                 </Link>
@@ -83,9 +78,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300">
+                <Link to="/help" className="text-gray-400 hover:text-white transition-colors duration-300">
                   Help Center
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
