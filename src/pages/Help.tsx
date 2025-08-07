@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { 
@@ -189,18 +190,18 @@ const Help = () => {
         {/* FAQ Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-6">Frequently Asked Questions</h2>
-          <div className="space-y-4">
+          <Accordion type="multiple" className="space-y-4">
             {frequentlyAsked.map((faq, index) => (
-              <Card key={index} className="border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
-                <CardHeader>
-                  <CardTitle className="text-lg text-white">{faq.question}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300">{faq.answer}</p>
-                </CardContent>
-              </Card>
+              <AccordionItem key={index} value={`item-${index}`} className="border-0 shadow-xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg px-6">
+                <AccordionTrigger className="text-lg font-semibold text-white hover:no-underline py-4">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-gray-300 pb-4">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </div>
 
         {/* Still Need Help */}
