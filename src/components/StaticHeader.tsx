@@ -118,10 +118,9 @@ const StaticHeader: React.FC = () => {
       <div className="flex items-center gap-4 ml-auto">
         <CreditsDisplay />
         <HealthScoreCreditsDisplay />
-        <Button onClick={handleBuyCredits} variant="outline" size="sm" className="gap-2">
-          <CreditCard className="h-4 w-4" />
+        <button onClick={handleBuyCredits} className="text-yellow-600 hover:text-yellow-700 transition-colors text-sm font-medium">
           Buy Credits
-        </Button>
+        </button>
         
         {/* Profile Dropdown */}
         <DropdownMenu>
