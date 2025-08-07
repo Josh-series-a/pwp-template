@@ -139,7 +139,7 @@ const CreditsDisplay: React.FC<CreditsDisplayProps> = ({
   }
 
   return (
-    <Badge variant="outline" className={`${className} px-2 py-1`}>
+    <Badge variant="outline" className={`${className} px-2 py-1 flex items-center gap-1.5`}>
       <Coins className="h-3 w-3 text-yellow-600" />
       <span className="font-medium">{credits.credits}</span>
     </Badge>
