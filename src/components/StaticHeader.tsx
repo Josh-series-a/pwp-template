@@ -13,7 +13,15 @@ import CreditsDisplay from './CreditsDisplay';
 import HealthScoreCreditsDisplay from './HealthScoreCreditsDisplay';
 
 const StaticHeader: React.FC = () => {
-  const { toggleSidebar, state } = useSidebar();
+  // Try to use sidebar context, but don't fail if it's not available
+  let sidebarContext;
+  try {
+    sidebarContext = useSidebar();
+  } catch {
+    sidebarContext = { toggleSidebar: () => {}, state: 'expanded' };
+  }
+  
+  const { toggleSidebar, state } = sidebarContext;
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
