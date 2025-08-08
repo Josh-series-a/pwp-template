@@ -176,14 +176,11 @@ const PackageDocuments = () => {
                       <CardTitle className="text-lg font-semibold line-clamp-2">
                         {doc.name}
                       </CardTitle>
-                      <div className="flex gap-2">
-                        <Badge variant="outline" className="text-xs">
-                          Version {doc.versionNumber}
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          {new Date(doc.packageCreatedAt).toLocaleDateString()}
-                        </Badge>
-                      </div>
+                       <div className="flex gap-2">
+                         <Badge variant="secondary" className="text-xs">
+                           {new Date(doc.packageCreatedAt).toLocaleDateString()}
+                         </Badge>
+                       </div>
                     </CardHeader>
                     <CardContent className="pt-0">
                       <div className="flex justify-end items-center">
