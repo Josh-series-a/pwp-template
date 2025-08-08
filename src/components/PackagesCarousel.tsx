@@ -280,7 +280,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                     >
                       {/* Dark overlay for better text readability */}
                       {packagesInGroup[0]?.cover_image_url && (
-                        <div className="absolute inset-0 bg-black/20 rounded-xl" />
+                        <div className="absolute inset-0 bg-black/10 rounded-xl" />
                       )}
                       
                       {/* Folder Icon and Expand/Collapse indicator */}
