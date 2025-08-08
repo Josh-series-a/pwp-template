@@ -283,38 +283,6 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                         <div className="absolute inset-0 bg-black/10 rounded-xl" />
                       )}
                       
-                      {/* Folder Icon and Expand/Collapse indicator */}
-                      <div className="flex justify-between items-start relative z-10">
-                        <div className="flex items-center gap-3">
-                          {isExpanded ? (
-                            <FolderOpen className={`h-6 w-6 ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`} />
-                          ) : (
-                            <Folder className={`h-6 w-6 ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`} />
-                          )}
-                          <Badge variant={packagesInGroup[0]?.cover_image_url ? "secondary" : "outline"} 
-                                 className={packagesInGroup[0]?.cover_image_url ? 'bg-white/90 text-gray-900 border-white/50' : ''}>
-                            {packagesInGroup.length} versions
-                          </Badge>
-                        </div>
-                        
-                        {/* Package thumbnails preview */}
-                        <div className="flex -space-x-2">
-                          {packagesInGroup.slice(0, 3).map((pkg, idx) => (
-                            <div key={pkg.id} className="w-8 h-8 rounded-full border-2 border-white bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                              <span className={`text-xs font-semibold ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`}>
-                                {idx + 1}
-                              </span>
-                            </div>
-                          ))}
-                          {packagesInGroup.length > 3 && (
-                            <div className="w-8 h-8 rounded-full border-2 border-white bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                              <span className={`text-xs font-semibold ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`}>
-                                +{packagesInGroup.length - 3}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
                       
                       {/* Package Name and Details */}
                       <div className="space-y-2 relative z-10">
