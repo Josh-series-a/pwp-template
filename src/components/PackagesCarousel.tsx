@@ -457,8 +457,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
               // Render single package normally
               const pkg = packagesInGroup[0];
               return (
-                <div key={pkg.id} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div>
+                <div key={pkg.id}>
                     {/* Square Package Card - Clickable */}
                     <div 
                       onClick={() => handlePackageClick(pkg.id)}
@@ -534,16 +533,15 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                           </Badge>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                     </div>
                 </div>
               );
             }
           })}
         </div>
       </div>
-      </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default PackagesCarousel;
