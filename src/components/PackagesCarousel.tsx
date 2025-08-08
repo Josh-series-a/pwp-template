@@ -199,6 +199,14 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
     }
     setExpandedFolders(newExpanded);
   };
+
+  const handleFolderClick = (packageName: string, packagesInGroup: Package[]) => {
+    // Navigate to a documents view page for this package folder
+    const encodedPackageName = encodeURIComponent(packageName);
+    const packageIds = packagesInGroup.map(pkg => pkg.id).join(',');
+    const currentPath = window.location.pathname;
+    navigate(`${currentPath}/documents/${encodedPackageName}?packages=${packageIds}`);
+  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -258,7 +266,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                 <div key={packageName} className="space-y-3">
                   {/* Folder Header with Cover Image */}
                   <div 
-                    onClick={() => toggleFolder(packageName)}
+                    onClick={() => handleFolderClick(packageName, packagesInGroup)}
                     className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-lg aspect-square"
                   >
                     {/* Background Image from first package in group */}
