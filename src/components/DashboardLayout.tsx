@@ -242,7 +242,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <div className="w-full h-full flex flex-col mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {!hideHeader && (
             <div className="flex items-center justify-start py-4 sm:py-6 flex-shrink-0">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground text-center">{title}</h1>
             </div>
           )}
           <div className={cn(
