@@ -255,7 +255,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
           <h3 className="text-lg font-semibold">Generated Packages ({packages.length})</h3>
         </div>
 
-        <div className="flex flex-wrap gap-8" style={{ gap: '2rem' }}>
+        <div className="flex flex-wrap gap-4" style={{ gap: '1rem' }}>
           {Object.entries(groupPackagesByName()).map(([packageName, packagesInGroup]) => {
             const isMultiple = packagesInGroup.length > 1;
             const isExpanded = expandedFolders.has(packageName);
