@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import CustomDocumentViewer from '@/components/CustomDocumentViewer';
 
 const DocumentPreview = () => {
-  const { companySlug, exerciseId, reportId, packageId } = useParams();
+  const { companySlug, reportId, packageId } = useParams();
   const navigate = useNavigate();
   
   // Get document info from URL search params
@@ -15,7 +15,7 @@ const DocumentPreview = () => {
   const docTitle = searchParams.get('title');
 
   const handleBackToPackage = () => {
-    navigate(`/dashboard/reports/${companySlug}/${exerciseId}/${reportId}/${packageId}`);
+    navigate(`/dashboard/reports/${companySlug}/${reportId}/${packageId}`);
   };
 
   if (!docUrl || !docTitle) {
