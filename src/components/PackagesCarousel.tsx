@@ -285,7 +285,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                       
                       
                       {/* Package Name and Details */}
-                      <div className="space-y-2 relative z-10">
+                      <div className="space-y-2 relative z-10 mt-4">
                         <h4 className={`text-xl font-bold leading-tight ${
                           packagesInGroup[0]?.cover_image_url ? 'text-white drop-shadow-lg' : 'text-blue-900'
                         }`}>
