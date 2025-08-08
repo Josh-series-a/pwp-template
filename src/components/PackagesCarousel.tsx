@@ -341,89 +341,139 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                     </div>
                   </div>
                   
-                  {/* Folder Contents */}
+                  {/* Folder Contents - Show All Documents */}
                   {isExpanded && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-8">
-                      {packagesInGroup.map((pkg) => (
-                        <div key={pkg.id}>
-                          {/* Square Package Card - Clickable */}
-                          <div 
-                            onClick={() => handlePackageClick(pkg.id)}
-                            className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
-                          >
-                            {/* Background Image or Gradient Fallback */}
-                            <div 
-                              className={`h-full flex flex-col justify-between p-6 ${
-                                pkg.cover_image_url 
-                                  ? 'bg-cover bg-center bg-no-repeat' 
-                                  : 'bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400'
-                              }`}
-                              style={pkg.cover_image_url ? { backgroundImage: `url(${pkg.cover_image_url})` } : {}}
-                            >
-                              {/* Dark overlay for better text readability when using images */}
-                              {pkg.cover_image_url && (
-                                <div className="absolute inset-0 bg-black/40 rounded-xl" />
-                              )}
-                              <div className="flex justify-end gap-2 relative z-10">
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className={`text-destructive hover:bg-destructive/10 ${
-                                        pkg.cover_image_url ? 'bg-white/20 hover:bg-white/30' : ''
-                                      }`}
-                                      onClick={(e) => e.stopPropagation()}
-                                      aria-label="Delete package"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>Delete this package?</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        This action cannot be undone. The package and its references will be permanently removed.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
-                                      <AlertDialogAction
-                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          confirmDeletePackage(pkg.id);
+                    <div className="space-y-4 ml-8">
+                      <div className="text-sm text-muted-foreground font-medium">
+                        All Documents in "{packageName}" ({packagesInGroup.reduce((total, pkg) => total + (pkg.documents?.length || 0), 0)} documents)
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {packagesInGroup.flatMap((pkg) => 
+                          pkg.documents?.map((doc, docIndex) => {
+                            const docUrl = doc.document[0];
+                            const isGoogleDoc = docUrl && docUrl.includes('docs.google.com');
+                            const thumbnailUrl = isGoogleDoc ? 
+                              docUrl.replace('/edit', '/preview').replace('/edit?', '/preview?') : null;
+                            
+                            return (
+                              <div key={`${pkg.id}-${docIndex}`}>
+                                <div 
+                                  onClick={() => handlePackageClick(pkg.id)}
+                                  className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-white border"
+                                  style={{ minHeight: '280px' }}
+                                >
+                                  {/* Document Preview/Thumbnail */}
+                                  {thumbnailUrl ? (
+                                    <div className="h-40 bg-muted overflow-hidden">
+                                      <img 
+                                        src={thumbnailUrl}
+                                        alt={`${doc.name} preview`}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = 'none';
                                         }}
-                                      >
-                                        Delete
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                      <FileText className="h-12 w-12 text-gray-400" />
+                                    </div>
+                                  )}
+                                  
+                                  {/* Document Info */}
+                                  <div className="p-4 space-y-3">
+                                    <div>
+                                      <h3 className="font-semibold text-lg leading-tight line-clamp-2 text-gray-900">
+                                        {doc.name}
+                                      </h3>
+                                      <p className="text-sm text-muted-foreground mt-1">
+                                        From version {packagesInGroup.indexOf(pkg) + 1}
+                                      </p>
+                                    </div>
+                                    
+                                    <div className="flex justify-between items-center">
+                                      <div className="flex gap-2">
+                                        <Badge variant="outline" className="text-xs">
+                                          {new Date(pkg.created_at).toLocaleDateString()}
+                                        </Badge>
+                                        <Badge variant="secondary" className="text-xs">
+                                          5 Credits
+                                        </Badge>
+                                      </div>
+                                      
+                                      {/* Action Buttons */}
+                                      <div className="flex gap-2">
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            const params = new URLSearchParams({
+                                              url: encodeURIComponent(doc.document[0]),
+                                              title: encodeURIComponent(doc.name)
+                                            });
+                                            const currentPath = window.location.pathname;
+                                            navigate(`${currentPath}/${pkg.id}/preview?${params.toString()}`);
+                                          }}
+                                        >
+                                          Preview
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="default"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(doc.document[0], '_blank');
+                                          }}
+                                        >
+                                          Open
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Delete Package Button (top right) */}
+                                  <div className="absolute top-2 right-2">
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="bg-white/80 hover:bg-white/90 text-destructive hover:text-destructive"
+                                          onClick={(e) => e.stopPropagation()}
+                                          aria-label="Delete package"
+                                        >
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>Delete this package version?</AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This will delete version {packagesInGroup.indexOf(pkg) + 1} of "{packageName}" and its document "{doc.name}". This action cannot be undone.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
+                                          <AlertDialogAction
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              confirmDeletePackage(pkg.id);
+                                            }}
+                                          >
+                                            Delete Version
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="space-y-3 relative z-10">
-                                <h2 className={`text-lg font-bold leading-tight line-clamp-3 ${
-                                  pkg.cover_image_url ? 'text-white drop-shadow-lg' : 'text-gray-900'
-                                }`}>
-                                  Version {packagesInGroup.indexOf(pkg) + 1}
-                                </h2>
-                                <p className={`text-sm font-medium ${
-                                  pkg.cover_image_url ? 'text-white/90 drop-shadow' : 'text-gray-800'
-                                }`}>
-                                  {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''}
-                                </p>
-                                <Badge variant="outline" className={`text-xs w-fit ${
-                                  pkg.cover_image_url 
-                                    ? 'bg-white/90 text-gray-900 border-white/50' 
-                                    : 'bg-white/80'
-                                }`}>
-                                  {new Date(pkg.created_at).toLocaleDateString()}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                            );
+                          }) || []
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
