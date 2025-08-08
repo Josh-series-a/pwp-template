@@ -267,7 +267,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                   {/* Folder Header with Cover Image */}
                   <div 
                     onClick={() => handleFolderClick(packageName, packagesInGroup)}
-                    className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-lg aspect-square w-64 h-64"
+                    className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-lg aspect-square w-80 h-80"
                   >
                     {/* Background Image from first package in group */}
                     <div 
