@@ -17,10 +17,7 @@ export const dashboardPackageService = {
   async getUserQueuedPackages(): Promise<PackageQueueItem[]> {
     const { data, error } = await supabase
       .from('package_queue')
-      .select(`
-        *,
-        reports!inner(title, company_name)
-      `)
+      .select('*')
       .in('status', ['queued', 'processing'])
       .order('requested_at', { ascending: false });
 
