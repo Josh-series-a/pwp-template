@@ -34,10 +34,11 @@ const PackageDocuments = () => {
 
   const packageIds = searchParams.get('packages')?.split(',') || [];
   const decodedPackageName = decodeURIComponent(packageName || '');
+  const packageIdsString = packageIds.join(','); // Convert to string for stable dependency
 
   useEffect(() => {
     fetchPackageData();
-  }, [reportId, packageIds, user]);
+  }, [reportId, packageIdsString, user?.id]); // Use stable string instead of array
 
   const fetchPackageData = async () => {
     if (!reportId) return;
