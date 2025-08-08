@@ -150,77 +150,77 @@ const PackageDocuments = () => {
               const thumbnailUrl = isGoogleDoc ? getDocumentPreviewUrl(docUrl, 'w800') : null;
               
               return (
-                <div key={`${doc.packageId}-${index}`}>
-                  <Card className="overflow-hidden bg-white">
-                    {/* Document Thumbnail - Separate with hover effects */}
-                    {thumbnailUrl ? (
-                      <div 
-                        className="relative overflow-hidden bg-muted cursor-pointer" 
-                        style={{ aspectRatio: '1/1.414' }}
-                        onClick={() => handleDocumentClick({
-                          title: doc.name,
-                          url: doc.document[0]
-                        }, doc.packageId)}
-                      >
-                        <img 
-                          src={thumbnailUrl}
-                          alt={`${doc.name} preview`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div 
-                        className="bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center cursor-pointer"
-                        style={{ aspectRatio: '1/1.414' }}
-                        onClick={() => handleDocumentClick({
-                          title: doc.name,
-                          url: doc.document[0]
-                        }, doc.packageId)}
-                      >
-                        <FileText className="h-12 w-12 text-gray-400" />
-                      </div>
-                    )}
+                <div key={`${doc.packageId}-${index}`} className="w-full">
+                  <div className="bg-white rounded-lg overflow-hidden">
+                    {/* Document Thumbnail - Separate container */}
+                    <div className="mb-4">
+                      {thumbnailUrl ? (
+                        <div 
+                          className="relative overflow-hidden bg-muted cursor-pointer rounded-lg" 
+                          style={{ aspectRatio: '1/1.414' }}
+                          onClick={() => handleDocumentClick({
+                            title: doc.name,
+                            url: doc.document[0]
+                          }, doc.packageId)}
+                        >
+                          <img 
+                            src={thumbnailUrl}
+                            alt={`${doc.name} preview`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div 
+                          className="bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center cursor-pointer rounded-lg"
+                          style={{ aspectRatio: '1/1.414' }}
+                          onClick={() => handleDocumentClick({
+                            title: doc.name,
+                            url: doc.document[0]
+                          }, doc.packageId)}
+                        >
+                          <FileText className="h-12 w-12 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
                     
-                    {/* Document Info - No hover effects */}
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold line-clamp-2">
+                    {/* Document Info - Separate container */}
+                    <div className="mb-4">
+                      <h3 className="text-lg font-semibold line-clamp-2 mb-2">
                         {doc.name}
-                      </CardTitle>
+                      </h3>
                       <div className="flex gap-2">
                         <Badge variant="secondary" className="text-xs">
                           {new Date(doc.packageCreatedAt).toLocaleDateString()}
                         </Badge>
                       </div>
-                    </CardHeader>
+                    </div>
                     
-                    {/* Action Buttons - No hover effects */}
-                    <CardContent className="pt-0">
-                      <div className="flex justify-end items-center">
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDocumentClick({
-                              title: doc.name,
-                              url: doc.document[0]
-                            }, doc.packageId)}
-                          >
-                            Preview
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="default"
-                            onClick={() => openInNewTab(doc.document[0])}
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                          </Button>
-                        </div>
+                    {/* Action Buttons - Separate container */}
+                    <div className="flex justify-end items-center">
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDocumentClick({
+                            title: doc.name,
+                            url: doc.document[0]
+                          }, doc.packageId)}
+                        >
+                          Preview
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => openInNewTab(doc.document[0])}
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 </div>
               );
             })}
