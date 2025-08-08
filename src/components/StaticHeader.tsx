@@ -64,7 +64,23 @@ const StaticHeader: React.FC = () => {
     
     segments.forEach((segment, index) => {
       currentPath += `/${segment}`;
-      const label = routeMap[segment] || segment;
+      
+      // Create acronym for long package names (URL encoded)
+      let label = routeMap[segment] || segment;
+      if (segment.includes('%20') || segment.includes('%') || segment.length > 20) {
+        // Decode and create acronym
+        const decoded = decodeURIComponent(segment);
+        if (decoded.split(' ').length > 2) {
+          label = decoded
+            .split(' ')
+            .filter(word => word.length > 2) // Only use words longer than 2 characters
+            .map(word => word[0].toUpperCase())
+            .join('');
+        } else {
+          label = decoded;
+        }
+      }
+      
       const isActive = index === segments.length - 1;
       
       items.push({ 
