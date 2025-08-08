@@ -21,6 +21,7 @@ import Account from "./pages/Account";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import PackageDetail from "./pages/PackageDetail";
+import PackageDocuments from "./pages/PackageDocuments";
 import DocumentPreview from "./pages/DocumentPreview";
 import Read from "./pages/Read";
 import BookSession from "./pages/BookSession";
@@ -96,6 +97,11 @@ const App = () => (
               <Route path="/dashboard/reports/:companySlug/:reportId/:packageId" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <PackageDetail />
+                </RoleProtectedRoute>
+              } />
+              <Route path="/dashboard/reports/:companySlug/:reportId/documents/:packageName" element={
+                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
+                  <PackageDocuments />
                 </RoleProtectedRoute>
               } />
               <Route path="/dashboard/reports/:companySlug/:reportId/:packageId/preview" element={
