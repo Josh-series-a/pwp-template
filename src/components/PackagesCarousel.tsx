@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, Trash2, Folder, FolderOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -39,6 +39,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [queuedPackages, setQueuedPackages] = useState<PackageQueueItem[]>([]);
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -176,6 +177,28 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
     const packageDetailPath = `${currentPath}/${packageId}`;
     navigate(packageDetailPath);
   };
+
+  // Group packages by name
+  const groupPackagesByName = () => {
+    const groups: { [key: string]: Package[] } = {};
+    packages.forEach(pkg => {
+      if (!groups[pkg.package_name]) {
+        groups[pkg.package_name] = [];
+      }
+      groups[pkg.package_name].push(pkg);
+    });
+    return groups;
+  };
+
+  const toggleFolder = (folderName: string) => {
+    const newExpanded = new Set(expandedFolders);
+    if (newExpanded.has(folderName)) {
+      newExpanded.delete(folderName);
+    } else {
+      newExpanded.add(folderName);
+    }
+    setExpandedFolders(newExpanded);
+  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -224,90 +247,210 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
           <h3 className="text-lg font-semibold">Generated Packages ({packages.length})</h3>
         </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {packages.map((pkg) => (
-              <div key={pkg.id}>
-                {/* Square Package Card - Clickable */}
-                <div 
-                  onClick={() => handlePackageClick(pkg.id)}
-                  className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
-                >
-                  {/* Background Image or Gradient Fallback */}
+        <div className="space-y-4">
+          {Object.entries(groupPackagesByName()).map(([packageName, packagesInGroup]) => {
+            const isMultiple = packagesInGroup.length > 1;
+            const isExpanded = expandedFolders.has(packageName);
+            
+            if (isMultiple) {
+              // Render as folder if multiple packages with same name
+              return (
+                <div key={packageName} className="space-y-3">
+                  {/* Folder Header */}
                   <div 
-                    className={`h-full flex flex-col justify-between p-6 ${
-                      pkg.cover_image_url 
-                        ? 'bg-cover bg-center bg-no-repeat' 
-                        : 'bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400'
-                    }`}
-                    style={pkg.cover_image_url ? { backgroundImage: `url(${pkg.cover_image_url})` } : {}}
+                    onClick={() => toggleFolder(packageName)}
+                    className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                   >
-                    {/* Dark overlay for better text readability when using images */}
-                    {pkg.cover_image_url && (
-                      <div className="absolute inset-0 bg-black/40 rounded-xl" />
+                    {isExpanded ? (
+                      <FolderOpen className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Folder className="h-5 w-5 text-primary" />
                     )}
-                    <div className="flex justify-end gap-2 relative z-10">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className={`text-destructive hover:bg-destructive/10 ${
-                              pkg.cover_image_url ? 'bg-white/20 hover:bg-white/30' : ''
-                            }`}
-                            onClick={(e) => e.stopPropagation()}
-                            aria-label="Delete package"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete this package?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. The package and its references will be permanently removed.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                confirmDeletePackage(pkg.id);
-                              }}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      
-                    </div>
-                    <div className="space-y-3 relative z-10">
-                      <h2 className={`text-xl font-bold leading-tight line-clamp-3 ${
-                        pkg.cover_image_url ? 'text-white drop-shadow-lg' : 'text-gray-900'
-                      }`}>
-                        {pkg.package_name}
-                      </h2>
-                      <p className={`text-base font-medium ${
-                        pkg.cover_image_url ? 'text-white/90 drop-shadow' : 'text-gray-800'
-                      }`}>
-                        {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''}
+                    <div className="flex-1">
+                      <h4 className="font-semibold">{packageName}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {packagesInGroup.length} versions
                       </p>
-                      <Badge variant="outline" className={`text-xs w-fit ${
-                        pkg.cover_image_url 
-                          ? 'bg-white/90 text-gray-900 border-white/50' 
-                          : 'bg-white/80'
-                      }`}>
-                        {new Date(pkg.created_at).toLocaleDateString()}
-                      </Badge>
+                    </div>
+                    <Badge variant="secondary">{packagesInGroup.length}</Badge>
+                  </div>
+                  
+                  {/* Folder Contents */}
+                  {isExpanded && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-8">
+                      {packagesInGroup.map((pkg) => (
+                        <div key={pkg.id}>
+                          {/* Square Package Card - Clickable */}
+                          <div 
+                            onClick={() => handlePackageClick(pkg.id)}
+                            className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
+                          >
+                            {/* Background Image or Gradient Fallback */}
+                            <div 
+                              className={`h-full flex flex-col justify-between p-6 ${
+                                pkg.cover_image_url 
+                                  ? 'bg-cover bg-center bg-no-repeat' 
+                                  : 'bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400'
+                              }`}
+                              style={pkg.cover_image_url ? { backgroundImage: `url(${pkg.cover_image_url})` } : {}}
+                            >
+                              {/* Dark overlay for better text readability when using images */}
+                              {pkg.cover_image_url && (
+                                <div className="absolute inset-0 bg-black/40 rounded-xl" />
+                              )}
+                              <div className="flex justify-end gap-2 relative z-10">
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={`text-destructive hover:bg-destructive/10 ${
+                                        pkg.cover_image_url ? 'bg-white/20 hover:bg-white/30' : ''
+                                      }`}
+                                      onClick={(e) => e.stopPropagation()}
+                                      aria-label="Delete package"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete this package?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. The package and its references will be permanently removed.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          confirmDeletePackage(pkg.id);
+                                        }}
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                              <div className="space-y-3 relative z-10">
+                                <h2 className={`text-lg font-bold leading-tight line-clamp-3 ${
+                                  pkg.cover_image_url ? 'text-white drop-shadow-lg' : 'text-gray-900'
+                                }`}>
+                                  Version {packagesInGroup.indexOf(pkg) + 1}
+                                </h2>
+                                <p className={`text-sm font-medium ${
+                                  pkg.cover_image_url ? 'text-white/90 drop-shadow' : 'text-gray-800'
+                                }`}>
+                                  {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''}
+                                </p>
+                                <Badge variant="outline" className={`text-xs w-fit ${
+                                  pkg.cover_image_url 
+                                    ? 'bg-white/90 text-gray-900 border-white/50' 
+                                    : 'bg-white/80'
+                                }`}>
+                                  {new Date(pkg.created_at).toLocaleDateString()}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            } else {
+              // Render single package normally
+              const pkg = packagesInGroup[0];
+              return (
+                <div key={pkg.id} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    {/* Square Package Card - Clickable */}
+                    <div 
+                      onClick={() => handlePackageClick(pkg.id)}
+                      className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg aspect-square"
+                    >
+                      {/* Background Image or Gradient Fallback */}
+                      <div 
+                        className={`h-full flex flex-col justify-between p-6 ${
+                          pkg.cover_image_url 
+                            ? 'bg-cover bg-center bg-no-repeat' 
+                            : 'bg-gradient-to-br from-yellow-200 via-yellow-300 to-yellow-400'
+                        }`}
+                        style={pkg.cover_image_url ? { backgroundImage: `url(${pkg.cover_image_url})` } : {}}
+                      >
+                        {/* Dark overlay for better text readability when using images */}
+                        {pkg.cover_image_url && (
+                          <div className="absolute inset-0 bg-black/40 rounded-xl" />
+                        )}
+                        <div className="flex justify-end gap-2 relative z-10">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`text-destructive hover:bg-destructive/10 ${
+                                  pkg.cover_image_url ? 'bg-white/20 hover:bg-white/30' : ''
+                                }`}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label="Delete package"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this package?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. The package and its references will be permanently removed.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    confirmDeletePackage(pkg.id);
+                                  }}
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                        <div className="space-y-3 relative z-10">
+                          <h2 className={`text-xl font-bold leading-tight line-clamp-3 ${
+                            pkg.cover_image_url ? 'text-white drop-shadow-lg' : 'text-gray-900'
+                          }`}>
+                            {pkg.package_name}
+                          </h2>
+                          <p className={`text-base font-medium ${
+                            pkg.cover_image_url ? 'text-white/90 drop-shadow' : 'text-gray-800'
+                          }`}>
+                            {pkg.documents?.length || 0} Document{(pkg.documents?.length || 0) !== 1 ? 's' : ''}
+                          </p>
+                          <Badge variant="outline" className={`text-xs w-fit ${
+                            pkg.cover_image_url 
+                              ? 'bg-white/90 text-gray-900 border-white/50' 
+                              : 'bg-white/80'
+                          }`}>
+                            {new Date(pkg.created_at).toLocaleDateString()}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              );
+            }
+          })}
         </div>
+      </div>
       </div>
     );
   };
