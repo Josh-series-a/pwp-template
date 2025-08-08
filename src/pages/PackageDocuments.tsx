@@ -41,20 +41,31 @@ const PackageDocuments = () => {
   }, [reportId, packageIdsString, user?.id]); // Use stable string instead of array
 
   const fetchPackageData = async () => {
-    if (!reportId) return;
+    if (!reportId) {
+      console.log('No reportId provided');
+      return;
+    }
+    
+    console.log('Fetching package data for reportId:', reportId);
+    console.log('Package IDs to filter:', packageIds);
     
     setIsLoading(true);
     try {
       const allPackages = await packageService.getPackages(reportId);
+      console.log('All packages fetched:', allPackages);
+      
       const filteredPackages = allPackages.filter(pkg => packageIds.includes(pkg.id));
+      console.log('Filtered packages:', filteredPackages);
       
       if (filteredPackages.length === 0) {
+        console.log('No packages found after filtering');
         toast.error('No packages found');
         navigate(`/dashboard/reports/${companySlug}/${reportId}`);
         return;
       }
       
       setPackages(filteredPackages);
+      console.log('Packages set in state:', filteredPackages);
     } catch (error) {
       console.error('Error fetching package data:', error);
       toast.error('Failed to load package data');
@@ -87,6 +98,9 @@ const PackageDocuments = () => {
       versionNumber: packages.indexOf(pkg) + 1
     }))
   );
+
+  console.log('All documents calculated:', allDocuments);
+  console.log('All documents length:', allDocuments.length);
 
   if (isLoading) {
     return (
