@@ -263,7 +263,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
             if (isMultiple) {
               // Render as folder if multiple packages with same name
               return (
-                <div key={packageName} className="space-y-3">
+                <div key={packageName} className="space-y-3 pr-4">
                   {/* Folder Header with Cover Image */}
                   <div 
                     onClick={() => handleFolderClick(packageName, packagesInGroup)}
@@ -457,7 +457,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
               // Render single package normally
               const pkg = packagesInGroup[0];
               return (
-                <div key={pkg.id}>
+                <div key={pkg.id} className="pr-4">
                     {/* Square Package Card - Clickable */}
                     <div 
                       onClick={() => handlePackageClick(pkg.id)}
