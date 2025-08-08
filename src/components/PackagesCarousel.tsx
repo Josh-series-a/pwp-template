@@ -250,7 +250,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
       )}
 
       {/* Generated Packages Section */}
-      <div className="space-y-4">
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Generated Packages ({packages.length})</h3>
         </div>
