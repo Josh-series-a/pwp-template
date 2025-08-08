@@ -150,12 +150,12 @@ const PackageDocuments = () => {
               const thumbnailUrl = isGoogleDoc ? getDocumentPreviewUrl(docUrl, 'w800') : null;
               
               return (
-                <div key={`${doc.packageId}-${index}`} className="transform transition-all duration-200 hover:translate-y-[-2px]">
-                  <Card className="overflow-hidden bg-white border shadow-md hover:shadow-lg transition-shadow duration-200">
+                <div key={`${doc.packageId}-${index}`}>
+                  <Card className="overflow-hidden bg-white">
                     {/* Document Thumbnail - Separate with hover effects */}
                     {thumbnailUrl ? (
                       <div 
-                        className="relative overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" 
+                        className="relative overflow-hidden bg-muted cursor-pointer" 
                         style={{ aspectRatio: '1/1.414' }}
                         onClick={() => handleDocumentClick({
                           title: doc.name,
@@ -170,11 +170,10 @@ const PackageDocuments = () => {
                             e.currentTarget.style.display = 'none';
                           }}
                         />
-                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-200" />
                       </div>
                     ) : (
                       <div 
-                        className="bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                        className="bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center cursor-pointer"
                         style={{ aspectRatio: '1/1.414' }}
                         onClick={() => handleDocumentClick({
                           title: doc.name,
