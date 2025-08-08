@@ -124,9 +124,6 @@ const PackageDetail = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {packageData.package_name}
             </h1>
-            <p className="text-lg text-gray-600">
-              Package ID: {packageData.id}
-            </p>
             <p className="text-sm text-muted-foreground">
               Created: {new Date(packageData.created_at).toLocaleDateString()} • Total Cost: {(packageData.documents?.length || 0) * 5} Credits
             </p>
