@@ -256,23 +256,89 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
               // Render as folder if multiple packages with same name
               return (
                 <div key={packageName} className="space-y-3">
-                  {/* Folder Header */}
+                  {/* Folder Header with Cover Image */}
                   <div 
                     onClick={() => toggleFolder(packageName)}
-                    className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                    className="relative overflow-hidden rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                    style={{ minHeight: '200px' }}
                   >
-                    {isExpanded ? (
-                      <FolderOpen className="h-5 w-5 text-primary" />
-                    ) : (
-                      <Folder className="h-5 w-5 text-primary" />
-                    )}
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{packageName}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {packagesInGroup.length} versions
-                      </p>
+                    {/* Background Image from first package in group */}
+                    <div 
+                      className={`h-full flex flex-col justify-between p-6 ${
+                        packagesInGroup[0]?.cover_image_url 
+                          ? 'bg-cover bg-center bg-no-repeat' 
+                          : 'bg-gradient-to-br from-blue-200 via-blue-300 to-blue-400'
+                      }`}
+                      style={packagesInGroup[0]?.cover_image_url ? { backgroundImage: `url(${packagesInGroup[0].cover_image_url})` } : {}}
+                    >
+                      {/* Dark overlay for better text readability */}
+                      {packagesInGroup[0]?.cover_image_url && (
+                        <div className="absolute inset-0 bg-black/50 rounded-xl" />
+                      )}
+                      
+                      {/* Folder Icon and Expand/Collapse indicator */}
+                      <div className="flex justify-between items-start relative z-10">
+                        <div className="flex items-center gap-3">
+                          {isExpanded ? (
+                            <FolderOpen className={`h-6 w-6 ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`} />
+                          ) : (
+                            <Folder className={`h-6 w-6 ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`} />
+                          )}
+                          <Badge variant={packagesInGroup[0]?.cover_image_url ? "secondary" : "outline"} 
+                                 className={packagesInGroup[0]?.cover_image_url ? 'bg-white/90 text-gray-900 border-white/50' : ''}>
+                            {packagesInGroup.length} versions
+                          </Badge>
+                        </div>
+                        
+                        {/* Package thumbnails preview */}
+                        <div className="flex -space-x-2">
+                          {packagesInGroup.slice(0, 3).map((pkg, idx) => (
+                            <div key={pkg.id} className="w-8 h-8 rounded-full border-2 border-white bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                              <span className={`text-xs font-semibold ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`}>
+                                {idx + 1}
+                              </span>
+                            </div>
+                          ))}
+                          {packagesInGroup.length > 3 && (
+                            <div className="w-8 h-8 rounded-full border-2 border-white bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                              <span className={`text-xs font-semibold ${packagesInGroup[0]?.cover_image_url ? 'text-white' : 'text-blue-800'}`}>
+                                +{packagesInGroup.length - 3}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Package Name and Details */}
+                      <div className="space-y-2 relative z-10">
+                        <h4 className={`text-xl font-bold leading-tight ${
+                          packagesInGroup[0]?.cover_image_url ? 'text-white drop-shadow-lg' : 'text-blue-900'
+                        }`}>
+                          {packageName}
+                        </h4>
+                        <p className={`text-base font-medium ${
+                          packagesInGroup[0]?.cover_image_url ? 'text-white/90 drop-shadow' : 'text-blue-800'
+                        }`}>
+                          {packagesInGroup.length} version{packagesInGroup.length !== 1 ? 's' : ''} • {packagesInGroup.reduce((total, pkg) => total + (pkg.documents?.length || 0), 0)} documents total
+                        </p>
+                        <div className="flex gap-2">
+                          <Badge variant="outline" className={`text-xs ${
+                            packagesInGroup[0]?.cover_image_url 
+                              ? 'bg-white/90 text-gray-900 border-white/50' 
+                              : 'bg-white/80'
+                          }`}>
+                            Latest: {new Date(packagesInGroup[0]?.created_at).toLocaleDateString()}
+                          </Badge>
+                          <Badge variant="outline" className={`text-xs ${
+                            packagesInGroup[0]?.cover_image_url 
+                              ? 'bg-white/90 text-gray-900 border-white/50' 
+                              : 'bg-white/80'
+                          }`}>
+                            {isExpanded ? 'Click to collapse' : 'Click to expand'}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
-                    <Badge variant="secondary">{packagesInGroup.length}</Badge>
                   </div>
                   
                   {/* Folder Contents */}
