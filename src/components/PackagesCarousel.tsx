@@ -255,7 +255,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
           <h3 className="text-lg font-semibold">Generated Packages ({packages.length})</h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-20" style={{ gridGap: '80px' }}>
           {Object.entries(groupPackagesByName()).map(([packageName, packagesInGroup]) => {
             const isMultiple = packagesInGroup.length > 1;
             const isExpanded = expandedFolders.has(packageName);
@@ -263,7 +263,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
             if (isMultiple) {
               // Render as folder if multiple packages with same name
               return (
-                <div key={packageName} className="space-y-3">
+                <div key={packageName} className="space-y-3 m-8">
                   {/* Folder Header with Cover Image */}
                   <div 
                     onClick={() => handleFolderClick(packageName, packagesInGroup)}
