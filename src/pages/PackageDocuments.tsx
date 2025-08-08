@@ -151,10 +151,11 @@ const PackageDocuments = () => {
               
               return (
                 <div key={`${doc.packageId}-${index}`}>
-                  <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.02] overflow-hidden">
-                    {thumbnailUrl && (
+                  <Card className="overflow-hidden bg-white border">
+                    {/* Document Thumbnail - Separate with hover effects */}
+                    {thumbnailUrl ? (
                       <div 
-                        className="relative overflow-hidden bg-muted cursor-pointer" 
+                        className="relative overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" 
                         style={{ aspectRatio: '1/1.414' }}
                         onClick={() => handleDocumentClick({
                           title: doc.name,
@@ -171,17 +172,32 @@ const PackageDocuments = () => {
                         />
                         <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-200" />
                       </div>
+                    ) : (
+                      <div 
+                        className="bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
+                        style={{ aspectRatio: '1/1.414' }}
+                        onClick={() => handleDocumentClick({
+                          title: doc.name,
+                          url: doc.document[0]
+                        }, doc.packageId)}
+                      >
+                        <FileText className="h-12 w-12 text-gray-400" />
+                      </div>
                     )}
+                    
+                    {/* Document Info - No hover effects */}
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg font-semibold line-clamp-2">
                         {doc.name}
                       </CardTitle>
-                       <div className="flex gap-2">
-                         <Badge variant="secondary" className="text-xs">
-                           {new Date(doc.packageCreatedAt).toLocaleDateString()}
-                         </Badge>
-                       </div>
+                      <div className="flex gap-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {new Date(doc.packageCreatedAt).toLocaleDateString()}
+                        </Badge>
+                      </div>
                     </CardHeader>
+                    
+                    {/* Action Buttons - No hover effects */}
                     <CardContent className="pt-0">
                       <div className="flex justify-end items-center">
                         <div className="flex gap-2">
