@@ -166,7 +166,7 @@ const PackageDocuments = () => {
                           <img 
                             src={thumbnailUrl}
                             alt={`${doc.name} preview`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-lg shadow-lg"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                             }}
