@@ -143,15 +143,15 @@ const PackageDocuments = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {allDocuments.map((doc, index) => {
               const docUrl = doc.document[0];
               const isGoogleDoc = isGoogleDocument(docUrl);
               const thumbnailUrl = isGoogleDoc ? getDocumentPreviewUrl(docUrl, 'w800') : null;
               
               return (
-                <div key={`${doc.packageId}-${index}`}>
-                  <Card className="overflow-hidden bg-white border">
+                <div key={`${doc.packageId}-${index}`} className="transform transition-all duration-200 hover:translate-y-[-2px]">
+                  <Card className="overflow-hidden bg-white border shadow-md hover:shadow-lg transition-shadow duration-200">
                     {/* Document Thumbnail - Separate with hover effects */}
                     {thumbnailUrl ? (
                       <div 
