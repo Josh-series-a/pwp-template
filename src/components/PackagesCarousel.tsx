@@ -294,7 +294,7 @@ const PackagesCarousel: React.FC<PackagesCarouselProps> = ({ reportId }) => {
                         <p className={`text-base font-medium ${
                           packagesInGroup[0]?.cover_image_url ? 'text-white/90 drop-shadow' : 'text-blue-800'
                         }`}>
-                          {packagesInGroup.reduce((total, pkg) => total + (pkg.documents?.length || 0), 0)} documents total
+                          {packagesInGroup.reduce((total, pkg) => total + (pkg.documents?.length || 0), 0)} documents
                         </p>
                         <div className="flex gap-2">
                           <Badge variant="outline" className={`text-xs ${
