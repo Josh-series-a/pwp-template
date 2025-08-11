@@ -198,13 +198,6 @@ const CustomDocumentViewer: React.FC<CustomDocumentViewerProps> = ({
               <FileText className="h-5 w-5 text-muted-foreground" />
               <div className="flex flex-col">
                 <span className="font-semibold text-sm">{title}</span>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span>Google Doc</span>
-                  <span>•</span>
-                  <span>Multiple pages</span>
-                  <span>•</span>
-                  <span>Unknown size</span>
-                </div>
               </div>
             </div>
           </div>
