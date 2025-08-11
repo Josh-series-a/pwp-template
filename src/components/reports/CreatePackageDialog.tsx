@@ -224,41 +224,62 @@ const CreatePackageDialog: React.FC<CreatePackageDialogProps> = ({
       const selectedCompanyData = companies.find(c => c.id === selectedCompany);
       const selectedPackageData = packages.filter(p => selectedPackages.includes(p.id));
 
-      const payload = {
-        name: selectedPackageData[0]?.title || 'Custom Package',
-        description: selectedPackageData[0]?.description || 'Custom package description',
-        color: "#3b82f6",
-        text_color: "#ffffff",
-        documents: selectedPackageData.flatMap(pkg => pkg.items || []),
-        user_id: user.id,
-        client_id: reportId, // Always use reportId as client_id
-        companyName: selectedCompanyData?.company_name || '',
-        package_id: selectedPackages[0] || 'custom',
-        webhook_url: "https://hook.eu2.make.com/1oitiml9rehzq4rbvywwxjssgbt1subm"
-      };
+      let successCount = 0;
+      let failureCount = 0;
 
-      console.log('Sending package creation request:', payload);
+      // Process each package individually
+      for (const pkg of selectedPackageData) {
+        try {
+          const payload = {
+            name: pkg.title,
+            description: pkg.description || 'Custom package description',
+            color: "#3b82f6",
+            text_color: "#ffffff",
+            documents: pkg.items || [],
+            user_id: user.id,
+            client_id: reportId, // Always use reportId as client_id
+            companyName: selectedCompanyData?.company_name || '',
+            package_id: pkg.id,
+            webhook_url: "https://hook.eu2.make.com/1oitiml9rehzq4rbvywwxjssgbt1subm"
+          };
 
-      const { data, error } = await supabase.functions.invoke('advisorpro-api', {
-        body: {
-          endpoint: 'create-package',
-          method: 'POST',
-          body: payload
+          console.log(`Processing package ${pkg.title}:`, payload);
+
+          const { data, error } = await supabase.functions.invoke('advisorpro-api', {
+            body: {
+              endpoint: 'create-package',
+              method: 'POST',
+              body: payload
+            }
+          });
+
+          if (error) {
+            console.error(`Error creating package ${pkg.title}:`, error);
+            failureCount++;
+            continue;
+          }
+
+          if (data && data.data && data.data.success) {
+            console.log(`Package ${pkg.title} created successfully:`, data.data);
+            successCount++;
+          } else {
+            console.error(`Package ${pkg.title} creation failed:`, data);
+            failureCount++;
+          }
+        } catch (packageError) {
+          console.error(`Error processing package ${pkg.title}:`, packageError);
+          failureCount++;
         }
-      });
-
-      if (error) {
-        console.error('Error creating package:', error);
-        toast.error('Failed to create package');
-        return;
       }
 
-      if (data && data.data && data.data.success) {
-        console.log('Package created successfully:', data.data);
-        toast.success(`Package created successfully! ${totalCost} credits deducted.`);
+      // Show appropriate success/error messages
+      if (successCount > 0 && failureCount === 0) {
+        toast.success(`All ${successCount} package(s) created successfully! ${totalCost} credits deducted.`);
+      } else if (successCount > 0 && failureCount > 0) {
+        toast.success(`${successCount} package(s) created successfully, ${failureCount} failed. ${totalCost} credits deducted.`);
       } else {
-        console.error('Package creation failed:', data);
-        toast.error('Failed to create package');
+        toast.error('Failed to create any packages');
+        setIsLoading(false);
         return;
       }
       
