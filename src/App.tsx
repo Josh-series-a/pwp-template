@@ -9,36 +9,21 @@ import RoleProtectedRoute from "./components/RoleProtectedRoute";
 import TransitionWrapper from "./components/TransitionWrapper";
 import ScrollToTop from "./components/ScrollToTop";
 
-import Index from "./pages/Index";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AdminSignup from "./pages/AdminSignup";
 import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
 import Account from "./pages/Account";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import PackageDetail from "./pages/PackageDetail";
 import PackageDocuments from "./pages/PackageDocuments";
 import DocumentPreview from "./pages/DocumentPreview";
-import Read from "./pages/Read";
-import BookSession from "./pages/BookSession";
-import BookInsights from "./pages/BookInsights";
-import Products from "./pages/Products";
-import Exercises from "./pages/Exercises";
 import NotFound from "./pages/NotFound";
-import PreloaderDemo from "./pages/PreloaderDemo";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import CookiePolicy from "./pages/CookiePolicy";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminCredits from "./pages/AdminCredits";
 import AdminAnalytics from "./pages/AdminAnalytics";
-import Labs from "./pages/Labs";
-import Help from "./pages/Help";
 
 const queryClient = new QueryClient();
 
@@ -52,28 +37,15 @@ const App = () => (
         <AuthProvider>
           <TransitionWrapper>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/admin/signup" element={<AdminSignup />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/preloader-demo" element={<PreloaderDemo />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/cookie-policy" element={<CookiePolicy />} />
-              <Route path="/help" element={<Help />} />
               
               {/* User Dashboard Routes - Only for regular users */}
               <Route path="/dashboard" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <Dashboard />
-                </RoleProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
-                  <Profile />
                 </RoleProtectedRoute>
               } />
               
@@ -107,31 +79,6 @@ const App = () => (
               <Route path="/dashboard/reports/:companySlug/:reportId/:packageId/preview" element={
                 <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
                   <DocumentPreview />
-                </RoleProtectedRoute>
-              } />
-              <Route path="/dashboard/read" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
-                  <Read />
-                </RoleProtectedRoute>
-              } />
-              <Route path="/dashboard/read/:chapterId" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
-                  <BookSession />
-                </RoleProtectedRoute>
-              } />
-              <Route path="/dashboard/insights" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
-                  <BookInsights />
-                </RoleProtectedRoute>
-              } />
-              <Route path="/dashboard/exercises" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
-                  <Exercises />
-                </RoleProtectedRoute>
-              } />
-              <Route path="/dashboard/labs" element={
-                <RoleProtectedRoute allowedRoles={['User']} redirectTo="/admin/dashboard">
-                  <Labs />
                 </RoleProtectedRoute>
               } />
               
